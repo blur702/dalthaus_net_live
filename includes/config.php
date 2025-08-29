@@ -225,3 +225,15 @@ define('CACHE_ENABLED', ENV !== 'development');
  * @var int
  */
 define('CACHE_TTL', 3600);
+
+// ============================================================================
+// LOCAL CONFIGURATION OVERRIDE
+// ============================================================================
+
+/**
+ * Load local configuration overrides if available
+ * This allows for environment-specific settings without modifying the main config
+ */
+if (file_exists(__DIR__ . '/config.local.php')) {
+    require_once __DIR__ . '/config.local.php';
+}
