@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['restore_version'])) {
                 cacheClear();
                 
                 $_SESSION['success'] = 'Version restored successfully';
-                header("Location: /admin/versions?content_id=$contentId");
+                header("Location: /admin/versions.php?content_id=" . (int)$contentId);
                 exit;
             } catch (Exception $e) {
                 $pdo->rollBack();
@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_version'])) {
         $stmt->execute([$versionId, $contentId]);
         
         $_SESSION['success'] = 'Autosave deleted';
-        header("Location: /admin/versions?content_id=$contentId");
+        header("Location: /admin/versions.php?content_id=" . (int)$contentId);
         exit;
     }
 }

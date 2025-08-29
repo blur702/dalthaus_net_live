@@ -1,87 +1,203 @@
-# MAMP Pro Compatible .htaccess
+# =====================================
+# DALTHAUS PHOTOGRAPHY CMS
+# Shared Hosting Configuration - PHP 8.4
+# =====================================
 
-# Set default directory index
-DirectoryIndex index.html index.php
+# Select PHP 8.4 (for shared hosting)
+# Uncomment the appropriate line for your host:
+# AddHandler application/x-httpd-php84 .php
+# AddHandler application/x-httpd-ea-php84 .php
+# AddType application/x-httpd-php84 .php
 
-# Custom error pages
-ErrorDocument 400 /error.php?code=400
-ErrorDocument 401 /error.php?code=401
-ErrorDocument 403 /error.php?code=403
-ErrorDocument 404 /error.php?code=404
-ErrorDocument 500 /error.php?code=500
-ErrorDocument 503 /error.php?code=503
+# Enable Apache Rewrite Engine
+RewriteEngine On
 
-# Enable RewriteEngine
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-    
-    # Force HTTPS in production (uncomment for production)
-    # RewriteCond %{HTTPS} off
-    # RewriteCond %{HTTP_HOST} !^localhost
-    # RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
-    
-    # Set RewriteBase - adjust if site is in a subdirectory
-    # If your site is at http://localhost/dalthaus_net/ use: RewriteBase /dalthaus_net/
-    # If your site is at http://localhost/ use: RewriteBase /
-    RewriteBase /
-    
-    # Block access to sensitive directories
-    RewriteRule ^(includes|logs|cache|temp|tests|docs|config|scripts)/.*$ - [F,L]
-    RewriteRule ^\.htaccess$ - [F,L]
-    RewriteRule ^.*\.log$ - [F,L]
-    
-    # Handle clean URLs
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ index.php?route=$1 [QSA,L]
-</IfModule>
+# =====================================
+# SHARED HOSTING BASE PATH
+# If site is in subdirectory, set RewriteBase
+# =====================================
+# RewriteBase /
+# RewriteBase /subdirectory/
 
-# PHP Settings for MAMP
-<IfModule mod_php7.c>
-    php_value error_reporting 32767
-    php_flag display_errors Off
-    php_flag log_errors On
-    php_value error_log logs/php_errors.log
-    php_value max_execution_time 300
-    php_value max_input_time 300
-    php_value memory_limit 256M
-    php_value post_max_size 10M
-    php_value upload_max_filesize 10M
-</IfModule>
-
-<IfModule mod_php8.c>
-    php_value error_reporting 32767
-    php_flag display_errors Off
-    php_flag log_errors On
-    php_value error_log logs/php_errors.log
-    php_value max_execution_time 300
-    php_value max_input_time 300
-    php_value memory_limit 256M
-    php_value post_max_size 10M
-    php_value upload_max_filesize 10M
-</IfModule>
-
-# Security headers (if mod_headers is enabled)
+# =====================================
+# SECURITY HEADERS (if allowed by host)
+# =====================================
 <IfModule mod_headers.c>
-    Header set X-Content-Type-Options "nosniff"
-    Header set X-Frame-Options "SAMEORIGIN"
-    Header set X-XSS-Protection "1; mode=block"
-    
-    # Cache static assets
-    <FilesMatch "\.(jpg|jpeg|png|gif|ico|css|js|woff2|woff|ttf)$">
-        Header set Cache-Control "max-age=2592000, public"
-    </FilesMatch>
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
 </IfModule>
 
-# Compress output (if mod_deflate is enabled)
+# =====================================
+# FORCE HTTPS (uncomment for production)
+# =====================================
+# RewriteCond %{HTTPS} !=on
+# RewriteCond %{HTTP:X-Forwarded-Proto} !https
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+# =====================================
+# PREVENT DIRECTORY LISTING
+# =====================================
+Options -Indexes +FollowSymLinks
+
+# =====================================
+# PROTECT SENSITIVE FILES
+# =====================================
+<FilesMatch "^\.">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+<FilesMatch "\.(ini|log|sh|sql|md|json|lock|env)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Protect specific files
+<Files "setup.php">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</Files>
+
+# =====================================
+# PROTECT DIRECTORIES
+# =====================================
+RewriteRule ^includes/ - [F,L]
+RewriteRule ^scripts/ - [F,L]
+RewriteRule ^logs/ - [F,L]
+RewriteRule ^cache/ - [F,L]
+RewriteRule ^temp/ - [F,L]
+RewriteRule ^vendor/ - [F,L]
+RewriteRule ^\.git/ - [F,L]
+
+# =====================================
+# URL REWRITING FOR CLEAN URLS
+# =====================================
+# Prevent rewriting for existing files and directories
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Skip rewriting for specific file extensions
+RewriteCond %{REQUEST_URI} !\.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf|eot|map|xml|txt|pdf|doc|docx)$ [NC]
+
+# Rewrite all other requests to index.php
+RewriteRule ^(.*)$ index.php?route=$1 [QSA,L]
+
+# =====================================
+# PHP 8.4 CONFIGURATION FOR SHARED HOSTING
+# =====================================
+<IfModule mod_php.c>
+    # PHP 8.4 Settings
+    php_flag display_errors Off
+    php_flag log_errors On
+    php_value max_execution_time 60
+    php_value max_input_time 60
+    php_value memory_limit 128M
+    php_value post_max_size 32M
+    php_value upload_max_filesize 10M
+    php_value session.cookie_httponly 1
+    php_value session.use_only_cookies 1
+    php_flag session.cookie_secure On
+    php_value session.gc_maxlifetime 3600
+</IfModule>
+
+# Alternative PHP settings via .user.ini for shared hosting
+# Create .user.ini file with these settings if .htaccess doesn't work
+
+# =====================================
+# COMPRESSION (if allowed)
+# =====================================
 <IfModule mod_deflate.c>
-    AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript application/javascript application/json
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript
+    AddOutputFilterByType DEFLATE application/javascript application/x-javascript
+    AddOutputFilterByType DEFLATE application/xml application/xhtml+xml application/rss+xml
+    AddOutputFilterByType DEFLATE application/json
+    AddOutputFilterByType DEFLATE image/svg+xml
 </IfModule>
 
-# Note: These rules are handled by the main rewrite rules above
-# No need for FilesMatch rules that might interfere with routing
-
-# Protect uploads directory
-<IfModule mod_rewrite.c>
-    RewriteRule ^uploads/.*\.php$ - [F,L]
+# =====================================
+# BROWSER CACHING
+# =====================================
+<IfModule mod_expires.c>
+    ExpiresActive On
+    
+    # HTML - No caching
+    ExpiresByType text/html "access plus 0 seconds"
+    
+    # CSS and JavaScript - 1 month
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    
+    # Images - 1 year
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    
+    # Fonts - 1 year
+    ExpiresByType font/woff "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
 </IfModule>
+
+# =====================================
+# ERROR DOCUMENTS
+# =====================================
+ErrorDocument 400 /public/error.php?code=400
+ErrorDocument 401 /public/error.php?code=401
+ErrorDocument 403 /public/error.php?code=403
+ErrorDocument 404 /public/error.php?code=404
+ErrorDocument 500 /public/error.php?code=500
+
+# =====================================
+# MIME TYPES
+# =====================================
+<IfModule mod_mime.c>
+    AddType text/css .css
+    AddType text/javascript .js
+    AddType application/javascript .js
+    AddType application/json .json
+    AddType image/svg+xml .svg
+    AddType image/webp .webp
+    AddType font/woff .woff
+    AddType font/woff2 .woff2
+</IfModule>
+
+# =====================================
+# DISABLE SERVER SIGNATURE
+# =====================================
+ServerSignature Off
+
+# =====================================
+# SHARED HOSTING OPTIMIZATIONS
+# =====================================
+# Limit request methods
+<LimitExcept GET POST HEAD>
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</LimitExcept>
+
+# =====================================
+# END CONFIGURATION
+# =====================================

@@ -35,11 +35,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'Password must be at least 8 characters long';
         } else {
             // Verify current password
-            $stmt = $pdo->prepare("SELECT password FROM users WHERE id = ?");
+            $stmt = $pdo->prepare("SELECT password_hash FROM users WHERE id = ?");
             $stmt->execute([$userId]);
             $user = $stmt->fetch();
             
-            if (!password_verify($currentPassword, $user['password'])) {
+            if (!password_verify($currentPassword, $user['password_hash'])) {
                 $error = 'Current password is incorrect';
             } else {
                 // Update password

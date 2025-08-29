@@ -55,6 +55,27 @@ define('DB_PASS', 'f-I*GSo^Urt*k*&#');
 define('ENV', 'production');
 
 // ============================================================================
+// SESSION SECURITY CONFIGURATION
+// ============================================================================
+
+/**
+ * Secure session configuration for production
+ * Prevents session hijacking and fixation attacks
+ */
+if (ENV === 'production') {
+    // Use secure cookies over HTTPS only
+    ini_set('session.cookie_secure', '1');
+}
+
+// Always use these security settings
+ini_set('session.cookie_httponly', '1');        // Prevent JavaScript access to session cookie
+ini_set('session.cookie_samesite', 'Strict');   // CSRF protection
+ini_set('session.use_only_cookies', '1');       // Don't accept session IDs from URLs
+ini_set('session.use_strict_mode', '1');        // Reject uninitialized session IDs
+ini_set('session.sid_length', '48');            // Longer session IDs for better security
+ini_set('session.sid_bits_per_character', '6'); // More entropy in session IDs
+
+// ============================================================================
 // PYTHON INTEGRATION
 // ============================================================================
 
@@ -206,7 +227,7 @@ define('LOG_MAX_LINES', 5000);
  * 'debug' in development, 'error' in production
  * @var string
  */
-define('LOG_LEVEL', ENV === 'production' ? 'debug' : 'error');
+define('LOG_LEVEL', ENV === 'production' ? 'error' : 'debug');
 
 // ============================================================================
 // CACHE CONFIGURATION

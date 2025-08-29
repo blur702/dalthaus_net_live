@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once 'includes/config.php';
+require_once 'includes/security_headers.php';  // Add security headers
 require_once 'includes/database.php';
 require_once 'includes/router.php';
 require_once 'includes/auth.php';

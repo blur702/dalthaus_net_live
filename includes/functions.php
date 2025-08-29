@@ -83,7 +83,7 @@ function createSlug(string $title): string {
  * Retrieve value from file cache
  * 
  * Returns null if cache disabled, file missing, or expired.
- * Uses serialized data storage with expiration timestamps.
+ * Uses JSON data storage with expiration timestamps for security.
  * 
  * @param string $key Cache key identifier
  * @return mixed Cached value or null if not found/expired
@@ -94,7 +94,15 @@ function cacheGet(string $key): mixed {
     $file = CACHE_PATH . '/' . md5($key) . '.cache';
     if (!file_exists($file)) return null;
     
-    $data = unserialize(file_get_contents($file));
+    $content = file_get_contents($file);
+    $data = json_decode($content, true);
+    
+    // Check for valid JSON
+    if ($data === null || !isset($data['expires']) || !isset($data['value'])) {
+        unlink($file);
+        return null;
+    }
+    
     if ($data['expires'] < time()) {
         unlink($file);
         return null;
@@ -106,10 +114,10 @@ function cacheGet(string $key): mixed {
  * Store value in file cache with expiration
  * 
  * Creates cache directory if needed.
- * Stores serialized data with expiration timestamp.
+ * Stores JSON data with expiration timestamp for security.
  * 
  * @param string $key Cache key identifier
- * @param mixed $value Value to cache (must be serializable)
+ * @param mixed $value Value to cache (must be JSON-encodable)
  * @param int $ttl Time-to-live in seconds (default: CACHE_TTL)
  * @return bool True if cached successfully, false otherwise
  */
@@ -119,7 +127,14 @@ function cacheSet(string $key, mixed $value, int $ttl = CACHE_TTL): bool {
     
     $file = CACHE_PATH . '/' . md5($key) . '.cache';
     $data = ['value' => $value, 'expires' => time() + $ttl];
-    return file_put_contents($file, serialize($data)) !== false;
+    $json = json_encode($data);
+    
+    // Check for valid JSON encoding
+    if ($json === false) {
+        return false;
+    }
+    
+    return file_put_contents($file, $json) !== false;
 }
 
 /**
@@ -222,8 +237,19 @@ function processContentImages(string $content): string {
         
         // Check if image exists (for local images)
         if (strpos($src, 'http') !== 0 && strpos($src, '//') !== 0) {
-            $imagePath = $_SERVER['DOCUMENT_ROOT'] . $src;
-            if (!file_exists($imagePath)) {
+            // Sanitize the path to prevent directory traversal
+            $cleanSrc = str_replace(['../', '..\\', '../', '\\..'], '', $src);
+            $cleanSrc = '/' . ltrim($cleanSrc, '/');
+            
+            // Validate the path is within allowed directories
+            if (preg_match('/^\/(?:uploads|assets|images)\//', $cleanSrc)) {
+                $imagePath = $_SERVER['DOCUMENT_ROOT'] . $cleanSrc;
+            } else {
+                // Invalid path, treat as missing image
+                $imagePath = '';
+            }
+            
+            if (empty($imagePath) || !file_exists($imagePath)) {
                 // Extract classes from the img tag
                 $classes = '';
                 if (preg_match('/class=["\']([^"\']*)["\']/', $fullMatch, $classMatch)) {
@@ -262,7 +288,7 @@ function processContentImages(string $content): string {
  */
 function showError(int $code = 404, string $message = ''): void {
     // Redirect to error page with code
-    header("Location: /error.php?code=$code");
+    header("Location: /error.php?code=" . (int)$code);
     exit;
 }
 
@@ -280,7 +306,7 @@ function handleException(Throwable $e): void {
     logMessage('Error: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine(), 'error');
     
     // Show user-friendly error page
-    if (ENVIRONMENT === 'production') {
+    if (ENV === 'production') {
         showError(500);
     } else {
         // In development, show detailed error

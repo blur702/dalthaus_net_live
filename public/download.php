@@ -60,10 +60,13 @@ if ($attachment['content_id']) {
 $mimeType = $attachment['mime_type'] ?: 'application/octet-stream';
 $size = filesize($filepath);
 
-// Set headers
-header('Content-Type: ' . $mimeType);
+// Set headers (sanitize to prevent header injection)
+$safeMimeType = preg_replace('/[\r\n]/', '', $mimeType);
+$safeFilename = preg_replace('/[\r\n"]/', '', $attachment['original_name'] ?? 'download');
+
+header('Content-Type: ' . $safeMimeType);
 header('Content-Length: ' . $size);
-header('Content-Disposition: inline; filename="' . $attachment['original_name'] . '"');
+header('Content-Disposition: inline; filename="' . $safeFilename . '"');
 header('Cache-Control: public, max-age=86400');
 
 // Output file

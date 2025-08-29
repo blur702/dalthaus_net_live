@@ -57,7 +57,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 } else {
                     $id = (int)$_POST['id'];
                     // Check if we're publishing for the first time
-                    $existingStatus = $pdo->query("SELECT status, published_at FROM content WHERE id = $id")->fetch();
+                    $stmt = $pdo->prepare("SELECT status, published_at FROM content WHERE id = ?");
+                    $stmt->execute([$id]);
+                    $existingStatus = $stmt->fetch();
                     $publishedAt = null;
                     if ($status === 'published' && $existingStatus['status'] === 'draft' && !$existingStatus['published_at']) {
                         $publishedAt = date('Y-m-d H:i:s');
@@ -81,7 +83,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         updatePageTracking($pdo, $id, $body);
                         
                         // Create new version
-                        $versionNum = $pdo->query("SELECT MAX(version_number) FROM content_versions WHERE content_id = $id")->fetchColumn() + 1;
+                        $stmt = $pdo->prepare("SELECT MAX(version_number) FROM content_versions WHERE content_id = ?");
+                        $stmt->execute([$id]);
+                        $versionNum = ($stmt->fetchColumn() ?: 0) + 1;
                         $stmt = $pdo->prepare("
                             INSERT INTO content_versions (content_id, version_number, title, body, is_autosave) 
                             VALUES (?, ?, ?, ?, FALSE)

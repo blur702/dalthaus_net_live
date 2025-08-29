@@ -1,0 +1,257 @@
+# =====================================
+# DALTHAUS PHOTOGRAPHY CMS - PRODUCTION
+# Apache Configuration for Ports 80/443
+# =====================================
+
+# Enable Apache Rewrite Engine
+RewriteEngine On
+
+# =====================================
+# SECURITY HEADERS
+# =====================================
+Header always set X-Frame-Options "SAMEORIGIN"
+Header always set X-Content-Type-Options "nosniff"
+Header always set X-XSS-Protection "1; mode=block"
+Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+# Content Security Policy
+Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' cdn.jsdelivr.net cdn.tiny.cloud; style-src 'self' 'unsafe-inline' fonts.googleapis.com cdn.jsdelivr.net; font-src 'self' fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';"
+
+# =====================================
+# FORCE HTTPS (PORT 443)
+# Uncomment these lines in production
+# =====================================
+RewriteCond %{HTTPS} !=on
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
+RewriteCond %{HTTP_HOST} !^localhost [NC]
+RewriteCond %{HTTP_HOST} !^127\.0\.0\.1 [NC]
+RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+# HSTS Header (only with HTTPS)
+Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" env=HTTPS
+
+# =====================================
+# WWW REDIRECT (Optional)
+# Uncomment to force www or non-www
+# =====================================
+# Force www
+# RewriteCond %{HTTP_HOST} !^www\. [NC]
+# RewriteRule ^(.*)$ https://www.%{HTTP_HOST}/$1 [R=301,L]
+
+# Force non-www
+# RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+# RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+
+# =====================================
+# PREVENT DIRECTORY LISTING
+# =====================================
+Options -Indexes
+
+# =====================================
+# PROTECT SENSITIVE FILES
+# =====================================
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+<FilesMatch "\.(ini|log|sh|sql|md|json|lock)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Protect specific files
+<Files "setup.php">
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files "router.php">
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files "composer.json">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# =====================================
+# PROTECT DIRECTORIES
+# =====================================
+<IfModule mod_rewrite.c>
+    RewriteRule ^includes/ - [F,L]
+    RewriteRule ^scripts/ - [F,L]
+    RewriteRule ^logs/ - [F,L]
+    RewriteRule ^cache/ - [F,L]
+    RewriteRule ^temp/ - [F,L]
+    RewriteRule ^\.git/ - [F,L]
+    RewriteRule ^\.idea/ - [F,L]
+    RewriteRule ^vendor/ - [F,L]
+</IfModule>
+
+# =====================================
+# URL REWRITING FOR CLEAN URLS
+# =====================================
+# Prevent rewriting for existing files and directories
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Skip rewriting for specific file extensions
+RewriteCond %{REQUEST_URI} !\.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf|eot|map|xml|txt|pdf|doc|docx)$ [NC]
+
+# Rewrite all other requests to index.php
+RewriteRule ^(.*)$ index.php?route=$1 [QSA,L]
+
+# =====================================
+# PHP CONFIGURATION
+# =====================================
+<IfModule mod_php.c>
+    # PHP Settings for Production
+    php_flag display_errors Off
+    php_flag log_errors On
+    php_value error_log logs/php_errors.log
+    php_value max_execution_time 60
+    php_value max_input_time 60
+    php_value memory_limit 128M
+    php_value post_max_size 32M
+    php_value upload_max_filesize 10M
+    php_value session.cookie_httponly 1
+    php_value session.use_only_cookies 1
+    php_value session.cookie_secure 1
+</IfModule>
+
+# Alternative PHP settings for FastCGI/FPM
+<IfModule !mod_php.c>
+    <IfModule mod_fcgid.c>
+        FcgidMaxRequestLen 33554432
+    </IfModule>
+</IfModule>
+
+# =====================================
+# COMPRESSION
+# =====================================
+<IfModule mod_deflate.c>
+    # Compress HTML, CSS, JavaScript, Text, XML
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE text/javascript
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE image/svg+xml
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/json
+    AddOutputFilterByType DEFLATE application/font-woff
+    AddOutputFilterByType DEFLATE application/font-woff2
+</IfModule>
+
+# =====================================
+# BROWSER CACHING
+# =====================================
+<IfModule mod_expires.c>
+    ExpiresActive On
+    
+    # Default expiration: 1 week
+    ExpiresDefault "access plus 1 week"
+    
+    # HTML - No caching for dynamic content
+    ExpiresByType text/html "access plus 0 seconds"
+    
+    # CSS and JavaScript - 1 month
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType text/javascript "access plus 1 month"
+    
+    # Images - 1 year
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/x-icon "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    
+    # Fonts - 1 year
+    ExpiresByType font/woff "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+    ExpiresByType application/font-woff "access plus 1 year"
+    ExpiresByType application/font-woff2 "access plus 1 year"
+    
+    # Other
+    ExpiresByType application/pdf "access plus 1 month"
+</IfModule>
+
+# =====================================
+# CACHE CONTROL HEADERS
+# =====================================
+<IfModule mod_headers.c>
+    # Disable caching for dynamic content
+    <FilesMatch "\.(php|cgi|pl|htm|html)$">
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires 0
+    </FilesMatch>
+    
+    # Cache static assets
+    <FilesMatch "\.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf|eot)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+</IfModule>
+
+# =====================================
+# MIME TYPES
+# =====================================
+<IfModule mod_mime.c>
+    AddType text/css .css
+    AddType text/javascript .js
+    AddType application/javascript .js
+    AddType application/json .json
+    AddType image/svg+xml .svg
+    AddType image/webp .webp
+    AddType font/woff .woff
+    AddType font/woff2 .woff2
+    AddType application/font-woff .woff
+    AddType application/font-woff2 .woff2
+</IfModule>
+
+# =====================================
+# ERROR DOCUMENTS
+# =====================================
+ErrorDocument 400 /public/error.php?code=400
+ErrorDocument 401 /public/error.php?code=401
+ErrorDocument 403 /public/error.php?code=403
+ErrorDocument 404 /public/error.php?code=404
+ErrorDocument 500 /public/error.php?code=500
+ErrorDocument 503 /public/error.php?code=503
+
+# =====================================
+# RATE LIMITING
+# Basic DDoS Protection
+# =====================================
+<IfModule mod_ratelimit.c>
+    SetOutputFilter RATE_LIMIT
+    SetEnv rate-limit 500
+    SetEnv rate-initial-burst 1000
+</IfModule>
+
+# =====================================
+# ADDITIONAL SECURITY
+# =====================================
+# Disable server signature
+ServerSignature Off
+
+# Disable ETags
+FileETag None
+
+# Prevent hotlinking (optional - update domain)
+# RewriteCond %{HTTP_REFERER} !^$
+# RewriteCond %{HTTP_REFERER} !^https?://(www\.)?yourdomain\.com [NC]
+# RewriteRule \.(jpg|jpeg|png|gif)$ - [F,L]
+
+# =====================================
+# END CONFIGURATION
+# =====================================#
