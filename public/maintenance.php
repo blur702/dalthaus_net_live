@@ -17,7 +17,7 @@ header('Retry-After: 3600');
 require_once __DIR__ . '/../includes/database.php';
 $pdo = Database::getInstance();
 
-$stmt = $pdo->prepare("SELECT setting_value FROM site_settings WHERE setting_key = ?");
+$stmt = $pdo->prepare("SELECT setting_value FROM settings WHERE setting_key = ?");
 $stmt->execute(['maintenance_message']);
 $message = $stmt->fetchColumn();
 

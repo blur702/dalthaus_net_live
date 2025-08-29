@@ -13,7 +13,7 @@ $error = '';
 
 // Load current settings
 $settings = [];
-$result = $pdo->query("SELECT setting_key, setting_value FROM site_settings");
+$result = $pdo->query("SELECT setting_key, setting_value FROM settings");
 foreach ($result as $row) {
     $settings[$row['setting_key']] = $row['setting_value'];
 }
@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             foreach ($textSettings as $key => $value) {
                 $stmt = $pdo->prepare("
-                    INSERT INTO site_settings (setting_key, setting_value) 
+                    INSERT INTO settings (setting_key, setting_value) 
                     VALUES (?, ?) 
                     ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)
                 ");
@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         
                         // Save new header image path
                         $stmt = $pdo->prepare("
-                            INSERT INTO site_settings (setting_key, setting_value) 
+                            INSERT INTO settings (setting_key, setting_value) 
                             VALUES ('header_image', ?) 
                             ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)
                         ");
@@ -93,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         unlink($oldFile);
                     }
                 }
-                $pdo->exec("DELETE FROM site_settings WHERE setting_key = 'header_image'");
+                $pdo->exec("DELETE FROM settings WHERE setting_key = 'header_image'");
             }
             
             if (empty($error)) {
@@ -104,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 // Reload settings
                 $settings = [];
-                $result = $pdo->query("SELECT setting_key, setting_value FROM site_settings");
+                $result = $pdo->query("SELECT setting_key, setting_value FROM settings");
                 foreach ($result as $row) {
                     $settings[$row['setting_key']] = $row['setting_value'];
                 }

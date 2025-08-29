@@ -26,7 +26,7 @@ if (!isset($topMenu)) {
 // Get site settings if not already loaded
 if (!isset($settings)) {
     $settings = [];
-    $result = $pdo->query("SELECT setting_key, setting_value FROM site_settings");
+    $result = $pdo->query("SELECT setting_key, setting_value FROM settings");
     foreach ($result as $row) {
         $settings[$row['setting_key']] = $row['setting_value'];
     }
