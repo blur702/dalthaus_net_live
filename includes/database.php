@@ -164,9 +164,13 @@ class Database {
         
         // Settings - key-value configuration storage
         $pdo->exec("CREATE TABLE IF NOT EXISTS settings (
-            `key` VARCHAR(50) PRIMARY KEY,
-            `value` TEXT,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            setting_key VARCHAR(100) UNIQUE NOT NULL,
+            setting_value TEXT,
+            setting_type VARCHAR(50) DEFAULT 'text',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            INDEX idx_key (setting_key)
         )");
         
         // Sessions - custom session handler with fingerprinting
@@ -186,6 +190,7 @@ class Database {
      * Seed database with initial data
      * 
      * Creates default admin user if no users exist.
+     * Creates essential settings like maintenance_mode.
      * Uses credentials from DEFAULT_ADMIN_USER and DEFAULT_ADMIN_PASS constants.
      * Password is properly hashed using password_hash().
      * 
@@ -193,11 +198,24 @@ class Database {
      * @return void
      */
     private static function seedData(PDO $pdo): void {
+        // Create default admin user if none exists
         $stmt = $pdo->query("SELECT COUNT(*) FROM users");
         if ($stmt->fetchColumn() == 0) {
             $hash = password_hash(DEFAULT_ADMIN_PASS, PASSWORD_DEFAULT);
             $pdo->prepare("INSERT INTO users (username, password_hash, role) VALUES (?, ?, 'admin')")
                 ->execute([DEFAULT_ADMIN_USER, $hash]);
+        }
+        
+        // Create essential settings
+        $defaultSettings = [
+            ['maintenance_mode', '0', 'boolean'],
+            ['site_title', 'Dalthaus Photography', 'text'],
+            ['site_description', 'Professional Photography Portfolio', 'text']
+        ];
+        
+        foreach ($defaultSettings as $setting) {
+            $stmt = $pdo->prepare("INSERT IGNORE INTO settings (setting_key, setting_value, setting_type) VALUES (?, ?, ?)");
+            $stmt->execute($setting);
         }
     }
 }

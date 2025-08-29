@@ -15,15 +15,20 @@ if (session_status() === PHP_SESSION_NONE) {
 // Check for maintenance mode (skip for admin routes and static assets)
 $requestUri = $_SERVER['REQUEST_URI'];
 if (!preg_match('/^\/admin/', $requestUri) && !preg_match('/\.(css|js|png|jpg|jpeg|gif|ico|svg)$/', $requestUri)) {
-    $pdo = Database::getInstance();
-    $stmt = $pdo->prepare("SELECT setting_value FROM settings WHERE setting_key = ?");
-    $stmt->execute(['maintenance_mode']);
-    $maintenanceMode = $stmt->fetchColumn();
-    
-    if ($maintenanceMode === '1') {
-        // Show maintenance page for all public routes
-        require_once __DIR__ . '/public/maintenance.php';
-        exit;
+    try {
+        $pdo = Database::getInstance();
+        $stmt = $pdo->prepare("SELECT setting_value FROM settings WHERE setting_key = ?");
+        $stmt->execute(['maintenance_mode']);
+        $maintenanceMode = $stmt->fetchColumn();
+        
+        if ($maintenanceMode === '1') {
+            // Show maintenance page for all public routes
+            require_once __DIR__ . '/public/maintenance.php';
+            exit;
+        }
+    } catch (PDOException $e) {
+        // Log error but don't break the site
+        error_log("Database error in maintenance check: " . $e->getMessage());
     }
 }
 

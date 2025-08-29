@@ -20,7 +20,10 @@ error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
 // Base directory (restrict operations to this directory)
-$BASE_DIR = realpath('/home/dalthaus/public_html');
+$BASE_DIR = realpath($_SERVER['DOCUMENT_ROOT'] ?: __DIR__);
+if (!$BASE_DIR) {
+    $BASE_DIR = realpath(__DIR__);
+}
 chdir($BASE_DIR);
 
 // Get action
