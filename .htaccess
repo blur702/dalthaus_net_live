@@ -93,6 +93,10 @@ RewriteRule ^\.git/ - [F,L]
 # =====================================
 # URL REWRITING FOR CLEAN URLS
 # =====================================
+# CRITICAL: Serve static assets directly first (before any other rules)
+RewriteCond %{REQUEST_URI} \.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf|eot|map|xml|txt|pdf|doc|docx)$ [NC]
+RewriteRule ^ - [L]
+
 # Allow direct access to admin PHP files
 RewriteCond %{REQUEST_URI} ^/admin/.*\.php$
 RewriteRule ^admin/(.*)$ admin/$1 [L]
@@ -102,12 +106,12 @@ RewriteCond %{REQUEST_URI} ^/public/.*\.php$
 RewriteCond %{REQUEST_URI} !^/public/index\.php$
 RewriteRule ^public/(.*)$ public/$1 [L]
 
-# Prevent rewriting for existing files and directories (static assets)
+# Prevent rewriting for existing files and directories
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
-# Skip rewriting for specific file extensions and admin routes
+# Only rewrite URLs that don't match static file extensions and aren't admin routes
 RewriteCond %{REQUEST_URI} !\.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf|eot|map|xml|txt|pdf|doc|docx)$ [NC]
 RewriteCond %{REQUEST_URI} !^/admin/
 
