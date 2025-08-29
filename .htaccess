@@ -39,7 +39,10 @@ RewriteEngine On
 # =====================================
 # PREVENT DIRECTORY LISTING
 # =====================================
-Options -Indexes +FollowSymLinks
+# Note: Some shared hosts don't allow Options directive
+<IfModule mod_negotiation.c>
+    Options -Indexes +FollowSymLinks
+</IfModule>
 
 # =====================================
 # PROTECT SENSITIVE FILES

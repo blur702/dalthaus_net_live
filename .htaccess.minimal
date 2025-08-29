@@ -1,0 +1,13 @@
+# Minimal .htaccess for testing
+# Rename this to .htaccess if the current one causes 500 errors
+
+# PHP 8.4 Handler (uncomment the one that works for your host)
+# AddHandler application/x-httpd-php84 .php
+# AddHandler application/x-httpd-ea-php84 .php
+# AddType application/x-httpd-php84 .php
+
+# Basic rewrite rules
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?route=$1 [QSA,L]
