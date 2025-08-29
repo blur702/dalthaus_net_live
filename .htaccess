@@ -64,16 +64,17 @@ Options -Indexes +FollowSymLinks
     </IfModule>
 </FilesMatch>
 
-# Protect specific files
-<Files "setup.php">
-    <IfModule mod_authz_core.c>
-        Require all denied
-    </IfModule>
-    <IfModule !mod_authz_core.c>
-        Order allow,deny
-        Deny from all
-    </IfModule>
-</Files>
+# Protect setup.php AFTER installation is complete
+# Uncomment these lines after running setup to prevent access
+# <Files "setup.php">
+#     <IfModule mod_authz_core.c>
+#         Require all denied
+#     </IfModule>
+#     <IfModule !mod_authz_core.c>
+#         Order allow,deny
+#         Deny from all
+#     </IfModule>
+# </Files>
 
 # =====================================
 # PROTECT DIRECTORIES
