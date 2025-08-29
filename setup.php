@@ -1,4 +1,3 @@
-#!/usr/bin/env php
 <?php
 /**
  * Dalthaus Photography CMS - Professional Setup Wizard
