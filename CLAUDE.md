@@ -10,8 +10,8 @@ Custom PHP 8.3 CMS for photography portfolio with document import, versioning, a
 
 ### Development Server
 ```bash
-# Start server (single port for both public and admin)
-php -S localhost:8000 router.php
+# Start server from project root
+php -S localhost:8000 -t . router.php
 
 # Access URLs:
 # Public:  http://localhost:8000/

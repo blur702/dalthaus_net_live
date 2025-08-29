@@ -4,12 +4,12 @@
 
 ### 1. Connect to your server
 ```bash
-ssh username@yourdomain.com
+ssh dalthaus@yourdomain.com
 ```
 
 ### 2. Navigate to your web root
 ```bash
-cd public_html  # or www or htdocs depending on host
+cd ~/public_html  # Based on your cPanel structure
 ```
 
 ### 3. Check Recent PHP Errors

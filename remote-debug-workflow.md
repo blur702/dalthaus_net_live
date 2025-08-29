@@ -7,8 +7,8 @@ You run commands via SSH and paste the output back to me:
 
 1. **Connect to your server:**
 ```bash
-ssh username@yourdomain.com
-cd public_html
+ssh dalthaus@yourdomain.com
+cd ~/public_html
 ```
 
 2. **Run diagnostic commands and share output:**
