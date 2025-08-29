@@ -26,21 +26,21 @@ define('DB_HOST', '127.0.0.1');
  * Database name for the CMS
  * @var string
  */
-define('DB_NAME', 'dalthaus_photocms');
+define('DB_NAME', 'dalthaus_cms');
 
 /**
  * Database username
- * Default 'root' for local development environments
+ * Production database user
  * @var string
  */
-define('DB_USER', 'dalthaus_photocms');
+define('DB_USER', 'kevin');
 
 /**
  * Database password
- * Leave empty for default MySQL/MAMP installations
+ * Production database password
  * @var string
  */
-define('DB_PASS', 'f-I*GSo^Urt*k*&#');
+define('DB_PASS', '(130Bpm)');
 
 // ============================================================================
 // ENVIRONMENT CONFIGURATION

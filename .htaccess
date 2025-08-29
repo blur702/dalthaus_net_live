@@ -93,12 +93,23 @@ RewriteRule ^\.git/ - [F,L]
 # =====================================
 # URL REWRITING FOR CLEAN URLS
 # =====================================
-# Prevent rewriting for existing files and directories
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
+# Allow direct access to admin PHP files
+RewriteCond %{REQUEST_URI} ^/admin/.*\.php$
+RewriteRule ^admin/(.*)$ admin/$1 [L]
 
-# Skip rewriting for specific file extensions
+# Allow direct access to public PHP files (except index.php which should route)
+RewriteCond %{REQUEST_URI} ^/public/.*\.php$
+RewriteCond %{REQUEST_URI} !^/public/index\.php$
+RewriteRule ^public/(.*)$ public/$1 [L]
+
+# Prevent rewriting for existing files and directories (static assets)
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Skip rewriting for specific file extensions and admin routes
 RewriteCond %{REQUEST_URI} !\.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf|eot|map|xml|txt|pdf|doc|docx)$ [NC]
+RewriteCond %{REQUEST_URI} !^/admin/
 
 # Rewrite all other requests to index.php
 RewriteRule ^(.*)$ index.php?route=$1 [QSA,L]
