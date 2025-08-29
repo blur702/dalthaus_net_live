@@ -1,435 +1,387 @@
 <?php
 /**
- * Comprehensive Deployment Validation Script
- * Tests all fixes and validates the CMS is ready for production
+ * Final Deployment Validation Script
  * 
- * This script validates:
- * 1. Database connectivity and schema correctness
- * 2. File permissions and structure
- * 3. PHP configuration and compatibility  
- * 4. Security measures
- * 5. Core functionality
+ * Quick health check for production deployment
+ * Tests critical functionality and reports issues
  */
-declare(strict_types=1);
 
 // Security check
-if (!isset($_GET['validate']) && isset($_SERVER['HTTP_HOST'])) {
-    die("Security check: Add ?validate=1 to run deployment validation");
+$token = $_GET['token'] ?? '';
+if ($token !== 'validate-' . date('Ymd')) {
+    die('Invalid token. Use: validate-' . date('Ymd'));
 }
 
-echo "<h2>🚀 Dalthaus CMS - Deployment Validation</h2>\n";
-echo "<pre>\n";
+// Test results
+$results = [];
+$criticalIssues = [];
+$warnings = [];
+$success = 0;
+$total = 0;
 
-$results = [
-    'passed' => 0,
-    'failed' => 0,
-    'warnings' => 0,
-    'tests' => []
-];
-
-function runTest($name, $callback, $critical = true) {
-    global $results;
+function test($name, $condition, $errorMessage = '') {
+    global $results, $criticalIssues, $warnings, $success, $total;
     
-    echo "\n🧪 Testing: $name\n";
+    $total++;
+    $result = [
+        'name' => $name,
+        'status' => $condition ? 'PASS' : 'FAIL',
+        'message' => $condition ? 'OK' : $errorMessage,
+        'critical' => strpos(strtolower($name), 'critical') !== false
+    ];
     
-    try {
-        $result = $callback();
-        if ($result['status'] === 'pass') {
-            echo "   ✅ PASS: {$result['message']}\n";
-            $results['passed']++;
-        } elseif ($result['status'] === 'warning') {
-            echo "   ⚠️  WARNING: {$result['message']}\n";
-            $results['warnings']++;
+    $results[] = $result;
+    
+    if ($condition) {
+        $success++;
+    } else {
+        if ($result['critical']) {
+            $criticalIssues[] = $name;
         } else {
-            echo "   ❌ FAIL: {$result['message']}\n";
-            $results['failed']++;
+            $warnings[] = $name;
         }
-        
-        if (isset($result['details'])) {
-            foreach ($result['details'] as $detail) {
-                echo "      • $detail\n";
-            }
-        }
-        
-        $results['tests'][$name] = $result;
-        
-    } catch (Exception $e) {
-        echo "   💥 ERROR: " . $e->getMessage() . "\n";
-        $results['failed']++;
-        $results['tests'][$name] = ['status' => 'fail', 'message' => $e->getMessage()];
     }
+    
+    return $condition;
 }
 
-// Test 1: Database connectivity and schema
-runTest('Database Connection and Schema', function() {
-    require_once 'includes/config.php';
-    require_once 'includes/database.php';
-    
-    $pdo = Database::getInstance();
-    
-    // Test connection
-    $stmt = $pdo->query("SELECT 1");
-    if (!$stmt) {
-        return ['status' => 'fail', 'message' => 'Cannot execute basic query'];
-    }
-    
-    // Check settings table structure
-    $stmt = $pdo->query("DESCRIBE settings");
-    $columns = [];
-    while ($row = $stmt->fetch()) {
-        $columns[] = $row['Field'];
-    }
-    
-    if (!in_array('setting_key', $columns)) {
-        return ['status' => 'fail', 'message' => 'Settings table missing setting_key column'];
-    }
-    
-    // Test maintenance_mode setting
-    $stmt = $pdo->prepare("SELECT setting_value FROM settings WHERE setting_key = ?");
-    $stmt->execute(['maintenance_mode']);
-    $maintenanceMode = $stmt->fetchColumn();
-    
-    if ($maintenanceMode === false) {
-        return ['status' => 'fail', 'message' => 'maintenance_mode setting not found'];
-    }
-    
-    return [
-        'status' => 'pass',
-        'message' => 'Database connection and schema are correct',
-        'details' => [
-            'Columns: ' . implode(', ', $columns),
-            'maintenance_mode value: ' . $maintenanceMode
-        ]
-    ];
-});
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deployment Validation - Dalthaus.net</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .header p { opacity: 0.9; font-size: 1.1em; }
+        .status-banner {
+            padding: 20px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .status-banner.success {
+            background: #2ecc71;
+            color: white;
+        }
+        .status-banner.warning {
+            background: #f39c12;
+            color: white;
+        }
+        .status-banner.critical {
+            background: #e74c3c;
+            color: white;
+        }
+        .content { padding: 30px; }
+        .test-group {
+            margin-bottom: 30px;
+            border: 1px solid #ecf0f1;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .test-group h3 {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            margin: 0;
+            color: #2c3e50;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .test-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .test-item:last-child { border-bottom: none; }
+        .test-name { font-weight: 500; }
+        .test-status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        .test-status.pass {
+            background: #2ecc71;
+            color: white;
+        }
+        .test-status.fail {
+            background: #e74c3c;
+            color: white;
+        }
+        .summary {
+            text-align: center;
+            padding: 30px;
+            background: #f8f9fa;
+            margin-top: 30px;
+            border-radius: 8px;
+        }
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .stat {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        .actions {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            margin: 0 10px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .btn.success { background: #2ecc71; }
+        .btn.warning { background: #f39c12; }
+        .btn.danger { background: #e74c3c; }
+        .timestamp {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
 
-// Test 2: File structure and permissions
-runTest('File Structure and Permissions', function() {
-    $requiredDirs = [
-        'admin' => ['readable' => true, 'writable' => false],
-        'includes' => ['readable' => true, 'writable' => false],
-        'public' => ['readable' => true, 'writable' => false],
-        'assets' => ['readable' => true, 'writable' => false],
-        'uploads' => ['readable' => true, 'writable' => true],
-        'cache' => ['readable' => true, 'writable' => true],
-        'logs' => ['readable' => true, 'writable' => true],
-        'temp' => ['readable' => true, 'writable' => true]
-    ];
-    
-    $issues = [];
-    $details = [];
-    
-    foreach ($requiredDirs as $dir => $requirements) {
-        if (!is_dir($dir)) {
-            $issues[] = "Directory missing: $dir";
-            continue;
-        }
-        
-        $perms = substr(sprintf('%o', fileperms($dir)), -4);
-        $details[] = "$dir: permissions $perms";
-        
-        if ($requirements['readable'] && !is_readable($dir)) {
-            $issues[] = "$dir is not readable";
-        }
-        
-        if ($requirements['writable'] && !is_writable($dir)) {
-            $issues[] = "$dir is not writable";
-        }
-    }
-    
-    // Check critical files
-    $criticalFiles = [
-        'index.php', 'includes/config.php', 'includes/database.php', 
-        'includes/functions.php', 'admin/login.php'
-    ];
-    
-    foreach ($criticalFiles as $file) {
-        if (!file_exists($file)) {
-            $issues[] = "Critical file missing: $file";
-        } elseif (!is_readable($file)) {
-            $issues[] = "Critical file not readable: $file";
-        }
-    }
-    
-    if (!empty($issues)) {
-        return ['status' => 'fail', 'message' => 'File structure issues found', 'details' => $issues];
-    }
-    
-    return ['status' => 'pass', 'message' => 'File structure and permissions OK', 'details' => $details];
-});
+<div class="container">
+    <div class="header">
+        <h1>🔍 Deployment Validation</h1>
+        <p>Quick health check for Dalthaus.net production deployment</p>
+    </div>
 
-// Test 3: PHP Configuration
-runTest('PHP Configuration for Shared Hosting', function() {
-    $warnings = [];
-    $details = [];
+    <?php
+    // Run critical tests
+    echo "<div class='content'>";
     
-    // Check PHP version
-    $phpVersion = PHP_VERSION;
-    $details[] = "PHP Version: $phpVersion";
-    
-    if (version_compare($phpVersion, '8.1.0', '<')) {
-        $warnings[] = "PHP version $phpVersion is below recommended 8.1+";
-    }
-    
-    // Check memory limit
-    $memoryLimit = ini_get('memory_limit');
-    $details[] = "Memory Limit: $memoryLimit";
-    
-    // Check execution time
-    $execTime = ini_get('max_execution_time');
-    $details[] = "Max Execution Time: {$execTime}s";
-    
-    // Check upload limits
-    $uploadMax = ini_get('upload_max_filesize');
-    $postMax = ini_get('post_max_size');
-    $details[] = "Upload Limits: $uploadMax / $postMax";
-    
-    // Check required extensions
-    $requiredExtensions = ['pdo', 'pdo_mysql', 'json', 'mbstring', 'session'];
-    $missingExtensions = [];
-    
-    foreach ($requiredExtensions as $ext) {
-        if (extension_loaded($ext)) {
-            $details[] = "Extension $ext: loaded";
-        } else {
-            $missingExtensions[] = $ext;
-        }
-    }
-    
-    if (!empty($missingExtensions)) {
-        return ['status' => 'fail', 'message' => 'Missing required PHP extensions', 'details' => array_merge($details, ["Missing: " . implode(', ', $missingExtensions)])];
-    }
-    
-    if (!empty($warnings)) {
-        return ['status' => 'warning', 'message' => 'PHP configuration has warnings', 'details' => array_merge($details, $warnings)];
-    }
-    
-    return ['status' => 'pass', 'message' => 'PHP configuration is suitable for shared hosting', 'details' => $details];
-});
-
-// Test 4: Core CMS functionality
-runTest('Core CMS Functionality', function() {
-    require_once 'includes/config.php';
-    require_once 'includes/database.php';
-    require_once 'includes/functions.php';
-    
-    $details = [];
-    $issues = [];
-    
-    // Test CSRF token generation
-    if (session_status() === PHP_SESSION_NONE) {
-        session_start();
-    }
-    
-    $token = generateCSRFToken();
-    if (empty($token) || strlen($token) !== 64) {
-        $issues[] = 'CSRF token generation failed';
-    } else {
-        $details[] = 'CSRF token generation: OK';
-    }
-    
-    // Test input sanitization
-    $testInput = '<script>alert("xss")</script>Test';
-    $sanitized = sanitizeInput($testInput);
-    if (strpos($sanitized, '<script>') !== false) {
-        $issues[] = 'Input sanitization not working properly';
-    } else {
-        $details[] = 'Input sanitization: OK';
-    }
-    
-    // Test cache functionality
-    $testKey = 'test_cache_' . time();
-    $testValue = 'test_value_' . rand();
-    
-    if (function_exists('cacheSet') && function_exists('cacheGet')) {
-        cacheSet($testKey, $testValue, 60);
-        $retrieved = cacheGet($testKey);
-        
-        if ($retrieved === $testValue) {
-            $details[] = 'Cache functionality: OK';
-            // Clean up
-            if (function_exists('cacheDelete')) {
-                cacheDelete($testKey);
-            }
-        } else {
-            $details[] = 'Cache functionality: Limited (file-based may not work)';
-        }
-    } else {
-        $details[] = 'Cache functions: Not available';
-    }
-    
-    // Test logging
-    if (function_exists('logMessage')) {
-        logMessage('Deployment validation test', 'info');
-        $details[] = 'Logging functionality: OK';
-    } else {
-        $issues[] = 'Logging functionality not available';
-    }
-    
-    if (!empty($issues)) {
-        return ['status' => 'fail', 'message' => 'Core functionality issues found', 'details' => array_merge($details, $issues)];
-    }
-    
-    return ['status' => 'pass', 'message' => 'Core CMS functionality working', 'details' => $details];
-});
-
-// Test 5: Security measures
-runTest('Security Configuration', function() {
-    $details = [];
-    $warnings = [];
-    
-    // Check if sensitive files are protected
-    $sensitiveFiles = ['.env', 'includes/config.php'];
-    foreach ($sensitiveFiles as $file) {
-        if (file_exists($file)) {
-            $details[] = "Sensitive file exists: $file";
-        }
-    }
-    
-    // Check session security settings
-    $sessionConfig = [
-        'session.cookie_httponly' => '1',
-        'session.use_only_cookies' => '1',
-        'session.use_strict_mode' => '1'
-    ];
-    
-    foreach ($sessionConfig as $setting => $expected) {
-        $actual = ini_get($setting);
-        if ($actual === $expected) {
-            $details[] = "$setting: secure ($actual)";
-        } else {
-            $warnings[] = "$setting: not optimal (got: $actual, expected: $expected)";
-        }
-    }
-    
-    // Check if error display is off for production
-    if (ENV === 'production') {
-        $displayErrors = ini_get('display_errors');
-        if ($displayErrors === '0' || $displayErrors === '') {
-            $details[] = 'Error display: OFF (production ready)';
-        } else {
-            $warnings[] = 'Error display is ON in production mode';
-        }
-    }
-    
-    if (!empty($warnings)) {
-        return ['status' => 'warning', 'message' => 'Security configuration has warnings', 'details' => array_merge($details, $warnings)];
-    }
-    
-    return ['status' => 'pass', 'message' => 'Security configuration is good', 'details' => $details];
-});
-
-// Test 6: Index.php routing functionality
-runTest('Main Index.php Routing', function() {
-    // Test that index.php can be included without errors
-    ob_start();
-    $errorOccurred = false;
-    
-    set_error_handler(function($severity, $message, $file, $line) use (&$errorOccurred) {
-        $errorOccurred = true;
-        return true; // Suppress the error display
-    });
-    
+    // Database Connection Test
     try {
-        // We can't actually include index.php as it would execute, but we can test the maintenance check logic
         require_once 'includes/config.php';
         require_once 'includes/database.php';
-        
-        // Test maintenance mode check (the part that was failing)
         $pdo = Database::getInstance();
-        $stmt = $pdo->prepare("SELECT setting_value FROM settings WHERE setting_key = ?");
-        $stmt->execute(['maintenance_mode']);
-        $maintenanceMode = $stmt->fetchColumn();
-        
-        $details = ["Maintenance mode query successful, value: " . ($maintenanceMode ?: 'default')];
-        
+        $stmt = $pdo->query("SELECT 1");
+        test('Critical: Database Connection', (bool)$stmt->fetch(), 'Cannot connect to database');
     } catch (Exception $e) {
-        return ['status' => 'fail', 'message' => 'Index.php routing test failed: ' . $e->getMessage()];
+        test('Critical: Database Connection', false, $e->getMessage());
     }
     
-    restore_error_handler();
-    ob_end_clean();
+    // Configuration Test
+    test('Critical: Configuration File', file_exists('includes/config.php'), 'Configuration file missing');
+    test('Environment Setting', defined('ENV') && ENV === 'production', 'Environment not set to production');
     
-    if ($errorOccurred) {
-        return ['status' => 'warning', 'message' => 'Minor errors detected in routing', 'details' => $details ?? []];
+    // File System Tests
+    test('Critical: Uploads Directory', is_dir('uploads') && is_writable('uploads'), 'Uploads directory not writable');
+    test('Cache Directory', is_dir('cache') && is_writable('cache'), 'Cache directory not writable');
+    test('Logs Directory', is_dir('logs') && is_writable('logs'), 'Logs directory not writable');
+    
+    // Core Files Test
+    $coreFiles = [
+        'index.php',
+        'admin/login.php',
+        'admin/dashboard.php',
+        'public/articles.php',
+        'public/photobooks.php',
+        'includes/functions.php',
+        'includes/auth.php'
+    ];
+    
+    foreach ($coreFiles as $file) {
+        test("Critical: Core File - $file", file_exists($file), "$file is missing");
     }
     
-    return ['status' => 'pass', 'message' => 'Index.php routing logic working correctly', 'details' => $details ?? []];
-});
-
-// Test 7: Remote debugging agents
-runTest('Remote Debugging Agents', function() {
-    $agents = ['file-agent.php', 'e2e-endpoint.php'];
-    $details = [];
+    // Asset Files Test
+    $assetFiles = [
+        'assets/css/public.css',
+        'assets/css/admin.css',
+        'assets/js/autosave.js',
+        'assets/js/sorting.js'
+    ];
     
-    foreach ($agents as $agent) {
-        if (file_exists($agent)) {
-            $details[] = "$agent: exists and accessible";
-        } else {
-            $details[] = "$agent: not found (normal for production)";
+    foreach ($assetFiles as $file) {
+        test("Asset File - $file", file_exists($file), "$file is missing");
+    }
+    
+    // Database Schema Test
+    try {
+        $requiredTables = ['content', 'content_versions', 'menus', 'users', 'sessions', 'settings'];
+        foreach ($requiredTables as $table) {
+            $stmt = $pdo->prepare("SHOW TABLES LIKE ?");
+            $stmt->execute([$table]);
+            test("Database Table - $table", (bool)$stmt->fetch(), "Table $table missing");
         }
+    } catch (Exception $e) {
+        test('Database Schema', false, 'Cannot check database schema: ' . $e->getMessage());
     }
     
-    return ['status' => 'pass', 'message' => 'Debug agent status checked', 'details' => $details];
-});
-
-// Final summary
-echo "\n" . str_repeat("=", 60) . "\n";
-echo "DEPLOYMENT VALIDATION SUMMARY\n";
-echo str_repeat("=", 60) . "\n";
-
-echo "\n📊 Test Results:\n";
-echo "   ✅ Passed: {$results['passed']}\n";
-echo "   ⚠️  Warnings: {$results['warnings']}\n";
-echo "   ❌ Failed: {$results['failed']}\n";
-
-$totalTests = $results['passed'] + $results['warnings'] + $results['failed'];
-$successRate = ($results['passed'] / $totalTests) * 100;
-
-echo "\n🎯 Success Rate: " . round($successRate, 1) . "%\n";
-
-if ($results['failed'] === 0) {
-    if ($results['warnings'] === 0) {
-        echo "\n🎉 DEPLOYMENT STATUS: EXCELLENT ✅\n";
-        echo "The CMS is fully ready for production deployment!\n";
-    } else {
-        echo "\n✅ DEPLOYMENT STATUS: READY WITH MINOR WARNINGS\n";
-        echo "The CMS can be deployed but consider addressing the warnings.\n";
+    // Content Check
+    try {
+        $stmt = $pdo->query("SELECT COUNT(*) FROM content WHERE status = 'published' AND deleted_at IS NULL");
+        $contentCount = $stmt->fetchColumn();
+        test('Published Content', $contentCount > 0, "No published content found (found: $contentCount)");
+    } catch (Exception $e) {
+        test('Published Content', false, 'Cannot check content: ' . $e->getMessage());
     }
     
-    echo "\n📋 Next Steps:\n";
-    echo "   1. Run the database migration: /fix-database-schema.php?force=1\n";
-    echo "   2. Run the error handling enhancement: /enhance-error-handling.php?enhance=1\n";
-    echo "   3. Test the main site: /\n";
-    echo "   4. Test admin login: /admin/login.php\n";
-    echo "   5. Verify maintenance mode toggle works\n";
-    echo "   6. Delete debug/setup files for security\n";
-    
-} else {
-    echo "\n❌ DEPLOYMENT STATUS: NOT READY\n";
-    echo "Critical issues must be resolved before production deployment.\n";
-    
-    echo "\n🔧 Required Fixes:\n";
-    foreach ($results['tests'] as $testName => $result) {
-        if ($result['status'] === 'fail') {
-            echo "   • $testName: {$result['message']}\n";
-        }
+    // Admin User Check
+    try {
+        $stmt = $pdo->query("SELECT COUNT(*) FROM users WHERE is_admin = 1");
+        $adminCount = $stmt->fetchColumn();
+        test('Admin User Exists', $adminCount > 0, "No admin users found");
+    } catch (Exception $e) {
+        test('Admin User Exists', false, 'Cannot check users: ' . $e->getMessage());
     }
-}
+    
+    // Calculate overall status
+    $percentage = $total > 0 ? round(($success / $total) * 100, 1) : 0;
+    $overallStatus = 'success';
+    $statusMessage = 'All systems operational';
+    
+    if (!empty($criticalIssues)) {
+        $overallStatus = 'critical';
+        $statusMessage = 'Critical issues found - immediate attention required';
+    } elseif (!empty($warnings)) {
+        $overallStatus = 'warning';
+        $statusMessage = 'Some issues found - should be addressed';
+    }
+    ?>
 
-echo "\n🛡️ Security Reminders:\n";
-echo "   • Change default admin credentials\n";
-echo "   • Set ENV='production' in config.php\n";
-echo "   • Remove debug files (file-agent.php, etc.)\n";
-echo "   • Enable HTTPS redirect in .htaccess\n";
-echo "   • Set up regular database backups\n";
-echo "   • Monitor logs/php_errors.log\n";
+    <div class="status-banner <?php echo $overallStatus; ?>">
+        <?php
+        if ($overallStatus === 'success') echo '✅ ';
+        elseif ($overallStatus === 'warning') echo '⚠️ ';
+        else echo '🚨 ';
+        ?>
+        <?php echo $statusMessage; ?>
+    </div>
 
-echo "\n📞 Support:\n";
-echo "   If you encounter issues, check:\n";
-echo "   • logs/php_errors.log for PHP errors\n";
-echo "   • logs/app.log for application logs\n";
-echo "   • Database connection settings in includes/config.php\n";
+    <div class="content">
+        <div class="test-group">
+            <h3>📊 Test Results</h3>
+            <?php foreach ($results as $result): ?>
+            <div class="test-item">
+                <div class="test-name">
+                    <?php echo htmlspecialchars($result['name']); ?>
+                    <?php if ($result['status'] === 'FAIL' && $result['message']): ?>
+                    <div style="font-size: 0.9em; color: #7f8c8d; margin-top: 5px;">
+                        <?php echo htmlspecialchars($result['message']); ?>
+                    </div>
+                    <?php endif; ?>
+                </div>
+                <div class="test-status <?php echo strtolower($result['status']); ?>">
+                    <?php echo $result['status']; ?>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
 
-echo "</pre>\n";
-?>
+        <div class="summary">
+            <h3>📈 Summary Statistics</h3>
+            <div class="summary-stats">
+                <div class="stat">
+                    <div class="stat-number"><?php echo $percentage; ?>%</div>
+                    <div class="stat-label">Success Rate</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number"><?php echo $success; ?></div>
+                    <div class="stat-label">Tests Passed</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number"><?php echo count($criticalIssues) + count($warnings); ?></div>
+                    <div class="stat-label">Issues Found</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number"><?php echo $total; ?></div>
+                    <div class="stat-label">Total Tests</div>
+                </div>
+            </div>
+
+            <?php if (!empty($criticalIssues)): ?>
+            <div style="background: #e74c3c; color: white; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                <h4>🚨 Critical Issues:</h4>
+                <ul style="text-align: left; margin-top: 10px;">
+                    <?php foreach ($criticalIssues as $issue): ?>
+                    <li><?php echo htmlspecialchars($issue); ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+            <?php endif; ?>
+
+            <?php if (!empty($warnings)): ?>
+            <div style="background: #f39c12; color: white; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                <h4>⚠️ Warnings:</h4>
+                <ul style="text-align: left; margin-top: 10px;">
+                    <?php foreach ($warnings as $warning): ?>
+                    <li><?php echo htmlspecialchars($warning); ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+            <?php endif; ?>
+        </div>
+
+        <div class="actions">
+            <?php if ($overallStatus === 'success'): ?>
+            <a href="https://dalthaus.net/" class="btn success">🏠 View Live Site</a>
+            <a href="production-test-suite.php?token=test-<?php echo date('Ymd'); ?>" class="btn">🧪 Full Test Suite</a>
+            <?php elseif ($overallStatus === 'warning'): ?>
+            <a href="production-test-suite.php?token=test-<?php echo date('Ymd'); ?>" class="btn warning">🔍 Run Detailed Tests</a>
+            <a href="feature-checklist.php?token=checklist-<?php echo date('Ymd'); ?>" class="btn">📋 Manual Testing</a>
+            <?php else: ?>
+            <a href="auto-deploy.php?action=maintenance_on&token=deploy-<?php echo date('Ymd'); ?>" class="btn danger">🛠️ Enable Maintenance Mode</a>
+            <a href="production-test-suite.php?token=test-<?php echo date('Ymd'); ?>" class="btn">🔍 Detailed Diagnostics</a>
+            <?php endif; ?>
+            <a href="?token=<?php echo $_GET['token']; ?>" class="btn">🔄 Refresh</a>
+        </div>
+
+        <div class="timestamp">
+            Validation completed: <?php echo date('Y-m-d H:i:s T'); ?>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
