@@ -1,93 +1,59 @@
 <?php
-/**
- * Force Git Pull - Handles conflicts
- */
-
-$token = 'agent-' . date('Ymd');
-
-if (($_GET['token'] ?? '') !== $token) {
-    die("Invalid token. Use: ?token=$token");
+// Force git pull by backing up local changes first
+$token = $_GET['token'] ?? '';
+if ($token !== 'agent-' . date('Ymd')) {
+    http_response_code(401);
+    die('Unauthorized - use ?token=agent-' . date('Ymd'));
 }
 
-?>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Force Git Pull</title>
-    <style>
-        body { font-family: monospace; margin: 20px; }
-        pre { background: #f4f4f4; padding: 15px; border: 1px solid #ddd; }
-        .success { color: green; }
-        .error { color: red; }
-    </style>
-</head>
-<body>
+echo "<h1>Force Git Pull</h1><pre>";
 
-<h1>Force Git Pull - Override Local Changes</h1>
+// Backup local config files
+echo "Backing up local configs...\n";
+$config_backup = @file_get_contents('includes/config.php');
+$local_backup = @file_get_contents('includes/config.local.php');
 
-<pre>
-<?php
-chdir(__DIR__);
+// Reset the modified files
+echo "Resetting modified files...\n";
+exec('git checkout -- includes/config.php includes/config.local.php 2>&1', $output, $return);
+echo implode("\n", $output) . "\n";
 
-// Step 1: Stash local changes
-echo "$ git stash\n";
-exec('git stash 2>&1', $stash_output, $stash_return);
-foreach ($stash_output as $line) {
-    echo htmlspecialchars($line) . "\n";
-}
+// Now pull
+echo "\nPulling latest changes...\n";
+exec('git pull origin main 2>&1', $output2, $return2);
+echo implode("\n", $output2) . "\n";
 
-// Step 2: Pull latest
-echo "\n$ git pull origin main\n";
-exec('git pull origin main 2>&1', $pull_output, $pull_return);
-foreach ($pull_output as $line) {
-    echo htmlspecialchars($line) . "\n";
-}
-
-if ($pull_return === 0) {
-    echo "\n<span class='success'>✅ Pull successful!</span>\n";
+if ($return2 === 0) {
+    echo "\n✅ Pull successful!\n";
     
-    // Show what files were updated
-    echo "\n$ git diff --name-only HEAD@{1} HEAD 2>/dev/null\n";
-    exec('git diff --name-only HEAD@{1} HEAD 2>&1', $diff_output);
-    if (!empty($diff_output)) {
-        echo "Files updated:\n";
-        foreach ($diff_output as $file) {
-            echo "  - " . htmlspecialchars($file) . "\n";
-            if ($file === 'MASTER_FIX.php') {
-                echo "    <span class='success'>✅ MASTER_FIX.php is now available!</span>\n";
-            }
-        }
-    }
+    // Restore the database credentials in config.local.php
+    echo "\nRestoring database credentials...\n";
+    $config_local = '<?php
+// Database Configuration - Production
+define("DB_HOST", "localhost");
+define("DB_NAME", "dalthaus_photocms");
+define("DB_USER", "dalthaus_photocms");
+define("DB_PASS", "f-I*GSo^Urt*k*&#");
+
+// Environment
+define("ENV", "production");
+
+// Admin defaults
+define("DEFAULT_ADMIN_USER", "admin");
+define("DEFAULT_ADMIN_PASS", "130Bpm");
+
+// Settings
+define("LOG_LEVEL", "ERROR");
+define("CACHE_ENABLED", true);
+';
+    
+    file_put_contents('includes/config.local.php', $config_local);
+    echo "✅ Database credentials restored\n";
+    
 } else {
-    echo "\n<span class='error'>❌ Pull failed</span>\n";
-    
-    // Try harder - reset to origin
-    echo "\n$ git fetch origin\n";
-    exec('git fetch origin 2>&1', $fetch_output);
-    foreach ($fetch_output as $line) {
-        echo htmlspecialchars($line) . "\n";
-    }
-    
-    echo "\n$ git reset --hard origin/main\n";
-    exec('git reset --hard origin/main 2>&1', $reset_output);
-    foreach ($reset_output as $line) {
-        echo htmlspecialchars($line) . "\n";
-    }
+    echo "\n❌ Pull failed\n";
 }
 
-// Step 3: Check if MASTER_FIX.php exists
-echo "\n$ ls -la MASTER_FIX.php\n";
-$ls_output = shell_exec('ls -la MASTER_FIX.php 2>&1');
-echo htmlspecialchars($ls_output);
-
-if (file_exists('MASTER_FIX.php')) {
-    echo "\n<span class='success'>✅ MASTER_FIX.php is ready to run!</span>\n";
-    echo "\n<a href='/MASTER_FIX.php'>→ Run MASTER FIX</a>\n";
-} else {
-    echo "\n<span class='error'>❌ MASTER_FIX.php not found</span>\n";
-}
+echo "\n<a href='/'>View Site</a> | <a href='/admin/login.php'>Admin Login</a>";
+echo "</pre>";
 ?>
-</pre>
-
-</body>
-</html>
