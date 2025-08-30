@@ -9,19 +9,19 @@
  * @since 1.0.0
  */
 
-// Override database settings for local MySQL
-define('DB_HOST', '127.0.0.1');
-define('DB_NAME', 'dalthaus_cms');
-define('DB_USER', 'root');
-define('DB_PASS', ''); // You'll set this after MySQL installation
+// Production database settings for shared hosting
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'dalthaus_photocms');
+define('DB_USER', 'dalthaus_photocms');
+define('DB_PASS', 'f-I*GSo^Urt*k*&#');
 
-// Set to development mode
-define('ENV', 'development');
+// Set to production mode
+define('ENV', 'production');
 
 // Use local admin credentials
 define('DEFAULT_ADMIN_USER', 'admin');
 define('DEFAULT_ADMIN_PASS', '130Bpm');
 
-// Enable debugging
-define('LOG_LEVEL', 'debug');
-define('CACHE_ENABLED', false);
+// Production settings
+define('LOG_LEVEL', 'error');
+define('CACHE_ENABLED', true);
