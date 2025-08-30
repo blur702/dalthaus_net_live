@@ -3,18 +3,16 @@
 # Excludes all development and temporary files
 # =====================================
 
+# Config files with sensitive data
+/includes/config.local.php
+
 # Development Files
-router.php
 debug-remote.php
 remote-debug-workflow.md
 ssh-debug-commands.md
 install-mysql.ps1
 install-mysql-admin.bat
 set_permissions.sh
-*.local.php
-config.local.php
-CLAUDE.md
-README.md
 TODO.md
 NOTES.md
 IMPLEMENTATION_NOTES.md
@@ -128,8 +126,13 @@ config.test.php
 # Documentation (development only)
 docs/
 documentation/
-*.md
-!LICENSE.md
+COMPREHENSIVE_*.md
+DEPLOYMENT_*.md
+FINAL_*.md
+PRODUCTION_*.md
+SECURITY_*.md
+SHARED_*.md
+EMERGENCY_*.md
 
 # Screenshots and Images (development)
 screenshots/
