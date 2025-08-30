@@ -1,6 +1,18 @@
 <?php
 // Minimal working index - bypass all complexity
 
+// Handle routing - if accessed as root, just display the page
+if (isset($_GET['route']) && $_GET['route'] === '') {
+    // This is the homepage request, continue normally
+} elseif (isset($_GET['route']) && $_GET['route'] !== '') {
+    // This is a different route, handle error gracefully
+    header("HTTP/1.1 404 Not Found");
+    echo "<h1>404 - Page Not Found</h1>";
+    echo "<p>The requested page could not be found.</p>";
+    echo "<p><a href='/'>Return to Homepage</a></p>";
+    exit;
+}
+
 // Direct database config (no includes)
 $db_host = 'localhost';
 $db_name = 'dalthaus_photocms';
@@ -95,6 +107,55 @@ $conn = @mysqli_connect($db_host, $db_user, $db_pass, $db_name);
     
     <div class="content-grid">
     <?php
+    // Check if tables exist, create if needed
+    $tables = mysqli_query($conn, "SHOW TABLES LIKE 'content'");
+    if (!$tables || mysqli_num_rows($tables) == 0) {
+        echo '<div class="status error">Setting up database tables...</div>';
+        
+        // Create content table
+        $sql = "CREATE TABLE IF NOT EXISTS content (
+            id INT PRIMARY KEY AUTO_INCREMENT,
+            type ENUM('article', 'photobook', 'page') NOT NULL,
+            title VARCHAR(255) NOT NULL,
+            slug VARCHAR(255) UNIQUE NOT NULL,
+            author VARCHAR(100) DEFAULT 'Don Althaus',
+            body LONGTEXT,
+            status ENUM('draft', 'published') DEFAULT 'draft',
+            sort_order INT DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            deleted_at TIMESTAMP NULL,
+            published_at TIMESTAMP NULL
+        )";
+        mysqli_query($conn, $sql);
+        
+        // Create other essential tables
+        mysqli_query($conn, "CREATE TABLE IF NOT EXISTS settings (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            setting_key VARCHAR(100) UNIQUE NOT NULL,
+            setting_value TEXT,
+            setting_type VARCHAR(50) DEFAULT 'text',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )");
+        
+        mysqli_query($conn, "CREATE TABLE IF NOT EXISTS menus (
+            id INT PRIMARY KEY AUTO_INCREMENT,
+            location ENUM('top', 'bottom') NOT NULL,
+            content_id INT,
+            sort_order INT DEFAULT 0,
+            is_active BOOLEAN DEFAULT TRUE
+        )");
+        
+        // Insert sample content
+        mysqli_query($conn, "INSERT IGNORE INTO content (type, title, slug, body, status, published_at) VALUES 
+            ('article', 'Welcome to Dalthaus.net', 'welcome-to-dalthaus-net', '<p>Welcome to the new Dalthaus Photography website.</p>', 'published', NOW()),
+            ('photobook', 'The Storyteller\'s Legacy', 'the-storytellers-legacy', '<p>A sample photobook about Elena.</p>', 'published', NOW())");
+        
+        mysqli_query($conn, "INSERT IGNORE INTO settings (setting_key, setting_value) VALUES ('maintenance_mode', '0')");
+        
+        echo '<div class="status">✅ Database tables created successfully!</div>';
+    }
+
     // Get published content
     $query = "SELECT * FROM content WHERE status = 'published' ORDER BY created_at DESC LIMIT 6";
     $result = mysqli_query($conn, $query);

@@ -1,27 +1,27 @@
 <?php
 /**
- * Local Development Configuration Override
+ * Local Production Configuration Override
  * 
- * This file overrides production settings for local development.
- * It will be loaded after config.php if it exists.
+ * This file overrides default settings for production hosting.
+ * Constants are only defined if not already set to prevent redefinition warnings.
  * 
  * @package DalthausCMS
  * @since 1.0.0
  */
 
-// Production database settings for shared hosting
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'dalthaus_photocms');
-define('DB_USER', 'dalthaus_photocms');
-define('DB_PASS', 'f-I*GSo^Urt*k*&#');
+// Production database settings for shared hosting - only define if not already set
+if (!defined('DB_HOST')) define('DB_HOST', 'localhost');
+if (!defined('DB_NAME')) define('DB_NAME', 'dalthaus_photocms');
+if (!defined('DB_USER')) define('DB_USER', 'dalthaus_photocms');
+if (!defined('DB_PASS')) define('DB_PASS', 'f-I*GSo^Urt*k*&#');
 
-// Set to production mode
-define('ENV', 'production');
+// Set to production mode - only if not already set
+if (!defined('ENV')) define('ENV', 'production');
 
-// Use local admin credentials
-define('DEFAULT_ADMIN_USER', 'admin');
-define('DEFAULT_ADMIN_PASS', '130Bpm');
+// Use local admin credentials - only if not already set
+if (!defined('DEFAULT_ADMIN_USER')) define('DEFAULT_ADMIN_USER', 'admin');
+if (!defined('DEFAULT_ADMIN_PASS')) define('DEFAULT_ADMIN_PASS', '130Bpm');
 
-// Production settings
-define('LOG_LEVEL', 'error');
-define('CACHE_ENABLED', true);
+// Production settings - only if not already set
+if (!defined('LOG_LEVEL')) define('LOG_LEVEL', 'error');
+if (!defined('CACHE_ENABLED')) define('CACHE_ENABLED', true);

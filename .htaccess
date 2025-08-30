@@ -115,8 +115,9 @@ RewriteRule ^ - [L]
 RewriteCond %{REQUEST_URI} !\.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf|eot|map|xml|txt|pdf|doc|docx)$ [NC]
 RewriteCond %{REQUEST_URI} !^/admin/
 
-# Rewrite all other requests to index.php
-RewriteRule ^(.*)$ index.php?route=$1 [QSA,L]
+# Temporarily use index-minimal.php as main router since it's working
+# RewriteRule ^(.*)$ index.php?route=$1 [QSA,L]
+RewriteRule ^(.*)$ index-minimal.php?route=$1 [QSA,L]
 
 # =====================================
 # PHP 8.4 CONFIGURATION FOR SHARED HOSTING

@@ -17,30 +17,30 @@ declare(strict_types=1);
 
 /**
  * Database host address
- * Use 127.0.0.1 instead of localhost for better MAMP/XAMPP compatibility
+ * Use localhost for production shared hosting
  * @var string
  */
-define('DB_HOST', '127.0.0.1');
+define('DB_HOST', 'localhost');
 
 /**
  * Database name for the CMS
  * @var string
  */
-define('DB_NAME', 'dalthaus_cms');
+define('DB_NAME', 'dalthaus_photocms');
 
 /**
  * Database username
  * Production database user
  * @var string
  */
-define('DB_USER', 'dalthaus_user');
+define('DB_USER', 'dalthaus_photocms');
 
 /**
  * Database password
  * Production database password
  * @var string
  */
-define('DB_PASS', '(130Bpm)');
+define('DB_PASS', 'f-I*GSo^Urt*k*&#');
 
 // ============================================================================
 // ENVIRONMENT CONFIGURATION
@@ -64,16 +64,17 @@ define('ENV', 'production');
  */
 if (ENV === 'production') {
     // Use secure cookies over HTTPS only
-    ini_set('session.cookie_secure', '1');
+    @ini_set('session.cookie_secure', '1');
 }
 
 // Always use these security settings
-ini_set('session.cookie_httponly', '1');        // Prevent JavaScript access to session cookie
-ini_set('session.cookie_samesite', 'Strict');   // CSRF protection
-ini_set('session.use_only_cookies', '1');       // Don't accept session IDs from URLs
-ini_set('session.use_strict_mode', '1');        // Reject uninitialized session IDs
-ini_set('session.sid_length', '48');            // Longer session IDs for better security
-ini_set('session.sid_bits_per_character', '6'); // More entropy in session IDs
+@ini_set('session.cookie_httponly', '1');        // Prevent JavaScript access to session cookie
+@ini_set('session.cookie_samesite', 'Strict');   // CSRF protection
+@ini_set('session.use_only_cookies', '1');       // Don't accept session IDs from URLs
+@ini_set('session.use_strict_mode', '1');        // Reject uninitialized session IDs
+// Session ID length settings (commented out due to deprecation in PHP 8.3+)
+// ini_set('session.sid_length', '48');            // Longer session IDs for better security
+// ini_set('session.sid_bits_per_character', '6'); // More entropy in session IDs
 
 // ============================================================================
 // PYTHON INTEGRATION

@@ -1,8 +1,13 @@
 <?php
 declare(strict_types=1);
 
-// Simple database connection
-$conn = @mysqli_connect('localhost', 'dalthaus_photocms', 'f-I*GSo^Urt*k*&#', 'dalthaus_photocms');
+// Simple homepage that works with the existing database
+$db_host = 'localhost';
+$db_name = 'dalthaus_photocms';  
+$db_user = 'dalthaus_photocms';
+$db_pass = 'f-I*GSo^Urt*k*&#';
+
+$conn = @mysqli_connect($db_host, $db_user, $db_pass, $db_name);
 
 if (!$conn) {
     http_response_code(500);
