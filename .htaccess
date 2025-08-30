@@ -111,18 +111,12 @@ RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
-# Special handling for root URL - serve index-minimal.php directly
-RewriteCond %{REQUEST_URI} ^/?$
-RewriteRule ^$ index-minimal.php [L]
-
 # Only rewrite URLs that don't match static file extensions and aren't admin routes
 RewriteCond %{REQUEST_URI} !\.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf|eot|map|xml|txt|pdf|doc|docx)$ [NC]
 RewriteCond %{REQUEST_URI} !^/admin/
-RewriteCond %{REQUEST_URI} !^/?$
 
-# Temporarily use index-minimal.php as main router since it's working
-# RewriteRule ^(.*)$ index.php?route=$1 [QSA,L]
-RewriteRule ^(.*)$ index-minimal.php?route=$1 [QSA,L]
+# Use index.php for all routing (we'll use index-minimal.php renamed as index.php)
+RewriteRule ^(.*)$ index.php?route=$1 [QSA,L]
 
 # =====================================
 # PHP 8.4 CONFIGURATION FOR SHARED HOSTING
