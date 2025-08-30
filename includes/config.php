@@ -33,7 +33,7 @@ define('DB_NAME', 'dalthaus_cms');
  * Production database user
  * @var string
  */
-define('DB_USER', 'kevin');
+define('DB_USER', 'dalthaus_user');
 
 /**
  * Database password

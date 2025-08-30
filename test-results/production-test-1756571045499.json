@@ -1,0 +1,154 @@
+{
+  "totalTests": 18,
+  "passedTests": 17,
+  "failedTests": 1,
+  "skippedTests": 0,
+  "startTime": "2025-08-30T16:24:02.838Z",
+  "endTime": "2025-08-30T16:24:05.498Z",
+  "failures": [
+    {
+      "testName": "Upload Endpoint",
+      "category": "API",
+      "failurePoint": "File upload inputs not found",
+      "expectedResult": "Test should pass without errors",
+      "actualResult": "File upload inputs not found",
+      "initialTriage": "Flaky Test",
+      "diagnosticArtifacts": {
+        "timestamp": "2025-08-30T16:24:04.508Z",
+        "errorDetails": "Error: File upload inputs not found\n    at ProductionTestSuite.testUploadEndpoint (/var/public_html/www/production-test-suite.js:445:19)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async ProductionTestSuite.runTest (/var/public_html/www/production-test-suite.js:53:13)\n    at async ProductionTestSuite.runAllTests (/var/public_html/www/production-test-suite.js:618:13)",
+        "httpStatus": "N/A",
+        "httpHeaders": {}
+      },
+      "suggestedFix": "Review error details and application logs"
+    }
+  ],
+  "environment": "https://dalthaus.net",
+  "testDetails": [
+    {
+      "name": "Site Connectivity",
+      "category": "Connectivity",
+      "status": "PASS",
+      "duration": "201ms",
+      "notes": "-"
+    },
+    {
+      "name": "Homepage Content",
+      "category": "Connectivity",
+      "status": "PASS",
+      "duration": "67ms",
+      "notes": "-"
+    },
+    {
+      "name": "Database Connectivity",
+      "category": "Database",
+      "status": "PASS",
+      "duration": "58ms",
+      "notes": "-"
+    },
+    {
+      "name": "Admin Login Page",
+      "category": "Authentication",
+      "status": "PASS",
+      "duration": "61ms",
+      "notes": "-"
+    },
+    {
+      "name": "Admin Authentication",
+      "category": "Authentication",
+      "status": "PASS",
+      "duration": "151ms",
+      "notes": "-"
+    },
+    {
+      "name": "Admin Dashboard",
+      "category": "Authentication",
+      "status": "PASS",
+      "duration": "209ms",
+      "notes": "-"
+    },
+    {
+      "name": "Article Management",
+      "category": "Content",
+      "status": "PASS",
+      "duration": "221ms",
+      "notes": "-"
+    },
+    {
+      "name": "Photobook Management",
+      "category": "Content",
+      "status": "PASS",
+      "duration": "198ms",
+      "notes": "-"
+    },
+    {
+      "name": "Settings Page",
+      "category": "Settings",
+      "status": "PASS",
+      "duration": "194ms",
+      "notes": "-"
+    },
+    {
+      "name": "Autosave API",
+      "category": "API",
+      "status": "PASS",
+      "duration": "47ms",
+      "notes": "-"
+    },
+    {
+      "name": "Sort API",
+      "category": "API",
+      "status": "PASS",
+      "duration": "50ms",
+      "notes": "-"
+    },
+    {
+      "name": "Upload Endpoint",
+      "category": "API",
+      "status": "FAIL",
+      "duration": "-",
+      "notes": "File upload inputs not found"
+    },
+    {
+      "name": "CSRF Protection",
+      "category": "Security",
+      "status": "PASS",
+      "duration": "191ms",
+      "notes": "-"
+    },
+    {
+      "name": "Session Security",
+      "category": "Security",
+      "status": "PASS",
+      "duration": "390ms",
+      "notes": "-"
+    },
+    {
+      "name": "Public Pages",
+      "category": "Public",
+      "status": "PASS",
+      "duration": "137ms",
+      "notes": "-"
+    },
+    {
+      "name": "404 Handling",
+      "category": "Error Handling",
+      "status": "PASS",
+      "duration": "47ms",
+      "notes": "-"
+    },
+    {
+      "name": "Response Times",
+      "category": "Performance",
+      "status": "PASS",
+      "duration": "177ms",
+      "notes": "-"
+    },
+    {
+      "name": "HTTP Headers",
+      "category": "Security",
+      "status": "PASS",
+      "duration": "46ms",
+      "notes": "-"
+    }
+  ]
+}
