@@ -122,12 +122,25 @@ try {
             $remote = $_POST['remote'] ?? 'origin';
             $branch = $_POST['branch'] ?? 'main';
             
+            // First do a fetch to get latest
+            $fetchResult = executeGitCommand('fetch', [$remote]);
+            
+            // Then pull
             $result = executeGitCommand('pull', [$remote, $branch]);
             $response = [
                 'success' => $result['success'],
                 'output' => implode("\n", $result['output']),
-                'updated' => strpos(implode(' ', $result['output']), 'Already up to date') === false
+                'updated' => strpos(implode(' ', $result['output']), 'Already up to date') === false,
+                'files_changed' => []
             ];
+            
+            // Get list of changed files if updated
+            if ($response['updated']) {
+                $diffResult = executeGitCommand('diff', ['--name-only', 'HEAD@{1}', 'HEAD']);
+                if ($diffResult['success']) {
+                    $response['files_changed'] = $diffResult['output'];
+                }
+            }
             break;
             
         case 'push':
