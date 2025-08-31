@@ -73,14 +73,20 @@ if (!$pageInfo) {
     $pageInfo = $pageData;
 }
 
-// Get attachments
-$stmt = $pdo->prepare("
-    SELECT * FROM content_attachments 
-    WHERE content_type = 'article' 
-    AND content_id = ?
-");
-$stmt->execute([$article['id']]);
-$attachments = $stmt->fetchAll();
+// Get attachments (handle missing table gracefully)
+$attachments = [];
+try {
+    $stmt = $pdo->prepare("
+        SELECT * FROM content_attachments 
+        WHERE content_type = 'article' 
+        AND content_id = ?
+    ");
+    $stmt->execute([$article['id']]);
+    $attachments = $stmt->fetchAll();
+} catch (Exception $e) {
+    // Table doesn't exist yet - just continue without attachments
+    error_log("Attachments table missing: " . $e->getMessage());
+}
 
 // Set page title
 $pageTitle = $article['title'];

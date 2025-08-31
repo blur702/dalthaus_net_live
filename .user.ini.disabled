@@ -1,0 +1,17 @@
+; Minimal PHP configuration
+; Removing potentially problematic settings
+
+; Basic error handling
+display_errors = Off
+log_errors = On
+
+; Basic resource limits
+max_execution_time = 60
+memory_limit = 128M
+
+; Basic session security
+session.cookie_httponly = 1
+session.use_only_cookies = 1
+
+; Timezone
+date.timezone = "America/New_York"
