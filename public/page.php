@@ -3,6 +3,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/database.php';
 require_once __DIR__ . '/../includes/functions.php';
+checkMaintenanceMode();
 
 $pdo = Database::getInstance();
 
@@ -39,7 +40,7 @@ require_once __DIR__ . '/../includes/header.php';
                 </header>
                 
                 <div class="page-body">
-                    <?= processContentImages($page['body']) ?>
+                    <?= renderContent($page['body']) ?>
                 </div>
             </article>
         </div>

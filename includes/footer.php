@@ -1,82 +1,56 @@
 <?php
-/**
- * Reusable footer template for all front-end pages
- * Includes footer menu, copyright, and common scripts
- */
-
-// Get bottom menu items if not already loaded
-if (!isset($bottomMenu)) {
-    $bottomMenu = $pdo->query("
-        SELECT m.*, c.title, c.slug, c.type 
-        FROM menus m
-        JOIN content c ON m.content_id = c.id
-        WHERE m.location = 'bottom' 
-        AND m.is_active = TRUE
-        AND c.deleted_at IS NULL
-        ORDER BY m.sort_order
-    ")->fetchAll();
+// Get site title for footer
+$footer_site_title = 'Dalthaus Photography';
+if (function_exists('getSetting')) {
+    $footer_site_title = getSetting('site_title', 'Dalthaus Photography');
 }
 ?>
-        <!-- Footer with bottom menu -->
-        <footer class="site-footer">
-            <?php if ($bottomMenu && count($bottomMenu) > 0): ?>
-            <nav class="bottom-menu" role="navigation" aria-label="Footer navigation">
-                <ul>
-                    <?php foreach ($bottomMenu as $item): 
-                        // Build URL based on content type and special cases
-                        if ($item['type'] === 'page') {
-                            // Special handling for system pages
-                            if ($item['slug'] === 'home') {
-                                $url = '/';
-                            } elseif ($item['slug'] === 'articles-listing') {
-                                $url = '/articles';
-                            } elseif ($item['slug'] === 'photobooks-listing') {
-                                $url = '/photobooks';
-                            } else {
-                                $url = '/' . $item['slug'];
-                            }
-                        } elseif ($item['type'] === 'article') {
-                            $url = '/article/' . $item['slug'];
-                        } elseif ($item['type'] === 'photobook') {
-                            $url = '/photobook/' . $item['slug'];
-                        } else {
-                            $url = '/' . $item['slug'];
-                        }
-                    ?>
-                    <li><a href="<?= htmlspecialchars($url) ?>"><?= htmlspecialchars($item['title']) ?></a></li>
-                    <?php endforeach; ?>
-                </ul>
-            </nav>
-            <?php endif; ?>
-            
-            <div class="footer-info">
-                <p><?= $settings['copyright_notice'] ?? '© ' . date('Y') . ' Dalthaus.net. All rights reserved.' ?></p>
-            </div>
-        </footer>
+<footer class="footer">
+    <p>&copy; <?= date('Y') ?> <?= htmlspecialchars($footer_site_title) ?>. All rights reserved.</p>
+    <div class="footer-links">
+        <a href="/privacy">Privacy Policy</a>
+        <span class="separator">|</span>
+        <a href="/terms">Terms of Service</a>
+        <span class="separator">|</span>
+        <a href="/contact">Contact</a>
     </div>
-    
-    <!-- Hamburger menu script -->
-    <script>
-        document.getElementById('hamburger-menu').addEventListener('click', function() {
-            const menu = document.getElementById('slide-menu');
-            const hamburger = this;
-            menu.classList.toggle('active');
-            hamburger.classList.toggle('active');
-        });
-        
-        // Close menu when clicking outside
-        document.addEventListener('click', function(event) {
-            const menu = document.getElementById('slide-menu');
-            const hamburger = document.getElementById('hamburger-menu');
-            if (!menu.contains(event.target) && !hamburger.contains(event.target)) {
-                menu.classList.remove('active');
-                hamburger.classList.remove('active');
-            }
-        });
-    </script>
-    
-    <?php if (isset($additionalScripts)): ?>
-    <?= $additionalScripts ?>
-    <?php endif; ?>
-</body>
-</html>
+</footer>
+
+<style>
+.footer {
+    background: transparent;
+    color: #7f8c8d;
+    text-align: center;
+    padding: 40px 20px;
+    margin-top: auto;
+    border-top: 1px solid #e0e0e0;
+}
+
+.footer p {
+    margin-bottom: 10px;
+    color: #7f8c8d;
+}
+
+.footer-links {
+    margin-top: 15px;
+}
+
+.footer-links a {
+    color: #3498db;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.3s ease;
+    padding: 0 10px;
+}
+
+.footer-links a:hover {
+    color: #2c3e50;
+    text-decoration: underline;
+}
+
+.footer-links .separator {
+    color: #7f8c8d;
+    margin: 0 5px;
+    font-size: 0.9rem;
+}
+</style>

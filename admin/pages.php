@@ -113,6 +113,7 @@ $csrf = generateCSRFToken();
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">    <link rel="stylesheet" href="/assets/css/admin.css">
     <script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js"></script>
+    <script src="/assets/js/tinymce-spacebar-fix.js"></script>
 </head>
 <body>
     <div class="admin-wrapper">
@@ -336,6 +337,12 @@ $csrf = generateCSRFToken();
                 'aside[class|style],' +
                 'nav[class|style]',
             valid_children: '+body[style]'
+    // Image upload configuration
+    images_upload_url: '/admin/api/tinymce_upload.php',
+    automatic_uploads: true,
+    images_upload_base_path: '',
+    images_reuse_filename: false,
+    file_picker_types: 'image',
         });
         
         function showCreateForm() {

@@ -26,6 +26,7 @@ if (($_GET['token'] ?? '') !== $token) {
 </head>
 <body>
 
+
 <h1>Git Pull - Update from GitHub</h1>
 
 <?php

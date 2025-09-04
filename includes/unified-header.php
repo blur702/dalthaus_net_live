@@ -1,32 +1,8 @@
 <?php
 /**
  * Unified Header Component
- * Displays site title and motto from settings or defaults
+ * Based on the homepage header - to be used across all public pages
  */
-
-// Initialize default values first
-$site_title = 'Dalthaus Photography';
-$site_motto = 'Capturing moments, telling stories through light and shadow';
-$header_text_color = '#2c3e50';
-
-// Try to get settings if functions exist
-if (function_exists('getSetting')) {
-    $site_title = getSetting('site_title', 'Dalthaus Photography');
-    $site_motto = getSetting('site_motto', 'Capturing moments, telling stories through light and shadow');
-    $header_image = getSetting('header_image', '');
-    $header_height = getSetting('header_height', '200');
-    $header_overlay_color = getSetting('header_overlay_color', 'rgba(0,0,0,0.3)');
-    $header_text_color = getSetting('header_text_color', '#2c3e50');
-} else {
-    // Fallback if functions.php not loaded
-    $header_image = '';
-    $header_height = '200';
-    $header_overlay_color = 'rgba(0,0,0,0.3)';
-}
-
-// Ensure we have values
-if (empty($site_title)) $site_title = 'Dalthaus Photography';
-if (empty($site_motto)) $site_motto = 'Capturing moments, telling stories through light and shadow';
 ?>
 <!-- Hamburger Menu (absolute positioned) -->
 <div class="hamburger-menu" id="hamburgerMenu">
@@ -36,14 +12,9 @@ if (empty($site_motto)) $site_motto = 'Capturing moments, telling stories throug
 </div>
 
 <!-- Header -->
-<header class="header" <?php if (!empty($header_image)): ?>style="background-image: url('<?php echo htmlspecialchars($header_image); ?>'); background-size: cover; background-position: center; min-height: <?php echo htmlspecialchars($header_height); ?>px;"<?php endif; ?>>
-    <?php if (!empty($header_image)): ?>
-    <div class="header-overlay" style="background: <?php echo htmlspecialchars($header_overlay_color); ?>; position: absolute; top: 0; left: 0; right: 0; bottom: 0;"></div>
-    <?php endif; ?>
-    <div class="header-content" style="position: relative; z-index: 1;">
-        <h1 class="site-title" style="color: <?php echo htmlspecialchars($header_text_color); ?>;"><?php echo htmlspecialchars($site_title); ?></h1>
-        <p class="site-slogan" style="color: <?php echo htmlspecialchars($header_text_color); ?>;"><?php echo htmlspecialchars($site_motto); ?></p>
-    </div>
+<header class="header">
+    <h1 class="site-title">Dalthaus Photography</h1>
+    <p class="site-slogan">Capturing moments, telling stories through light and shadow</p>
 </header>
 
 <!-- Mobile Navigation -->
@@ -67,25 +38,18 @@ if (empty($site_motto)) $site_motto = 'Capturing moments, telling stories throug
         position: relative;
     }
     
-    .header-content {
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-    
     .site-title {
         font-family: 'Arimo', sans-serif;
         font-size: 2.5rem;
         font-weight: 700;
-        margin: 0;
+        color: #2c3e50;
         margin-bottom: 10px;
-        line-height: 1.2;
     }
     
     .site-slogan {
         font-size: 1.1rem;
-        font-style: italic;
-        margin: 0;
         color: #7f8c8d;
+        font-style: italic;
     }
     
     /* Hamburger Menu */
@@ -210,6 +174,7 @@ if (empty($site_motto)) $site_motto = 'Capturing moments, telling stories throug
                 mobileNav.classList.toggle('active');
                 navOverlay.classList.toggle('active');
                 
+                // Prevent body scroll when menu is open
                 if (mobileNav.classList.contains('active')) {
                     document.body.style.overflow = 'hidden';
                 } else {
@@ -217,15 +182,18 @@ if (empty($site_motto)) $site_motto = 'Capturing moments, telling stories throug
                 }
             }
 
+            // Remove any existing listeners first
             const newHamburger = hamburgerMenu.cloneNode(true);
             hamburgerMenu.parentNode.replaceChild(newHamburger, hamburgerMenu);
             
             const newOverlay = navOverlay.cloneNode(true);
             navOverlay.parentNode.replaceChild(newOverlay, navOverlay);
 
+            // Add event listeners
             document.getElementById('hamburgerMenu').addEventListener('click', toggleMenu);
             document.getElementById('navOverlay').addEventListener('click', toggleMenu);
 
+            // Close menu on escape key
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape' && document.getElementById('mobileNav').classList.contains('active')) {
                     toggleMenu();
@@ -233,6 +201,7 @@ if (empty($site_motto)) $site_motto = 'Capturing moments, telling stories throug
             });
         }
         
+        // Initialize when DOM is ready
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initHeaderMenu);
         } else {

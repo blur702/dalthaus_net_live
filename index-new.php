@@ -55,20 +55,6 @@ switch ($path) {
         }
         break;
     
-    case '/about':
-        if (file_exists('about.php')) {
-            require_once 'about.php';
-            exit;
-        }
-        break;
-    
-    case '/contact':
-        if (file_exists('contact.php')) {
-            require_once 'contact.php';
-            exit;
-        }
-        break;
-    
     case '/admin':
     case '/admin/':
         if (file_exists('admin/index.php')) {

@@ -1,21 +1,22 @@
 <?php
+declare(strict_types=1);
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/database.php';
 require_once __DIR__ . '/../includes/functions.php';
 
 $pdo = Database::getInstance();
 
-// Get all published articles from unified content table
-$articles = $pdo->query("
+// Get all published photobooks from unified content table
+$photobooks = $pdo->query("
     SELECT *, slug as alias, body as content, published_at as published_date FROM content 
-    WHERE type = 'article' 
+    WHERE type = 'photobook'
     AND status = 'published' 
     AND deleted_at IS NULL 
     ORDER BY sort_order, created_at DESC
 ")->fetchAll();
 
 // Set page title
-$pageTitle = 'Articles';
+$pageTitle = 'Photo Books';
 
 // Include header template
 require_once __DIR__ . '/../includes/header.php';
@@ -184,16 +185,21 @@ require_once __DIR__ . '/../includes/header.php';
         
         <main class="main-content" role="main">
             <div class="single-column-layout">
-                <h1>Articles</h1>
+                <h1>Photo Books</h1>
                 <div class="listings-grid">
-                    <?php if ($articles && count($articles) > 0): ?>
-                        <?php foreach ($articles as $article): ?>
+                    <?php if ($photobooks && count($photobooks) > 0): ?>
+                        <?php foreach ($photobooks as $book): ?>
                         <article class="listing-card">
                             <div class="listing-card-image">
                                 <?php
-                                $imgSrc = isset($article['featured_image']) ? $article['featured_image'] : null;
-                                if (!$imgSrc && !empty($article['content'])) {
-                                    preg_match('/<img[^>]+src=["\'"]([^"\']+)["\'"]/', $article['content'], $imgMatch);
+                                $imgSrc = null;
+                                if (isset($book['teaser_image']) && $book['teaser_image']) {
+                                    $imgSrc = $book['teaser_image'];
+                                } elseif (isset($book['featured_image']) && $book['featured_image']) {
+                                    $imgSrc = $book['featured_image'];
+                                }
+                                if (!$imgSrc && !empty($book['body'])) {
+                                    preg_match('/<img[^>]+src=["\'"]([^"\']+)["\'"]/', $book['body'], $imgMatch);
                                     $imgSrc = isset($imgMatch[1]) ? $imgMatch[1] : null;
                                 }
                                 $hasImage = $imgSrc && file_exists($_SERVER['DOCUMENT_ROOT'] . $imgSrc);
@@ -207,21 +213,21 @@ require_once __DIR__ . '/../includes/header.php';
                             </div>
                             <div class="listing-card-content">
                                 <h2 class="listing-title">
-                                    <a href="/article/<?= htmlspecialchars($article['alias']) ?>">
-                                        <?= htmlspecialchars($article['title']) ?>
+                                    <a href="/photobook/<?= htmlspecialchars($book['alias']) ?>">
+                                        <?= htmlspecialchars($book['title']) ?>
                                     </a>
                                 </h2>
                                 <div class="listing-meta">
-                                    Don Althaus · <?= date('d F Y', strtotime($article['published_date'] ?? $article['created_at'])) ?> · Articles
+                                    Don Althaus · <?= date('d F Y', strtotime($book['published_date'] ?? $book['created_at'])) ?> · Photo Books
                                 </div>
                                 <div class="listing-excerpt">
-                                    <?= htmlspecialchars(($article['excerpt'] ?? null) ?: mb_substr(strip_tags($article['content'] ?? ''), 0, 300) . '...') ?>
+                                    <?= htmlspecialchars((isset($book['summary']) ? $book['summary'] : null) ?: mb_substr(strip_tags($book['body'] ?? ''), 0, 300) . '...') ?>
                                 </div>
                             </div>
                         </article>
                         <?php endforeach; ?>
                     <?php else: ?>
-                        <p class="no-content">No articles published yet.</p>
+                        <p class="no-content">No photo books published yet.</p>
                     <?php endif; ?>
                 </div>
             </div>

@@ -41,6 +41,7 @@ function callAgent($url, $token, $action, $params = []) {
     </style>
 </head>
 <body>
+
 <div class="container">
 
 <h1>🔍 Production Debug & Fix Tool</h1>

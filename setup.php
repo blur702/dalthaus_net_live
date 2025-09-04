@@ -37,6 +37,7 @@ if (file_exists($configFile) && !isset($_GET['override'])) {
         </style>
     </head>
     <body>
+
         <div class="message">
             <div class="icon">✅</div>
             <h2>Already Installed</h2>

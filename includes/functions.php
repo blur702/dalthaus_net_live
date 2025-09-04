@@ -1,320 +1,169 @@
 <?php
 /**
- * Core Utility Functions
- * 
- * Collection of helper functions for common CMS operations including:
- * - CSRF protection
- * - Input sanitization and validation
- * - Caching operations
- * - Logging and error handling
- * - File management
- * - Content processing
- * 
- * @package DalthausCMS
- * @since 1.0.0
+ * Core functions for the site
  */
-declare(strict_types=1);
 
 /**
- * Generate or retrieve CSRF token for current session
- * 
- * Creates a new token if none exists, otherwise returns existing token.
- * Token is stored in session for validation on form submission.
- * 
- * @return string 64-character hexadecimal CSRF token
+ * Get a single setting value from database
  */
-function generateCSRFToken(): string {
-    if (!isset($_SESSION['csrf_token'])) {
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-    }
-    return $_SESSION['csrf_token'];
-}
-
-/**
- * Validate submitted CSRF token against session token
- * 
- * Uses timing-safe comparison to prevent timing attacks.
- * Returns false if no session token exists.
- * 
- * @param string $token Token submitted with form/AJAX request
- * @return bool True if tokens match, false otherwise
- */
-function validateCSRFToken(string $token): bool {
-    if (!isset($_SESSION['csrf_token'])) {
-        return false;
-    }
-    return hash_equals($_SESSION['csrf_token'], $token);
-}
-
-/**
- * Sanitize user input for safe HTML output
- * 
- * Trims whitespace and escapes HTML special characters.
- * Prevents XSS attacks when displaying user-submitted content.
- * 
- * @param string $input Raw user input
- * @return string Sanitized string safe for HTML output
- */
-function sanitizeInput(string $input): string {
-    // Only trim whitespace, don't encode HTML entities
-    // HTML encoding should be done when displaying data, not storing it
-    return trim($input);
-}
-
-/**
- * Create URL-friendly slug from title
- * 
- * Converts to lowercase, replaces non-alphanumeric with hyphens,
- * removes consecutive hyphens, and trims edge hyphens.
- * Falls back to 'untitled' if result is empty.
- * 
- * @param string $title Original title text
- * @return string URL-safe slug
- */
-function createSlug(string $title): string {
-    $slug = strtolower(trim($title));
-    $slug = preg_replace('/[^a-z0-9-]/', '-', $slug);
-    $slug = preg_replace('/-+/', '-', $slug);
-    $slug = trim($slug, '-');
-    return $slug ?: 'untitled';
-}
-
-/**
- * Retrieve value from file cache
- * 
- * Returns null if cache disabled, file missing, or expired.
- * Uses JSON data storage with expiration timestamps for security.
- * 
- * @param string $key Cache key identifier
- * @return mixed Cached value or null if not found/expired
- */
-function cacheGet(string $key): mixed {
-    if (!CACHE_ENABLED) return null;
-    
-    $file = CACHE_PATH . '/' . md5($key) . '.cache';
-    if (!file_exists($file)) return null;
-    
-    $content = file_get_contents($file);
-    $data = json_decode($content, true);
-    
-    // Check for valid JSON
-    if ($data === null || !isset($data['expires']) || !isset($data['value'])) {
-        unlink($file);
-        return null;
+function getSetting($key, $default = '') {
+    if (!isset($GLOBALS['pdo']) || !$GLOBALS['pdo']) {
+        return $default;
     }
     
-    if ($data['expires'] < time()) {
-        unlink($file);
-        return null;
-    }
-    return $data['value'];
-}
-
-/**
- * Store value in file cache with expiration
- * 
- * Creates cache directory if needed.
- * Stores JSON data with expiration timestamp for security.
- * 
- * @param string $key Cache key identifier
- * @param mixed $value Value to cache (must be JSON-encodable)
- * @param int $ttl Time-to-live in seconds (default: CACHE_TTL)
- * @return bool True if cached successfully, false otherwise
- */
-function cacheSet(string $key, mixed $value, int $ttl = CACHE_TTL): bool {
-    if (!CACHE_ENABLED) return false;
-    if (!is_dir(CACHE_PATH)) mkdir(CACHE_PATH, 0755, true);
-    
-    $file = CACHE_PATH . '/' . md5($key) . '.cache';
-    $data = ['value' => $value, 'expires' => time() + $ttl];
-    $json = json_encode($data);
-    
-    // Check for valid JSON encoding
-    if ($json === false) {
-        return false;
-    }
-    
-    return file_put_contents($file, $json) !== false;
-}
-
-/**
- * Clear all cached files
- * 
- * Removes all .cache files from cache directory.
- * Used when content changes require cache invalidation.
- * 
- * @return void
- */
-function cacheClear(): void {
-    if (is_dir(CACHE_PATH)) {
-        array_map('unlink', glob(CACHE_PATH . '/*.cache'));
-    }
-}
-
-/**
- * Write message to application log with automatic rotation
- * 
- * Appends timestamped entry to log file.
- * Automatically rotates log when line limit reached.
- * Creates log directory if it doesn't exist.
- * 
- * @param string $message Log message text
- * @param string $level Log level (info, warning, error, debug)
- * @return void
- */
-function logMessage(string $message, string $level = 'info'): void {
-    if (!is_dir(LOG_PATH)) {
-        mkdir(LOG_PATH, 0755, true);
-    }
-    
-    $logFile = LOG_PATH . '/app.log';
-    $timestamp = date('Y-m-d H:i:s');
-    $entry = "[$timestamp] [$level] $message" . PHP_EOL;
-    
-    file_put_contents($logFile, $entry, FILE_APPEND | LOCK_EX);
-    rotateLog();
-}
-
-/**
- * Rotate log file when size limit exceeded
- * 
- * Keeps only the last LOG_MAX_LINES lines.
- * Prevents log files from growing too large.
- * 
- * @return void
- */
-function rotateLog(): void {
-    $logFile = LOG_PATH . '/app.log';
-    if (file_exists($logFile)) {
-        $lines = file($logFile, FILE_IGNORE_NEW_LINES);
-        if (count($lines) > LOG_MAX_LINES) {
-            $kept = array_slice($lines, -LOG_MAX_LINES);
-            file_put_contents($logFile, implode(PHP_EOL, $kept) . PHP_EOL);
-        }
-    }
-}
-
-/**
- * Remove temporary files older than 24 hours
- * 
- * Cleans up document import and other temporary files.
- * Should be run via cron job for automatic maintenance.
- * 
- * @return void
- */
-function cleanTempFiles(): void {
-    if (!is_dir(TEMP_PATH)) return;
-    
-    $files = glob(TEMP_PATH . '/*');
-    $now = time();
-    
-    foreach ($files as $file) {
-        if (is_file($file) && ($now - filemtime($file) > 86400)) {
-            unlink($file);
-        }
-    }
-}
-
-/**
- * Process content HTML to handle missing images
- * 
- * Replaces missing image tags with placeholder divs.
- * Preserves image classes for styling (full, left, right, center).
- * Used to prevent broken image icons in content display.
- * 
- * @param string $content HTML content with img tags
- * @return string Processed HTML with placeholders for missing images
- */
-function processContentImages(string $content): string {
-    // Pattern to match img tags
-    $pattern = '/<img\s+([^>]*?)src=["\']([^"\']+)["\']([^>]*?)>/i';
-    
-    return preg_replace_callback($pattern, function($matches) {
-        $fullMatch = $matches[0];
-        $beforeSrc = $matches[1];
-        $src = $matches[2];
-        $afterSrc = $matches[3];
+    try {
+        $stmt = $GLOBALS['pdo']->prepare("SELECT setting_value FROM settings WHERE setting_key = ? LIMIT 1");
+        $stmt->execute([$key]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
         
-        // Check if image exists (for local images)
-        if (strpos($src, 'http') !== 0 && strpos($src, '//') !== 0) {
-            // Sanitize the path to prevent directory traversal
-            $cleanSrc = str_replace(['../', '..\\', '../', '\\..'], '', $src);
-            $cleanSrc = '/' . ltrim($cleanSrc, '/');
-            
-            // Validate the path is within allowed directories
-            if (preg_match('/^\/(?:uploads|assets|images)\//', $cleanSrc)) {
-                $imagePath = $_SERVER['DOCUMENT_ROOT'] . $cleanSrc;
-            } else {
-                // Invalid path, treat as missing image
-                $imagePath = '';
-            }
-            
-            if (empty($imagePath) || !file_exists($imagePath)) {
-                // Extract classes from the img tag
-                $classes = '';
-                if (preg_match('/class=["\']([^"\']*)["\']/', $fullMatch, $classMatch)) {
-                    $classes = $classMatch[1];
-                }
-                
-                // Determine size based on classes
-                $sizeClass = 'medium';
-                if (strpos($classes, 'img-full') !== false) {
-                    $sizeClass = 'large img-full';
-                } elseif (strpos($classes, 'img-left') !== false) {
-                    $sizeClass = 'medium img-left';
-                } elseif (strpos($classes, 'img-right') !== false) {
-                    $sizeClass = 'medium img-right';
-                } elseif (strpos($classes, 'img-center') !== false) {
-                    $sizeClass = 'medium img-center';
-                }
-                
-                // Return placeholder div
-                return '<div class="image-placeholder ' . $sizeClass . '" aria-label="Image placeholder"></div>';
-            }
+        return $result ? $result['setting_value'] : $default;
+    } catch (PDOException $e) {
+        error_log('Error getting setting: ' . $e->getMessage());
+        return $default;
+    }
+}
+
+/**
+ * Get all settings as associative array
+ */
+function getSettings() {
+    if (!isset($GLOBALS['pdo']) || !$GLOBALS['pdo']) {
+        return [
+            'site_title' => 'Dalthaus Photography',
+            'site_motto' => 'Capturing moments, telling stories through light and shadow'
+        ];
+    }
+    
+    try {
+        $stmt = $GLOBALS['pdo']->query("SELECT setting_key, setting_value FROM settings");
+        $settings = [];
+        
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $settings[$row['setting_key']] = $row['setting_value'];
         }
         
-        return $fullMatch;
-    }, $content);
+        return $settings;
+    } catch (PDOException $e) {
+        error_log('Error getting settings: ' . $e->getMessage());
+        return [];
+    }
 }
 
 /**
- * Display error page and terminate execution
- * 
- * Redirects to error.php with specified HTTP status code.
- * 
- * @param int $code HTTP error code (default: 404)
- * @param string $message Optional error message (unused in current implementation)
- * @return void
+ * Get article by slug
  */
-function showError(int $code = 404, string $message = ''): void {
-    // Redirect to error page with code
-    header("Location: /error.php?code=" . (int)$code);
+function getArticleBySlug($slug) {
+    try {
+        $pdo = Database::getInstance();
+        $stmt = $pdo->prepare("SELECT * FROM content WHERE slug = ? AND type = 'article' AND status = 'published' LIMIT 1");
+        $stmt->execute([$slug]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        return $result ? $result : null;
+    } catch (Exception $e) {
+        error_log('Error getting article by slug: ' . $e->getMessage());
+        return null;
+    }
+}
+
+/**
+ * Get photobook by slug
+ */
+function getPhotobookBySlug($slug) {
+    try {
+        $pdo = Database::getInstance();
+        $stmt = $pdo->prepare("SELECT * FROM content WHERE slug = ? AND type = 'photobook' AND status = 'published' LIMIT 1");
+        $stmt->execute([$slug]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        return $result ? $result : null;
+    } catch (Exception $e) {
+        error_log('Error getting photobook by slug: ' . $e->getMessage());
+        return null;
+    }
+}
+
+/**
+ * Check maintenance mode
+ */
+function checkMaintenanceMode() {
+    $isMaintenanceModeOn = getSetting('maintenance_mode', '0');
+    $isAdmin = isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true;
+    
+    if ($isMaintenanceModeOn === '1' && !$isAdmin) {
+        http_response_code(503);
+        echo '<!DOCTYPE html><html><head><title>Maintenance</title></head><body><h1>Maintenance Mode</h1><p>Site is under maintenance.</p></body></html>';
+        exit;
+    }
+}
+
+/**
+ * Show error page
+ */
+function showError($code = 404) {
+    http_response_code($code);
+    $title = $code === 404 ? 'Page Not Found' : 'Error';
+    $message = $code === 404 ? 'The page you are looking for does not exist.' : 'An error occurred.';
+    
+    echo '<!DOCTYPE html><html><head><title>' . $title . '</title></head><body>';
+    echo '<h1>' . $title . '</h1><p>' . $message . '</p>';
+    echo '<p><a href="/">Return to Homepage</a></p></body></html>';
     exit;
 }
 
 /**
- * Global exception handler
- * 
- * Logs exception details and displays appropriate error page.
- * Shows detailed error in development, generic error in production.
- * 
- * @param Throwable $e Exception or error to handle
- * @return void
+ * Check if user is admin
  */
-function handleException(Throwable $e): void {
-    // Log the error
-    logMessage('Error: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine(), 'error');
-    
-    // Show user-friendly error page
-    if (ENV === 'production') {
-        showError(500);
-    } else {
-        // In development, show detailed error
-        echo '<pre>';
-        echo 'Error: ' . htmlspecialchars($e->getMessage()) . "\n";
-        echo 'File: ' . htmlspecialchars($e->getFile()) . ':' . $e->getLine() . "\n";
-        echo 'Trace: ' . "\n" . htmlspecialchars($e->getTraceAsString());
-        echo '</pre>';
-        exit;
-    }
+function isAdmin() {
+    return isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true;
 }
+
+/**
+ * Check if maintenance mode is active
+ */
+function isMaintenanceMode() {
+    return getSetting('maintenance_mode', '0') === '1';
+}
+
+/**
+ * Clear cache files
+ */
+function cacheClear() {
+    $cleared = 0;
+    $cacheDir = __DIR__ . '/../cache';
+    
+    if (!is_dir($cacheDir)) {
+        return true;
+    }
+    
+    try {
+        $files = glob($cacheDir . '/*');
+        foreach ($files as $file) {
+            if (is_file($file) && unlink($file)) {
+                $cleared++;
+            }
+        }
+    } catch (Exception $e) {
+        error_log("Cache clear error: " . $e->getMessage());
+    }
+    
+    return true;
+}
+
+/**
+ * Log messages for debugging
+ */
+function logMessage($message, $level = 'info') {
+    $timestamp = date('Y-m-d H:i:s');
+    $logEntry = "[{$timestamp}] [{$level}] {$message}" . PHP_EOL;
+    
+    $logFile = __DIR__ . '/../logs/app.log';
+    $logDir = dirname($logFile);
+    
+    if (!is_dir($logDir)) {
+        mkdir($logDir, 0755, true);
+    }
+    
+    file_put_contents($logFile, $logEntry, FILE_APPEND | LOCK_EX);
+}
+?>

@@ -91,6 +91,7 @@ $conn = @mysqli_connect($db_host, $db_user, $db_pass, $db_name);
 </head>
 <body>
 
+
 <div class="nav">
     <a href="/">Home</a>
     <a href="/admin/login.php">Admin</a>

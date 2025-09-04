@@ -1,4 +1,15 @@
 <?php
+/**
+ * Database Connection and Management Class
+ * 
+ * Provides a singleton PDO database connection with automatic setup capabilities.
+ * Handles database creation, table initialization, and connection management.
+ * Supports both production and test databases based on TEST_MODE configuration.
+ * 
+ * @package DalthausCMS
+ * @since 1.0.0
+ */
+declare(strict_types=1);
 require_once __DIR__ . '/config.php';
 
 /**

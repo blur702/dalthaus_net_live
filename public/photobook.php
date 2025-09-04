@@ -1,379 +1,65 @@
 <?php
-declare(strict_types=1);
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/database.php';
 require_once __DIR__ . '/../includes/functions.php';
-require_once __DIR__ . '/../includes/page_tracker.php';
-require_once __DIR__ . '/../includes/auth.php';
 
+// Start session if needed
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-$alias = $_GET['params'][0] ?? '';
+// Check maintenance mode
+checkMaintenanceMode();
 
-if (!$alias) {
+// Get the slug from URL
+$slug = $_GET['slug'] ?? '';
+if (empty($slug)) {
     showError(404);
 }
 
-$pdo = Database::getInstance();
-
-// Check if admin is logged in
-$isAdmin = Auth::isLoggedIn() && $_SESSION['role'] === 'admin';
-
-// Get photobook from unified content table
-if ($isAdmin) {
-    // Admins can view any photobook (published or draft)
-    $stmt = $pdo->prepare("
-        SELECT *, slug as alias, body as content, published_at as published_date FROM content 
-        WHERE slug = ? 
-        AND type = 'photobook'
-        AND deleted_at IS NULL
-    ");
-} else {
-    // Regular users can only view published photobooks
-    $stmt = $pdo->prepare("
-        SELECT *, slug as alias, body as content, published_at as published_date FROM content 
-        WHERE slug = ? 
-        AND type = 'photobook'
-        AND status = 'published' 
-        AND deleted_at IS NULL
-    ");
-}
-$stmt->execute([$alias]);
-$photobook = $stmt->fetch();
-
-if (!$photobook) {
-    showError(404);
-}
-
-// Get stored page information from content table
-$pageInfo = getPageInfo($pdo, $photobook['id'], 'photobooks');
-
-// Parse photobook content into pages/chapters
-$pages = preg_split('/<!-- page -->/', $photobook['body'] ?? '');
-$totalPages = count($pages);
-
-// Clean up pages - remove empty ones
-$pages = array_filter($pages, function($page) {
-    return !empty(trim($page));
-});
-$pages = array_values($pages); // Re-index
-$totalPages = count($pages) ?: 1;
-
-// If no page breaks, treat entire content as single page
-if ($totalPages === 0) {
-    $pages = [$photobook['body'] ?? ''];
-    $totalPages = 1;
-}
-
-// If we don't have stored page info, generate it
-if (!$pageInfo) {
-    $pageData = extractPageInfo($photobook['body']);
-    $pageInfo = $pageData;
-}
-
-// Set page title
-$pageTitle = $photobook['title'];
-
-// Additional styles for photobook viewer
-$additionalStyles = '
-<style>
-        .book-content {
-            transition: opacity 0.3s ease;
-            min-height: 400px;
-        }
-        
-        .elegant-nav {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 2rem;
-            padding: 3rem 0 2rem;
-            margin-top: 3rem;
-            border-top: 1px solid #eee;
-        }
-        
-        .nav-arrow {
-            width: 40px;
-            height: 40px;
-            border: none;
-            background: transparent;
-            color: #666;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
-        
-        .nav-arrow:hover:not(:disabled) {
-            background: #f5f5f5;
-            color: #333;
-        }
-        
-        .nav-arrow:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-        }
-        
-        .page-select-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .elegant-select {
-            appearance: none;
-            background: transparent;
-            border: none;
-            font-size: 1.1rem;
-            font-family: \'Gelasio\', serif;
-            color: #333;
-            text-align: center;
-            cursor: pointer;
-            padding: 0.25rem 1rem;
-            min-width: 200px;
-            position: relative;
-        }
-        
-        .elegant-select:hover {
-            color: #000;
-        }
-        
-        .elegant-select:focus {
-            outline: none;
-            border-bottom: 1px solid #666;
-        }
-        
-        .page-info {
-            font-size: 0.85rem;
-            color: #999;
-            font-family: \'Arimo\', sans-serif;
-            letter-spacing: 0.5px;
-        }
-        
-        .back-nav {
-            text-align: center;
-            padding: 1.5rem 0;
-        }
-        
-        .back-link {
-            color: #666;
-            text-decoration: none;
-            font-family: \'Arimo\', sans-serif;
-            font-size: 0.95rem;
-            transition: color 0.3s;
-        }
-        
-        .back-link:hover {
-            color: #333;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; }
-        }
-        
-        @media print {
-            .photobook-controls,
-            .site-header,
-            .site-footer,
-            .article-nav {
-                display: none;
-            }
-            
-            .book-content {
-                padding: 0;
-            }
-            
-            .photobook-viewer {
-                box-shadow: none;
-            }
-        }
-</style>
-';
-
-// Include header template
-require_once __DIR__ . '/../includes/header.php';
-?>
+try {
+    // Get photobook from database
+    $photobook = getPhotobookBySlug($slug);
+    if (!$photobook) {
+        showError(404);
+    }
     
-    <main id="main" class="site-main">
-        <div class="container">
-            <div class="photobook-viewer">
-                <div class="book-header">
-                    <h1 class="book-title"><?= htmlspecialchars($photobook['title']) ?></h1>
-                    <?php if ($isAdmin && $photobook['status'] === 'draft'): ?>
-                    <div class="draft-indicator" style="background: #f39c12; color: white; padding: 5px 15px; border-radius: 3px; display: inline-block; margin: 10px auto; font-size: 14px; text-align: center;">
-                        DRAFT - Not visible to public
-                    </div>
-                    <?php endif; ?>
-                </div>
-                
-                
-                <article id="photobook-content" class="book-content" role="main" aria-live="polite">
-                    <!-- Story pages will be loaded here -->
-                </article>
-                
-                <?php if ($totalPages > 1): ?>
-                <div class="elegant-nav">
-                    <button class="nav-arrow nav-prev" onclick="navigatePage(-1)" aria-label="Previous page" disabled>
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M15 18l-6-6 6-6"/>
-                        </svg>
-                    </button>
-                    
-                    <div class="page-select-wrapper">
-                        <select id="page-selector" onchange="goToPage(this.value)" class="elegant-select">
-                            <?php if ($pageInfo && isset($pageInfo['pages'])): ?>
-                                <?php foreach ($pageInfo['pages'] as $page): ?>
-                                    <option value="<?= $page['page'] ?>">
-                                        <?= htmlspecialchars($page['title']) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <?php for($i = 1; $i <= $totalPages; $i++): ?>
-                                    <option value="<?= $i ?>">Page <?= $i ?></option>
-                                <?php endfor; ?>
-                            <?php endif; ?>
-                        </select>
-                        <span class="page-info"><?= $totalPages ?> pages</span>
-                    </div>
-                    
-                    <button class="nav-arrow nav-next" onclick="navigatePage(1)" aria-label="Next page">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M9 18l6-6-6-6"/>
-                        </svg>
-                    </button>
-                </div>
-                
-                <nav class="back-nav">
-                    <a href="/photobooks" class="back-link">← Back to Photo Books</a>
-                </nav>
-                <?php else: ?>
-                <nav class="back-nav" style="margin-top: 2rem;">
-                    <a href="/photobooks" class="back-link">← Back to Photo Books</a>
-                </nav>
-                <?php endif; ?>
+    // Set page title
+    $pageTitle = htmlspecialchars($photobook['title']);
+    
+    // Include header
+    include __DIR__ . '/../includes/header.php';
+    
+} catch (Exception $e) {
+    error_log("Photobook page error: " . $e->getMessage());
+    showError(500);
+}
+?>
+
+<div class="container">
+    <article class="content-item">
+        <div class="content-image">
+            <?php if (!empty($photobook['image_filename'])): ?>
+                <img src="/uploads/<?php echo htmlspecialchars($photobook['image_filename']); ?>" 
+                     alt="<?php echo htmlspecialchars($photobook['title']); ?>" 
+                     style="aspect-ratio: 4/3; object-fit: cover; width: 100%;">
+            <?php endif; ?>
+        </div>
+        <div class="content-text">
+            <h1><?php echo htmlspecialchars($photobook['title']); ?></h1>
+            <div class="content-body">
+                <?php echo nl2br(htmlspecialchars($photobook['content'])); ?>
+            </div>
+            <div class="content-meta">
+                <p class="publish-date">Published: <?php echo date('F j, Y', strtotime($photobook['created_at'])); ?></p>
             </div>
         </div>
-    </main>
-    
-<?php
-// Additional scripts for photobook navigation
-$additionalScripts = '
-<script>
-    // Store pages data with processed images
-    const pages = ' . json_encode(array_map('processContentImages', $pages)) . ';
-    const slug = ' . json_encode($alias) . ';
-    const totalPages = ' . $totalPages . ';
-    let currentPage = 1;
-        
-    // Initialize
-    document.addEventListener("DOMContentLoaded", function() {
-        // Check if there\'s a page in the URL hash
-        const hash = window.location.hash;
-        if (hash) {
-            const pageNum = parseInt(hash.replace("#page-", ""));
-            if (pageNum && pageNum > 0 && pageNum <= totalPages) {
-                currentPage = pageNum;
-            }
-        }
-        
-        loadPage(currentPage);
-        updateHistory();
-    });
-    
-    // Handle browser back/forward
-    window.addEventListener("popstate", function(event) {
-        if (event.state && event.state.page) {
-            currentPage = event.state.page;
-            loadPage(currentPage);
-        }
-    });
-    
-    function navigatePage(direction) {
-        const newPage = currentPage + direction;
-        if (newPage >= 1 && newPage <= totalPages) {
-            currentPage = newPage;
-            loadPage(currentPage);
-            updateHistory();
-            
-            // Scroll to top of viewer
-            document.querySelector(".photobook-viewer").scrollIntoView({ behavior: "smooth" });
-        }
-    }
-    
-    function goToPage(page) {
-        page = parseInt(page);
-        if (page >= 1 && page <= totalPages) {
-            currentPage = page;
-            loadPage(currentPage);
-            updateHistory();
-            
-            // Smooth scroll to top of content
-            document.querySelector(".book-content").scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-    }
-    
-    function loadPage(pageNum) {
-        const content = document.getElementById("photobook-content");
-        const pageSelector = document.getElementById("page-selector");
-        
-        // Fade out current content
-        content.style.opacity = "0";
-        
-        setTimeout(() => {
-            // Update content
-            content.innerHTML = pages[pageNum - 1] || "";
-            
-            // Update page selector
-            if (pageSelector) {
-                pageSelector.value = pageNum;
-            }
-            
-            // Update navigation buttons
-            updateNavButtons();
-            
-            // Update page dots
-            updatePageDots();
-            
-            // Fade in new content
-            content.style.opacity = "1";
-        }, 200);
-    }
-    
-    function updateNavButtons() {
-        const prevButton = document.querySelector(".nav-prev");
-        const nextButton = document.querySelector(".nav-next");
-        
-        if (prevButton) prevButton.disabled = currentPage === 1;
-        if (nextButton) nextButton.disabled = currentPage === totalPages;
-    }
-    
-    function updatePageDots() {
-        // No longer using page dots
-    }
-    
-    function updateHistory() {
-        const url = `/photobook/${slug}#page-${currentPage}`;
-        const state = { page: currentPage };
-        
-        if (window.location.hash === `#page-${currentPage}`) {
-            return; // Already on this page
-        }
-        
-        history.pushState(state, "", url);
-    }
-</script>
-';
+    </article>
+</div>
 
-// Include footer template
-require_once __DIR__ . '/../includes/footer.php';
+<?php
+// Include footer if it exists
+if (file_exists(__DIR__ . '/../includes/footer.php')) {
+    include __DIR__ . '/../includes/footer.php';
+}
+?>

@@ -196,6 +196,7 @@ mysqli_close($conn);
     </style>
 </head>
 <body>
+
     <header class="header">
         <nav class="nav">
             <div class="logo">Dalthaus Photography</div>

@@ -1,4 +1,25 @@
 <?php
+/**
+ * Configuration File
+ * 
+ * Central configuration for the Dalthaus.net CMS.
+ * Contains all system constants including database settings, paths, security parameters,
+ * and environment-specific configurations.
+ * 
+ * @package DalthausCMS
+ * @since 1.0.0
+ */
+declare(strict_types=1);
+
+// ============================================================================
+// DATABASE CONFIGURATION
+// ============================================================================
+
+/**
+ * Database host address
+ * Use localhost for production shared hosting
+ * @var string
+ */
 define('DB_HOST', 'localhost');
 
 /**
