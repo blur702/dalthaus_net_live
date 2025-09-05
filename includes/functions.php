@@ -166,4 +166,61 @@ function logMessage($message, $level = 'info') {
     
     file_put_contents($logFile, $logEntry, FILE_APPEND | LOCK_EX);
 }
+
+/**
+ * Get all content of a specific type
+ */
+function getAllContent(string $type): array {
+    $pdo = Database::getInstance();
+    $stmt = $pdo->prepare("SELECT * FROM content WHERE type = ? AND status = 'published' AND deleted_at IS NULL ORDER BY created_at DESC");
+    $stmt->execute([$type]);
+    return $stmt->fetchAll();
+}
+
+/**
+ * Get recent articles
+ */
+function getRecentArticles(int $limit = 4): array {
+    $pdo = Database::getInstance();
+    $stmt = $pdo->prepare("SELECT * FROM content WHERE type = 'article' AND status = 'published' AND deleted_at IS NULL ORDER BY created_at DESC LIMIT ?");
+    $stmt->execute([$limit]);
+    return $stmt->fetchAll();
+}
+
+/**
+ * Get recent photobooks
+ */
+function getRecentPhotobooks(int $limit = 3): array {
+    $pdo = Database::getInstance();
+    $stmt = $pdo->prepare("SELECT * FROM content WHERE type = 'photobook' AND status = 'published' AND deleted_at IS NULL ORDER BY created_at DESC LIMIT ?");
+    $stmt->execute([$limit]);
+    return $stmt->fetchAll();
+}
+
+/**
+ * Get content for a specific page
+ */
+function getPageContent(string $slug): ?string {
+    $pdo = Database::getInstance();
+    $stmt = $pdo->prepare("SELECT body FROM content WHERE slug = ? AND type = 'page' AND status = 'published' LIMIT 1");
+    $stmt->execute([$slug]);
+    $result = $stmt->fetchColumn();
+    return $result ?: null;
+}
+
+/**
+ * Create a URL-friendly slug from a string
+ */
+function createSlug(string $text): string {
+    $text = preg_replace('~[^\pL\d]+~u', '-', $text);
+    $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+    $text = preg_replace('~[^-\w]+~', '', $text);
+    $text = trim($text, '-');
+    $text = preg_replace('~-+~', '-', $text);
+    $text = strtolower($text);
+    if (empty($text)) {
+        return 'n-a';
+    }
+    return $text;
+}
 ?>

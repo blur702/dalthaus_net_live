@@ -7,7 +7,6 @@
 // Initialize default values first
 $site_title = 'Dalthaus Photography';
 $site_motto = 'Capturing moments, telling stories through light and shadow';
-$header_text_color = '#2c3e50';
 
 // Try to get settings if functions exist
 if (function_exists('getSetting')) {
@@ -16,227 +15,60 @@ if (function_exists('getSetting')) {
     $header_image = getSetting('header_image', '');
     $header_height = getSetting('header_height', '200');
     $header_overlay_color = getSetting('header_overlay_color', 'rgba(0,0,0,0.3)');
-    $header_text_color = getSetting('header_text_color', '#2c3e50');
+    $header_text_color = getSetting('header_text_color', '#ffffff');
 } else {
     // Fallback if functions.php not loaded
     $header_image = '';
     $header_height = '200';
     $header_overlay_color = 'rgba(0,0,0,0.3)';
+    $header_text_color = '#ffffff';
 }
 
 // Ensure we have values
 if (empty($site_title)) $site_title = 'Dalthaus Photography';
 if (empty($site_motto)) $site_motto = 'Capturing moments, telling stories through light and shadow';
+
+// Custom styling for the header
+$header_style = '';
+if (!empty($header_image)) {
+    $header_style = "background-image: url('" . htmlspecialchars($header_image) . "'); background-size: cover; background-position: center; min-height: " . htmlspecialchars($header_height) . "px;";
+}
+
+$header_text_style = "color: " . htmlspecialchars($header_text_color) . ";";
+
 ?>
-<!-- Hamburger Menu (absolute positioned) -->
-<div class="hamburger-menu" id="hamburgerMenu">
+<!-- Hamburger Menu (fixed position) -->
+<button class="hamburger-menu" id="hamburgerMenu" aria-label="Open menu" aria-controls="mobileNav">
     <span></span>
     <span></span>
     <span></span>
-</div>
+</button>
 
 <!-- Header -->
-<header class="header" <?php if (!empty($header_image)): ?>style="background-image: url('<?php echo htmlspecialchars($header_image); ?>'); background-size: cover; background-position: center; min-height: <?php echo htmlspecialchars($header_height); ?>px;"<?php endif; ?>>
+<header class="site-header" <?php if ($header_style) echo 'style="' . $header_style . '"'; ?>>
     <?php if (!empty($header_image)): ?>
-    <div class="header-overlay" style="background: <?php echo htmlspecialchars($header_overlay_color); ?>; position: absolute; top: 0; left: 0; right: 0; bottom: 0;"></div>
+    <div class="header-overlay" style="background-color: <?php echo htmlspecialchars($header_overlay_color); ?>"></div>
     <?php endif; ?>
-    <div class="header-content" style="position: relative; z-index: 1;">
-        <h1 class="site-title" style="color: <?php echo htmlspecialchars($header_text_color); ?>;"><?php echo htmlspecialchars($site_title); ?></h1>
-        <p class="site-slogan" style="color: <?php echo htmlspecialchars($header_text_color); ?>;"><?php echo htmlspecialchars($site_motto); ?></p>
+    <div class="header-content">
+        <div class="header-text">
+            <h1 class="site-title" style="<?php echo $header_text_style; ?>">
+                <a href="/"><?php echo htmlspecialchars($site_title); ?></a>
+            </h1>
+            <p class="site-motto" style="<?php echo $header_text_style; ?>"><?php echo htmlspecialchars($site_motto); ?></p>
+        </div>
     </div>
 </header>
 
 <!-- Mobile Navigation -->
-<nav class="mobile-nav" id="mobileNav">
-    <a href="/">Home</a>
-    <a href="/articles">Articles</a>
-    <a href="/photobooks">Photobooks</a>
-    <a href="/about">About</a>
-    <a href="/contact">Contact</a>
+<nav class="slide-menu" id="mobileNav">
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/articles">Articles</a></li>
+        <li><a href="/photobooks">Photobooks</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/contact">Contact</a></li>
+    </ul>
 </nav>
 
 <!-- Navigation Overlay -->
 <div class="nav-overlay" id="navOverlay"></div>
-
-<style>
-    /* Header Styles */
-    .header {
-        padding: 40px 20px;
-        text-align: center;
-        border-bottom: 1px solid #e0e0e0;
-        position: relative;
-    }
-    
-    .header-content {
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-    
-    .site-title {
-        font-family: 'Arimo', sans-serif;
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin: 0;
-        margin-bottom: 10px;
-        line-height: 1.2;
-    }
-    
-    .site-slogan {
-        font-size: 1.1rem;
-        font-style: italic;
-        margin: 0;
-        color: #7f8c8d;
-    }
-    
-    /* Hamburger Menu */
-    .hamburger-menu {
-        position: absolute;
-        top: 30px;
-        right: 30px;
-        z-index: 1000;
-        cursor: pointer;
-        width: 30px;
-        height: 25px;
-    }
-    
-    .hamburger-menu span {
-        display: block;
-        width: 100%;
-        height: 3px;
-        background-color: #2c3e50;
-        margin: 5px 0;
-        transition: all 0.3s ease;
-    }
-    
-    .hamburger-menu.active span:nth-child(1) {
-        transform: rotate(45deg) translate(5px, 5px);
-    }
-    
-    .hamburger-menu.active span:nth-child(2) {
-        opacity: 0;
-    }
-    
-    .hamburger-menu.active span:nth-child(3) {
-        transform: rotate(-45deg) translate(7px, -6px);
-    }
-    
-    /* Mobile Navigation */
-    .mobile-nav {
-        position: fixed;
-        top: 0;
-        right: -300px;
-        width: 280px;
-        height: 100vh;
-        background: white;
-        box-shadow: -2px 0 10px rgba(0,0,0,0.1);
-        transition: right 0.3s ease;
-        z-index: 999;
-        padding: 80px 20px 20px;
-        overflow-y: auto;
-    }
-    
-    .mobile-nav.active {
-        right: 0;
-    }
-    
-    .mobile-nav a {
-        display: block;
-        padding: 15px 10px;
-        color: #2c3e50;
-        text-decoration: none;
-        border-bottom: 1px solid #eee;
-        font-size: 16px;
-        transition: background 0.2s ease;
-    }
-    
-    .mobile-nav a:hover {
-        background: #f5f5f5;
-        padding-left: 20px;
-    }
-    
-    .nav-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity 0.3s ease, visibility 0.3s ease;
-        z-index: 998;
-    }
-    
-    .nav-overlay.active {
-        opacity: 1;
-        visibility: visible;
-    }
-    
-    /* Responsive */
-    @media (max-width: 968px) {
-        .site-title {
-            font-size: 2rem;
-        }
-    }
-    
-    @media (max-width: 600px) {
-        .site-title {
-            font-size: 1.5rem;
-        }
-        
-        .site-slogan {
-            font-size: 0.9rem;
-        }
-        
-        .hamburger-menu {
-            top: 20px;
-            right: 20px;
-        }
-    }
-</style>
-
-<script>
-    // Hamburger Menu JavaScript
-    (function() {
-        function initHeaderMenu() {
-            const hamburgerMenu = document.getElementById('hamburgerMenu');
-            const mobileNav = document.getElementById('mobileNav');
-            const navOverlay = document.getElementById('navOverlay');
-            
-            if (!hamburgerMenu || !mobileNav || !navOverlay) return;
-
-            function toggleMenu() {
-                hamburgerMenu.classList.toggle('active');
-                mobileNav.classList.toggle('active');
-                navOverlay.classList.toggle('active');
-                
-                if (mobileNav.classList.contains('active')) {
-                    document.body.style.overflow = 'hidden';
-                } else {
-                    document.body.style.overflow = '';
-                }
-            }
-
-            const newHamburger = hamburgerMenu.cloneNode(true);
-            hamburgerMenu.parentNode.replaceChild(newHamburger, hamburgerMenu);
-            
-            const newOverlay = navOverlay.cloneNode(true);
-            navOverlay.parentNode.replaceChild(newOverlay, navOverlay);
-
-            document.getElementById('hamburgerMenu').addEventListener('click', toggleMenu);
-            document.getElementById('navOverlay').addEventListener('click', toggleMenu);
-
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && document.getElementById('mobileNav').classList.contains('active')) {
-                    toggleMenu();
-                }
-            });
-        }
-        
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initHeaderMenu);
-        } else {
-            initHeaderMenu();
-        }
-    })();
-</script>
