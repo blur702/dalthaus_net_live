@@ -45,7 +45,9 @@ return function(Router $router) {
         $router->get('/reorder', 'Content', 'reorder');
         $router->post('/reorder', 'Content', 'updateOrder');
         $router->post('/content/autosave', 'Content', 'autosave');
-        $router->post('/content/upload-image', 'Content', 'uploadImage');
+
+        // **FIXED:** Dedicated image upload route
+        $router->post('/upload/tinymce', 'Upload', 'tinymce');
 
         // Page management
         $router->get('/pages', 'Pages', 'index');

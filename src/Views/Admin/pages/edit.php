@@ -1,7 +1,7 @@
 <?php
 /**
- * Page Management - Edit View (Refactored UI)
- * A simplified, single-column form for editing static pages.
+ * Page Management - Edit View (Fixed)
+ * All view-specific JavaScript has been removed to prevent conflicts.
  */
 ?>
 
@@ -25,7 +25,7 @@
 
     <div class="p-6">
         <form method="POST" action="/admin/pages/<?= $page['page_id'] ?>/update" id="pageForm">
-            <input type="hidden" name="_token" value="<?= $this->escape($csrf_token ?? '') ?>">
+            <input type="hidden" name="_token" value="<?= $this->escape($csrf_token) ?>">
 
             <div class="space-y-6">
                 <!-- Page Title -->
@@ -56,16 +56,3 @@
         </form>
     </div>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('pageForm');
-    if (form) {
-        form.addEventListener('submit', function() {
-            if (typeof tinymce !== 'undefined' && tinymce.get('body')) {
-                tinymce.get('body').save();
-            }
-        });
-    }
-});
-</script>

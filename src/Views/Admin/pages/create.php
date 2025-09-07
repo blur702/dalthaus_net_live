@@ -1,7 +1,7 @@
 <?php
 /**
- * Page Management - Create View (Refactored UI)
- * A simplified, single-column form for creating static pages.
+ * Page Management - Create View (Fixed)
+ * All view-specific JavaScript has been removed to prevent conflicts.
  */
 ?>
 
@@ -16,7 +16,7 @@
 
     <div class="p-6">
         <form method="POST" action="/admin/pages/store" id="pageForm">
-            <input type="hidden" name="_token" value="<?= $this->escape($csrf_token ?? '') ?>">
+            <input type="hidden" name="_token" value="<?= $this->escape($csrf_token) ?>">
 
             <div class="space-y-6">
                 <!-- Page Title -->
@@ -53,27 +53,3 @@
         </form>
     </div>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('pageForm');
-    if (form) {
-        form.addEventListener('submit', function() {
-            if (typeof tinymce !== 'undefined' && tinymce.get('body')) {
-                tinymce.get('body').save();
-            }
-        });
-    }
-
-    const titleInput = document.getElementById('title');
-    const urlAliasInput = document.getElementById('url_alias');
-    if (titleInput && urlAliasInput) {
-        titleInput.addEventListener('input', function() {
-            if (!urlAliasInput.dataset.manuallyEdited) {
-                urlAliasInput.value = this.value.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').trim('-');
-            }
-        });
-        urlAliasInput.addEventListener('input', () => urlAliasInput.dataset.manuallyEdited = 'true');
-    }
-});
-</script>

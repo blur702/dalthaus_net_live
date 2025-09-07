@@ -1,7 +1,8 @@
 <?php
 /**
- * Content Management - Create View (Refactored UI)
- * A simplified, single-column form for creating content.
+ * Content Management - Create View (Fixed)
+ * All view-specific JavaScript has been removed to prevent conflicts.
+ * The main admin layout now handles all script initialization.
  */
 ?>
 
@@ -16,7 +17,7 @@
 
     <div class="p-6">
         <form method="POST" action="/admin/content/store" enctype="multipart/form-data" id="contentForm">
-            <input type="hidden" name="_token" value="<?= $this->escape($csrf_token ?? '') ?>">
+            <input type="hidden" name="_token" value="<?= $this->escape($csrf_token) ?>">
             <input type="hidden" name="content_type" value="<?= $this->escape($content_type) ?>">
 
             <div class="space-y-6">
@@ -74,71 +75,3 @@
         </form>
     </div>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('contentForm');
-    
-    // File size validation (max 5MB per file)
-    const maxFileSize = 5 * 1024 * 1024; // 5MB in bytes
-    const fileInputs = form.querySelectorAll('input[type="file"]');
-    
-    fileInputs.forEach(input => {
-        input.addEventListener('change', function() {
-            if (this.files.length > 0) {
-                const file = this.files[0];
-                if (file.size > maxFileSize) {
-                    alert(`File "${file.name}" is too large. Maximum size is 5MB. Your file is ${(file.size / 1024 / 1024).toFixed(2)}MB.`);
-                    this.value = ''; // Clear the input
-                    return;
-                }
-                
-                // Check file type
-                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-                if (!allowedTypes.includes(file.type)) {
-                    alert(`File "${file.name}" is not a supported image type. Please use JPG, PNG, GIF, or WebP.`);
-                    this.value = ''; // Clear the input
-                    return;
-                }
-            }
-        });
-    });
-    
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            // Check total form size before submitting
-            let totalSize = 0;
-            fileInputs.forEach(input => {
-                if (input.files.length > 0) {
-                    totalSize += input.files[0].size;
-                }
-            });
-            
-            // Check if total size exceeds 20MB
-            const maxTotalSize = 20 * 1024 * 1024; // 20MB
-            if (totalSize > maxTotalSize) {
-                e.preventDefault();
-                alert(`Total file size (${(totalSize / 1024 / 1024).toFixed(2)}MB) exceeds the maximum allowed size of 20MB. Please reduce file sizes or upload fewer files.`);
-                return false;
-            }
-            
-            if (typeof tinymce !== 'undefined' && tinymce.get('body')) {
-                tinymce.get('body').save();
-            }
-            const action = e.submitter ? e.submitter.value : 'draft';
-            document.getElementById('status').value = action;
-        });
-    }
-
-    const titleInput = document.getElementById('title');
-    const urlAliasInput = document.getElementById('url_alias');
-    if (titleInput && urlAliasInput) {
-        titleInput.addEventListener('input', function() {
-            if (!urlAliasInput.dataset.manuallyEdited) {
-                urlAliasInput.value = this.value.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').trim('-');
-            }
-        });
-        urlAliasInput.addEventListener('input', () => urlAliasInput.dataset.manuallyEdited = 'true');
-    }
-});
-</script>
