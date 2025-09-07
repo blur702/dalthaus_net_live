@@ -245,6 +245,101 @@
                 </div>
             </div>
 
+            <!-- Maintenance Mode -->
+            <div class="mb-8">
+                <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
+                    <svg class="w-5 h-5 text-yellow-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                    </svg>
+                    Maintenance Mode
+                </h3>
+                
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-yellow-800">
+                                Important Information
+                            </h3>
+                            <div class="mt-2 text-sm text-yellow-700">
+                                <p>When maintenance mode is enabled, visitors will see a maintenance page instead of your site. As an admin, you can still access all admin pages normally.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- Maintenance Mode Toggle -->
+                    <div>
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Enable Maintenance Mode</label>
+                                <p class="text-sm text-gray-500 mt-1">When enabled, visitors will see a maintenance page</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="maintenance_mode" value="1" 
+                                       <?= ($settings['maintenance_mode'] ?? '0') === '1' ? 'checked' : '' ?> 
+                                       class="sr-only peer" onchange="toggleMaintenancePreview()">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                        
+                        <!-- Current Status Indicator -->
+                        <div class="mt-3 p-3 rounded-lg" id="maintenance-status">
+                            <?php if (($settings['maintenance_mode'] ?? '0') === '1'): ?>
+                                <div class="flex items-center text-yellow-800 bg-yellow-100 p-3 rounded-lg">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                    </svg>
+                                    <strong>Maintenance mode is currently ACTIVE</strong> - Visitors see maintenance page
+                                </div>
+                            <?php else: ?>
+                                <div class="flex items-center text-green-800 bg-green-100 p-3 rounded-lg">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    <strong>Site is live and accessible</strong> - Normal operation
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <!-- Maintenance Message -->
+                    <div>
+                        <label for="maintenance_message" class="block text-sm font-medium text-gray-700 mb-1">
+                            Maintenance Message <span class="text-red-500">*</span>
+                        </label>
+                        <textarea name="maintenance_message" id="maintenance_message" rows="4" maxlength="1000" required
+                                  class="block w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm <?= isset($form_errors['maintenance_message']) ? 'border-red-300 bg-red-50' : '' ?>"
+                                  placeholder="We are currently performing maintenance on our site. Please check back shortly."><?= $this->escape($settings['maintenance_message'] ?? 'We are currently performing maintenance on our site. Please check back shortly.') ?></textarea>
+                        <?php if (isset($form_errors['maintenance_message'])): ?>
+                        <p class="mt-1 text-sm text-red-600"><?= $this->escape($form_errors['maintenance_message']) ?></p>
+                        <?php else: ?>
+                        <div class="mt-1 flex justify-between">
+                            <p class="text-sm text-gray-500">Message shown to visitors during maintenance</p>
+                            <span class="text-sm text-gray-500" id="message-counter">0/1000</span>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+
+                    <!-- Preview Button -->
+                    <div>
+                        <button type="button" onclick="previewMaintenancePage()" 
+                                class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                            Preview Maintenance Page
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Action Buttons -->
             <div class="flex items-center justify-between pt-6 border-t border-gray-200">
                 <div class="flex space-x-4">
@@ -501,9 +596,133 @@ function preventDefaults(e) {
 setupDragDrop('logo-dropzone', 'site_logo');
 setupDragDrop('favicon-dropzone', 'favicon');
 
+// Maintenance mode functions
+function toggleMaintenancePreview() {
+    const toggle = document.querySelector('input[name="maintenance_mode"]');
+    const statusDiv = document.getElementById('maintenance-status');
+    
+    if (toggle.checked) {
+        statusDiv.innerHTML = `
+            <div class="flex items-center text-yellow-800 bg-yellow-100 p-3 rounded-lg">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                </svg>
+                <strong>Maintenance mode is currently ACTIVE</strong> - Visitors see maintenance page
+            </div>`;
+    } else {
+        statusDiv.innerHTML = `
+            <div class="flex items-center text-green-800 bg-green-100 p-3 rounded-lg">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <strong>Site is live and accessible</strong> - Normal operation
+            </div>`;
+    }
+}
+
+function previewMaintenancePage() {
+    const message = document.getElementById('maintenance_message').value;
+    const siteTitle = document.getElementById('site_title').value || 'Website';
+    
+    // Create a temporary window with maintenance page preview
+    const previewWindow = window.open('', 'maintenancePreview', 'width=800,height=600,scrollbars=yes');
+    const previewContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site Maintenance - ${siteTitle}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+        
+        .maintenance-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .maintenance-icon {
+            font-size: 4rem;
+            margin-bottom: 2rem;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+    </style>
+</head>
+<body>
+    <div class="maintenance-container">
+        <div class="maintenance-icon">🔧</div>
+        <h1 style="color: #333; font-size: 2.5rem; font-weight: 600; margin-bottom: 1rem; line-height: 1.2;">
+            Site Under Maintenance
+        </h1>
+        <div style="color: #666; font-size: 1.125rem; line-height: 1.6; margin-bottom: 2rem;">
+            ${message.replace(/\\n/g, '<br>')}
+        </div>
+        <div>
+            <a href="/admin/login" style="display: inline-block; padding: 1rem 2rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 10px; font-weight: 500; margin-right: 1rem; margin-bottom: 0.5rem;">
+                👤 Admin Login
+            </a>
+        </div>
+        <div style="margin-top: 2rem; padding: 1rem; background: rgba(102, 126, 234, 0.1); border-radius: 10px; color: #666; font-size: 0.875rem;">
+            <strong>PREVIEW MODE</strong> - This is how visitors will see the maintenance page
+        </div>
+    </div>
+</body>
+</html>`;
+    
+    previewWindow.document.write(previewContent);
+    previewWindow.document.close();
+}
+
+// Character counter for maintenance message
+document.getElementById('maintenance_message').addEventListener('input', function() {
+    const counter = document.getElementById('message-counter');
+    const length = this.value.length;
+    counter.textContent = `${length}/1000`;
+    
+    if (length > 800) {
+        counter.style.color = '#dc2626'; // red
+    } else if (length > 600) {
+        counter.style.color = '#d97706'; // orange
+    } else {
+        counter.style.color = '#6b7280'; // gray
+    }
+});
+
+// Initialize character counter
+document.addEventListener('DOMContentLoaded', function() {
+    const messageField = document.getElementById('maintenance_message');
+    const counter = document.getElementById('message-counter');
+    if (messageField && counter) {
+        counter.textContent = `${messageField.value.length}/1000`;
+    }
+});
+
 // Form validation
 document.getElementById('settingsForm').addEventListener('submit', function(e) {
-    const requiredFields = ['site_title', 'admin_email', 'timezone', 'date_format', 'items_per_page'];
+    const requiredFields = ['site_title', 'admin_email', 'timezone', 'date_format', 'items_per_page', 'maintenance_message'];
     
     for (const field of requiredFields) {
         const value = document.getElementById(field).value.trim();
@@ -519,6 +738,14 @@ document.getElementById('settingsForm').addEventListener('submit', function(e) {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(email)) {
         alert('Please enter a valid email address.');
+        e.preventDefault();
+        return;
+    }
+    
+    // Maintenance message validation
+    const maintenanceMessage = document.getElementById('maintenance_message').value;
+    if (maintenanceMessage.length > 1000) {
+        alert('Maintenance message must be less than 1000 characters.');
         e.preventDefault();
         return;
     }

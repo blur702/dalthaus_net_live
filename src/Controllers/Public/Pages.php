@@ -6,7 +6,6 @@ namespace CMS\Controllers\Public;
 
 use CMS\Controllers\BaseController;
 use CMS\Models\Page;
-use CMS\Models\Settings;
 
 /**
  * Pages Controller
@@ -28,10 +27,6 @@ class Pages extends BaseController
     {
         // Set default layout for public pages
         $this->view->layout('default');
-        
-        // Get site settings for all public pages
-        $settings = Settings::getAll();
-        $this->view->with('settings', $settings);
     }
 
     /**

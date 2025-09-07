@@ -42,7 +42,9 @@ class Settings extends BaseModel
         'admin_email' => 'admin@example.com',
         'timezone' => 'America/New_York',
         'date_format' => 'Y-m-d',
-        'items_per_page' => '10'
+        'items_per_page' => '10',
+        'maintenance_mode' => '0',
+        'maintenance_message' => 'We are currently performing maintenance on our site. Please check back shortly.'
     ];
 
     /**
@@ -101,7 +103,9 @@ class Settings extends BaseModel
                     'setting_name = ?',
                     [$name]
                 );
-                $success = $result > 0;
+                // Consider it successful even if no rows changed (value might be the same)
+                // The update operation itself succeeded, even if the value didn't change
+                $success = $result !== false;
             } else {
                 // Insert new setting
                 $id = $instance->db->insert($instance->table, [
@@ -111,9 +115,9 @@ class Settings extends BaseModel
                 $success = !empty($id);
             }
 
+            // Always update cache when operation succeeds
             if ($success) {
-                // Update cache
-                self::$settingsCache[$name] = $value;
+                self::$settingsCache[$name] = $valueString;
             }
 
             return $success;
@@ -292,7 +296,9 @@ class Settings extends BaseModel
             'admin_email',
             'timezone',
             'date_format',
-            'items_per_page'
+            'items_per_page',
+            'maintenance_mode',
+            'maintenance_message'
         ]);
     }
 
@@ -386,6 +392,15 @@ class Settings extends BaseModel
         // Timezone validation
         if (!empty($data['timezone']) && !in_array($data['timezone'], timezone_identifiers_list())) {
             $errors['timezone'] = 'Invalid timezone';
+        }
+
+        // Maintenance message validation
+        if (isset($data['maintenance_message'])) {
+            if (empty($data['maintenance_message'])) {
+                $errors['maintenance_message'] = 'Maintenance message is required when provided';
+            } elseif (strlen($data['maintenance_message']) > 1000) {
+                $errors['maintenance_message'] = 'Maintenance message must be less than 1000 characters';
+            }
         }
 
         return $errors;

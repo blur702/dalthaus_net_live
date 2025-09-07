@@ -21,9 +21,9 @@ use Exception;
 class Settings extends BaseController
 {
     /**
-     * Maximum file size for uploads (2MB)
+     * Maximum file size for uploads (25MB)
      */
-    private const MAX_FILE_SIZE = 2 * 1024 * 1024;
+    private const MAX_FILE_SIZE = 25 * 1024 * 1024;
 
     /**
      * Initialize controller
@@ -529,7 +529,9 @@ class Settings extends BaseController
             'admin_email' => $this->sanitize($this->getParam('admin_email', '', 'post')),
             'timezone' => $this->sanitize($this->getParam('timezone', '', 'post')),
             'date_format' => $this->sanitize($this->getParam('date_format', '', 'post')),
-            'items_per_page' => $this->sanitize($this->getParam('items_per_page', '10', 'post'))
+            'items_per_page' => $this->sanitize($this->getParam('items_per_page', '10', 'post')),
+            'maintenance_mode' => $this->getParam('maintenance_mode', '0', 'post') === '1' ? '1' : '0',
+            'maintenance_message' => $this->sanitize($this->getParam('maintenance_message', '', 'post'))
         ];
     }
 
@@ -581,7 +583,7 @@ class Settings extends BaseController
     {
         // Check file size
         if ($file['size'] > self::MAX_FILE_SIZE) {
-            return ['valid' => false, 'message' => 'File size must be less than 2MB'];
+            return ['valid' => false, 'message' => 'File size must be less than 25MB'];
         }
 
         // Check file type
@@ -615,7 +617,7 @@ class Settings extends BaseController
     {
         // Check file size
         if ($file['size'] > self::MAX_FILE_SIZE) {
-            return ['valid' => false, 'message' => 'File size must be less than 2MB'];
+            return ['valid' => false, 'message' => 'File size must be less than 25MB'];
         }
 
         // Check file type (favicon specific)

@@ -34,9 +34,9 @@ class FileUpload
     ];
     
     /**
-     * Maximum file size (10MB)
+     * Maximum file size (25MB)
      */
-    private const MAX_FILE_SIZE = 10485760;
+    private const MAX_FILE_SIZE = 26214400;
     
     /**
      * Constructor

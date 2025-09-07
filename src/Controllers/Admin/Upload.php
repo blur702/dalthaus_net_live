@@ -25,7 +25,7 @@ class Upload extends BaseController
         $file = $_FILES['file'];
         $uploadDir = __DIR__ . '/../../../uploads/content';
         $allowedTypes = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-        $maxSize = 10 * 1024 * 1024; // 10MB
+        $maxSize = 25 * 1024 * 1024; // 25MB
 
         // Validate file type
         $fileExtension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
