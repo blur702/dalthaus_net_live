@@ -32,7 +32,8 @@
                     <div class="relative">
                         <input type="text" name="username" id="username" required maxlength="50"
                                value="<?= $this->escape($form_data['username'] ?? '') ?>"
-                               class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm <?= isset($form_errors['username']) ? 'border-red-300' : '' ?>"
+                               class="block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out sm:text-sm <?= isset($form_errors['username']) ? 'border-red-300 bg-red-50' : 'bg-white hover:border-gray-400' ?>"
+                               placeholder="johndoe"
                                onblur="checkUsername()">
                         <div class="absolute inset-y-0 right-0 pr-3 flex items-center" id="username-status" style="display: none;">
                             <!-- Status icons will be inserted here -->
@@ -54,7 +55,8 @@
                     <div class="relative">
                         <input type="email" name="email" id="email" required maxlength="255"
                                value="<?= $this->escape($form_data['email'] ?? '') ?>"
-                               class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm <?= isset($form_errors['email']) ? 'border-red-300' : '' ?>"
+                               class="block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out sm:text-sm <?= isset($form_errors['email']) ? 'border-red-300 bg-red-50' : 'bg-white hover:border-gray-400' ?>"
+                               placeholder="john@example.com"
                                onblur="checkEmail()">
                         <div class="absolute inset-y-0 right-0 pr-3 flex items-center" id="email-status" style="display: none;">
                             <!-- Status icons will be inserted here -->

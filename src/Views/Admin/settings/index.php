@@ -41,7 +41,7 @@
                         </label>
                         <input type="text" name="site_title" id="site_title" required maxlength="100"
                                value="<?= $this->escape($settings['site_title'] ?? '') ?>"
-                               class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm <?= isset($form_errors['site_title']) ? 'border-red-300' : '' ?>">
+                               class="block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out sm:text-sm <?= isset($form_errors['site_title']) ? 'border-red-300 bg-red-50' : 'bg-white hover:border-gray-400' ?>" placeholder="My Website">
                         <?php if (isset($form_errors['site_title'])): ?>
                         <p class="mt-1 text-sm text-red-600"><?= $this->escape($form_errors['site_title']) ?></p>
                         <?php else: ?>
@@ -56,7 +56,7 @@
                         </label>
                         <input type="email" name="admin_email" id="admin_email" required maxlength="255"
                                value="<?= $this->escape($settings['admin_email'] ?? '') ?>"
-                               class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm <?= isset($form_errors['admin_email']) ? 'border-red-300' : '' ?>">
+                               class="block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out sm:text-sm <?= isset($form_errors['admin_email']) ? 'border-red-300 bg-red-50' : 'bg-white hover:border-gray-400' ?>" placeholder="admin@example.com">
                         <?php if (isset($form_errors['admin_email'])): ?>
                         <p class="mt-1 text-sm text-red-600"><?= $this->escape($form_errors['admin_email']) ?></p>
                         <?php else: ?>

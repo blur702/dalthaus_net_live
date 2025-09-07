@@ -220,11 +220,22 @@ class Page extends BaseModel
     {
         $body = $this->getAttribute('body') ?? '';
         
+        // If no body content, return empty array
+        if (empty(trim($body))) {
+            return [];
+        }
+        
         // Split by TinyMCE pagebreak delimiter
         $pages = preg_split('/<hr\s+class=["\']mce-pagebreak["\'][^>]*>/i', $body);
         
-        // Remove empty pages and trim
-        return array_filter(array_map('trim', $pages));
+        // Trim pages and filter out completely empty ones
+        $pages = array_map('trim', $pages);
+        $pages = array_filter($pages, function($page) {
+            return !empty($page);
+        });
+        
+        // Re-index array to ensure sequential keys
+        return array_values($pages);
     }
 
     /**

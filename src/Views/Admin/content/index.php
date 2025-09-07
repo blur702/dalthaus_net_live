@@ -37,11 +37,11 @@
         <form method="GET" action="/admin/content" class="grid grid-cols-1 md:grid-cols-5 gap-4">
             <div>
                 <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
-                <input type="text" name="search" id="search" value="<?= $this->escape($filters['search'] ?? '') ?>" placeholder="Search title, teaser..." class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                <input type="text" name="search" id="search" value="<?= $this->escape($filters['search'] ?? '') ?>" placeholder="Search title, teaser..." class="mt-1 block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out sm:text-sm bg-white hover:border-gray-400">
             </div>
             <div>
                 <label for="type" class="block text-sm font-medium text-gray-700">Type</label>
-                <select name="type" id="type" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                <select name="type" id="type" class="mt-1 block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out sm:text-sm bg-white hover:border-gray-400 cursor-pointer">
                     <option value="">All Types</option>
                     <option value="article" <?= ($filters['type'] ?? '') === 'article' ? 'selected' : '' ?>>Articles</option>
                     <option value="photobook" <?= ($filters['type'] ?? '') === 'photobook' ? 'selected' : '' ?>>Photobooks</option>
@@ -49,7 +49,7 @@
             </div>
             <div>
                 <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-                <select name="status" id="status" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                <select name="status" id="status" class="mt-1 block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out sm:text-sm bg-white hover:border-gray-400 cursor-pointer">
                     <option value="">All Status</option>
                     <option value="published" <?= ($filters['status'] ?? '') === 'published' ? 'selected' : '' ?>>Published</option>
                     <option value="draft" <?= ($filters['status'] ?? '') === 'draft' ? 'selected' : '' ?>>Draft</option>
@@ -57,7 +57,7 @@
             </div>
             <div>
                 <label for="sort_by" class="block text-sm font-medium text-gray-700">Sort By</label>
-                <select name="sort_by" id="sort_by" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                <select name="sort_by" id="sort_by" class="mt-1 block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out sm:text-sm bg-white hover:border-gray-400 cursor-pointer">
                     <option value="updated_at" <?= ($filters['sort_by'] ?? '') === 'updated_at' ? 'selected' : '' ?>>Updated Date</option>
                     <option value="created_at" <?= ($filters['sort_by'] ?? '') === 'created_at' ? 'selected' : '' ?>>Created Date</option>
                     <option value="published_at" <?= ($filters['sort_by'] ?? '') === 'published_at' ? 'selected' : '' ?>>Published Date</option>

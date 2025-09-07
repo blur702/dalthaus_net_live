@@ -32,25 +32,25 @@
                 <!-- Title -->
                 <div>
                     <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Title <span class="text-red-500">*</span></label>
-                    <input type="text" name="title" id="title" required maxlength="200" value="<?= $this->escape($form_data['title'] ?? $content->getAttribute('title')) ?>" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    <input type="text" name="title" id="title" required maxlength="200" value="<?= $this->escape($form_data['title'] ?? $content->getAttribute('title')) ?>" class="block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out sm:text-sm bg-white hover:border-gray-400" placeholder="Enter title...">
                 </div>
 
                 <!-- URL Alias -->
                 <div>
                     <label for="url_alias" class="block text-sm font-medium text-gray-700 mb-1">URL Alias <span class="text-red-500">*</span></label>
-                    <input type="text" name="url_alias" id="url_alias" required maxlength="100" value="<?= $this->escape($form_data['url_alias'] ?? $content->getAttribute('url_alias')) ?>" pattern="[a-z0-9\-]+" title="Only lowercase letters, numbers, and hyphens allowed" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    <input type="text" name="url_alias" id="url_alias" required maxlength="100" value="<?= $this->escape($form_data['url_alias'] ?? $content->getAttribute('url_alias')) ?>" pattern="[a-z0-9\-]+" title="Only lowercase letters, numbers, and hyphens allowed" class="block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out sm:text-sm bg-white hover:border-gray-400" placeholder="e.g., my-article-title">
                 </div>
 
                 <!-- Content Body -->
                 <div>
                     <label for="body" class="block text-sm font-medium text-gray-700 mb-1">Content <span class="text-red-500">*</span></label>
-                    <textarea name="body" id="body" rows="20" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"><?= $this->escape($form_data['body'] ?? $content->getAttribute('body')) ?></textarea>
+                    <textarea name="body" id="body" rows="20" class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out sm:text-sm bg-white hover:border-gray-400" placeholder="Write your content here..."><?= $this->escape($form_data['body'] ?? $content->getAttribute('body')) ?></textarea>
                 </div>
 
                 <!-- Teaser -->
                 <div>
                     <label for="teaser" class="block text-sm font-medium text-gray-700 mb-1">Teaser</label>
-                    <textarea name="teaser" id="teaser" rows="3" maxlength="500" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="A brief summary for listings..."><?= $this->escape($form_data['teaser'] ?? $content->getAttribute('teaser')) ?></textarea>
+                    <textarea name="teaser" id="teaser" rows="3" maxlength="500" class="block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out sm:text-sm bg-white hover:border-gray-400" placeholder="A brief summary for listings..."><?= $this->escape($form_data['teaser'] ?? $content->getAttribute('teaser')) ?></textarea>
                 </div>
 
                 <!-- Images -->
@@ -60,7 +60,7 @@
                         <?php if ($content->getAttribute('featured_image')): ?>
                             <div class="mb-2"><img src="/uploads/<?= $this->escape($content->getAttribute('featured_image')) ?>" alt="Current featured image" class="h-32 w-auto rounded-md border border-gray-200"></div>
                         <?php endif; ?>
-                        <input type="file" name="featured_image" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"/>
+                        <input type="file" name="featured_image" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-lg file:border file:border-gray-300 file:text-sm file:font-medium file:bg-white file:text-gray-700 hover:file:bg-gray-50 file:transition file:duration-150 file:ease-in-out cursor-pointer"/>
                         <p class="mt-1 text-xs text-gray-500">Upload a new image to replace the current one.</p>
                     </div>
                     <div>
@@ -68,7 +68,7 @@
                         <?php if ($content->getAttribute('teaser_image')): ?>
                             <div class="mb-2"><img src="/uploads/<?= $this->escape($content->getAttribute('teaser_image')) ?>" alt="Current teaser image" class="h-32 w-auto rounded-md border border-gray-200"></div>
                         <?php endif; ?>
-                        <input type="file" name="teaser_image" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"/>
+                        <input type="file" name="teaser_image" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-lg file:border file:border-gray-300 file:text-sm file:font-medium file:bg-white file:text-gray-700 hover:file:bg-gray-50 file:transition file:duration-150 file:ease-in-out cursor-pointer"/>
                         <p class="mt-1 text-xs text-gray-500">Upload a new image to replace the current one.</p>
                     </div>
                 </div>
@@ -77,15 +77,15 @@
             <!-- Action Buttons -->
             <div class="flex items-center justify-end pt-6 border-t border-gray-200 space-x-3">
                 <input type="hidden" name="status" id="status" value="<?= $this->escape($content->getAttribute('status')) ?>">
-                <button type="submit" name="action" value="save" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                <button type="submit" name="action" value="save" class="inline-flex items-center px-5 py-2.5 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition duration-150 ease-in-out shadow-sm">
                     Save Changes
                 </button>
                 <?php if ($content->getAttribute('status') === 'draft'): ?>
-                    <button type="submit" name="action" value="publish" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+                    <button type="submit" name="action" value="publish" class="inline-flex items-center px-5 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out shadow-sm">
                         Save & Publish
                     </button>
                 <?php else: ?>
-                    <button type="submit" name="action" value="draft" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700">
+                    <button type="submit" name="action" value="draft" class="inline-flex items-center px-5 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition duration-150 ease-in-out shadow-sm">
                         Unpublish (Save as Draft)
                     </button>
                 <?php endif; ?>

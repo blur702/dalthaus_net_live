@@ -9,9 +9,17 @@
     
     <!-- Page Content -->
     <article class="prose max-w-none">
+        <?php if ($total_pages > 1): ?>
+        <h2 class="text-lg font-bold mb-4" style="font-family: Arial, sans-serif;">
+            Page Section title
+        </h2>
+        <?php endif; ?>
+        
         <div class="content-text leading-relaxed text-gray-900">
-            <?php if ($page->getAttribute('content')): ?>
-                <?= $page->getAttribute('content') ?>
+            <?php if (!empty($content)): ?>
+                <?= $content ?>
+            <?php elseif ($page->getAttribute('body')): ?>
+                <?= $page->getAttribute('body') ?>
             <?php else: ?>
                 <p class="mb-4">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad 
@@ -29,4 +37,42 @@
             <?php endif; ?>
         </div>
     </article>
+    
+    <?php if ($total_pages > 1): ?>
+    <!-- Page Navigation -->
+    <div class="mt-8 mb-8 text-center border-t border-b border-gray-300 py-4">
+        <div class="text-sm text-gray-900 mb-2">Pages in this Content</div>
+        <div class="text-xs text-gray-600">Drop Down: Section titles</div>
+    </div>
+    
+    <!-- Page Navigation -->
+    <div class="pagination">
+        <!-- Previous Page -->
+        <?php if ($current_page > 1): ?>
+        <a href="<?= $this->escape($page->getUrl() . '?p=' . ($current_page - 1)) ?>" aria-label="Previous page">&lt;</a>
+        <?php else: ?>
+        <span class="disabled">&lt;</span>
+        <?php endif; ?>
+        
+        <!-- Page Numbers -->
+        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+            <?php if ($i == $current_page): ?>
+            <span class="current"><?= $i ?></span>
+            <?php else: ?>
+            <a href="<?= $this->escape($page->getUrl() . '?p=' . $i) ?>"><?= $i ?></a>
+            <?php endif; ?>
+        <?php endfor; ?>
+        
+        <?php if ($total_pages > 8): ?>
+        <span>...</span>
+        <?php endif; ?>
+        
+        <!-- Next Page -->
+        <?php if ($current_page < $total_pages): ?>
+        <a href="<?= $this->escape($page->getUrl() . '?p=' . ($current_page + 1)) ?>" aria-label="Next page">&gt;</a>
+        <?php else: ?>
+        <span class="disabled">&gt;</span>
+        <?php endif; ?>
+    </div>
+    <?php endif; ?>
 </div>

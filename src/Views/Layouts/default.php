@@ -259,6 +259,22 @@
     </div>
 
     <script>
+        // Prevent custom element redefinition errors from browser extensions
+        (function() {
+            const originalDefine = window.customElements ? window.customElements.define : null;
+            if (originalDefine) {
+                window.customElements.define = function(name, constructor, options) {
+                    if (!window.customElements.get(name)) {
+                        try {
+                            originalDefine.call(window.customElements, name, constructor, options);
+                        } catch (e) {
+                            console.warn('Custom element registration blocked:', name);
+                        }
+                    }
+                };
+            }
+        })();
+        
         function openMenu() {
             document.getElementById('sideMenu').classList.add('active');
             document.getElementById('menuOverlay').classList.add('active');
