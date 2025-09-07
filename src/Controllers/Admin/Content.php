@@ -11,8 +11,6 @@ use Exception;
 
 class Content extends BaseController
 {
-    private const ITEMS_PER_PAGE = 20;
-
     protected function initialize(): void
     {
         $this->requireAuth();
@@ -26,6 +24,7 @@ class Content extends BaseController
         $search = $this->sanitize($this->getParam('search', ''));
         $status = $this->getParam('status', '');
         $sortBy = $this->getParam('sort_by', 'created_at');
+        $sortDir = $this->getParam('sort_dir', 'DESC');
         
         // Validate content type
         $validTypes = [ContentModel::TYPE_ARTICLE, ContentModel::TYPE_PHOTOBOOK];
@@ -38,23 +37,25 @@ class Content extends BaseController
             'search' => $search,
             'status' => $status,
             'content_type' => $type,
-            'sort_by' => $sortBy
+            'sort_by' => $sortBy,
+            'sort_dir' => $sortDir
         ];
         
         // Get content items
+        $itemsPerPage = $this->config['app']['items_per_page'] ?? 10;
         $totalItems = ContentModel::countWithFilters($filters);
-        $totalPages = ceil($totalItems / self::ITEMS_PER_PAGE);
+        $totalPages = ceil($totalItems / $itemsPerPage);
         $page = max(1, min($page, $totalPages ?: 1));
-        $offset = ($page - 1) * self::ITEMS_PER_PAGE;
+        $offset = ($page - 1) * $itemsPerPage;
         
-        $content = ContentModel::findWithFilters($filters, self::ITEMS_PER_PAGE, (int) $offset);
+        $content = ContentModel::findWithFilters($filters, $itemsPerPage, (int) $offset);
         
         // Prepare pagination data
         $pagination = [
             'current_page' => $page,
             'total_pages' => $totalPages,
             'total_items' => $totalItems,
-            'items_per_page' => self::ITEMS_PER_PAGE,
+            'items_per_page' => $itemsPerPage,
             'has_prev' => $page > 1,
             'has_next' => $page < $totalPages,
             'prev_page' => max(1, $page - 1),
@@ -131,7 +132,18 @@ class Content extends BaseController
             }
 
             // Handle file uploads
-            $this->handleFileUploads($data);
+            $uploadErrors = $this->handleFileUploads($data);
+            $errors = array_merge($errors, $uploadErrors);
+
+            if (!empty($errors)) {
+                // **FIX:** Store data and errors in session and redirect
+                $_SESSION['form_data'] = $data;
+                $_SESSION['form_errors'] = $errors;
+                $this->setFlash('error', 'Please fix the validation errors below.');
+                // Redirect back to the create form, preserving the content type
+                $this->redirect('/admin/content/create?type=' . urlencode($data['content_type']));
+                return;
+            }
 
             // Set additional fields
             $data['user_id'] = $this->getCurrentUserId();
@@ -269,7 +281,16 @@ class Content extends BaseController
             }
             
             // Handle file uploads
-            $this->handleFileUploads($data);
+            $uploadErrors = $this->handleFileUploads($data);
+            $errors = array_merge($errors, $uploadErrors);
+
+            if (!empty($errors)) {
+                $_SESSION['form_data'] = $data;
+                $_SESSION['form_errors'] = $errors;
+                $this->setFlash('error', 'Please fix the validation errors.');
+                $this->redirect('/admin/content/' . $id . '/edit');
+                return;
+            }
             
             // Update timestamps
             $data['updated_at'] = date('Y-m-d H:i:s');
@@ -493,9 +514,11 @@ class Content extends BaseController
 
     /**
      * @param array<string, mixed> $data
+     * @return array<string, string>
      */
-    private function handleFileUploads(array &$data): void
+    private function handleFileUploads(array &$data): array
     {
+        $errors = [];
         // Create year/month folder structure
         $yearMonth = date('Y/m');
         $uploadBasePath = dirname(__DIR__, 3) . '/uploads/content/';
@@ -520,6 +543,8 @@ class Content extends BaseController
             
             if ($result['success']) {
                 $data['featured_image'] = 'content/featured/' . $yearMonth . '/' . $result['filename'];
+            } else {
+                $errors['featured_image'] = $result['error'];
             }
         }
         
@@ -543,7 +568,10 @@ class Content extends BaseController
             
             if ($result['success']) {
                 $data['teaser_image'] = 'content/teasers/' . $yearMonth . '/' . $result['filename'];
+            } else {
+                $errors['teaser_image'] = $result['error'];
             }
         }
+        return $errors;
     }
 }
