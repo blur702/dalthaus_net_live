@@ -43,6 +43,23 @@ abstract class BaseController
 
     protected function render(string $template, array $data = []): void
     {
+        // Add current_user to all admin views
+        if (!isset($data['current_user']) && $this->getCurrentUserId()) {
+            $userModel = new \CMS\Models\User();
+            $user = $userModel->find($this->getCurrentUserId());
+            $data['current_user'] = $user ? $user->toArray() : null;
+        }
+        
+        // Add CSRF token if not already set
+        if (!isset($data['csrf_token'])) {
+            $data['csrf_token'] = $this->generateCsrfToken();
+        }
+        
+        // Add flash messages if not already set
+        if (!isset($data['flash'])) {
+            $data['flash'] = $this->getFlash();
+        }
+        
         echo $this->view->render($template, $data);
     }
 

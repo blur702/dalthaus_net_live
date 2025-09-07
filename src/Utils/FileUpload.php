@@ -243,39 +243,60 @@ class FileUpload
      */
     private function scanFileContent(string $filepath): void
     {
-        $content = file_get_contents($filepath);
+        // Check if this is an image file
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_file($finfo, $filepath);
+        finfo_close($finfo);
         
-        // Check for PHP tags
-        if (preg_match('/<\?php|<\?=/i', $content)) {
-            throw new Exception('Potentially malicious content detected.');
-        }
+        $isImage = strpos($mimeType, 'image/') === 0;
         
-        // Check for common web shells patterns
-        $maliciousPatterns = [
-            '/eval\s*\(/i',
-            '/base64_decode\s*\(/i',
-            '/shell_exec\s*\(/i',
-            '/system\s*\(/i',
-            '/passthru\s*\(/i',
-            '/exec\s*\(/i',
-            '/popen\s*\(/i',
-            '/proc_open\s*\(/i',
-            '/include\s*\(/i',
-            '/require\s*\(/i',
-            '/file_get_contents\s*\(/i',
-            '/file_put_contents\s*\(/i',
-            '/fopen\s*\(/i'
-        ];
-        
-        foreach ($maliciousPatterns as $pattern) {
-            if (preg_match($pattern, $content)) {
-                throw new Exception('Suspicious content pattern detected.');
+        if ($isImage) {
+            // For images, only check the first 1KB for PHP signatures
+            // This avoids false positives from binary image data
+            $handle = fopen($filepath, 'rb');
+            $header = fread($handle, 1024);
+            fclose($handle);
+            
+            // Check for PHP tags in the header
+            if (preg_match('/<\?php|<\?=/i', $header)) {
+                throw new Exception('PHP code detected in image file.');
             }
-        }
-        
-        // Check for null bytes
-        if (strpos($content, chr(0)) !== false) {
-            throw new Exception('Null byte detected in file.');
+        } else {
+            // For non-image files, do full content scanning
+            $content = file_get_contents($filepath);
+            
+            // Check for PHP tags
+            if (preg_match('/<\?php|<\?=/i', $content)) {
+                throw new Exception('Potentially malicious content detected.');
+            }
+            
+            // Check for common web shells patterns
+            $maliciousPatterns = [
+                '/eval\s*\(/i',
+                '/base64_decode\s*\(/i',
+                '/shell_exec\s*\(/i',
+                '/system\s*\(/i',
+                '/passthru\s*\(/i',
+                '/exec\s*\(/i',
+                '/popen\s*\(/i',
+                '/proc_open\s*\(/i',
+                '/include\s*\(/i',
+                '/require\s*\(/i',
+                '/file_get_contents\s*\(/i',
+                '/file_put_contents\s*\(/i',
+                '/fopen\s*\(/i'
+            ];
+            
+            foreach ($maliciousPatterns as $pattern) {
+                if (preg_match($pattern, $content)) {
+                    throw new Exception('Suspicious content pattern detected.');
+                }
+            }
+            
+            // Check for null bytes in non-image files
+            if (strpos($content, chr(0)) !== false) {
+                throw new Exception('Null byte detected in file.');
+            }
         }
     }
     

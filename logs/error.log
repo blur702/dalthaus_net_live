@@ -34,3 +34,12 @@
 [07-Sep-2025 11:51:17 America/New_York] Page store error: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'meta_title' in 'field list'
 [07-Sep-2025 11:51:17 America/New_York] Uncaught exception: Call to undefined method CMS\Controllers\Admin\Auth::getUser() in /Users/kevin/PhpstormProjects/dalthaus_net_live/src/Controllers/Admin/Dashboard.php:79
 [07-Sep-2025 12:02:53 America/New_York] Uncaught exception: Cannot use object of type CMS\Models\User as array in /Users/kevin/PhpstormProjects/dalthaus_net_live/src/Views/Admin/dashboard/index.php:9
+[07-Sep-2025 14:51:59 America/New_York] Uncaught exception: Cannot use object of type CMS\Models\User as array in /Users/kevin/PhpstormProjects/dalthaus_net_live/src/Views/Layouts/admin.php:36
+[07-Sep-2025 15:09:42 America/New_York] Uncaught exception: Cannot use object of type CMS\Models\User as array in /Users/kevin/PhpstormProjects/dalthaus_net_live/src/Views/Layouts/admin.php:36
+[07-Sep-2025 15:09:50 America/New_York] Uncaught exception: Cannot use object of type CMS\Models\User as array in /Users/kevin/PhpstormProjects/dalthaus_net_live/src/Views/Layouts/admin.php:36
+[07-Sep-2025 15:09:57 America/New_York] Uncaught exception: Cannot use object of type CMS\Models\User as array in /Users/kevin/PhpstormProjects/dalthaus_net_live/src/Views/Layouts/admin.php:36
+[07-Sep-2025 15:15:27 America/New_York] Uncaught exception: Call to a member function getAttribute() on array in /Users/kevin/PhpstormProjects/dalthaus_net_live/src/Views/Admin/dashboard/index.php:9
+[07-Sep-2025 15:20:31 America/New_York] Content store error: Query execution failed: SQLSTATE[22007]: Invalid datetime format: 1292 Incorrect datetime value: '' for column 'published_at' at row 1
+[07-Sep-2025 16:51:39 America/New_York] Content store error: Query execution failed: SQLSTATE[22007]: Invalid datetime format: 1292 Incorrect datetime value: '' for column 'published_at' at row 1
+[07-Sep-2025 16:53:06 America/New_York] Content store error: Query execution failed: SQLSTATE[22007]: Invalid datetime format: 1292 Incorrect datetime value: '' for column 'published_at' at row 1
+[07-Sep-2025 16:53:17 America/New_York] Content store error: Query execution failed: SQLSTATE[22007]: Invalid datetime format: 1292 Incorrect datetime value: '' for column 'published_at' at row 1

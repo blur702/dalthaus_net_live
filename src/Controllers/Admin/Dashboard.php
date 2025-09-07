@@ -50,7 +50,10 @@ class Dashboard extends BaseController
         $recentContent = $this->getRecentContent();
         
         // Get recent activity
-        $recentActivity = ActivityLog::getRecentActivity(10);
+        $recentActivity_raw = ActivityLog::getRecentActivity(10);
+        $recentActivity = array_map(function($item) {
+            return is_object($item) && method_exists($item, 'toArray') ? $item->toArray() : $item;
+        }, $recentActivity_raw);
         
         // Get activity stats for different periods
         $activityStats = [
@@ -58,9 +61,6 @@ class Dashboard extends BaseController
             'week' => ActivityLog::getActivityStats('week'),
             'month' => ActivityLog::getActivityStats('month')
         ];
-        
-        // Get flash messages
-        $flash = $this->getFlash();
         
         // Get time-based greeting
         $hour = (int)date('G');
@@ -80,7 +80,10 @@ class Dashboard extends BaseController
             'cron' => ['status' => 'warning', 'message' => 'Last run 2h ago'],
             'security' => ['status' => 'healthy', 'message' => 'Secure'],
         ];
-        $draft_reminders = Content::all(['status' => Content::STATUS_DRAFT], 'updated_at DESC', 5);
+        $draft_reminders_raw = Content::all(['status' => Content::STATUS_DRAFT], 'updated_at DESC', 5);
+        $draft_reminders = array_map(function($item) {
+            return is_object($item) && method_exists($item, 'toArray') ? $item->toArray() : $item;
+        }, $draft_reminders_raw);
         $most_viewed = []; // Placeholder
 
         $this->render('admin/dashboard/index', [
@@ -88,12 +91,9 @@ class Dashboard extends BaseController
             'recent_content' => $recentContent,
             'recent_activity' => $recentActivity,
             'activity_stats' => $activityStats,
-            'flash' => $flash,
             'greeting' => $greeting,
-            'current_user' => isset($_SESSION['user_id']) ? User::find($_SESSION['user_id']) : null,
             'content_trends' => $this->getContentTrends(),
             'page_title' => 'Dashboard',
-            'csrf_token' => $this->generateCsrfToken(),
             'system_health' => $system_health,
             'draft_reminders' => $draft_reminders,
             'most_viewed' => $most_viewed,
@@ -188,7 +188,11 @@ class Dashboard extends BaseController
      */
     private function getRecentContent(): array
     {
-        return Content::getForAdmin([], 10);
+        $content = Content::getForAdmin([], 10);
+        // Convert Content objects to arrays for view
+        return array_map(function($item) {
+            return is_object($item) && method_exists($item, 'toArray') ? $item->toArray() : $item;
+        }, $content);
     }
     
     /**

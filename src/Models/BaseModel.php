@@ -349,6 +349,17 @@ abstract class BaseModel
     {
         return $this->data[$key] ?? null;
     }
+    
+    /**
+     * Get the ID of this model
+     * 
+     * @return int|null
+     */
+    public function getId(): ?int
+    {
+        $id = $this->getAttribute($this->primaryKey);
+        return $id !== null ? (int) $id : null;
+    }
 
     /**
      * Set attribute value

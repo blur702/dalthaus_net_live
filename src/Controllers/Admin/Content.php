@@ -157,9 +157,12 @@ class Content extends BaseController
 
             $content = ContentModel::create($data);
 
-            if ($content) {
+            if ($content && $content->getId()) {
+                // Log for debugging
+                error_log('Content created: ID=' . $content->getId() . ', URL=' . $data['url_alias'] . ', Status=' . $data['status']);
+                
                 $this->setFlash('success', ucfirst($data['content_type']) . ' created successfully.');
-                $this->redirect('/admin/content/' . $content->getAttribute('content_id') . '/edit');
+                $this->redirect('/admin/content/' . $content->getId() . '/edit');
             } else {
                 throw new Exception('Failed to create content in the database.');
             }
@@ -176,13 +179,17 @@ class Content extends BaseController
      */
     private function getFormData(): array
     {
+        // Get the action to determine status
+        $action = $this->getParam('action', 'draft', 'post');
+        $status = ($action === 'publish') ? ContentModel::STATUS_PUBLISHED : ContentModel::STATUS_DRAFT;
+        
         return [
             'title' => $this->sanitize($this->getParam('title', '', 'post')),
             'teaser' => $this->sanitize($this->getParam('teaser', '', 'post')),
             'body' => $this->getParam('body', '', 'post'),
             'url_alias' => $this->sanitize($this->getParam('url_alias', '', 'post')),
             'content_type' => $this->getParam('content_type', ContentModel::TYPE_ARTICLE, 'post'),
-            'status' => $this->getParam('action', ContentModel::STATUS_DRAFT, 'post'),
+            'status' => $status,
             'published_at' => $this->getParam('published_at', '', 'post'),
             'meta_keywords' => $this->sanitize($this->getParam('meta_keywords', '', 'post')),
             'meta_description' => $this->sanitize($this->getParam('meta_description', '', 'post'))
@@ -219,13 +226,18 @@ class Content extends BaseController
     public function edit(): void
     {
         $id = (int) $this->getParam('id');
+        error_log('Edit content: Looking for ID=' . $id);
+        
         $content = ContentModel::find($id);
         
         if (!$content) {
+            error_log('Edit content: Content not found for ID=' . $id);
             $this->setFlash('error', 'Content not found.');
             $this->redirect('/admin/content');
             return;
         }
+        
+        error_log('Edit content: Found content ID=' . $id . ', Title=' . $content->getAttribute('title'));
         
         $this->render('admin/content/edit', [
             'content' => $content,

@@ -6,7 +6,7 @@
             <p class="text-gray-600">Welcome to your CMS admin panel</p>
             <?php if (!empty($current_user)): ?>
                 <p class="text-sm text-gray-500 mt-1">
-                    Last login: <?= $this->formatDate($current_user->getAttribute('created_at') ?? null, 'M j, Y g:i A') ?>
+                    Last login: <?= $this->formatDate($current_user['created_at'] ?? null, 'M j, Y g:i A') ?>
                 </p>
             <?php endif; ?>
         </div>
@@ -355,23 +355,23 @@
                     <div class="flex items-center justify-between py-2 border-b border-gray-200 last:border-b-0">
                         <div class="flex-1 min-w-0">
                             <p class="text-sm font-medium text-gray-900 truncate">
-                                <?= $this->escape($content->getAttribute('title')) ?>
+                                <?= $this->escape($content['title'] ?? '') ?>
                             </p>
                             <p class="text-xs text-gray-500">
-                                <?= ucfirst($content->getAttribute('content_type')) ?> • 
-                                <?= ucfirst($content->getAttribute('status')) ?> •
-                                <?= date('M j', strtotime($content->getAttribute('updated_at'))) ?>
+                                <?= ucfirst($content['content_type'] ?? '') ?> • 
+                                <?= ucfirst($content['status'] ?? '') ?> •
+                                <?= date('M j', strtotime($content['updated_at'] ?? 'now')) ?>
                             </p>
                         </div>
                         <div class="ml-4 flex-shrink-0 flex space-x-2">
-                            <a href="<?= $content->getUrl() ?>" target="_blank" 
+                            <a href="/<?= $content['content_type'] ?? 'content' ?>/<?= $content['url_alias'] ?? '' ?>" target="_blank" 
                                class="text-gray-400 hover:text-gray-600 text-sm" title="View">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                 </svg>
                             </a>
-                            <a href="/admin/content/<?= $content->getAttribute('content_id') ?>/edit" 
+                            <a href="/admin/content/<?= $content['content_id'] ?? '' ?>/edit" 
                                class="text-blue-600 hover:text-blue-500 text-sm" title="Edit">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>

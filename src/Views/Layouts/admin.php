@@ -8,13 +8,11 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📝</text></svg>">
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js" referrerpolicy="origin"></script>
     
     <style>
         body { background-color: #f8f9fa; }
         .dropdown:hover .dropdown-menu { display: block; }
         .dropdown-menu { display: none; }
-        .tox-tinymce { border-radius: 0.375rem; border: 1px solid #D1D5DB; }
     </style>
 </head>
 <body class="bg-gray-100">
@@ -63,32 +61,9 @@
     </main>
 
     <script>
+        // Page functionality
         document.addEventListener('DOMContentLoaded', function () {
-            // **THE DEFINITIVE FIX:**
-            // Only initialize TinyMCE if a textarea with the ID 'body' exists on the page.
-            // This prevents all script conflicts and errors on pages without an editor.
-            if (document.getElementById('body')) {
-                tinymce.init({
-                    selector: 'textarea#body',
-                    plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table help wordcount pagebreak',
-                    toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | link image | pagebreak code',
-                    height: 500,
-                    menubar: false,
-                    images_upload_url: '/admin/upload/tinymce',
-                    automatic_uploads: true,
-                    setup: function(editor) {
-                        // Ensures content is saved back to the textarea before form submission
-                        editor.on('init', () => {
-                            const form = editor.getElement().form;
-                            if (form && !form.dataset.tinymceSubmitListener) {
-                                form.addEventListener('submit', () => editor.save());
-                                form.dataset.tinymceSubmitListener = 'true';
-                            }
-                        });
-                    }
-                });
-            }
-
+            
             // Auto-dismiss flash messages
             setTimeout(function() {
                 const flashMessage = document.querySelector('.flash-message');
@@ -98,6 +73,24 @@
                     setTimeout(() => flashMessage.remove(), 500);
                 }
             }, 5000);
+            
+            // Auto-generate URL alias from title (for forms that have it)
+            const titleInput = document.getElementById('title');
+            const urlAliasInput = document.getElementById('url_alias');
+            if (titleInput && urlAliasInput) {
+                titleInput.addEventListener('input', function() {
+                    if (!urlAliasInput.dataset.manuallyEdited) {
+                        urlAliasInput.value = this.value.toLowerCase()
+                            .replace(/[^a-z0-9\s-]/g, '')
+                            .replace(/\s+/g, '-')
+                            .replace(/-+/g, '-')
+                            .replace(/^-+|-+$/g, '');
+                    }
+                });
+                urlAliasInput.addEventListener('input', function() {
+                    this.dataset.manuallyEdited = 'true';
+                });
+            }
         });
     </script>
 </body>

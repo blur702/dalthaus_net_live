@@ -1,0 +1,27 @@
+{
+  "name": "dalthaus_net_live",
+  "version": "1.0.0",
+  "description": "",
+  "main": "playwright.config.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blur702/dalthaus_net_live.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/blur702/dalthaus_net_live/issues"
+  },
+  "homepage": "https://github.com/blur702/dalthaus_net_live#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.55.0"
+  }
+}

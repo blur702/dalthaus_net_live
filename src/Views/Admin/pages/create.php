@@ -29,7 +29,7 @@
                 <!-- URL Alias -->
                 <div>
                     <label for="url_alias" class="block text-sm font-medium text-gray-700 mb-1">URL Alias <span class="text-red-500">*</span></label>
-                    <input type="text" name="url_alias" id="url_alias" required maxlength="100" value="<?= $this->escape($form_data['url_alias'] ?? '') ?>" pattern="[a-z0-9-]+" title="Only lowercase letters, numbers, and hyphens allowed" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm <?= isset($form_errors['url_alias']) ? 'border-red-300' : '' ?>">
+                    <input type="text" name="url_alias" id="url_alias" required maxlength="100" value="<?= $this->escape($form_data['url_alias'] ?? '') ?>" pattern="[a-z0-9\-]+" title="Only lowercase letters, numbers, and hyphens allowed" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm <?= isset($form_errors['url_alias']) ? 'border-red-300' : '' ?>">
                     <?php if (isset($form_errors['url_alias'])): ?><p class="mt-1 text-sm text-red-600"><?= $this->escape($form_errors['url_alias']) ?></p><?php else: ?><p class="mt-1 text-sm text-gray-500">Auto-generated from title if left blank.</p><?php endif; ?>
                 </div>
 
@@ -53,3 +53,20 @@
         </form>
     </div>
 </div>
+
+<!-- Block custom element conflicts immediately -->
+<script>
+(function() {
+    if (window.CE_BLOCKED) return;
+    window.CE_BLOCKED = true;
+    const orig = window.customElements.define;
+    const blocked = new Set();
+    window.customElements.define = function(n, c, o) {
+        if (blocked.has(n) || window.customElements.get(n)) return;
+        blocked.add(n);
+        try { orig.call(window.customElements, n, c, o); } catch(e) {}
+    };
+})();
+</script>
+<!-- TinyMCE - Only for this page -->
+<script src="/assets/js/tinymce-single.js"></script>

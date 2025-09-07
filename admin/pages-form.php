@@ -101,7 +101,7 @@ if ($_POST) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <!-- TinyMCE -->
-    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <!-- TinyMCE will be loaded from admin layout -->
 </head>
 <body class="bg-gray-100">
     <!-- Admin Header -->
@@ -286,31 +286,10 @@ if ($_POST) {
         Auto-saved
     </div>
 
+    <!-- TinyMCE initialization handled centrally -->
+    
     <script>
-    // Initialize TinyMCE
-    tinymce.init({
-        selector: '.tinymce-editor',
-        height: 400,
-        menubar: false,
-        plugins: [
-            'advlist', 'autolink', 'lists', 'link', 'image', 'charmap',
-            'preview', 'anchor', 'searchreplace', 'visualblocks', 'code',
-            'fullscreen', 'insertdatetime', 'media', 'table', 'help',
-            'wordcount', 'pagebreak'
-        ],
-        toolbar: 'undo redo | blocks | bold italic forecolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | pagebreak | help',
-        content_css: '//www.tiny.cloud/css/codepen.min.css',
-        pagebreak_separator: '<hr class="mce-pagebreak" />',
-        setup: function(editor) {
-            editor.on('change', function() {
-                // Trigger auto-save on content change
-                if (typeof autoSave === 'function') {
-                    clearTimeout(window.autoSaveTimer);
-                    window.autoSaveTimer = setTimeout(autoSave, 60000); // Auto-save after 60 seconds
-                }
-            });
-        }
-    });
+    // TinyMCE will be initialized automatically
 
     // Auto-generate URL alias from title
     document.getElementById('title').addEventListener('input', function() {

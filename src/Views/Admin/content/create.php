@@ -16,6 +16,28 @@
     </div>
 
     <div class="p-6">
+        <?php if (!empty($form_errors)): ?>
+        <div class="mb-6 bg-red-50 border border-red-200 rounded-md p-4">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium text-red-800">Please fix the validation errors below:</h3>
+                    <div class="mt-2 text-sm text-red-700">
+                        <ul class="list-disc list-inside space-y-1">
+                            <?php foreach ($form_errors as $field => $error): ?>
+                                <li><?= $this->escape($error) ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+        
         <form method="POST" action="/admin/content/store" enctype="multipart/form-data" id="contentForm">
             <input type="hidden" name="_token" value="<?= $this->escape($csrf_token) ?>">
             <input type="hidden" name="content_type" value="<?= $this->escape($content_type) ?>">
@@ -31,7 +53,7 @@
                 <!-- URL Alias -->
                 <div>
                     <label for="url_alias" class="block text-sm font-medium text-gray-700 mb-1">URL Alias <span class="text-red-500">*</span></label>
-                    <input type="text" name="url_alias" id="url_alias" required maxlength="100" value="<?= $this->escape($form_data['url_alias'] ?? '') ?>" pattern="[a-z0-9-]+" title="Only lowercase letters, numbers, and hyphens allowed" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm <?= isset($form_errors['url_alias']) ? 'border-red-300' : '' ?>">
+                    <input type="text" name="url_alias" id="url_alias" required maxlength="100" value="<?= $this->escape($form_data['url_alias'] ?? '') ?>" pattern="[a-z0-9\-]+" title="Only lowercase letters, numbers, and hyphens allowed" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm <?= isset($form_errors['url_alias']) ? 'border-red-300' : '' ?>">
                     <?php if (isset($form_errors['url_alias'])): ?><p class="mt-1 text-sm text-red-600"><?= $this->escape($form_errors['url_alias']) ?></p><?php else: ?><p class="mt-1 text-sm text-gray-500">Auto-generated from title if left blank.</p><?php endif; ?>
                 </div>
 
@@ -75,3 +97,20 @@
         </form>
     </div>
 </div>
+
+<!-- Block custom element conflicts immediately -->
+<script>
+(function() {
+    if (window.CE_BLOCKED) return;
+    window.CE_BLOCKED = true;
+    const orig = window.customElements.define;
+    const blocked = new Set();
+    window.customElements.define = function(n, c, o) {
+        if (blocked.has(n) || window.customElements.get(n)) return;
+        blocked.add(n);
+        try { orig.call(window.customElements, n, c, o); } catch(e) {}
+    };
+})();
+</script>
+<!-- TinyMCE - Only for this page -->
+<script src="/assets/js/tinymce-single.js"></script>
