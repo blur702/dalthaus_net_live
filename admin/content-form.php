@@ -397,7 +397,7 @@ function validateContentData(array $data, ?int $excludeId = null): array
                         <!-- Body -->
                         <div>
                             <label for="body" class="block text-sm font-medium text-gray-700 mb-2">Body Content</label>
-                            <textarea name="body" id="body" rows="20"
+                            <textarea name="body" rows="20"
                                       class="tinymce-editor"><?= htmlspecialchars($formValues['body'] ?? '') ?></textarea>
                         </div>
                     </div>
@@ -509,9 +509,7 @@ function validateContentData(array $data, ?int $excludeId = null): array
     </div>
 
     <script>
-    // Initialize TinyMCE, but only if it hasn't been initialized for this element already.
-    // This prevents conflicts if this form is loaded into a page that already has TinyMCE.
-    if (document.querySelector('.tinymce-editor') && (!tinymce.get('body'))) {
+    // Initialize TinyMCE
         tinymce.init({
             selector: '.tinymce-editor',
             height: 400,
@@ -535,7 +533,6 @@ function validateContentData(array $data, ?int $excludeId = null): array
             });
         }
     });
-    }
 
     // Auto-generate URL alias from title
     document.getElementById('title').addEventListener('input', function() {
