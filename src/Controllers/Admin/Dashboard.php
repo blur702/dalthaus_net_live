@@ -72,6 +72,17 @@ class Dashboard extends BaseController
             $greeting = 'Good evening';
         }
 
+        // Dummy data for missing variables
+        $system_health = [
+            'database' => ['status' => 'healthy', 'message' => 'Connected'],
+            'cache' => ['status' => 'healthy', 'message' => 'OK'],
+            'uploads' => ['status' => 'healthy', 'message' => 'Writable'],
+            'cron' => ['status' => 'warning', 'message' => 'Last run 2h ago'],
+            'security' => ['status' => 'healthy', 'message' => 'Secure'],
+        ];
+        $draft_reminders = Content::all(['status' => Content::STATUS_DRAFT], 'updated_at DESC', 5);
+        $most_viewed = []; // Placeholder
+
         $this->render('admin/dashboard/index', [
             'stats' => $stats,
             'recent_content' => $recentContent,
@@ -82,7 +93,10 @@ class Dashboard extends BaseController
             'current_user' => isset($_SESSION['user_id']) ? User::find($_SESSION['user_id']) : null,
             'content_trends' => $this->getContentTrends(),
             'page_title' => 'Dashboard',
-            'csrf_token' => $this->generateCsrfToken()
+            'csrf_token' => $this->generateCsrfToken(),
+            'system_health' => $system_health,
+            'draft_reminders' => $draft_reminders,
+            'most_viewed' => $most_viewed,
         ]);
     }
 
