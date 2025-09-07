@@ -13,6 +13,9 @@ declare(strict_types=1);
  * @version 1.0.0
  */
 
+// Autoloader
+require_once __DIR__ . '/vendor/autoload.php';
+
 // Custom exception handler for database connection errors
 set_exception_handler(function ($exception) {
     if ($exception instanceof PDOException) {
@@ -64,17 +67,6 @@ if (isset($config['errors']['log_errors']) && $config['errors']['log_errors']) {
     ini_set('log_errors', '1');
     ini_set('error_log', $config['errors']['error_log_path']);
 }
-
-// Autoloader
-spl_autoload_register(function ($class) {
-    // Convert namespace to file path
-    $file = str_replace(['CMS\\', '\\'], ['src/', '/'], $class) . '.php';
-    $file = __DIR__ . '/' . $file;
-    
-    if (file_exists($file)) {
-        require_once $file;
-    }
-});
 
 try {
     // Initialize router

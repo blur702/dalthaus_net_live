@@ -39,13 +39,14 @@ class Content extends BaseModel
     public const STATUS_PUBLISHED = 'published';
 
     /**
-     * Get published articles
+     * Get published content by type
      * 
-     * @param int|null $limit Number of articles to retrieve
+     * @param string $contentType Content type (article or photobook)
+     * @param int|null $limit Number of items to retrieve
      * @param int|null $offset Offset for pagination
      * @return array
      */
-    public static function getPublishedArticles(?int $limit = null, ?int $offset = null): array
+    public static function getPublishedContentByType(string $contentType, ?int $limit = null, ?int $offset = null): array
     {
         $instance = new static();
         
@@ -55,7 +56,7 @@ class Content extends BaseModel
                   WHERE c.content_type = ? AND c.status = ?
                   ORDER BY c.sort_order ASC, c.published_at DESC";
 
-        $params = [self::TYPE_ARTICLE, self::STATUS_PUBLISHED];
+        $params = [$contentType, self::STATUS_PUBLISHED];
 
         if ($limit !== null) {
             $query .= " LIMIT {$limit}";
@@ -69,6 +70,18 @@ class Content extends BaseModel
     }
 
     /**
+     * Get published articles
+     *
+     * @param int|null $limit Number of articles to retrieve
+     * @param int|null $offset Offset for pagination
+     * @return array
+     */
+    public static function getPublishedArticles(?int $limit = null, ?int $offset = null): array
+    {
+        return self::getPublishedContentByType(self::TYPE_ARTICLE, $limit, $offset);
+    }
+
+    /**
      * Get published photobooks
      * 
      * @param int|null $limit Number of photobooks to retrieve
@@ -77,25 +90,7 @@ class Content extends BaseModel
      */
     public static function getPublishedPhotobooks(?int $limit = null, ?int $offset = null): array
     {
-        $instance = new static();
-        
-        $query = "SELECT c.*, u.username 
-                  FROM {$instance->table} c 
-                  LEFT JOIN users u ON c.user_id = u.user_id
-                  WHERE c.content_type = ? AND c.status = ?
-                  ORDER BY c.sort_order ASC, c.published_at DESC";
-
-        $params = [self::TYPE_PHOTOBOOK, self::STATUS_PUBLISHED];
-
-        if ($limit !== null) {
-            $query .= " LIMIT {$limit}";
-            
-            if ($offset !== null) {
-                $query .= " OFFSET {$offset}";
-            }
-        }
-
-        return self::query($query, $params);
+        return self::getPublishedContentByType(self::TYPE_PHOTOBOOK, $limit, $offset);
     }
 
     /**
@@ -164,6 +159,10 @@ class Content extends BaseModel
         // Sorting
         $sortBy = $filters['sort_by'] ?? 'updated_at';
         $sortDir = $filters['sort_dir'] ?? 'DESC';
+        $allowedSortBy = ['title', 'content_type', 'status', 'created_at', 'updated_at', 'published_at'];
+        if (!in_array($sortBy, $allowedSortBy)) {
+            $sortBy = 'updated_at';
+        }
         $query .= " ORDER BY c.{$sortBy} {$sortDir}";
 
         // Pagination
@@ -445,7 +444,7 @@ class Content extends BaseModel
             'status' => $filters['status'] ?? '',
             'search' => $filters['search'] ?? '',
             'sort_by' => $filters['sort_by'] ?? 'updated_at',
-            'sort_dir' => 'DESC'
+            'sort_dir' => $filters['sort_dir'] ?? 'DESC'
         ];
         
         $results = self::getForAdmin($mappedFilters, $limit, $offset);
