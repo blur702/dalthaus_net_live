@@ -58,12 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
             ...tinymceConfig
         });
         
-        // Also initialize specific ID if needed
-        if (document.getElementById('body')) {
-            tinymce.init({
-                selector: '#body',
-                ...tinymceConfig
-            });
-        }
+        // The main layout file, admin.php, handles the initialization for the #body element.
+        // This script will only handle other textareas with the .tinymce-editor class.
     }
 });
