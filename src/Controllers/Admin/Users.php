@@ -181,9 +181,9 @@ class Users extends BaseController
      * 
      * @return void
      */
-    public function edit(): void
+    public function edit(string $id = ''): void
     {
-        $id = (int) $this->getParam('id');
+        $id = (int) $id;
         
         if ($id <= 0) {
             $this->setFlash('error', 'Invalid user ID.');
@@ -235,13 +235,13 @@ class Users extends BaseController
      * 
      * @return void
      */
-    public function update(): void
+    public function update(string $id = ''): void
     {
         if (!$this->isPost()) {
             $this->redirect('/admin/users');
         }
 
-        $id = (int) $this->getParam('id');
+        $id = (int) $id;
         
         if ($id <= 0) {
             $this->setFlash('error', 'Invalid user ID.');
@@ -313,13 +313,13 @@ class Users extends BaseController
      * 
      * @return void
      */
-    public function delete(): void
+    public function delete(string $id = ''): void
     {
         if (!$this->isPost()) {
             $this->redirect('/admin/users');
         }
 
-        $id = (int) $this->getParam('id');
+        $id = (int) $id;
         
         if ($id <= 0) {
             $this->setFlash('error', 'Invalid user ID.');

@@ -94,7 +94,9 @@
                             </div>
                             <div class="ml-4">
                                 <div class="text-sm font-medium text-gray-900">
-                                    <?= $this->escape($page['title']) ?>
+                                    <a href="/page/<?= $page['url_alias'] ?>" target="_blank" class="hover:text-blue-600 hover:underline">
+                                        <?= $this->escape($page['title']) ?>
+                                    </a>
                                 </div>
                                 <?php if ($page['meta_description']): ?>
                                 <div class="text-sm text-gray-500 truncate max-w-md">
@@ -122,7 +124,7 @@
                             <a href="/admin/pages/<?= $page['page_id'] ?>/edit" class="text-blue-600 hover:text-blue-900">
                                 Edit
                             </a>
-                            <a href="/pages/<?= $page['url_alias'] ?>" target="_blank" class="text-green-600 hover:text-green-900">
+                            <a href="/page/<?= $page['url_alias'] ?>" target="_blank" class="text-green-600 hover:text-green-900">
                                 View
                             </a>
                             <button onclick="duplicatePage(<?= $page['page_id'] ?>, '<?= $this->escape($page['title']) ?>')" class="text-purple-600 hover:text-purple-900">

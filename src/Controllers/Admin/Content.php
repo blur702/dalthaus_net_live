@@ -223,9 +223,9 @@ class Content extends BaseController
         return $errors;
     }
 
-    public function edit(): void
+    public function edit(string $id = ''): void
     {
-        $id = (int) $this->getParam('id');
+        $id = (int) $id;
         error_log('Edit content: Looking for ID=' . $id);
         
         $content = ContentModel::find($id);
@@ -249,12 +249,12 @@ class Content extends BaseController
         ]);
     }
 
-    public function update(): void
+    public function update(string $id = ''): void
     {
         // Check if POST data exceeded the limit
         if (empty($_POST) && empty($_FILES) && $_SERVER['CONTENT_LENGTH'] > 0) {
             $maxSize = ini_get('post_max_size');
-            $id = (int) $this->getParam('id');
+            $id = (int) $id;
             $this->setFlash('error', "The uploaded content exceeded the maximum allowed size of {$maxSize}. Please reduce file sizes or upload fewer images.");
             $this->redirect('/admin/content/' . $id . '/edit');
             return;
@@ -271,7 +271,7 @@ class Content extends BaseController
             return;
         }
         
-        $id = (int) $this->getParam('id');
+        $id = (int) $id;
         $content = ContentModel::find($id);
         
         if (!$content) {
@@ -329,7 +329,7 @@ class Content extends BaseController
         }
     }
 
-    public function delete(): void
+    public function delete(string $id = ''): void
     {
         if (!$this->isPost()) {
             $this->redirect('/admin/content');
@@ -342,7 +342,7 @@ class Content extends BaseController
             return;
         }
         
-        $id = (int) $this->getParam('id');
+        $id = (int) $id;
         $content = ContentModel::find($id);
         
         if (!$content) {

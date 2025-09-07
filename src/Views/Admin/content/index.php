@@ -128,7 +128,9 @@
                             <?php endif; ?>
                             <div class="ml-4">
                                 <div class="text-sm font-medium text-gray-900">
-                                    <?= $this->escape($item['title']) ?>
+                                    <a href="/<?= $item['content_type'] ?>/<?= $item['url_alias'] ?>" target="_blank" class="hover:text-blue-600 hover:underline">
+                                        <?= $this->escape($item['title']) ?>
+                                    </a>
                                 </div>
                                 <?php if ($item['teaser']): ?>
                                 <div class="text-sm text-gray-500 truncate max-w-xs">
@@ -159,7 +161,7 @@
                             <a href="/admin/content/<?= $item['content_id'] ?>/edit" class="text-blue-600 hover:text-blue-900">
                                 Edit
                             </a>
-                            <a href="/<?= $item['content_type'] ?>s/<?= $item['url_alias'] ?>" target="_blank" class="text-green-600 hover:text-green-900">
+                            <a href="/<?= $item['content_type'] ?>/<?= $item['url_alias'] ?>" target="_blank" class="text-green-600 hover:text-green-900">
                                 View
                             </a>
                             <button onclick="deleteContent(<?= $item['content_id'] ?>, '<?= $this->escape($item['title']) ?>')" class="text-red-600 hover:text-red-900">
