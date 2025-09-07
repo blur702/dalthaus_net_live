@@ -6,7 +6,7 @@
             <p class="text-gray-600">Welcome to your CMS admin panel</p>
             <?php if (!empty($current_user)): ?>
                 <p class="text-sm text-gray-500 mt-1">
-                    Last login: <?= $this->formatDate($current_user['created_at'] ?? null, 'M j, Y g:i A') ?>
+                    Last login: <?= $this->formatDate($current_user->getAttribute('created_at') ?? null, 'M j, Y g:i A') ?>
                 </p>
             <?php endif; ?>
         </div>

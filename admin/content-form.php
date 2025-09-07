@@ -509,10 +509,12 @@ function validateContentData(array $data, ?int $excludeId = null): array
     </div>
 
     <script>
-    // Initialize TinyMCE
-    tinymce.init({
-        selector: '.tinymce-editor',
-        height: 400,
+    // Initialize TinyMCE, but only if it hasn't been initialized for this element already.
+    // This prevents conflicts if this form is loaded into a page that already has TinyMCE.
+    if (document.querySelector('.tinymce-editor') && (!tinymce.get('body'))) {
+        tinymce.init({
+            selector: '.tinymce-editor',
+            height: 400,
         menubar: false,
         plugins: [
             'advlist', 'autolink', 'lists', 'link', 'image', 'charmap',
@@ -533,6 +535,7 @@ function validateContentData(array $data, ?int $excludeId = null): array
             });
         }
     });
+    }
 
     // Auto-generate URL alias from title
     document.getElementById('title').addEventListener('input', function() {
