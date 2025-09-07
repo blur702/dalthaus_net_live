@@ -27,7 +27,7 @@
     </div>
 
     <div class="p-6">
-        <form method="POST" action="/admin/settings" enctype="multipart/form-data" id="settingsForm">
+        <form method="POST" action="/admin/settings/update" enctype="multipart/form-data" id="settingsForm">
             <?= $this->csrfField() ?>
 
             <!-- Basic Site Information -->
