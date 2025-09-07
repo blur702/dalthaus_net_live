@@ -5,7 +5,133 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c4d373a9-2ff0-4bed-b725-60773a6a2f6f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/resources/main-prompt.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config/routes.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Utils/Request.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/.github/CODE_OF_CONDUCT.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/.github/CONTRIBUTING.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/.github/FUNDING.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/.github/ISSUE_TEMPLATE/bug_report.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/.github/ISSUE_TEMPLATE/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/.github/ISSUE_TEMPLATE/feature_request.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/.github/ISSUE_TEMPLATE/moderation_report.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/.github/ISSUE_TEMPLATE/new_subagent.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/ai-engineer.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/api-documenter.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/architect-review.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/backend-architect.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/business-analyst.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/c-pro.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/cloud-architect.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/code-reviewer.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/content-marketer.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/context-manager.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/cpp-pro.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/csharp-pro.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/customer-support.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/data-engineer.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/data-scientist.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/database-admin.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/database-optimizer.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/debugger.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/deployment-engineer.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/devops-troubleshooter.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/docs-architect.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/dx-optimizer.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/e2e-test-runner.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/elixir-pro.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/error-detective.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/flutter-expert.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/frontend-developer.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/golang-pro.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/graphql-architect.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/hr-pro.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/hybrid-cloud-architect.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/incident-responder.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/ios-developer.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/java-pro.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/javascript-pro.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/kubernetes-architect.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/legacy-modernizer.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/legal-advisor.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/mermaid-expert.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/minecraft-bukkit-pro.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/ml-engineer.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/mlops-engineer.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/mobile-developer.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/network-engineer.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/payment-integration.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/performance-engineer.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/php-pro.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/prompt-engineer.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/python-pro.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/quant-analyst.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/reference-builder.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/risk-manager.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/ruby-pro.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/rust-pro.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/sales-automator.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/scala-pro.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/search-specialist.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/security-auditor.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/seo-authority-builder.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/seo-cannibalization-detector.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/seo-content-auditor.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/seo-content-planner.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/seo-content-refresher.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/seo-content-writer.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/seo-keyword-strategist.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/seo-meta-optimizer.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/seo-snippet-hunter.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/seo-structure-architect.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/sql-pro.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/terraform-specialist.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/test-automator.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/tutorial-engineer.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/typescript-pro.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/ui-ux-designer.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/agents/unity-developer.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/main-prompt.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/1x/Admin Area Header-front.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/1x/Admin Dashboard-front.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/1x/Artboard 1-front.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/1x/Artboard 12-front.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/1x/Artboard 14-front.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/1x/Article Create and Edit Content-front.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/1x/Article Item Display-front.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/1x/Article Listing Page-front.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/1x/Article Sorting-front.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/1x/Articles Overview-front.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/1x/FRONT PAGE-front.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/1x/Hamburger Menu Layout-front.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/1x/Pages Create and Edit Page-front.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/1x/Photobook Create-Edit Form-front.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/1x/Photobooks listing page-front.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/1x/Public Front end Header-front.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/1x/Public Frontend Footer-front.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/1x/design specifications. -front.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/sketched v2/1x/Admin Area Header.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/sketched v2/1x/Admin Dashboard.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/sketched v2/1x/Artboard 1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/sketched v2/1x/Artboard 12.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/sketched v2/1x/Artboard 14.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/sketched v2/1x/Article Create and Edit Content.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/sketched v2/1x/Article Item Display.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/sketched v2/1x/Article Listing Page.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/sketched v2/1x/Article Sorting.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/sketched v2/1x/Articles Overview.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/sketched v2/1x/FRONT PAGE.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/sketched v2/1x/Hamburger Menu Layout.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/sketched v2/1x/Pages Create and Edit Page.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/sketched v2/1x/Photobook Create-Edit Form.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/sketched v2/1x/Photobooks listing page.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/sketched v2/1x/Public Front end Header.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/sketched v2/1x/Public Frontend Footer.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/sketches/sketched v2/1x/design specifications. .png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controllers/Admin/Content.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controllers/Admin/Content.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,19 +144,22 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "blur702"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;blur702&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/blur702/dalthaus_net_live.git",
-    "accountId": "f69ea760-08f7-48db-a000-c9772b85185a"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/blur702/dalthaus_net_live.git&quot;,
+    &quot;accountId&quot;: &quot;f69ea760-08f7-48db-a000-c9772b85185a&quot;
   }
-}]]></component>
+}</component>
   <component name="PhpWorkspaceProjectConfiguration" interpreter_name="php" />
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="ProjectErrors" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
 }</component>
@@ -42,21 +171,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "reference.webide.settings.project.settings.php",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/kevin/PhpstormProjects/dalthaus_net_live/resources&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.intellij.mcpserver.settings&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/resources" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -73,11 +209,22 @@
       <option name="presentableId" value="Default" />
       <updated>1757174553464</updated>
       <workItem from="1757174555172" duration="262000" />
-      <workItem from="1757175226234" duration="725000" />
+      <workItem from="1757175226234" duration="36577000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>

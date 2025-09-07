@@ -47,7 +47,7 @@ class Content extends BaseController
         $page = max(1, min($page, $totalPages ?: 1));
         $offset = ($page - 1) * self::ITEMS_PER_PAGE;
         
-        $content = ContentModel::findWithFilters($filters, self::ITEMS_PER_PAGE, $offset);
+        $content = ContentModel::findWithFilters($filters, self::ITEMS_PER_PAGE, (int) $offset);
         
         // Prepare pagination data
         $pagination = [
@@ -97,6 +97,14 @@ class Content extends BaseController
 
     public function store(): void
     {
+        // Check if POST data exceeded the limit
+        if (empty($_POST) && empty($_FILES) && $_SERVER['CONTENT_LENGTH'] > 0) {
+            $maxSize = ini_get('post_max_size');
+            $this->setFlash('error', "The uploaded content exceeded the maximum allowed size of {$maxSize}. Please reduce file sizes or upload fewer images.");
+            $this->redirect('/admin/content/create');
+            return;
+        }
+        
         if (!$this->isPost()) {
             $this->redirect('/admin/content');
             return;
@@ -145,12 +153,15 @@ class Content extends BaseController
             }
 
         } catch (Exception $e) {
-            $this->logError('Content store error', $e);
+            error_log('Content store error: ' . $e->getMessage());
             $this->setFlash('error', 'An error occurred while creating content.');
             $this->redirect('/admin/content/create');
         }
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function getFormData(): array
     {
         return [
@@ -166,6 +177,10 @@ class Content extends BaseController
         ];
     }
 
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, string>
+     */
     private function validateContentData(array $data, ?int $excludeId = null): array
     {
         $errors = [];
@@ -192,7 +207,7 @@ class Content extends BaseController
     public function edit(): void
     {
         $id = (int) $this->getParam('id');
-        $content = ContentModel::findById($id);
+        $content = ContentModel::find($id);
         
         if (!$content) {
             $this->setFlash('error', 'Content not found.');
@@ -212,6 +227,15 @@ class Content extends BaseController
 
     public function update(): void
     {
+        // Check if POST data exceeded the limit
+        if (empty($_POST) && empty($_FILES) && $_SERVER['CONTENT_LENGTH'] > 0) {
+            $maxSize = ini_get('post_max_size');
+            $id = (int) $this->getParam('id');
+            $this->setFlash('error', "The uploaded content exceeded the maximum allowed size of {$maxSize}. Please reduce file sizes or upload fewer images.");
+            $this->redirect('/admin/content/' . $id . '/edit');
+            return;
+        }
+        
         if (!$this->isPost()) {
             $this->redirect('/admin/content');
             return;
@@ -224,7 +248,7 @@ class Content extends BaseController
         }
         
         $id = (int) $this->getParam('id');
-        $content = ContentModel::findById($id);
+        $content = ContentModel::find($id);
         
         if (!$content) {
             $this->setFlash('error', 'Content not found.');
@@ -254,14 +278,19 @@ class Content extends BaseController
                 $data['published_at'] = date('Y-m-d H:i:s');
             }
             
-            if ($content->update($data)) {
+            // Set updated data on content model
+            foreach ($data as $key => $value) {
+                $content->setAttribute($key, $value);
+            }
+            
+            if ($content->save()) {
                 $this->setFlash('success', ucfirst($content->getAttribute('content_type')) . ' updated successfully.');
                 $this->redirect('/admin/content/' . $id . '/edit');
             } else {
                 throw new Exception('Failed to update content.');
             }
         } catch (Exception $e) {
-            $this->logError('Content update error', $e);
+            error_log('Content update error: ' . $e->getMessage());
             $this->setFlash('error', 'An error occurred while updating content.');
             $this->redirect('/admin/content/' . $id . '/edit');
         }
@@ -281,7 +310,7 @@ class Content extends BaseController
         }
         
         $id = (int) $this->getParam('id');
-        $content = ContentModel::findById($id);
+        $content = ContentModel::find($id);
         
         if (!$content) {
             $this->setFlash('error', 'Content not found.');
@@ -294,12 +323,13 @@ class Content extends BaseController
             $featuredImage = $content->getAttribute('featured_image');
             $teaserImage = $content->getAttribute('teaser_image');
             
-            if ($featuredImage && file_exists(PUBLIC_PATH . '/uploads/' . $featuredImage)) {
-                unlink(PUBLIC_PATH . '/uploads/' . $featuredImage);
+            $uploadPath = dirname(__DIR__, 3) . '/uploads/';
+            if ($featuredImage && file_exists($uploadPath . $featuredImage)) {
+                unlink($uploadPath . $featuredImage);
             }
             
-            if ($teaserImage && file_exists(PUBLIC_PATH . '/uploads/' . $teaserImage)) {
-                unlink(PUBLIC_PATH . '/uploads/' . $teaserImage);
+            if ($teaserImage && file_exists($uploadPath . $teaserImage)) {
+                unlink($uploadPath . $teaserImage);
             }
             
             if ($content->delete()) {
@@ -308,7 +338,7 @@ class Content extends BaseController
                 throw new Exception('Failed to delete content.');
             }
         } catch (Exception $e) {
-            $this->logError('Content delete error', $e);
+            error_log('Content delete error: ' . $e->getMessage());
             $this->setFlash('error', 'An error occurred while deleting content.');
         }
         
@@ -337,12 +367,12 @@ class Content extends BaseController
     public function updateOrder(): void
     {
         if (!$this->isPost()) {
-            $this->json(['success' => false, 'message' => 'Invalid request method']);
+            $this->renderJson(['success' => false, 'message' => 'Invalid request method']);
             return;
         }
         
         if (!$this->validateCsrfToken()) {
-            $this->json(['success' => false, 'message' => 'Security token validation failed']);
+            $this->renderJson(['success' => false, 'message' => 'Security token validation failed']);
             return;
         }
         
@@ -354,25 +384,25 @@ class Content extends BaseController
             }
             
             if (ContentModel::updateSortOrder($order)) {
-                $this->json(['success' => true, 'message' => 'Order updated successfully']);
+                $this->renderJson(['success' => true, 'message' => 'Order updated successfully']);
             } else {
                 throw new Exception('Failed to update order');
             }
         } catch (Exception $e) {
-            $this->logError('Update order error', $e);
-            $this->json(['success' => false, 'message' => 'An error occurred while updating order']);
+            error_log('Update order error: ' . $e->getMessage());
+            $this->renderJson(['success' => false, 'message' => 'An error occurred while updating order']);
         }
     }
 
     public function autosave(): void
     {
         if (!$this->isPost()) {
-            $this->json(['success' => false, 'message' => 'Invalid request method']);
+            $this->renderJson(['success' => false, 'message' => 'Invalid request method']);
             return;
         }
         
         if (!$this->validateCsrfToken()) {
-            $this->json(['success' => false, 'message' => 'Security token validation failed']);
+            $this->renderJson(['success' => false, 'message' => 'Security token validation failed']);
             return;
         }
         
@@ -385,7 +415,7 @@ class Content extends BaseController
                 throw new Exception('Invalid autosave data');
             }
             
-            $content = ContentModel::findById($id);
+            $content = ContentModel::find($id);
             
             if (!$content) {
                 throw new Exception('Content not found');
@@ -398,31 +428,30 @@ class Content extends BaseController
                 throw new Exception('Field not allowed for autosave');
             }
             
-            $content->update([
-                $field => $value,
-                'updated_at' => date('Y-m-d H:i:s')
-            ]);
+            $content->setAttribute($field, $value);
+            $content->setAttribute('updated_at', date('Y-m-d H:i:s'));
+            $content->save();
             
-            $this->json([
+            $this->renderJson([
                 'success' => true,
                 'message' => 'Autosaved',
                 'timestamp' => date('g:i:s A')
             ]);
         } catch (Exception $e) {
-            $this->logError('Autosave error', $e);
-            $this->json(['success' => false, 'message' => 'Autosave failed']);
+            error_log('Autosave error: ' . $e->getMessage());
+            $this->renderJson(['success' => false, 'message' => 'Autosave failed']);
         }
     }
 
     public function uploadImage(): void
     {
         if (!$this->isPost()) {
-            $this->json(['success' => false, 'message' => 'Invalid request method']);
+            $this->renderJson(['success' => false, 'message' => 'Invalid request method']);
             return;
         }
         
         if (!$this->validateCsrfToken()) {
-            $this->json(['success' => false, 'message' => 'Security token validation failed']);
+            $this->renderJson(['success' => false, 'message' => 'Security token validation failed']);
             return;
         }
         
@@ -431,47 +460,89 @@ class Content extends BaseController
                 throw new Exception('No file uploaded');
             }
             
-            $upload = new FileUpload($_FILES['file']);
-            $upload->setAllowedTypes(['jpg', 'jpeg', 'png', 'gif', 'webp']);
-            $upload->setMaxSize(5 * 1024 * 1024); // 5MB
-            $upload->setUploadPath(PUBLIC_PATH . '/uploads/content/');
+            // Create year/month folder structure for content images
+            $yearMonth = date('Y/m');
+            $imagePath = dirname(__DIR__, 3) . '/uploads/content/images/' . $yearMonth . '/';
             
-            if ($upload->upload()) {
-                $this->json([
-                    'location' => '/uploads/content/' . $upload->getFileName()
+            // Create directory if it doesn't exist
+            if (!is_dir($imagePath)) {
+                mkdir($imagePath, 0755, true);
+            }
+            
+            $uploadConfig = [
+                'upload_path' => $imagePath,
+                'max_size' => 5 * 1024 * 1024, // 5MB
+                'allowed_types' => ['jpg', 'jpeg', 'png', 'gif', 'webp']
+            ];
+            
+            $upload = new FileUpload($uploadConfig);
+            $result = $upload->upload($_FILES['file']);
+            
+            if ($result['success']) {
+                $this->renderJson([
+                    'location' => '/uploads/content/images/' . $yearMonth . '/' . $result['filename']
                 ]);
             } else {
-                throw new Exception($upload->getError());
+                throw new Exception($result['error'] ?? 'Upload failed');
             }
         } catch (Exception $e) {
-            $this->logError('Image upload error', $e);
-            $this->json(['success' => false, 'message' => $e->getMessage()]);
+            error_log('Image upload error: ' . $e->getMessage());
+            $this->renderJson(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     private function handleFileUploads(array &$data): void
     {
+        // Create year/month folder structure
+        $yearMonth = date('Y/m');
+        $uploadBasePath = dirname(__DIR__, 3) . '/uploads/content/';
+        
         // Handle featured image upload
         if (!empty($_FILES['featured_image']['name'])) {
-            $upload = new FileUpload($_FILES['featured_image']);
-            $upload->setAllowedTypes(['jpg', 'jpeg', 'png', 'gif', 'webp']);
-            $upload->setMaxSize(5 * 1024 * 1024); // 5MB
-            $upload->setUploadPath(PUBLIC_PATH . '/uploads/');
+            $featuredPath = $uploadBasePath . 'featured/' . $yearMonth . '/';
             
-            if ($upload->upload()) {
-                $data['featured_image'] = $upload->getFileName();
+            // Create directory if it doesn't exist
+            if (!is_dir($featuredPath)) {
+                mkdir($featuredPath, 0755, true);
+            }
+            
+            $uploadConfig = [
+                'upload_path' => $featuredPath,
+                'max_size' => 5 * 1024 * 1024, // 5MB
+                'allowed_types' => ['jpg', 'jpeg', 'png', 'gif', 'webp']
+            ];
+            
+            $upload = new FileUpload($uploadConfig);
+            $result = $upload->upload($_FILES['featured_image']);
+            
+            if ($result['success']) {
+                $data['featured_image'] = 'content/featured/' . $yearMonth . '/' . $result['filename'];
             }
         }
         
         // Handle teaser image upload
         if (!empty($_FILES['teaser_image']['name'])) {
-            $upload = new FileUpload($_FILES['teaser_image']);
-            $upload->setAllowedTypes(['jpg', 'jpeg', 'png', 'gif', 'webp']);
-            $upload->setMaxSize(5 * 1024 * 1024); // 5MB
-            $upload->setUploadPath(PUBLIC_PATH . '/uploads/');
+            $teaserPath = $uploadBasePath . 'teasers/' . $yearMonth . '/';
             
-            if ($upload->upload()) {
-                $data['teaser_image'] = $upload->getFileName();
+            // Create directory if it doesn't exist
+            if (!is_dir($teaserPath)) {
+                mkdir($teaserPath, 0755, true);
+            }
+            
+            $uploadConfig = [
+                'upload_path' => $teaserPath,
+                'max_size' => 5 * 1024 * 1024, // 5MB
+                'allowed_types' => ['jpg', 'jpeg', 'png', 'gif', 'webp']
+            ];
+            
+            $upload = new FileUpload($uploadConfig);
+            $result = $upload->upload($_FILES['teaser_image']);
+            
+            if ($result['success']) {
+                $data['teaser_image'] = 'content/teasers/' . $yearMonth . '/' . $result['filename'];
             }
         }
     }
