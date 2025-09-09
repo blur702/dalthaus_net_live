@@ -80,24 +80,44 @@ class Photobooks extends BaseController
             return;
         }
 
-        // Get content pages (split by pagebreak)
-        $contentPages = $photobook->getContentPages();
-        $currentPage = max(1, min(count($contentPages), (int) $this->getParam('p', 1)));
-        $currentContent = $contentPages[$currentPage - 1] ?? '';
+        // Check if user wants full view with page breaks
+        $viewMode = $this->getParam('view', 'paginated');
+        
+        if ($viewMode === 'full') {
+            // Show full content with visual page breaks
+            $content = $photobook->getContentWithPageBreaks();
+            $this->render('photobooks/show', [
+                'photobook' => $photobook,
+                'content' => $content,
+                'view_mode' => 'full',
+                'current_page' => 1,
+                'total_pages' => 1,
+                'author' => $photobook->getAuthor(),
+                'page_title' => $photobook->getAttribute('title'),
+                'meta_description' => $photobook->getAttribute('meta_description'),
+                'meta_keywords' => $photobook->getAttribute('meta_keywords')
+            ]);
+        } else {
+            // Show paginated content (default)
+            $contentPages = $photobook->getContentPages();
+            $currentPage = max(1, min(count($contentPages), (int) $this->getParam('p', 1)));
+            $currentContent = $contentPages[$currentPage - 1] ?? '';
 
-        // Get author information
-        $author = $photobook->getAuthor();
+            // Get author information
+            $author = $photobook->getAuthor();
 
-        // Render photobook template
-        $this->render('photobooks/show', [
-            'photobook' => $photobook,
-            'content' => $currentContent,
-            'current_page' => $currentPage,
-            'total_pages' => count($contentPages),
-            'author' => $author,
-            'page_title' => $photobook->getAttribute('title'),
-            'meta_description' => $photobook->getAttribute('meta_description'),
-            'meta_keywords' => $photobook->getAttribute('meta_keywords')
-        ]);
+            // Render photobook template
+            $this->render('photobooks/show', [
+                'photobook' => $photobook,
+                'content' => $currentContent,
+                'view_mode' => 'paginated',
+                'current_page' => $currentPage,
+                'total_pages' => count($contentPages),
+                'author' => $author,
+                'page_title' => $photobook->getAttribute('title'),
+                'meta_description' => $photobook->getAttribute('meta_description'),
+                'meta_keywords' => $photobook->getAttribute('meta_keywords')
+            ]);
+        }
     }
 }

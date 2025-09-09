@@ -48,20 +48,39 @@ class Pages extends BaseController
             return;
         }
 
-        // Get content pages (split by pagebreak)
-        $contentPages = $page->getContentPages();
-        $currentPage = max(1, min(count($contentPages), (int) $this->getParam('p', 1)));
-        $currentContent = $contentPages[$currentPage - 1] ?? '';
+        // Check if user wants full view with page breaks
+        $viewMode = $this->getParam('view', 'paginated');
+        
+        if ($viewMode === 'full') {
+            // Show full content with visual page breaks
+            $content = $page->getContentWithPageBreaks();
+            $this->render('pages/show', [
+                'page' => $page,
+                'content' => $content,
+                'view_mode' => 'full',
+                'current_page' => 1,
+                'total_pages' => 1,
+                'page_title' => $page->getAttribute('title'),
+                'meta_description' => $page->getAttribute('meta_description'),
+                'meta_keywords' => $page->getAttribute('meta_keywords')
+            ]);
+        } else {
+            // Show paginated content (default)
+            $contentPages = $page->getContentPages();
+            $currentPage = max(1, min(count($contentPages), (int) $this->getParam('p', 1)));
+            $currentContent = $contentPages[$currentPage - 1] ?? '';
 
-        // Render page template
-        $this->render('pages/show', [
-            'page' => $page,
-            'content' => $currentContent,
-            'current_page' => $currentPage,
-            'total_pages' => count($contentPages),
-            'page_title' => $page->getAttribute('title'),
-            'meta_description' => $page->getAttribute('meta_description'),
-            'meta_keywords' => $page->getAttribute('meta_keywords')
-        ]);
+            // Render page template
+            $this->render('pages/show', [
+                'page' => $page,
+                'content' => $currentContent,
+                'view_mode' => 'paginated',
+                'current_page' => $currentPage,
+                'total_pages' => count($contentPages),
+                'page_title' => $page->getAttribute('title'),
+                'meta_description' => $page->getAttribute('meta_description'),
+                'meta_keywords' => $page->getAttribute('meta_keywords')
+            ]);
+        }
     }
 }

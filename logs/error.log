@@ -43,3 +43,43 @@
 [07-Sep-2025 16:51:39 America/New_York] Content store error: Query execution failed: SQLSTATE[22007]: Invalid datetime format: 1292 Incorrect datetime value: '' for column 'published_at' at row 1
 [07-Sep-2025 16:53:06 America/New_York] Content store error: Query execution failed: SQLSTATE[22007]: Invalid datetime format: 1292 Incorrect datetime value: '' for column 'published_at' at row 1
 [07-Sep-2025 16:53:17 America/New_York] Content store error: Query execution failed: SQLSTATE[22007]: Invalid datetime format: 1292 Incorrect datetime value: '' for column 'published_at' at row 1
+[07-Sep-2025 17:39:40 America/New_York] Content created: ID=11, URL=this-is-a-new-photobook, Status=published
+[07-Sep-2025 17:39:40 America/New_York] Edit content: Looking for ID=0
+[07-Sep-2025 17:39:40 America/New_York] Edit content: Content not found for ID=0
+[07-Sep-2025 17:47:01 America/New_York] Edit content: Looking for ID=0
+[07-Sep-2025 17:47:01 America/New_York] Edit content: Content not found for ID=0
+[07-Sep-2025 17:47:05 America/New_York] Edit content: Looking for ID=0
+[07-Sep-2025 17:47:05 America/New_York] Edit content: Content not found for ID=0
+[07-Sep-2025 17:47:06 America/New_York] Edit content: Looking for ID=0
+[07-Sep-2025 17:47:06 America/New_York] Edit content: Content not found for ID=0
+[07-Sep-2025 17:47:10 America/New_York] Edit content: Looking for ID=0
+[07-Sep-2025 17:47:10 America/New_York] Edit content: Content not found for ID=0
+[07-Sep-2025 17:47:15 America/New_York] Edit content: Looking for ID=0
+[07-Sep-2025 17:47:15 America/New_York] Edit content: Content not found for ID=0
+[07-Sep-2025 18:01:30 America/New_York] Edit content: Looking for ID=9
+[07-Sep-2025 18:01:31 America/New_York] Edit content: Found content ID=9, Title=Gallery with Multiple Pages
+[07-Sep-2025 19:05:21 America/New_York] Content created: ID=12, URL=this-is-a-super-test, Status=published
+[07-Sep-2025 19:05:21 America/New_York] Edit content: Looking for ID=12
+[07-Sep-2025 19:05:21 America/New_York] Edit content: Found content ID=12, Title=This is a super test
+[07-Sep-2025 19:07:31 America/New_York] Edit content: Looking for ID=8
+[07-Sep-2025 19:07:31 America/New_York] Edit content: Found content ID=8, Title=Multi-Page Article Example
+[07-Sep-2025 19:07:46 America/New_York] Content update error: Query execution failed: SQLSTATE[22007]: Invalid datetime format: 1292 Incorrect datetime value: '' for column 'published_at' at row 1
+[07-Sep-2025 19:07:46 America/New_York] Edit content: Looking for ID=8
+[07-Sep-2025 19:07:46 America/New_York] Edit content: Found content ID=8, Title=Multi-Page Article Example
+[07-Sep-2025 19:08:00 America/New_York] Content update error: Query execution failed: SQLSTATE[22007]: Invalid datetime format: 1292 Incorrect datetime value: '' for column 'published_at' at row 1
+[07-Sep-2025 19:08:00 America/New_York] Edit content: Looking for ID=8
+[07-Sep-2025 19:08:00 America/New_York] Edit content: Found content ID=8, Title=Multi-Page Article Example
+[07-Sep-2025 19:08:39 America/New_York] Content update error: Query execution failed: SQLSTATE[22007]: Invalid datetime format: 1292 Incorrect datetime value: '' for column 'published_at' at row 1
+[07-Sep-2025 19:08:39 America/New_York] Edit content: Looking for ID=8
+[07-Sep-2025 19:08:39 America/New_York] Edit content: Found content ID=8, Title=Multi-Page Article Example
+[07-Sep-2025 19:20:35 America/New_York] Edit content: Looking for ID=8
+[07-Sep-2025 19:20:35 America/New_York] Edit content: Found content ID=8, Title=Multi-Page Article Example
+[07-Sep-2025 19:41:21 America/New_York] Content store error: Query execution failed: SQLSTATE[22007]: Invalid datetime format: 1292 Incorrect datetime value: '' for column 'published_at' at row 1
+[07-Sep-2025 20:06:32 America/New_York] Content created: ID=13, URL=test23, Status=published
+[07-Sep-2025 20:06:32 America/New_York] Edit content: Looking for ID=13
+[07-Sep-2025 20:06:32 America/New_York] Edit content: Found content ID=13, Title=This is a letatest photobook test
+[07-Sep-2025 20:20:11 America/New_York] Edit content: Looking for ID=13
+[07-Sep-2025 20:20:11 America/New_York] Edit content: Found content ID=13, Title=This is a letatest photobook test
+[07-Sep-2025 20:20:22 America/New_York] Content update error: Query execution failed: SQLSTATE[22007]: Invalid datetime format: 1292 Incorrect datetime value: '' for column 'published_at' at row 1
+[07-Sep-2025 20:20:22 America/New_York] Edit content: Looking for ID=13
+[07-Sep-2025 20:20:22 America/New_York] Edit content: Found content ID=13, Title=This is a letatest photobook test

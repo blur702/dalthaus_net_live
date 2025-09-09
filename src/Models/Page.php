@@ -237,6 +237,39 @@ class Page extends BaseModel
         // Re-index array to ensure sequential keys
         return array_values($pages);
     }
+    
+    /**
+     * Get content with visual page break indicators
+     * Replaces TinyMCE page breaks with styled HTML
+     * 
+     * @return string Content with visual page breaks
+     */
+    public function getContentWithPageBreaks(): string
+    {
+        $body = $this->getAttribute('body') ?? '';
+        
+        if (empty(trim($body))) {
+            return '';
+        }
+        
+        // Replace TinyMCE page breaks with a visual indicator
+        $pageBreakHtml = '
+        <div class="page-break-indicator" style="margin: 3rem 0; position: relative; height: 40px;">
+            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 2px; background: linear-gradient(to right, transparent, #ddd 20%, #ddd 80%, transparent); transform: translateY(-50%);"></div>
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 0.5rem 1.5rem; border: 2px solid #ddd; border-radius: 20px;">
+                <span style="color: #888; font-size: 0.85em; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">Page Break</span>
+            </div>
+        </div>';
+        
+        // Replace all page break tags with the visual indicator
+        $content = preg_replace(
+            '/<hr\s+class=["\']mce-pagebreak["\'][^>]*>/i',
+            $pageBreakHtml,
+            $body
+        );
+        
+        return $content;
+    }
 
     /**
      * Get all pages for public listing

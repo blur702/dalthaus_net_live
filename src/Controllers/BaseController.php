@@ -261,7 +261,7 @@ abstract class BaseController
      * @param Exception $exception Optional exception
      * @return void
      */
-    protected function logError(string $message, Exception $exception = null): void
+    protected function logError(string $message, ?Exception $exception = null): void
     {
         $logMessage = date('Y-m-d H:i:s') . " - {$message}";
         if ($exception) {

@@ -20,9 +20,26 @@
         <?php endif; ?>
     </header>
     
+    <!-- View Mode Toggle (only if photobook has page breaks) -->
+    <?php if ($total_pages > 1 || (isset($view_mode) && $view_mode === 'full')): ?>
+    <div class="mb-4 text-right">
+        <?php if (isset($view_mode) && $view_mode === 'paginated'): ?>
+            <a href="<?= $this->escape($photobook->getUrl() . '?view=full') ?>" 
+               class="text-blue-600 hover:text-blue-800 text-sm">
+                View Full Photobook (with page breaks)
+            </a>
+        <?php else: ?>
+            <a href="<?= $this->escape($photobook->getUrl()) ?>" 
+               class="text-blue-600 hover:text-blue-800 text-sm">
+                View Paginated
+            </a>
+        <?php endif; ?>
+    </div>
+    <?php endif; ?>
+    
     <!-- Photobook Content -->
     <article class="prose max-w-none">
-        <?php if ($total_pages > 1): ?>
+        <?php if ($total_pages > 1 && (!isset($view_mode) || $view_mode === 'paginated')): ?>
         <h2 class="text-lg font-bold mb-4" style="font-family: Arial, sans-serif;">
             Photobook Section title
         </h2>
@@ -61,7 +78,7 @@
         </div>
     </article>
     
-    <?php if ($total_pages > 1): ?>
+    <?php if ($total_pages > 1 && (!isset($view_mode) || $view_mode === 'paginated')): ?>
     <!-- Photobook Navigation -->
     <div class="mt-8 mb-8 text-center border-t border-b border-gray-300 py-4">
         <div class="text-sm text-gray-900 mb-2">Pages in this Photobook</div>

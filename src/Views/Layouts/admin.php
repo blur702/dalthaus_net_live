@@ -8,11 +8,55 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📝</text></svg>">
     
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Prevent custom element conflicts BEFORE loading any scripts -->
+    <script>
+        // Comprehensive fix for custom element redefinition errors
+        (function() {
+            // Store the original customElements.define method
+            const originalDefine = window.customElements?.define;
+            if (!originalDefine) return;
+            
+            // Keep track of defined elements
+            const definedElements = new Set();
+            
+            // Override customElements.define to prevent redefinition
+            window.customElements.define = function(name, constructor, options) {
+                // Check if element is already defined
+                if (window.customElements.get(name) || definedElements.has(name)) {
+                    console.warn(`Custom element '${name}' already defined, skipping redefinition`);
+                    return;
+                }
+                
+                try {
+                    // Call original define method
+                    originalDefine.call(window.customElements, name, constructor, options);
+                    definedElements.add(name);
+                } catch (e) {
+                    console.warn(`Failed to define custom element '${name}':`, e.message);
+                }
+            };
+            
+            // Also protect against direct access attempts
+            const originalGet = window.customElements?.get;
+            if (originalGet) {
+                window.customElements.get = function(name) {
+                    try {
+                        return originalGet.call(window.customElements, name);
+                    } catch (e) {
+                        return undefined;
+                    }
+                };
+            }
+        })();
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js" referrerpolicy="origin"></script>
     
     <style>
         body { background-color: #f8f9fa; }
         .dropdown:hover .dropdown-menu { display: block; }
         .dropdown-menu { display: none; }
+        .tox-tinymce { border-radius: 0.375rem; border: 1px solid #D1D5DB; }
     </style>
 </head>
 <body class="bg-gray-100">
@@ -61,37 +105,99 @@
     </main>
 
     <script>
-        // Page functionality
-        document.addEventListener('DOMContentLoaded', function () {
+        /**
+         * Robust TinyMCE initialization with conflict prevention
+         */
+        let editorInitialized = false;
+        
+        const initializeTinyMCE = () => {
+            // Check if we should initialize
+            const textarea = document.getElementById('body');
+            if (!textarea || editorInitialized) {
+                return;
+            }
             
-            // Auto-dismiss flash messages
-            setTimeout(function() {
-                const flashMessage = document.querySelector('.flash-message');
-                if (flashMessage) {
-                    flashMessage.style.transition = 'opacity 0.5s';
-                    flashMessage.style.opacity = '0';
-                    setTimeout(() => flashMessage.remove(), 500);
+            // Mark as initializing to prevent duplicate attempts
+            editorInitialized = true;
+            
+            // Remove any existing instances first
+            if (typeof tinymce !== 'undefined' && tinymce.get('body')) {
+                try {
+                    tinymce.get('body').remove();
+                } catch (e) {
+                    console.warn('Failed to remove existing editor:', e);
                 }
-            }, 5000);
+            }
             
-            // Auto-generate URL alias from title (for forms that have it)
-            const titleInput = document.getElementById('title');
-            const urlAliasInput = document.getElementById('url_alias');
-            if (titleInput && urlAliasInput) {
-                titleInput.addEventListener('input', function() {
-                    if (!urlAliasInput.dataset.manuallyEdited) {
-                        urlAliasInput.value = this.value.toLowerCase()
-                            .replace(/[^a-z0-9\s-]/g, '')
-                            .replace(/\s+/g, '-')
-                            .replace(/-+/g, '-')
-                            .replace(/^-+|-+$/g, '');
-                    }
-                });
-                urlAliasInput.addEventListener('input', function() {
-                    this.dataset.manuallyEdited = 'true';
-                });
+            // Wait a bit to ensure all scripts are loaded
+            setTimeout(() => {
+                if (typeof tinymce === 'undefined') {
+                    console.error('TinyMCE not loaded');
+                    editorInitialized = false;
+                    return;
+                }
+                
+                try {
+                    tinymce.init({
+                        selector: 'textarea#body',
+                        plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table help wordcount pagebreak',
+                        toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | link image | pagebreak code',
+                        height: 500,
+                        menubar: false,
+                        images_upload_url: '/admin/upload/tinymce',
+                        automatic_uploads: true,
+                        file_picker_types: 'image',
+                        // Prevent duplicate initialization
+                        init_instance_callback: function(editor) {
+                            // Save content before form submit
+                            const form = editor.getElement().form;
+                            if (form && !form.dataset.tinymceSetup) {
+                                form.addEventListener('submit', (e) => {
+                                    editor.save();
+                                });
+                                form.dataset.tinymceSetup = 'true';
+                            }
+                        },
+                        // Error handling
+                        setup: function(editor) {
+                            editor.on('LoadContent', function(e) {
+                                console.log('TinyMCE content loaded');
+                            });
+                            editor.on('Error', function(e) {
+                                console.error('TinyMCE error:', e);
+                            });
+                        }
+                    });
+                } catch (e) {
+                    console.error('Failed to initialize TinyMCE:', e);
+                    editorInitialized = false;
+                }
+            }, 100);
+        };
+        
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeTinyMCE);
+        } else {
+            initializeTinyMCE();
+        }
+        
+        // Also try on window load as backup
+        window.addEventListener('load', () => {
+            if (!editorInitialized) {
+                initializeTinyMCE();
             }
         });
+
+        // Auto-dismiss flash messages
+        setTimeout(function() {
+            const flashMessage = document.querySelector('.flash-message');
+            if (flashMessage) {
+                flashMessage.style.transition = 'opacity 0.5s';
+                flashMessage.style.opacity = '0';
+                setTimeout(() => flashMessage.remove(), 500);
+            }
+        }, 5000);
     </script>
 </body>
 </html>
