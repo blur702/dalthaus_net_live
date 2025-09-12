@@ -3,7 +3,7 @@
     <!-- Article Header -->
     <header class="mb-8 text-center">
         <h1 class="text-2xl font-bold text-gray-900 mb-2" style="font-family: Arial, sans-serif;">
-            <?= $this->escape($article->getAttribute('title')) ?> (Article Display)
+            <?= $this->escape($article->getAttribute('title')) ?>
         </h1>
         
         <div class="text-sm text-gray-900 mb-4">
@@ -19,22 +19,6 @@
         <?php endif; ?>
     </header>
     
-    <!-- View Mode Toggle (only if article has page breaks) -->
-    <?php if ($total_pages > 1 || $view_mode === 'full'): ?>
-    <div class="mb-4 text-right">
-        <?php if ($view_mode === 'paginated'): ?>
-            <a href="<?= $this->escape($article->getUrl() . '?view=full') ?>" 
-               class="text-blue-600 hover:text-blue-800 text-sm">
-                View Full Article (with page breaks)
-            </a>
-        <?php else: ?>
-            <a href="<?= $this->escape($article->getUrl()) ?>" 
-               class="text-blue-600 hover:text-blue-800 text-sm">
-                View Paginated
-            </a>
-        <?php endif; ?>
-    </div>
-    <?php endif; ?>
     
     <!-- Article Content -->
     <article class="prose max-w-none">

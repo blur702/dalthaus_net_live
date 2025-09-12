@@ -3,26 +3,10 @@
     <!-- Page Header -->
     <header class="mb-8 text-center">
         <h1 class="text-2xl font-bold text-gray-900 mb-4" style="font-family: Arial, sans-serif;">
-            <?= $this->escape($page->getAttribute('title')) ?> (Page Display)
+            <?= $this->escape($page->getAttribute('title')) ?>
         </h1>
     </header>
     
-    <!-- View Mode Toggle (only if page has page breaks) -->
-    <?php if ($total_pages > 1 || (isset($view_mode) && $view_mode === 'full')): ?>
-    <div class="mb-4 text-right">
-        <?php if (isset($view_mode) && $view_mode === 'paginated'): ?>
-            <a href="<?= $this->escape($page->getUrl() . '?view=full') ?>" 
-               class="text-blue-600 hover:text-blue-800 text-sm">
-                View Full Page (with page breaks)
-            </a>
-        <?php else: ?>
-            <a href="<?= $this->escape($page->getUrl()) ?>" 
-               class="text-blue-600 hover:text-blue-800 text-sm">
-                View Paginated
-            </a>
-        <?php endif; ?>
-    </div>
-    <?php endif; ?>
     
     <!-- Page Content -->
     <article class="prose max-w-none">

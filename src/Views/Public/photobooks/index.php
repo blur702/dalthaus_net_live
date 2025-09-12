@@ -3,7 +3,7 @@
     <!-- Page Title -->
     <div class="mb-8 text-center">
         <h2 class="text-2xl font-bold text-gray-900 mb-4" style="font-family: Arial, sans-serif;">
-            Photobooks (Listings)
+            Photobooks
         </h2>
     </div>
     
@@ -20,8 +20,10 @@
                          class="teaser-image w-full">
                 </div>
                 <?php else: ?>
-                <div class="teaser-image flex-shrink-0 w-64">
-                    TEASER IMAGE
+                <div class="flex-shrink-0 w-64">
+                    <div class="teaser-image bg-black text-white flex items-center justify-center text-lg font-bold">
+                        TEASER IMAGE
+                    </div>
                 </div>
                 <?php endif; ?>
                 

@@ -19,8 +19,10 @@
                                  class="teaser-image w-full">
                         </div>
                         <?php else: ?>
-                        <div class="flex-shrink-0 w-48 teaser-image bg-black text-white flex items-center justify-center text-lg font-bold">
-                            TEASER IMAGE
+                        <div class="flex-shrink-0 w-48">
+                            <div class="teaser-image bg-black text-white flex items-center justify-center text-lg font-bold">
+                                TEASER IMAGE
+                            </div>
                         </div>
                         <?php endif; ?>
                         
@@ -83,8 +85,10 @@
                                  class="teaser-image w-full">
                         </div>
                         <?php else: ?>
-                        <div class="mb-3 w-full teaser-image bg-black text-white flex items-center justify-center text-lg font-bold">
-                            TEASER IMAGE
+                        <div class="mb-3 w-full">
+                            <div class="teaser-image bg-black text-white flex items-center justify-center text-lg font-bold">
+                                TEASER IMAGE
+                            </div>
                         </div>
                         <?php endif; ?>
                         
