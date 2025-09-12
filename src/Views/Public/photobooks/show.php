@@ -12,7 +12,6 @@
         
         <?php if ($photobook->getAttribute('teaser_image')): ?>
         <div class="mb-6">
-            <div class="text-xs text-gray-600 mb-2">(Featured image here at 4:3 aspect ratio)</div>
             <img src="<?= $this->escape($photobook->getTeaserImageUrl()) ?>" 
                  alt="<?= $this->escape($photobook->getAttribute('title')) ?>"
                  class="teaser-image mx-auto max-w-md">

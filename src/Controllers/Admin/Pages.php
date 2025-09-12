@@ -664,7 +664,6 @@ class Pages extends BaseController
             'title' => $this->sanitize($this->getParam('title', '', 'post')),
             'body' => $this->getParam('body', '', 'post'), // Don't sanitize HTML content
             'url_alias' => $this->sanitize($this->getParam('url_alias', '', 'post')),
-            'meta_title' => $this->sanitize($this->getParam('meta_title', '', 'post')),
             'meta_description' => $this->sanitize($this->getParam('meta_description', '', 'post')),
             'meta_keywords' => $this->sanitize($this->getParam('meta_keywords', '', 'post'))
         ];

@@ -57,6 +57,14 @@
         .dropdown:hover .dropdown-menu { display: block; }
         .dropdown-menu { display: none; }
         .tox-tinymce { border-radius: 0.375rem; border: 1px solid #D1D5DB; }
+        
+        /* 4:3 aspect ratio for admin images */
+        .admin-image-43 {
+            aspect-ratio: 4 / 3;
+            object-fit: cover;
+            width: 100%;
+            height: auto;
+        }
     </style>
 </head>
 <body class="bg-gray-100">

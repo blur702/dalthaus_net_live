@@ -16,10 +16,10 @@
                         <div class="flex-shrink-0 w-48">
                             <img src="<?= $this->escape($article->getTeaserImageUrl()) ?>" 
                                  alt="<?= $this->escape($article->getAttribute('title')) ?>"
-                                 class="teaser-image w-full h-36 object-cover bg-black text-white flex items-center justify-center text-lg font-bold">
+                                 class="teaser-image w-full">
                         </div>
                         <?php else: ?>
-                        <div class="flex-shrink-0 w-48 h-36 bg-black text-white flex items-center justify-center text-lg font-bold">
+                        <div class="flex-shrink-0 w-48 teaser-image bg-black text-white flex items-center justify-center text-lg font-bold">
                             TEASER IMAGE
                         </div>
                         <?php endif; ?>
@@ -80,10 +80,10 @@
                         <div class="mb-3">
                             <img src="<?= $this->escape($photobook->getTeaserImageUrl()) ?>" 
                                  alt="<?= $this->escape($photobook->getAttribute('title')) ?>"
-                                 class="teaser-image w-full h-40 object-cover bg-black text-white flex items-center justify-center text-lg font-bold">
+                                 class="teaser-image w-full">
                         </div>
                         <?php else: ?>
-                        <div class="mb-3 w-full h-40 bg-black text-white flex items-center justify-center text-lg font-bold">
+                        <div class="mb-3 w-full teaser-image bg-black text-white flex items-center justify-center text-lg font-bold">
                             TEASER IMAGE
                         </div>
                         <?php endif; ?>

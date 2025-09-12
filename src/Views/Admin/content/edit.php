@@ -58,7 +58,7 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Featured Image</label>
                         <?php if ($content->getAttribute('featured_image')): ?>
-                            <div class="mb-2"><img src="/uploads/<?= $this->escape($content->getAttribute('featured_image')) ?>" alt="Current featured image" class="h-32 w-auto rounded-md border border-gray-200"></div>
+                            <div class="mb-2 max-w-xs"><img src="/uploads/<?= $this->escape($content->getAttribute('featured_image')) ?>" alt="Current featured image" class="admin-image-43 rounded-md border border-gray-200"></div>
                         <?php endif; ?>
                         <input type="file" name="featured_image" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-lg file:border file:border-gray-300 file:text-sm file:font-medium file:bg-white file:text-gray-700 hover:file:bg-gray-50 file:transition file:duration-150 file:ease-in-out cursor-pointer"/>
                         <p class="mt-1 text-xs text-gray-500">Upload a new image to replace the current one.</p>
@@ -66,7 +66,7 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Teaser Image</label>
                         <?php if ($content->getAttribute('teaser_image')): ?>
-                            <div class="mb-2"><img src="/uploads/<?= $this->escape($content->getAttribute('teaser_image')) ?>" alt="Current teaser image" class="h-32 w-auto rounded-md border border-gray-200"></div>
+                            <div class="mb-2 max-w-xs"><img src="/uploads/<?= $this->escape($content->getAttribute('teaser_image')) ?>" alt="Current teaser image" class="admin-image-43 rounded-md border border-gray-200"></div>
                         <?php endif; ?>
                         <input type="file" name="teaser_image" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-lg file:border file:border-gray-300 file:text-sm file:font-medium file:bg-white file:text-gray-700 hover:file:bg-gray-50 file:transition file:duration-150 file:ease-in-out cursor-pointer"/>
                         <p class="mt-1 text-xs text-gray-500">Upload a new image to replace the current one.</p>
