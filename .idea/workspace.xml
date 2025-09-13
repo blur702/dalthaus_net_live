@@ -5,39 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c4d373a9-2ff0-4bed-b725-60773a6a2f6f" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/content-form.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/content-reorder.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/content.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/includes/header.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/menus.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/pages-form.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/pages.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/settings.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/users.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/js/tinymce-single.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/js/tinymce-single.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/logs/error.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/error.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controllers/BaseController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controllers/BaseController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controllers/Public/Articles.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controllers/Public/Articles.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controllers/Public/Pages.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controllers/Public/Pages.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controllers/Public/Photobooks.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controllers/Public/Photobooks.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Models/Content.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Models/Content.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Models/Page.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Models/Page.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Views/Admin/content/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Views/Admin/content/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Views/Admin/dashboard/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Views/Admin/dashboard/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Views/Admin/settings/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Views/Admin/settings/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Views/Admin/users/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Views/Admin/users/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Views/Layouts/admin.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Views/Layouts/admin.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Views/Public/articles/show.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Views/Public/articles/show.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Views/Public/pages/show.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Views/Public/pages/show.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Views/Public/photobooks/show.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Views/Public/photobooks/show.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ComposerSettings" synchronizationState="SYNCHRONIZE">
+  <component name="ComposerConfigs">
+    <option name="notifyAboutSettingsSync" value="false" />
+  </component>
+  <component name="ComposerSettings" doNotAsk="true" synchronizationState="SYNCHRONIZE">
     <execution />
   </component>
   <component name="Git.Settings">
@@ -83,7 +63,7 @@
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.intellij.mcpserver.settings&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -109,6 +89,9 @@
       <updated>1757174553464</updated>
       <workItem from="1757174555172" duration="262000" />
       <workItem from="1757175226234" duration="36577000" />
+      <workItem from="1757715327557" duration="68000" />
+      <workItem from="1757715435282" duration="386000" />
+      <workItem from="1757715840043" duration="596000" />
     </task>
     <servers />
   </component>

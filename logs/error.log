@@ -83,3 +83,7 @@
 [07-Sep-2025 20:20:22 America/New_York] Content update error: Query execution failed: SQLSTATE[22007]: Invalid datetime format: 1292 Incorrect datetime value: '' for column 'published_at' at row 1
 [07-Sep-2025 20:20:22 America/New_York] Edit content: Looking for ID=13
 [07-Sep-2025 20:20:22 America/New_York] Edit content: Found content ID=13, Title=This is a letatest photobook test
+[12-Sep-2025 18:29:42 America/New_York] Page store error: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'meta_title' in 'field list'
+[12-Sep-2025 19:08:22 America/New_York] Content created: ID=16, URL=m--article-vv, Status=published
+[12-Sep-2025 19:08:22 America/New_York] Edit content: Looking for ID=16
+[12-Sep-2025 19:08:22 America/New_York] Edit content: Found content ID=16, Title=This is 912
