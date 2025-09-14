@@ -63,7 +63,7 @@ class Settings extends BaseModel
 
         $instance = new static();
         $value = $instance->db->fetchColumn(
-            "SELECT setting_value FROM {$instance->table} WHERE setting_name = ?",
+            "SELECT setting_value FROM {$instance->table} WHERE setting_key = ?",
             [$name]
         );
 
@@ -93,14 +93,14 @@ class Settings extends BaseModel
 
         try {
             // Check if setting exists
-            $exists = $instance->db->exists($instance->table, 'setting_name = ?', [$name]);
+            $exists = $instance->db->exists($instance->table, 'setting_key = ?', [$name]);
 
             if ($exists) {
                 // Update existing setting
                 $result = $instance->db->update(
                     $instance->table,
                     ['setting_value' => $valueString],
-                    'setting_name = ?',
+                    'setting_key = ?',
                     [$name]
                 );
                 // Consider it successful even if no rows changed (value might be the same)
@@ -109,7 +109,7 @@ class Settings extends BaseModel
             } else {
                 // Insert new setting
                 $id = $instance->db->insert($instance->table, [
-                    'setting_name' => $name,
+                    'setting_key' => $name,
                     'setting_value' => $valueString
                 ]);
                 $success = !empty($id);
@@ -150,14 +150,14 @@ class Settings extends BaseModel
         if (!empty($uncached)) {
             $placeholders = str_repeat('?,', count($uncached) - 1) . '?';
             $settings = $instance->db->fetchAll(
-                "SELECT setting_name, setting_value FROM {$instance->table} WHERE setting_name IN ({$placeholders})",
+                "SELECT setting_key, setting_value FROM {$instance->table} WHERE setting_key IN ({$placeholders})",
                 $uncached
             );
 
             foreach ($settings as $setting) {
                 $value = $setting['setting_value'];
-                $result[$setting['setting_name']] = $value;
-                self::$settingsCache[$setting['setting_name']] = $value;
+                $result[$setting['setting_key']] = $value;
+                self::$settingsCache[$setting['setting_key']] = $value;
             }
 
             // Add defaults for missing settings
@@ -182,12 +182,12 @@ class Settings extends BaseModel
     {
         $instance = new static();
         $settings = $instance->db->fetchAll(
-            "SELECT setting_name, setting_value FROM {$instance->table}"
+            "SELECT setting_key, setting_value FROM {$instance->table}"
         );
 
         $result = [];
         foreach ($settings as $setting) {
-            $result[$setting['setting_name']] = $setting['setting_value'];
+            $result[$setting['setting_key']] = $setting['setting_value'];
         }
 
         // Add defaults for missing settings
@@ -206,7 +206,7 @@ class Settings extends BaseModel
     /**
      * Set multiple settings at once
      * 
-     * @param array $settings Associative array of setting_name => value pairs
+     * @param array $settings Associative array of setting_key => value pairs
      * @return bool
      */
     public static function setMultiple(array $settings): bool
@@ -219,18 +219,18 @@ class Settings extends BaseModel
             foreach ($settings as $name => $value) {
                 $valueString = is_bool($value) ? ($value ? '1' : '0') : (string) $value;
                 
-                $exists = $instance->db->exists($instance->table, 'setting_name = ?', [$name]);
+                $exists = $instance->db->exists($instance->table, 'setting_key = ?', [$name]);
 
                 if ($exists) {
                     $instance->db->update(
                         $instance->table,
                         ['setting_value' => $valueString],
-                        'setting_name = ?',
+                        'setting_key = ?',
                         [$name]
                     );
                 } else {
                     $instance->db->insert($instance->table, [
-                        'setting_name' => $name,
+                        'setting_key' => $name,
                         'setting_value' => $valueString
                     ]);
                 }
@@ -258,7 +258,7 @@ class Settings extends BaseModel
     {
         $instance = new static();
         
-        $deleted = $instance->db->delete($instance->table, 'setting_name = ?', [$name]);
+        $deleted = $instance->db->delete($instance->table, 'setting_key = ?', [$name]);
         
         if ($deleted > 0) {
             // Remove from cache
@@ -278,7 +278,7 @@ class Settings extends BaseModel
     public static function settingExists(string $name): bool
     {
         $instance = new static();
-        return $instance->db->exists($instance->table, 'setting_name = ?', [$name]);
+        return $instance->db->exists($instance->table, 'setting_key = ?', [$name]);
     }
 
     /**
