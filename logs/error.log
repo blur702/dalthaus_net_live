@@ -91,3 +91,18 @@
 [13-Sep-2025 18:20:14 America/New_York] Edit content: Looking for ID=17
 [13-Sep-2025 18:20:14 America/New_York] Edit content: Found content ID=17, Title=This is a new photobook - 9-12
 [13-Sep-2025 18:28:13 America/New_York] Uncaught exception: Cannot use object of type CMS\Models\Content as array in /Users/kevin/Desktop/dalthuaus_net_live/src/Views/Admin/content/reorder.php:53
+[14-Sep-2025 17:45:55 America/New_York] Database connection attempt: DSN=mysql:host=localhost;dbname=cms_db;charset=utf8mb4, User=cms_user
+[14-Sep-2025 17:45:55 America/New_York] Database connection successful
+[14-Sep-2025 17:46:08 America/New_York] Database connection attempt: DSN=mysql:host=localhost;dbname=cms_db;charset=utf8mb4, User=cms_user
+[14-Sep-2025 17:46:08 America/New_York] Database connection successful
+[14-Sep-2025 17:46:08 America/New_York] Maintenance mode check failed: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'where clause'
+[14-Sep-2025 17:47:22 America/New_York] Database connection attempt: DSN=mysql:host=localhost;dbname=cms_db;charset=utf8mb4, User=cms_user
+[14-Sep-2025 17:47:22 America/New_York] Database connection successful
+[14-Sep-2025 17:47:33 America/New_York] Database connection attempt: DSN=mysql:host=localhost;dbname=cms_db;charset=utf8mb4, User=cms_user
+[14-Sep-2025 17:47:33 America/New_York] Database connection successful
+[14-Sep-2025 17:47:42 America/New_York] Database connection attempt: DSN=mysql:host=localhost;dbname=cms_db;charset=utf8mb4, User=cms_user
+[14-Sep-2025 17:47:42 America/New_York] Database connection successful
+[14-Sep-2025 17:47:52 America/New_York] Database connection attempt: DSN=mysql:host=localhost;dbname=cms_db;charset=utf8mb4, User=cms_user
+[14-Sep-2025 17:47:52 America/New_York] Database connection successful
+[14-Sep-2025 17:48:00 America/New_York] Database connection attempt: DSN=mysql:host=localhost;dbname=cms_db;charset=utf8mb4, User=cms_user
+[14-Sep-2025 17:48:00 America/New_York] Database connection successful
