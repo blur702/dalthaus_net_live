@@ -84,6 +84,7 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_URI} !^/uploads/
 RewriteCond %{REQUEST_URI} !^/assets/
 RewriteCond %{REQUEST_URI} !^/setup\.php$
+RewriteCond %{REQUEST_URI} !^/agent\.php$
 RewriteRule ^(.*)$ index.php [QSA,L]
 
 # Set up proper MIME types
