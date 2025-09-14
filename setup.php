@@ -405,7 +405,7 @@ $suggestedUrl = rtrim($suggestedUrl, '/setup.php');
                                     <label class="block text-gray-700 text-sm font-bold mb-2">Database Name</label>
                                     <input type="text" name="db_name" value="<?= htmlspecialchars($currentConfig['database']['dbname'] ?? 'dalthaus_maincms') ?>" 
                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                           placeholder="cms_db">
+                                           placeholder="dalthaus_maincms">
                                 </div>
                                 <div>
                                     <label class="block text-gray-700 text-sm font-bold mb-2">Database User</label>

@@ -92,7 +92,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 8358,
+                      "duration": 4344,
                       "errors": [],
                       "stdout": [
                         {
@@ -138,13 +138,10 @@
                           "text": "← 200 https://dalthaus.net/cdn-cgi/challenge-platform/h/g/scripts/jsd/f78657f80e4b/main.js?\n"
                         },
                         {
-                          "text": "→ POST https://dalthaus.net/cdn-cgi/challenge-platform/h/g/jsd/r/0.8196738149472228:1757877139:htd5QGWzaXrNZsUEaXrBjIhFiQMr53rXDfTb2EUYWwk/97f272567c05ea36\n"
+                          "text": "→ POST https://dalthaus.net/cdn-cgi/challenge-platform/h/g/jsd/r/0.8196738149472228:1757877139:htd5QGWzaXrNZsUEaXrBjIhFiQMr53rXDfTb2EUYWwk/97f28eba6950c936\n"
                         },
                         {
                           "text": "Console [error]: Failed to load resource: the server responded with a status of 404 ()\n"
-                        },
-                        {
-                          "text": "← 200 https://dalthaus.net/cdn-cgi/challenge-platform/h/g/jsd/r/0.8196738149472228:1757877139:htd5QGWzaXrNZsUEaXrBjIhFiQMr53rXDfTb2EUYWwk/97f272567c05ea36\n"
                         },
                         {
                           "text": "Admin page response status: \u001b[33m200\u001b[39m\n"
@@ -170,7 +167,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-09-14T19:56:07.146Z",
+                      "startTime": "2025-09-14T20:15:35.590Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -205,7 +202,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2401,
+                      "duration": 2115,
                       "errors": [],
                       "stdout": [
                         {
@@ -241,7 +238,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-09-14T19:56:20.322Z",
+                      "startTime": "2025-09-14T20:15:41.150Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -276,7 +273,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2106,
+                      "duration": 1938,
                       "errors": [],
                       "stdout": [
                         {
@@ -292,10 +289,10 @@
                           "text": "Agent test response status: \u001b[33m200\u001b[39m\n"
                         },
                         {
-                          "text": "Agent response preview: {\"success\":true,\"message\":\"Agent is operational\",\"php_version\":\"8.4.12\",\"directory\":\"\\/home\\/dalthaus\\/public_html\",\"timestamp\":\"2025-09-14T15:56:23-04:00\"}\n"
+                          "text": "Agent response preview: {\"success\":true,\"message\":\"Agent is operational\",\"php_version\":\"8.4.12\",\"directory\":\"\\/home\\/dalthaus\\/public_html\",\"timestamp\":\"2025-09-14T16:15:44-04:00\"}\n"
                         },
                         {
-                          "text": "Agent JSON response: {\n  \"success\": true,\n  \"message\": \"Agent is operational\",\n  \"php_version\": \"8.4.12\",\n  \"directory\": \"/home/dalthaus/public_html\",\n  \"timestamp\": \"2025-09-14T15:56:23-04:00\"\n}\n"
+                          "text": "Agent JSON response: {\n  \"success\": true,\n  \"message\": \"Agent is operational\",\n  \"php_version\": \"8.4.12\",\n  \"directory\": \"/home/dalthaus/public_html\",\n  \"timestamp\": \"2025-09-14T16:15:44-04:00\"\n}\n"
                         },
                         {
                           "text": "Database config in agent response: Not found\n"
@@ -309,7 +306,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-09-14T19:56:22.754Z",
+                      "startTime": "2025-09-14T20:15:43.289Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -344,7 +341,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 6812,
+                      "duration": 7211,
                       "errors": [],
                       "stdout": [
                         {
@@ -375,10 +372,10 @@
                           "text": "← 200 https://dalthaus.net/cdn-cgi/challenge-platform/h/g/scripts/jsd/f78657f80e4b/main.js?\n"
                         },
                         {
-                          "text": "→ POST https://dalthaus.net/cdn-cgi/challenge-platform/h/g/jsd/r/0.8196738149472228:1757877139:htd5QGWzaXrNZsUEaXrBjIhFiQMr53rXDfTb2EUYWwk/97f272987e6e2421\n"
+                          "text": "→ POST https://dalthaus.net/cdn-cgi/challenge-platform/h/g/jsd/r/0.8196738149472228:1757877139:htd5QGWzaXrNZsUEaXrBjIhFiQMr53rXDfTb2EUYWwk/97f28eebfd7007b0\n"
                         },
                         {
-                          "text": "← 200 https://dalthaus.net/cdn-cgi/challenge-platform/h/g/jsd/r/0.8196738149472228:1757877139:htd5QGWzaXrNZsUEaXrBjIhFiQMr53rXDfTb2EUYWwk/97f272987e6e2421\n"
+                          "text": "← 200 https://dalthaus.net/cdn-cgi/challenge-platform/h/g/jsd/r/0.8196738149472228:1757877139:htd5QGWzaXrNZsUEaXrBjIhFiQMr53rXDfTb2EUYWwk/97f28eebfd7007b0\n"
                         },
                         {
                           "text": "/check_server_config.php response status: \u001b[33m404\u001b[39m\n"
@@ -470,7 +467,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-09-14T19:56:24.896Z",
+                      "startTime": "2025-09-14T20:15:45.259Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -505,7 +502,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 4693,
+                      "duration": 5730,
                       "errors": [],
                       "stdout": [
                         {
@@ -539,9 +536,6 @@
                           "text": "Homepage response status: \u001b[33m200\u001b[39m\n"
                         },
                         {
-                          "text": "→ GET https://dalthaus.net/config.php\n"
-                        },
-                        {
                           "text": "← 302 https://dalthaus.net/cdn-cgi/challenge-platform/scripts/jsd/main.js\n"
                         },
                         {
@@ -551,10 +545,16 @@
                           "text": "← 200 https://dalthaus.net/cdn-cgi/challenge-platform/h/g/scripts/jsd/f78657f80e4b/main.js?\n"
                         },
                         {
-                          "text": "← 404 https://dalthaus.net/config.php\n"
+                          "text": "→ POST https://dalthaus.net/cdn-cgi/challenge-platform/h/g/jsd/r/0.8196738149472228:1757877139:htd5QGWzaXrNZsUEaXrBjIhFiQMr53rXDfTb2EUYWwk/97f28f1a0e4f0816\n"
                         },
                         {
-                          "text": "→ POST https://dalthaus.net/cdn-cgi/challenge-platform/h/g/jsd/r/0.8196738149472228:1757877139:htd5QGWzaXrNZsUEaXrBjIhFiQMr53rXDfTb2EUYWwk/97f272bfb9f9c984\n"
+                          "text": "→ GET https://dalthaus.net/config.php\n"
+                        },
+                        {
+                          "text": "← 200 https://dalthaus.net/cdn-cgi/challenge-platform/h/g/jsd/r/0.8196738149472228:1757877139:htd5QGWzaXrNZsUEaXrBjIhFiQMr53rXDfTb2EUYWwk/97f28f1a0e4f0816\n"
+                        },
+                        {
+                          "text": "← 404 https://dalthaus.net/config.php\n"
                         },
                         {
                           "text": "Console [error]: Failed to load resource: the server responded with a status of 404 ()\n"
@@ -566,7 +566,7 @@
                           "text": "← 200 https://dalthaus.net/cdn-cgi/challenge-platform/scripts/jsd/main.js\n"
                         },
                         {
-                          "text": "→ POST https://dalthaus.net/cdn-cgi/challenge-platform/h/g/jsd/r/0.8196738149472228:1757877139:htd5QGWzaXrNZsUEaXrBjIhFiQMr53rXDfTb2EUYWwk/97f272c91a6cc984\n"
+                          "text": "→ POST https://dalthaus.net/cdn-cgi/challenge-platform/h/g/jsd/r/0.8196738149472228:1757877139:htd5QGWzaXrNZsUEaXrBjIhFiQMr53rXDfTb2EUYWwk/97f28f268e670816\n"
                         },
                         {
                           "text": "/config.php status: \u001b[33m404\u001b[39m\n"
@@ -575,7 +575,7 @@
                           "text": "→ GET https://dalthaus.net/config/config.php\n"
                         },
                         {
-                          "text": "← 200 https://dalthaus.net/cdn-cgi/challenge-platform/h/g/jsd/r/0.8196738149472228:1757877139:htd5QGWzaXrNZsUEaXrBjIhFiQMr53rXDfTb2EUYWwk/97f272c91a6cc984\n"
+                          "text": "← 200 https://dalthaus.net/cdn-cgi/challenge-platform/h/g/jsd/r/0.8196738149472228:1757877139:htd5QGWzaXrNZsUEaXrBjIhFiQMr53rXDfTb2EUYWwk/97f28f268e670816\n"
                         },
                         {
                           "text": "← 404 https://dalthaus.net/config/config.php\n"
@@ -584,22 +584,10 @@
                           "text": "Console [error]: Failed to load resource: the server responded with a status of 404 ()\n"
                         },
                         {
-                          "text": "→ GET https://dalthaus.net/cdn-cgi/challenge-platform/scripts/jsd/main.js\n"
-                        },
-                        {
-                          "text": "← 200 https://dalthaus.net/cdn-cgi/challenge-platform/scripts/jsd/main.js\n"
-                        },
-                        {
-                          "text": "→ POST https://dalthaus.net/cdn-cgi/challenge-platform/h/g/jsd/r/0.8196738149472228:1757877139:htd5QGWzaXrNZsUEaXrBjIhFiQMr53rXDfTb2EUYWwk/97f272cc6abec984\n"
-                        },
-                        {
                           "text": "/config/config.php status: \u001b[33m404\u001b[39m\n"
                         },
                         {
                           "text": "→ GET https://dalthaus.net/config.production.php\n"
-                        },
-                        {
-                          "text": "← 200 https://dalthaus.net/cdn-cgi/challenge-platform/h/g/jsd/r/0.8196738149472228:1757877139:htd5QGWzaXrNZsUEaXrBjIhFiQMr53rXDfTb2EUYWwk/97f272cc6abec984\n"
                         },
                         {
                           "text": "← 404 https://dalthaus.net/config.production.php\n"
@@ -652,7 +640,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-09-14T19:56:31.745Z",
+                      "startTime": "2025-09-14T20:15:52.499Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -687,7 +675,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 4827,
+                      "duration": 4937,
                       "errors": [],
                       "stdout": [
                         {
@@ -724,28 +712,31 @@
                           "text": "/ status: \u001b[33m200\u001b[39m\n"
                         },
                         {
-                          "text": "\n--- Testing database access on /admin ---\n"
-                        },
-                        {
-                          "text": "→ GET https://dalthaus.net/admin\n"
-                        },
-                        {
                           "text": "← 302 https://dalthaus.net/cdn-cgi/challenge-platform/scripts/jsd/main.js\n"
                         },
                         {
                           "text": "→ GET https://dalthaus.net/cdn-cgi/challenge-platform/h/g/scripts/jsd/f78657f80e4b/main.js?\n"
                         },
                         {
+                          "text": "\n--- Testing database access on /admin ---\n"
+                        },
+                        {
                           "text": "← 200 https://dalthaus.net/cdn-cgi/challenge-platform/h/g/scripts/jsd/f78657f80e4b/main.js?\n"
+                        },
+                        {
+                          "text": "→ POST https://dalthaus.net/cdn-cgi/challenge-platform/h/g/jsd/r/0.8196738149472228:1757877139:htd5QGWzaXrNZsUEaXrBjIhFiQMr53rXDfTb2EUYWwk/97f28f3aaa445758\n"
+                        },
+                        {
+                          "text": "→ GET https://dalthaus.net/admin\n"
+                        },
+                        {
+                          "text": "← 200 https://dalthaus.net/cdn-cgi/challenge-platform/h/g/jsd/r/0.8196738149472228:1757877139:htd5QGWzaXrNZsUEaXrBjIhFiQMr53rXDfTb2EUYWwk/97f28f3aaa445758\n"
                         },
                         {
                           "text": "← 302 https://dalthaus.net/admin\n"
                         },
                         {
                           "text": "→ GET https://dalthaus.net/admin/login\n"
-                        },
-                        {
-                          "text": "→ POST https://dalthaus.net/cdn-cgi/challenge-platform/h/g/jsd/r/0.8196738149472228:1757877139:htd5QGWzaXrNZsUEaXrBjIhFiQMr53rXDfTb2EUYWwk/97f272e05b0f8023\n"
                         },
                         {
                           "text": "← 200 https://dalthaus.net/admin/login\n"
@@ -760,15 +751,6 @@
                           "text": "Console [warning]: cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation\n"
                         },
                         {
-                          "text": "→ GET https://dalthaus.net/cdn-cgi/challenge-platform/scripts/jsd/main.js\n"
-                        },
-                        {
-                          "text": "← 200 https://dalthaus.net/cdn-cgi/challenge-platform/scripts/jsd/main.js\n"
-                        },
-                        {
-                          "text": "→ POST https://dalthaus.net/cdn-cgi/challenge-platform/h/g/jsd/r/0.8196738149472228:1757877139:htd5QGWzaXrNZsUEaXrBjIhFiQMr53rXDfTb2EUYWwk/97f272ea5b5a8023\n"
-                        },
-                        {
                           "text": "/admin status: \u001b[33m200\u001b[39m\n"
                         },
                         {
@@ -776,9 +758,6 @@
                         },
                         {
                           "text": "→ GET https://dalthaus.net/articles\n"
-                        },
-                        {
-                          "text": "← 200 https://dalthaus.net/cdn-cgi/challenge-platform/h/g/jsd/r/0.8196738149472228:1757877139:htd5QGWzaXrNZsUEaXrBjIhFiQMr53rXDfTb2EUYWwk/97f272ea5b5a8023\n"
                         },
                         {
                           "text": "← 200 https://dalthaus.net/articles\n"
@@ -793,15 +772,6 @@
                           "text": "Console [warning]: cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation\n"
                         },
                         {
-                          "text": "→ GET https://dalthaus.net/cdn-cgi/challenge-platform/scripts/jsd/main.js\n"
-                        },
-                        {
-                          "text": "← 200 https://dalthaus.net/cdn-cgi/challenge-platform/scripts/jsd/main.js\n"
-                        },
-                        {
-                          "text": "→ POST https://dalthaus.net/cdn-cgi/challenge-platform/h/g/jsd/r/0.8196738149472228:1757877139:htd5QGWzaXrNZsUEaXrBjIhFiQMr53rXDfTb2EUYWwk/97f272f06b898023\n"
-                        },
-                        {
                           "text": "/articles status: \u001b[33m200\u001b[39m\n"
                         },
                         {
@@ -809,9 +779,6 @@
                         },
                         {
                           "text": "→ GET https://dalthaus.net/photobooks\n"
-                        },
-                        {
-                          "text": "← 200 https://dalthaus.net/cdn-cgi/challenge-platform/h/g/jsd/r/0.8196738149472228:1757877139:htd5QGWzaXrNZsUEaXrBjIhFiQMr53rXDfTb2EUYWwk/97f272f06b898023\n"
                         },
                         {
                           "text": "← 200 https://dalthaus.net/photobooks\n"
@@ -834,7 +801,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-09-14T19:56:36.462Z",
+                      "startTime": "2025-09-14T20:15:58.280Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -860,8 +827,8 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-09-14T19:56:05.952Z",
-    "duration": 35821.115,
+    "startTime": "2025-09-14T20:15:34.403Z",
+    "duration": 29384.108,
     "expected": 6,
     "skipped": 0,
     "unexpected": 0,

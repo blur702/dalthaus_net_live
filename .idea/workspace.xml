@@ -6,13 +6,26 @@
   <component name="ChangeListManager">
     <list default="true" id="c4d373a9-2ff0-4bed-b725-60773a6a2f6f" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/playwright.config.js" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/test-results/.last-run.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test-results/admin-error.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-results/admin-page-content.html" beforeDir="false" afterPath="$PROJECT_DIR$/test-results/admin-page-content.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-results/admin-page-text.txt" beforeDir="false" afterPath="$PROJECT_DIR$/test-results/admin-page-text.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-results/agent-test-content.html" beforeDir="false" afterPath="$PROJECT_DIR$/test-results/agent-test-content.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-results/agent-test-text.txt" beforeDir="false" afterPath="$PROJECT_DIR$/test-results/agent-test-text.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test-results/agent-test.png" beforeDir="false" afterPath="$PROJECT_DIR$/test-results/agent-test.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test-results/diagnose.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test-results/homepage.png" beforeDir="false" afterPath="$PROJECT_DIR$/test-results/homepage.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-results/database-diagnosis-Databas-00b81-atus-and-configuration-test-diagnosis/test-finished-1.png" beforeDir="false" afterPath="$PROJECT_DIR$/test-results/database-diagnosis-Databas-00b81-atus-and-configuration-test-diagnosis/test-finished-1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-results/database-diagnosis-Databas-13229-se-page-configuration-check-diagnosis/test-finished-1.png" beforeDir="false" afterPath="$PROJECT_DIR$/test-results/database-diagnosis-Databas-13229-se-page-configuration-check-diagnosis/test-finished-1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-results/diagnose-page-content.html" beforeDir="false" afterPath="$PROJECT_DIR$/test-results/diagnose-page-content.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-results/diagnose-page-text.txt" beforeDir="false" afterPath="$PROJECT_DIR$/test-results/diagnose-page-text.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-results/diagnose-page.png" beforeDir="false" afterPath="$PROJECT_DIR$/test-results/diagnose-page.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-results/diagnosis-analysis-report.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-results/html-report/data/52625c5487b94f3016164a6e8b15af34ff52b543.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-results/html-report/data/ba72f701a0ea14a09288d1bda33ab6267328c4b7.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-results/html-report/data/bd88786f1b5777a6342ff2dcfe98fb1ee3532c27.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-results/html-report/data/d7f64e3f4493d080a855e0379340b01ffc0d78e3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-results/html-report/data/e6ef20bb1e4bd41d0d99e313730ae395672b683c.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-results/html-report/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-results/test-results.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-results/test-summary.json" beforeDir="false" afterPath="$PROJECT_DIR$/test-results/test-summary.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -100,7 +113,7 @@
       <workItem from="1757715435282" duration="386000" />
       <workItem from="1757715840043" duration="596000" />
       <workItem from="1757799911064" duration="135000" />
-      <workItem from="1757800331748" duration="20161000" />
+      <workItem from="1757800331748" duration="21090000" />
     </task>
     <servers />
   </component>
