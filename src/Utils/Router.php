@@ -40,10 +40,16 @@ class Router
             $namespace = $group['namespace'] ?? '';
         }
 
+        // Build the full controller path
+        $fullController = $controller;
+        if ($namespace) {
+            $fullController = $namespace . '\\' . $controller;
+        }
+
         $this->routes[] = [
             'method' => strtoupper($method),
             'pattern' => $this->normalizePattern($prefix . $pattern),
-            'controller' => $namespace . '\\' . $controller,
+            'controller' => $fullController,
             'action' => $action,
         ];
     }
