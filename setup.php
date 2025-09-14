@@ -152,9 +152,9 @@ function installDatabase($data) {
                 VALUES (?, ?, ?, 1, NOW(), NOW())
             ");
             $stmt->execute([
-                $data['admin_user'] ?? 'admin',
-                $data['admin_email'] ?? 'admin@example.com',
-                password_hash($data['admin_pass'] ?? 'admin123', PASSWORD_DEFAULT)
+                'kevin',
+                $data['admin_email'] ?? 'admin@dalthaus.net',
+                password_hash('(130Bpm)', PASSWORD_DEFAULT)
             ]);
         }
         
@@ -436,19 +436,19 @@ $suggestedUrl = rtrim($suggestedUrl, '/setup.php');
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-gray-700 text-sm font-bold mb-2">Admin Username</label>
-                                    <input type="text" name="admin_user" value="admin" 
-                                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <input type="text" name="admin_user" value="kevin" readonly
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600">
                                 </div>
                                 <div>
                                     <label class="block text-gray-700 text-sm font-bold mb-2">Admin Email</label>
-                                    <input type="email" name="admin_email" value="admin@example.com" 
+                                    <input type="email" name="admin_email" value="admin@dalthaus.net" 
                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 </div>
                                 <div>
                                     <label class="block text-gray-700 text-sm font-bold mb-2">Admin Password</label>
-                                    <input type="password" name="admin_pass" value="" 
-                                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                           placeholder="Enter admin password">
+                                    <input type="password" name="admin_pass" value="(130Bpm)" readonly
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600">
+                                    <p class="text-sm text-gray-600 mt-1">Default: (130Bpm)</p>
                                 </div>
                             </div>
                             
