@@ -43,9 +43,9 @@ try {
     
     // Test 6: Check Router
     echo "6. Testing Router class...\n";
-    if (class_exists('CMS\Router')) {
+    if (class_exists('CMS\Utils\Router')) {
         echo "Router class exists\n";
-        $router = new CMS\Router();
+        $router = new CMS\Utils\Router();
         echo "Router instantiated successfully\n";
     } else {
         echo "Router class NOT found!\n";
