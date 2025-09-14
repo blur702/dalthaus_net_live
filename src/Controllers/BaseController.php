@@ -133,7 +133,8 @@ abstract class BaseController
 
     protected function requireAuth(): void
     {
-        if (!($this->getCurrentUserId())) {
+        // Check both user_id and logged_in flag for consistency
+        if (!$this->isAuthenticated()) {
             $this->setFlash('error', 'You must be logged in to view this page.');
             $this->redirect('/admin/login');
         }
@@ -141,7 +142,14 @@ abstract class BaseController
 
     protected function getCurrentUserId(): ?int
     {
-        return $_SESSION['user_id'] ?? null;
+        return isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : null;
+    }
+    
+    protected function isAuthenticated(): bool
+    {
+        return isset($_SESSION['user_id']) && 
+               isset($_SESSION['logged_in']) && 
+               $_SESSION['logged_in'] === true;
     }
 
     protected function isAjax(): bool

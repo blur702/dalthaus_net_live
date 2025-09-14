@@ -109,6 +109,7 @@ class Auth
         $_SESSION['username'] = $user['username'];
         $_SESSION['email'] = $user['email'];
         $_SESSION['logged_in'] = true;
+        $_SESSION['is_admin'] = true; // All users in this system are admins for now
         $_SESSION['login_time'] = time();
         $_SESSION['last_activity'] = time();
         
