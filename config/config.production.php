@@ -22,9 +22,9 @@ return [
      */
     'database' => [
         'host' => $_ENV['DB_HOST'] ?? 'localhost',
-        'dbname' => $_ENV['DB_NAME'] ?? 'cms_db',
-        'username' => $_ENV['DB_USER'] ?? 'cms_user',
-        'password' => $_ENV['DB_PASSWORD'] ?? '',
+        'dbname' => $_ENV['DB_NAME'] ?? 'dalthaus_maincms',
+        'username' => $_ENV['DB_USER'] ?? 'dalthaus_maincms',
+        'password' => $_ENV['DB_PASSWORD'] ?? 'f4!,Wpds=w6*=~+1',
         'charset' => 'utf8mb4',
         'options' => [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
