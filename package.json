@@ -2,12 +2,15 @@
   "name": "dalthaus_net_live",
   "version": "1.0.0",
   "description": "",
-  "main": "playwright.config.js",
+  "main": "playwright.config.ts",
   "directories": {
     "test": "tests"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx playwright test",
+    "test:diagnosis": "npx playwright test database-diagnosis.spec.ts",
+    "test:headed": "npx playwright test --headed",
+    "test:debug": "npx playwright test --debug"
   },
   "repository": {
     "type": "git",

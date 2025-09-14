@@ -1,0 +1,13 @@
+{
+  "timestamp": "2025-09-14T19:56:41.224Z",
+  "test_run": "Database Connection Diagnosis",
+  "site_url": "https://dalthaus.net",
+  "expected_db": "dalthaus_maincms",
+  "expected_user": "dalthaus_maincms",
+  "problem_indicators": [
+    "cms_db references found",
+    "cms_user references found",
+    "Connection failed errors",
+    "SQLSTATE errors"
+  ]
+}

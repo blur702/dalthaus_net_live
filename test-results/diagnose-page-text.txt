@@ -1,0 +1,51 @@
+=== Dalthaus.net Server Diagnostics ===
+
+1. PHP Version: 8.4.12
+   SAPI: litespeed
+
+2. Config File:
+   ✓ File exists
+   ✓ File is readable
+   ✓ Config loads successfully
+   Database: dalthaus_maincms
+
+3. Database Connection:
+   ✓ Database connection successful!
+   Tables found: 7
+   - activity_log
+   - content
+   - menu_items
+   - menus
+   - pages
+   - settings
+   - users
+
+4. Composer Autoloader:
+   ✓ Autoloader exists
+   ✓ CMS\Utils\Router class found
+   ✓ CMS\Controllers\Public\Home class found
+
+5. File Permissions:
+   uploads: ✓ Writable
+   logs: ✓ Writable
+   cache: ✗ Not writable
+
+6. .htaccess:
+   ✓ .htaccess exists
+   ✓ RewriteEngine is On
+
+7. Maintenance Mode:
+   ✓ Not in maintenance mode
+
+8. Git Status:
+   ✓ Git repository found
+   Current branch: main
+   Modified files: 16
+
+=== Diagnostics Complete ===
+
+To fix issues:
+1. Ensure database is running and accessible
+2. Run: composer dump-autoload
+3. Check file permissions
+4. Review error logs in /logs directory
