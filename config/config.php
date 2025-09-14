@@ -19,9 +19,9 @@ return [
      */
     'database' => [
         'host' => 'localhost',
-        'dbname' => 'cms_db',
-        'username' => 'cms_user',
-        'password' => 'cms_password',
+        'dbname' => 'dalthaus_maincms',
+        'username' => 'dalthaus_maincms',
+        'password' => 'f4!,Wpds=w6*=~+1',
         'charset' => 'utf8mb4',
         'options' => [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
