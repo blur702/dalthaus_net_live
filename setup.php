@@ -385,19 +385,19 @@ $suggestedUrl = rtrim($suggestedUrl, '/setup.php');
                                 </div>
                                 <div>
                                     <label class="block text-gray-700 text-sm font-bold mb-2">Database Name</label>
-                                    <input type="text" name="db_name" value="<?= htmlspecialchars($currentConfig['database']['name'] ?? 'cms_db') ?>" 
+                                    <input type="text" name="db_name" value="<?= htmlspecialchars($currentConfig['database']['dbname'] ?? 'dalthaus_maincms') ?>" 
                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                            placeholder="cms_db">
                                 </div>
                                 <div>
                                     <label class="block text-gray-700 text-sm font-bold mb-2">Database User</label>
-                                    <input type="text" name="db_user" value="<?= htmlspecialchars($currentConfig['database']['user'] ?? '') ?>" 
+                                    <input type="text" name="db_user" value="<?= htmlspecialchars($currentConfig['database']['username'] ?? 'dalthaus_maincms') ?>" 
                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                            placeholder="database_user">
                                 </div>
                                 <div>
                                     <label class="block text-gray-700 text-sm font-bold mb-2">Database Password</label>
-                                    <input type="password" name="db_pass" 
+                                    <input type="password" name="db_pass" value="<?= htmlspecialchars($currentConfig['database']['password'] ?? 'f4!,Wpds=w6*=~+1') ?>"
                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                            placeholder="••••••••">
                                 </div>
