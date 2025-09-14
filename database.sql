@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 -- Table structure for table `users`
 --
 
-CREATE TABLE `users` (
+CREATE TABLE IF NOT EXISTS `users` (
   `user_id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(50) NOT NULL,
   `email` varchar(100) NOT NULL,
@@ -37,7 +37,7 @@ CREATE TABLE `users` (
 -- Table structure for table `content`
 --
 
-CREATE TABLE `content` (
+CREATE TABLE IF NOT EXISTS `content` (
   `content_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `title` varchar(255) NOT NULL,
@@ -68,7 +68,7 @@ CREATE TABLE `content` (
 -- Table structure for table `pages`
 --
 
-CREATE TABLE `pages` (
+CREATE TABLE IF NOT EXISTS `pages` (
   `page_id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(255) NOT NULL,
   `url_alias` varchar(255) NOT NULL,
@@ -89,7 +89,7 @@ CREATE TABLE `pages` (
 -- Table structure for table `menus`
 --
 
-CREATE TABLE `menus` (
+CREATE TABLE IF NOT EXISTS `menus` (
   `menu_id` int(11) NOT NULL AUTO_INCREMENT,
   `menu_name` varchar(100) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -104,7 +104,7 @@ CREATE TABLE `menus` (
 -- Table structure for table `menu_items`
 --
 
-CREATE TABLE `menu_items` (
+CREATE TABLE IF NOT EXISTS `menu_items` (
   `item_id` int(11) NOT NULL AUTO_INCREMENT,
   `menu_id` int(11) NOT NULL,
   `parent_id` int(11) DEFAULT NULL,
@@ -127,7 +127,7 @@ CREATE TABLE `menu_items` (
 -- Table structure for table `settings`
 --
 
-CREATE TABLE `settings` (
+CREATE TABLE IF NOT EXISTS `settings` (
   `setting_id` int(11) NOT NULL AUTO_INCREMENT,
   `setting_key` varchar(100) NOT NULL,
   `setting_value` text,
@@ -143,7 +143,7 @@ CREATE TABLE `settings` (
 -- Table structure for table `activity_log`
 --
 
-CREATE TABLE `activity_log` (
+CREATE TABLE IF NOT EXISTS `activity_log` (
   `log_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) DEFAULT NULL,
   `action` varchar(100) NOT NULL,
@@ -168,25 +168,25 @@ CREATE TABLE `activity_log` (
 --
 
 -- Default menus
-INSERT INTO `menus` (`menu_id`, `menu_name`) VALUES
+INSERT IGNORE INTO `menus` (`menu_id`, `menu_name`) VALUES
 (1, 'main'),
 (2, 'footer'),
 (3, 'sidebar');
 
 -- Default menu items for main menu
-INSERT INTO `menu_items` (`menu_id`, `label`, `link`, `sort_order`) VALUES
+INSERT IGNORE INTO `menu_items` (`menu_id`, `label`, `link`, `sort_order`) VALUES
 (1, 'Home', '/', 1),
 (1, 'Articles', '/articles', 2),
 (1, 'Photobooks', '/photobooks', 3);
 
 -- Default menu items for footer menu
-INSERT INTO `menu_items` (`menu_id`, `label`, `link`, `sort_order`) VALUES
+INSERT IGNORE INTO `menu_items` (`menu_id`, `label`, `link`, `sort_order`) VALUES
 (2, 'Home', '/', 1),
 (2, 'Articles', '/articles', 2),
 (2, 'Photobooks', '/photobooks', 3);
 
 -- Default settings
-INSERT INTO `settings` (`setting_key`, `setting_value`) VALUES
+INSERT IGNORE INTO `settings` (`setting_key`, `setting_value`) VALUES
 ('site_name', 'CMS Application'),
 ('site_description', 'A modern content management system'),
 ('items_per_page', '10'),
@@ -195,7 +195,7 @@ INSERT INTO `settings` (`setting_key`, `setting_value`) VALUES
 
 -- Default admin user (username: admin, password: admin123)
 -- Note: Change this password immediately after setup!
-INSERT INTO `users` (`username`, `email`, `password_hash`, `is_admin`) VALUES
+INSERT IGNORE INTO `users` (`username`, `email`, `password_hash`, `is_admin`) VALUES
 ('kevin', 'kevin@example.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 1);
 
 COMMIT;
