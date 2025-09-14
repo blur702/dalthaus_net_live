@@ -1,49 +1,89 @@
-# CMS URL Rewriting Rules
+# CMS .htaccess Configuration
+# Optimized for shared hosting environments
+
+# Enable RewriteEngine
 RewriteEngine On
 
-# Prevent direct access to sensitive files
-<Files "config.php">
-    Order allow,deny
-    Deny from all
-</Files>
+# Set the base directory if in a subdirectory
+# RewriteBase /
 
-<Files "database.sql">
-    Order allow,deny
-    Deny from all
-</Files>
+# Security Headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    
+    # Content Security Policy - Updated for TinyMCE
+    Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.tiny.cloud https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.tailwindcss.com https://cdn.tiny.cloud https://cdn.jsdelivr.net; img-src 'self' data: https: blob:; font-src 'self' https://cdnjs.cloudflare.com data:; connect-src 'self' https://cdn.tiny.cloud https://cdn.jsdelivr.net; frame-src 'self' https://cdn.tiny.cloud; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
+    
+    # Permissions Policy
+    Header set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), accelerometer=(), gyroscope=()"
+</IfModule>
 
-<FilesMatch "\.(log|md)$">
-    Order allow,deny
+# Prevent directory listing
+Options -Indexes
+
+# Protect sensitive files
+<FilesMatch "(\.env|\.git|\.gitignore|composer\.(json|lock)|package\.(json|lock)|webpack\.config\.js|database\.sql|CLAUDE\.md|Makefile|README\.md|config\.php)$">
+    Order Allow,Deny
     Deny from all
 </FilesMatch>
 
-# Security headers
-<IfModule mod_headers.c>
-    # Prevent MIME type sniffing
-    Header always set X-Content-Type-Options "nosniff"
-    
-    # Prevent clickjacking attacks
-    Header always set X-Frame-Options "DENY"
-    
-    # Enable XSS protection (legacy browsers)
-    Header always set X-XSS-Protection "1; mode=block"
-    
-    # Control referrer information
-    Header always set Referrer-Policy "strict-origin-when-cross-origin"
-    
-    # Content Security Policy - Adjust domains as needed for your deployment
-    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.tiny.cloud https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.tailwindcss.com; img-src 'self' data: https:; font-src 'self' https://cdnjs.cloudflare.com data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
-    
-    # Strict Transport Security (only enable when using HTTPS)
-    # Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" env=HTTPS
-    
-    # Permissions Policy (formerly Feature Policy)
-    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), accelerometer=(), gyroscope=()"
+# Protect directories
+<IfModule mod_rewrite.c>
+    RewriteRule ^config/ - [F,L]
+    RewriteRule ^src/ - [F,L]
+    RewriteRule ^tests/ - [F,L]
+    RewriteRule ^vendor/ - [F,L]
+    RewriteRule ^node_modules/ - [F,L]
 </IfModule>
 
-# Redirect all requests to index.php except for existing files and directories
+# Block access to setup.php after installation (uncomment after setup)
+# <Files "setup.php">
+#     Order Allow,Deny
+#     Deny from all
+# </Files>
+
+# PHP Configuration for shared hosting
+<IfModule mod_php7.c>
+    php_value upload_max_filesize 20M
+    php_value post_max_size 25M
+    php_value max_execution_time 300
+    php_value max_input_time 300
+    php_value memory_limit 256M
+    php_value session.gc_maxlifetime 86400
+</IfModule>
+
+<IfModule mod_php8.c>
+    php_value upload_max_filesize 20M
+    php_value post_max_size 25M
+    php_value max_execution_time 300
+    php_value max_input_time 300
+    php_value memory_limit 256M
+    php_value session.gc_maxlifetime 86400
+</IfModule>
+
+# Handle maintenance mode
+RewriteCond %{REQUEST_URI} !^/maintenance\.html$
+RewriteCond %{REQUEST_URI} !^/assets/
+RewriteCond %{DOCUMENT_ROOT}/maintenance.html -f
+RewriteRule ^(.*)$ /maintenance.html [R=503,L]
+
+# Force HTTPS (uncomment if SSL is available)
+# RewriteCond %{HTTPS} !=on
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+# Remove trailing slash except for directories
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.+)/$ /$1 [L,R=301]
+
+# Route all requests through index.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/uploads/
+RewriteCond %{REQUEST_URI} !^/assets/
+RewriteCond %{REQUEST_URI} !^/setup\.php$
 RewriteRule ^(.*)$ index.php [QSA,L]
 
 # Set up proper MIME types
@@ -51,29 +91,54 @@ RewriteRule ^(.*)$ index.php [QSA,L]
     AddType text/css .css
     AddType application/javascript .js
     AddType image/webp .webp
+    AddType image/svg+xml .svg
+    AddType font/woff .woff
+    AddType font/woff2 .woff2
 </IfModule>
 
-# Enable compression
+# Compression
 <IfModule mod_deflate.c>
-    AddOutputFilterByType DEFLATE text/plain
-    AddOutputFilterByType DEFLATE text/html
-    AddOutputFilterByType DEFLATE text/xml
-    AddOutputFilterByType DEFLATE text/css
-    AddOutputFilterByType DEFLATE application/xml
-    AddOutputFilterByType DEFLATE application/xhtml+xml
-    AddOutputFilterByType DEFLATE application/rss+xml
-    AddOutputFilterByType DEFLATE application/javascript
-    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript
+    AddOutputFilterByType DEFLATE application/javascript application/x-javascript
+    AddOutputFilterByType DEFLATE application/xml application/xhtml+xml application/rss+xml
+    AddOutputFilterByType DEFLATE application/x-font-ttf application/vnd.ms-fontobject
+    AddOutputFilterByType DEFLATE font/opentype font/otf font/ttf
+    AddOutputFilterByType DEFLATE image/svg+xml
 </IfModule>
 
-# Browser caching
+# Browser Caching
 <IfModule mod_expires.c>
-    ExpiresActive on
-    ExpiresByType text/css "access plus 1 year"
-    ExpiresByType application/javascript "access plus 1 year"
-    ExpiresByType image/png "access plus 1 year"
-    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresActive On
+    
+    # Images
     ExpiresByType image/jpeg "access plus 1 year"
     ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
     ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/x-icon "access plus 1 year"
+    
+    # CSS and JavaScript
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType text/javascript "access plus 1 month"
+    
+    # Others
+    ExpiresByType application/pdf "access plus 1 month"
+    ExpiresByType application/x-font-ttf "access plus 1 year"
+    ExpiresByType font/opentype "access plus 1 year"
+    ExpiresByType font/woff "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
 </IfModule>
+
+# UTF-8 Encoding
+AddDefaultCharset UTF-8
+<IfModule mod_mime.c>
+    AddCharset UTF-8 .css .js .xml .json .html .htm
+</IfModule>
+
+# Error Documents
+ErrorDocument 404 /index.php
+ErrorDocument 403 /index.php
+ErrorDocument 500 /index.php
+ErrorDocument 503 /maintenance.html
