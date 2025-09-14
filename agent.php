@@ -168,6 +168,35 @@ switch ($action) {
             ]);
         }
         break;
+    
+    case 'force_git_reset':
+        // Force reset to match GitHub
+        $output = [];
+        $commands = [
+            'git reset --hard HEAD',
+            'git clean -fd',
+            'git pull origin main'
+        ];
+        
+        $allOutput = [];
+        $success = true;
+        
+        foreach ($commands as $cmd) {
+            $cmdOutput = [];
+            $returnCode = 0;
+            exec('cd ' . escapeshellarg(__DIR__) . ' && ' . $cmd . ' 2>&1', $cmdOutput, $returnCode);
+            $allOutput[$cmd] = $cmdOutput;
+            if ($returnCode !== 0) {
+                $success = false;
+            }
+        }
+        
+        echo json_encode([
+            'success' => $success,
+            'message' => $success ? 'Force reset complete' : 'Force reset had errors',
+            'output' => $allOutput
+        ]);
+        break;
 
     case 'test':
         echo json_encode([
