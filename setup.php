@@ -144,7 +144,7 @@ function installDatabase($data) {
         
         // Create default admin user if not exists
         $stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE username = ?");
-        $stmt->execute(['admin']);
+        $stmt->execute(['kevin']);
         
         if ($stmt->fetchColumn() == 0) {
             $stmt = $pdo->prepare("
@@ -155,6 +155,18 @@ function installDatabase($data) {
                 'kevin',
                 $data['admin_email'] ?? 'admin@dalthaus.net',
                 password_hash('(130Bpm)', PASSWORD_DEFAULT)
+            ]);
+        } else {
+            // Update existing kevin user to ensure it's an admin with correct password
+            $stmt = $pdo->prepare("
+                UPDATE users 
+                SET password_hash = ?, is_admin = 1, email = ?
+                WHERE username = ?
+            ");
+            $stmt->execute([
+                password_hash('(130Bpm)', PASSWORD_DEFAULT),
+                $data['admin_email'] ?? 'admin@dalthaus.net',
+                'kevin'
             ]);
         }
         
