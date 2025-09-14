@@ -352,6 +352,47 @@ return [
         ]);
         break;
 
+    
+    case 'clear_all_sessions':
+        // Clear ALL session files on the server
+        $sessionPath = session_save_path() ?: '/opt/alt/php84/var/lib/php/session';
+        $files = glob($sessionPath . '/sess_*');
+        $count = 0;
+        foreach ($files as $file) {
+            if (@unlink($file)) $count++;
+        }
+        echo json_encode([
+            'success' => true,
+            'message' => "Cleared $count session files",
+            'session_path' => $sessionPath
+        ]);
+        exit;
+        
+    case 'test_auth':
+        // Test authentication system
+        session_start();
+        require_once __DIR__ . '/vendor/autoload.php';
+        $config = require __DIR__ . '/config/config.php';
+        
+        try {
+            $db = CMS\Utils\Database::getInstance($config['database']);
+            $auth = new CMS\Utils\Auth($db, $config['security']);
+            
+            $result = [
+                'session_id' => session_id(),
+                'session_data' => $_SESSION,
+                'auth_check' => $auth->check(),
+                'user_id' => $_SESSION['user_id'] ?? null,
+                'logged_in' => $_SESSION['logged_in'] ?? false,
+                'is_admin' => $_SESSION['is_admin'] ?? false
+            ];
+            
+            echo json_encode(['success' => true, 'auth_status' => $result]);
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
+        exit;
+        
     default:
         echo json_encode([
             'success' => false,
