@@ -35,6 +35,28 @@ switch ($input['action']) {
         ]);
         break;
         
+    case 'git_force_pull':
+        $output = [];
+        $returnCode = 0;
+        $commands = [
+            'cd ' . __DIR__,
+            'git fetch origin main',
+            'git reset --hard origin/main'
+        ];
+        
+        foreach ($commands as $cmd) {
+            exec($cmd . ' 2>&1', $output, $returnCode);
+            if ($returnCode !== 0) break;
+        }
+        
+        echo json_encode([
+            'success' => $returnCode === 0,
+            'message' => $returnCode === 0 ? 'Force pull successful' : 'Force pull failed',
+            'output' => implode("\n", $output),
+            'return_code' => $returnCode
+        ]);
+        break;
+        
     case 'check_error':
         // Check PHP error log
         $errorLog = ini_get('error_log');
