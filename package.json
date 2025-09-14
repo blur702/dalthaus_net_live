@@ -26,5 +26,8 @@
   "homepage": "https://github.com/blur702/dalthaus_net_live#readme",
   "devDependencies": {
     "@playwright/test": "^1.55.0"
+  },
+  "dependencies": {
+    "playwright": "^1.55.0"
   }
 }
