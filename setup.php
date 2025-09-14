@@ -207,10 +207,16 @@ function saveConfiguration($data) {
             'database' => [
                 'host' => $data['db_host'],
                 'port' => (int)$data['db_port'],
-                'name' => $data['db_name'],
-                'user' => $data['db_user'],
-                'pass' => $data['db_pass'],
-                'charset' => 'utf8mb4'
+                'dbname' => $data['db_name'],
+                'username' => $data['db_user'],
+                'password' => $data['db_pass'],
+                'charset' => 'utf8mb4',
+                'options' => [
+                    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                    PDO::ATTR_EMULATE_PREPARES   => false,
+                    PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
+                ]
             ],
             'session' => [
                 'name' => 'cms_session',
