@@ -148,7 +148,7 @@ function installDatabase($data) {
         
         if ($stmt->fetchColumn() == 0) {
             $stmt = $pdo->prepare("
-                INSERT INTO users (username, email, password, is_admin, created_at, updated_at) 
+                INSERT INTO users (username, email, password_hash, is_admin, created_at, updated_at) 
                 VALUES (?, ?, ?, 1, NOW(), NOW())
             ");
             $stmt->execute([
