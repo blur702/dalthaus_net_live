@@ -167,11 +167,17 @@ abstract class BaseController
             return;
         }
         
-        // Check if maintenance mode is enabled
-        $maintenanceMode = Settings::getBool('maintenance_mode', false);
-        
-        if ($maintenanceMode) {
-            $this->showMaintenancePage();
+        // Check if maintenance mode is enabled - wrapped in try-catch to prevent 503 on DB errors
+        try {
+            $maintenanceMode = Settings::getBool('maintenance_mode', false);
+            
+            if ($maintenanceMode) {
+                $this->showMaintenancePage();
+            }
+        } catch (Exception $e) {
+            // Log the error but don't trigger maintenance mode on database errors
+            error_log('Maintenance mode check failed: ' . $e->getMessage());
+            // Continue normally - assume maintenance mode is OFF if we can't check
         }
     }
 

@@ -7,6 +7,12 @@
     <list default="true" id="c4d373a9-2ff0-4bed-b725-60773a6a2f6f" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/playwright.config.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-results/.last-run.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-results/admin-error.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-results/agent-test.png" beforeDir="false" afterPath="$PROJECT_DIR$/test-results/agent-test.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-results/diagnose.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-results/homepage.png" beforeDir="false" afterPath="$PROJECT_DIR$/test-results/homepage.png" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -94,7 +100,7 @@
       <workItem from="1757715435282" duration="386000" />
       <workItem from="1757715840043" duration="596000" />
       <workItem from="1757799911064" duration="135000" />
-      <workItem from="1757800331748" duration="19598000" />
+      <workItem from="1757800331748" duration="20161000" />
     </task>
     <servers />
   </component>
