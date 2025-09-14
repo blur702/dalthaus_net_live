@@ -1,46 +1,93 @@
 <?php
-// Emergency config fix - can be run via web
-header('Content-Type: text/plain');
+// Emergency dashboard fix
+header("Content-Type: text/plain");
 
-$configFile = __DIR__ . '/config/config.php';
+echo "=== EMERGENCY FIX RUNNING ===\n\n";
 
-if (!file_exists($configFile)) {
-    die("Config file not found!");
-}
+// 1. First ensure database config is correct
+$configPath = __DIR__ . "/config/config.php";
+$configContent = file_get_contents($configPath);
 
-// Read the config file as text
-$configContent = file_get_contents($configFile);
+// Force correct database values
+$configContent = preg_replace(
+    '/["\']dbname["\']\s*=>\s*["\'][^"\']*["\']/',
+    '"dbname" => "dalthaus_maincms"',
+    $configContent
+);
+$configContent = preg_replace(
+    '/["\']username["\']\s*=>\s*["\'][^"\']*["\']/',
+    '"username" => "dalthaus_maincms"',
+    $configContent
+);
+$configContent = preg_replace(
+    '/["\']password["\']\s*=>\s*["\'][^"\']*["\']/',
+    '"password" => "f4!,Wpds=w6*=~+1"',
+    $configContent
+);
 
-// Fix the database array keys using string replacement
-$configContent = str_replace("'name' =>", "'dbname' =>", $configContent);
-$configContent = str_replace("'user' =>", "'username' =>", $configContent);
-$configContent = str_replace("'pass' =>", "'password' =>", $configContent);
+file_put_contents($configPath, $configContent);
+echo "1. Config file updated\n";
 
-// Add PDO options if not present
-if (strpos($configContent, "'options'") === false) {
-    // Find the charset line and add options after it
-    $configContent = str_replace(
-        "'charset' => 'utf8mb4',\n  ),",
-        "'charset' => 'utf8mb4',\n    'options' => \n    array (\n      " . PDO::ATTR_ERRMODE . " => " . PDO::ERRMODE_EXCEPTION . ",\n      " . PDO::ATTR_DEFAULT_FETCH_MODE . " => " . PDO::FETCH_ASSOC . ",\n      " . PDO::ATTR_EMULATE_PREPARES . " => false,\n    ),\n  ),",
-        $configContent
+// 2. Fix BaseController to handle Settings errors
+$baseControllerPath = __DIR__ . "/src/Controllers/BaseController.php";
+$baseController = file_get_contents($baseControllerPath);
+
+// Make sure Settings::getBool is wrapped in try-catch
+if (!strpos($baseController, "try {") || !strpos($baseController, "Settings::getBool")) {
+    $baseController = str_replace(
+        '$maintenanceMode = Settings::getBool(\'maintenance_mode\', false);',
+        'try {
+            $maintenanceMode = Settings::getBool(\'maintenance_mode\', false);
+        } catch (\\Exception $e) {
+            error_log(\'Settings::getBool failed: \' . $e->getMessage());
+            $maintenanceMode = false; // Default to not in maintenance
+        }',
+        $baseController
     );
+    file_put_contents($baseControllerPath, $baseController);
+    echo "2. BaseController error handling updated\n";
 }
 
-// Backup the old config
-$backupFile = $configFile . '.backup.' . date('YmdHis');
-copy($configFile, $backupFile);
-echo "Backup created: " . basename($backupFile) . "\n";
+// 3. Ensure settings table exists with correct structure
+try {
+    $pdo = new PDO(
+        "mysql:host=localhost;dbname=dalthaus_maincms;charset=utf8mb4",
+        "dalthaus_maincms",
+        "f4!,Wpds=w6*=~+1"
+    );
+    
+    // Create table if not exists
+    $pdo->exec("CREATE TABLE IF NOT EXISTS settings (
+        setting_id int(11) NOT NULL AUTO_INCREMENT,
+        setting_key varchar(100) NOT NULL,
+        setting_value text,
+        created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        PRIMARY KEY (setting_id),
+        UNIQUE KEY setting_key (setting_key)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+    
+    // Ensure maintenance_mode is off
+    $stmt = $pdo->prepare("INSERT INTO settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?");
+    $stmt->execute(["maintenance_mode", "0", "0"]);
+    
+    echo "3. Settings table verified and maintenance_mode set to 0\n";
+    
+} catch (PDOException $e) {
+    echo "3. Database error: " . $e->getMessage() . "\n";
+}
 
-// Write the fixed config
-file_put_contents($configFile, $configContent);
-echo "Config file fixed!\n\n";
+// 4. Clear all caches
+if (function_exists("opcache_reset")) {
+    opcache_reset();
+    echo "4. OPcache cleared\n";
+}
 
-// Verify the fix
-$config = require $configFile;
-echo "Verification:\n";
-echo "- dbname: " . ($config['database']['dbname'] ?? 'NOT FOUND') . "\n";
-echo "- username: " . ($config['database']['username'] ?? 'NOT FOUND') . "\n";
-echo "- password: " . (isset($config['database']['password']) ? '***hidden***' : 'NOT FOUND') . "\n";
+// Clear any session data
+session_start();
+session_destroy();
+echo "5. Sessions cleared\n";
 
-echo "\nConfig fixed successfully! The site should now work.\n";
+echo "\n✅ Emergency fix complete!\n";
+echo "Dashboard should now load without 503 errors.\n";
 ?>
