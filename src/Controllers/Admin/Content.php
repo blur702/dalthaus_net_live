@@ -192,9 +192,7 @@ class Content extends BaseController
             'url_alias' => $this->sanitize($this->getParam('url_alias', '', 'post')),
             'content_type' => $this->getParam('content_type', ContentModel::TYPE_ARTICLE, 'post'),
             'status' => $status,
-            'published_at' => $this->getParam('published_at', '', 'post'),
-            'meta_keywords' => $this->sanitize($this->getParam('meta_keywords', '', 'post')),
-            'meta_description' => $this->sanitize($this->getParam('meta_description', '', 'post'))
+            'published_at' => $this->getParam('published_at', '', 'post')
         ];
     }
 
@@ -459,7 +457,7 @@ class Content extends BaseController
             }
             
             // Only allow certain fields to be autosaved
-            $allowedFields = ['title', 'teaser', 'body', 'meta_keywords', 'meta_description'];
+            $allowedFields = ['title', 'teaser', 'body'];
             
             if (!in_array($field, $allowedFields)) {
                 throw new Exception('Field not allowed for autosave');
