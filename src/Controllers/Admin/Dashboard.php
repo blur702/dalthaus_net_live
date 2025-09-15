@@ -65,6 +65,18 @@ class Dashboard extends BaseController
      */
     public function index(): void
     {
+        // DEBUG: Log that we reached the index method
+        error_log("Dashboard::index() - Successfully reached dashboard index method");
+        
+        // TEMPORARY: Show debug info if requested
+        if (isset($_GET['debug_index'])) {
+            echo "<h1>Dashboard Index Debug</h1>";
+            echo "<p>✓ Authentication passed</p>";
+            echo "<p>✓ Reached index() method</p>";
+            echo "<p>About to load dashboard data and render view...</p>";
+            echo "<p><a href='/admin/dashboard'>Try normal dashboard</a></p>";
+            return;
+        }
         // Get dashboard statistics
         $stats = $this->getDashboardStats();
         
@@ -107,6 +119,19 @@ class Dashboard extends BaseController
             return is_object($item) && method_exists($item, 'toArray') ? $item->toArray() : $item;
         }, $draft_reminders_raw);
         $most_viewed = []; // Placeholder
+
+        // DEBUG: Log before rendering
+        error_log("Dashboard::index() - About to render view");
+        
+        // TEMPORARY: Debug render
+        if (isset($_GET['debug_render'])) {
+            echo "<h1>Dashboard Render Debug</h1>";
+            echo "<p>✓ All data prepared successfully</p>";
+            echo "<p>✓ About to call render('admin/dashboard/index', ...)</p>";
+            echo "<p>If this shows but normal dashboard doesn't work, the issue is in view rendering</p>";
+            echo "<p><a href='/admin/dashboard'>Try normal dashboard</a></p>";
+            return;
+        }
 
         $this->render('admin/dashboard/index', [
             'stats' => $stats,
