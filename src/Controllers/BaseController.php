@@ -272,33 +272,68 @@ abstract class BaseController
     <title>Site Maintenance - {$siteName}</title>
     <style>
         body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: Arial, sans-serif;
+            background-color: rgb(248, 248, 248);
             margin: 0; padding: 0; min-height: 100vh; 
             display: flex; align-items: center; justify-content: center;
-            color: #333;
+            color: rgb(20, 20, 20);
         }
         .maintenance-container { 
-            background: white; border-radius: 10px; padding: 40px; 
-            max-width: 600px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            background: white; 
+            border-radius: 8px; 
+            padding: 3rem 2rem; 
+            max-width: 600px; 
+            width: 90%;
+            text-align: center; 
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e5e5;
         }
-        .maintenance-icon { font-size: 4rem; color: #667eea; margin-bottom: 20px; }
-        h1 { color: #333; margin-bottom: 20px; }
-        p { color: #666; line-height: 1.6; margin-bottom: 30px; }
-        .login-link { 
-            display: inline-block; padding: 12px 24px; background: #667eea;
-            color: white; text-decoration: none; border-radius: 5px; 
-            transition: background 0.3s;
+        .maintenance-icon { 
+            font-size: 4rem; 
+            margin-bottom: 2rem; 
+            animation: pulse 2s infinite;
         }
-        .login-link:hover { background: #5a67d8; }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        h1 { 
+            color: rgb(20, 20, 20); 
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem; 
+            line-height: 1.2;
+        }
+        p { 
+            color: #666; 
+            font-size: 1.125rem;
+            line-height: 1.6; 
+            margin-bottom: 2rem; 
+        }
+        .retry-info {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #f8f8f8;
+            border-radius: 8px;
+            color: #666;
+            font-size: 0.875rem;
+            border: 1px solid #e5e5e5;
+        }
     </style>
+    <script>
+        setTimeout(function() {
+            window.location.reload();
+        }, 300000);
+    </script>
 </head>
 <body>
     <div class=\"maintenance-container\">
         <div class=\"maintenance-icon\">🔧</div>
-        <h1>Site Maintenance</h1>
+        <h1>Site Under Maintenance</h1>
         <p>" . htmlspecialchars($message) . "</p>
-        <a href=\"/admin/login\" class=\"login-link\">Admin Login</a>
+        <div class=\"retry-info\">
+            <strong>For visitors:</strong> This page will automatically refresh every 5 minutes to check if maintenance is complete.
+        </div>
     </div>
 </body>
 </html>";
