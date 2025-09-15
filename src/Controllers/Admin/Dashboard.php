@@ -29,6 +29,28 @@ class Dashboard extends BaseController
      */
     protected function initialize(): void
     {
+        // DEBUG: Log authentication check
+        error_log("Dashboard::initialize() - Session data: " . print_r($_SESSION, true));
+        error_log("Dashboard::initialize() - isAuthenticated(): " . ($this->isAuthenticated() ? 'true' : 'false'));
+        
+        // TEMPORARY DEBUG: Show auth status instead of redirecting
+        if (isset($_GET['debug_auth'])) {
+            echo "<h1>Dashboard Authentication Debug</h1>";
+            echo "<p>isAuthenticated(): " . ($this->isAuthenticated() ? 'YES' : 'NO') . "</p>";
+            echo "<p>Session data:</p><pre>";
+            print_r($_SESSION);
+            echo "</pre>";
+            
+            if (!$this->isAuthenticated()) {
+                echo "<p style='color: red;'>requireAuth() would redirect to login!</p>";
+                exit;
+            } else {
+                echo "<p style='color: green;'>Authentication passed, would continue to dashboard...</p>";
+                echo "<p><a href='/admin/dashboard'>Try without debug</a></p>";
+                exit;
+            }
+        }
+        
         // Require authentication for all admin actions
         $this->requireAuth();
         
