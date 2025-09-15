@@ -19,8 +19,8 @@ return function(Router $router) {
 
     // Admin routes
     $router->group(['prefix' => '/admin', 'namespace' => 'Admin'], function(Router $router) {
-        // Redirect /admin to /admin/dashboard
-        $router->get('', 'Dashboard', 'index');
+        // Handle /admin route - redirect to dashboard or show login
+        $router->get('', 'Auth', 'handleAdminRoot');
         
         // Authentication
         $router->get('/login', 'Auth', 'login');

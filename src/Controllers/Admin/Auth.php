@@ -23,6 +23,18 @@ class Auth extends BaseController
     }
 
     /**
+     * Handle /admin root route - redirect to dashboard if logged in, or to login
+     */
+    public function handleAdminRoot(): void
+    {
+        if ($this->isAuthenticated()) {
+            $this->redirect("/admin/dashboard");
+        } else {
+            $this->redirect("/admin/login");
+        }
+    }
+
+    /**
      * Show login form - NEVER REDIRECTS
      */
     public function login(): void
