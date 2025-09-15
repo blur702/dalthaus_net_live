@@ -1,0 +1,34 @@
+# SSH Credentials - DO NOT COMMIT
+ssh_config.py
+
+# Development and test files
+test_*.py
+debug_*.py
+check_*.py
+setup_*.py
+
+# Temporary files
+*.tmp
+*.log
+.DS_Store
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+env/
+.env
+
+# Local configuration overrides
+config.local.php
+*config.local*
