@@ -15,11 +15,6 @@
         <?= nl2br($this->escape($maintenance_message)) ?>
     </div>
     
-    <div>
-        <a href="mailto:<?= $this->escape($settings['admin_email'] ?? 'admin@example.com') ?>" class="login-link">
-            ✉️ Contact Admin
-        </a>
-    </div>
     
     <div class="retry-info">
         <strong>For visitors:</strong> This page will automatically refresh every 5 minutes to check if maintenance is complete.

@@ -7,6 +7,21 @@
         </h1>
     </header>
     
+    <!-- View Mode Toggle -->
+    <?php if ($total_pages > 1): ?>
+    <div class="mb-4 text-center">
+        <div class="inline-flex rounded-lg border border-gray-300 bg-white p-1">
+            <a href="<?= $this->escape($page->getUrl()) ?>" 
+               class="<?= (!isset($view_mode) || $view_mode === 'paginated') ? 'bg-blue-500 text-white' : 'text-gray-700 hover:bg-gray-100' ?> px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                Paginated View
+            </a>
+            <a href="<?= $this->escape($page->getUrl() . '?view=full') ?>" 
+               class="<?= (isset($view_mode) && $view_mode === 'full') ? 'bg-blue-500 text-white' : 'text-gray-700 hover:bg-gray-100' ?> px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                Full View
+            </a>
+        </div>
+    </div>
+    <?php endif; ?>
     
     <!-- Page Content -->
     <article class="prose max-w-none">
@@ -20,7 +35,7 @@
             <?php if (!empty($content)): ?>
                 <?= $content ?>
             <?php elseif ($page->getAttribute('body')): ?>
-                <?= $page->getAttribute('body') ?>
+                <?= $page->getContentWithPageBreaks() ?>
             <?php else: ?>
                 <p class="mb-4">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad 

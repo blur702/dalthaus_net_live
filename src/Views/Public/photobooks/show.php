@@ -19,6 +19,21 @@
         <?php endif; ?>
     </header>
     
+    <!-- View Mode Toggle -->
+    <?php if ($total_pages > 1): ?>
+    <div class="mb-4 text-center">
+        <div class="inline-flex rounded-lg border border-gray-300 bg-white p-1">
+            <a href="<?= $this->escape($photobook->getUrl()) ?>" 
+               class="<?= $view_mode === 'paginated' ? 'bg-blue-500 text-white' : 'text-gray-700 hover:bg-gray-100' ?> px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                Paginated View
+            </a>
+            <a href="<?= $this->escape($photobook->getUrl() . '?view=full') ?>" 
+               class="<?= $view_mode === 'full' ? 'bg-blue-500 text-white' : 'text-gray-700 hover:bg-gray-100' ?> px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                Full View
+            </a>
+        </div>
+    </div>
+    <?php endif; ?>
     
     <!-- Photobook Content -->
     <article class="prose max-w-none">
