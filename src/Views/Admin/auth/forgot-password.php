@@ -9,11 +9,9 @@
 
 <!-- Flash Messages -->
 <?php if (isset($flash) && !empty($flash)): ?>
-    <?php foreach ($flash as $type => $message): ?>
-    <div class="mb-4 p-4 rounded-md <?= $type === 'error' ? 'bg-red-50 text-red-800 border border-red-200' : ($type === 'success' ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-blue-50 text-blue-800 border border-blue-200') ?>">
-        <?= $this->escape($message) ?>
+    <div class="mb-4 p-4 rounded-md <?= $flash['type'] === 'error' ? 'bg-red-50 text-red-800 border border-red-200' : ($flash['type'] === 'success' ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-blue-50 text-blue-800 border border-blue-200') ?>">
+        <?= $this->escape($flash['message']) ?>
     </div>
-    <?php endforeach; ?>
 <?php endif; ?>
 
 <form class="mt-8 space-y-6" action="/admin/forgot-password" method="POST">

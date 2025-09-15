@@ -92,9 +92,22 @@ class Auth extends BaseController
             return;
         }
 
-        if ($this->auth->attempt($username, $password)) {
+        // Debug: Log the attempt result
+        $attemptResult = $this->auth->attempt($username, $password);
+        error_log("Login attempt for user '{$username}': " . ($attemptResult ? 'SUCCESS' : 'FAILED'));
+        
+        if ($attemptResult) {
+            error_log("Setting flash message and redirecting to /admin/dashboard");
             $this->setFlash("success", "Welcome back!");
+            
+            // Debug: Check if headers already sent
+            if (headers_sent($file, $line)) {
+                error_log("Headers already sent in {$file} at line {$line} before redirect");
+            }
+            
+            error_log("About to redirect to /admin/dashboard");
             $this->redirect("/admin/dashboard");
+            error_log("This should never be logged - after redirect");
             return; // Ensure execution stops after redirect
         } else {
             $remainingLockout = $this->auth->getRemainingLockoutTime($username);
