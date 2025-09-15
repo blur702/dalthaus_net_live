@@ -16,10 +16,6 @@
     </div>
     
     <div>
-        <a href="/admin/login" class="login-link">
-            👤 Admin Login
-        </a>
-        
         <a href="mailto:<?= $this->escape($settings['admin_email'] ?? 'admin@example.com') ?>" class="login-link">
             ✉️ Contact Admin
         </a>
@@ -27,7 +23,5 @@
     
     <div class="retry-info">
         <strong>For visitors:</strong> This page will automatically refresh every 5 minutes to check if maintenance is complete.
-        <br>
-        <strong>For administrators:</strong> You can still access the admin area using the login link above.
     </div>
 </div>
