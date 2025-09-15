@@ -17,27 +17,26 @@
     <!-- Custom CSS for maintenance page -->
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: Arial, sans-serif;
+            background-color: rgb(248, 248, 248);
             margin: 0;
             padding: 0;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #333;
+            color: rgb(20, 20, 20);
         }
         
         .maintenance-container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
+            background: white;
+            border-radius: 8px;
             padding: 3rem 2rem;
             max-width: 600px;
             width: 90%;
             text-align: center;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e5e5;
         }
         
         .maintenance-icon {
@@ -52,7 +51,7 @@
         }
         
         .maintenance-title {
-            color: #333;
+            color: rgb(20, 20, 20);
             font-size: 2.5rem;
             font-weight: 600;
             margin-bottom: 1rem;
@@ -66,32 +65,14 @@
             margin-bottom: 2rem;
         }
         
-        .login-link {
-            display: inline-block;
-            padding: 1rem 2rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            text-decoration: none;
-            border-radius: 10px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-            margin-right: 1rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .login-link:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
-        }
-        
         .retry-info {
             margin-top: 2rem;
             padding: 1rem;
-            background: rgba(102, 126, 234, 0.1);
-            border-radius: 10px;
+            background: #f8f8f8;
+            border-radius: 8px;
             color: #666;
             font-size: 0.875rem;
+            border: 1px solid #e5e5e5;
         }
         
         .site-logo {
@@ -114,10 +95,6 @@
                 font-size: 3rem;
             }
             
-            .login-link {
-                display: block;
-                margin-bottom: 1rem;
-            }
         }
     </style>
 </head>
@@ -130,16 +107,6 @@
             window.location.reload();
         }, 300000); // 5 minutes
         
-        // Show loading indicator when clicking admin login
-        document.addEventListener('DOMContentLoaded', function() {
-            const loginLinks = document.querySelectorAll('.login-link');
-            loginLinks.forEach(function(link) {
-                link.addEventListener('click', function(e) {
-                    this.innerHTML = 'Loading...';
-                    this.style.opacity = '0.7';
-                });
-            });
-        });
     </script>
 </body>
 </html>
