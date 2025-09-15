@@ -124,20 +124,20 @@ class Dashboard extends BaseController
         
         error_log("Dashboard::index() - Step 3: About to get recent activity");
         try {
-            // Get recent activity
+            // Get recent activity (safe fallback if table doesn't exist)
             $recentActivity_raw = ActivityLog::getRecentActivity(10);
             $recentActivity = array_map(function($item) {
                 return is_object($item) && method_exists($item, 'toArray') ? $item->toArray() : $item;
             }, $recentActivity_raw);
             error_log("Dashboard::index() - Step 3: Recent activity loaded successfully");
         } catch (Exception $e) {
-            error_log("Dashboard::index() - Step 3 FAILED: " . $e->getMessage());
-            throw $e;
+            error_log("Dashboard::index() - Step 3 FAILED (using fallback): " . $e->getMessage());
+            $recentActivity = []; // Fallback to empty array
         }
         
         error_log("Dashboard::index() - Step 4: About to get activity stats");
         try {
-            // Get activity stats for different periods
+            // Get activity stats for different periods (safe fallback if table doesn't exist)
             $activityStats = [
                 'today' => ActivityLog::getActivityStats('today'),
                 'week' => ActivityLog::getActivityStats('week'),
@@ -145,8 +145,12 @@ class Dashboard extends BaseController
             ];
             error_log("Dashboard::index() - Step 4: Activity stats loaded successfully");
         } catch (Exception $e) {
-            error_log("Dashboard::index() - Step 4 FAILED: " . $e->getMessage());
-            throw $e;
+            error_log("Dashboard::index() - Step 4 FAILED (using fallback): " . $e->getMessage());
+            $activityStats = [
+                'today' => 0,
+                'week' => 0, 
+                'month' => 0
+            ]; // Fallback to zero stats
         }
         
         // Get time-based greeting
@@ -267,16 +271,24 @@ class Dashboard extends BaseController
                AND published_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)"
         ) ?: 0;
         
-        // Active users this month (users who have activity logs)
-        $stats['active_users_month'] = $this->db->fetchColumn(
-            "SELECT COUNT(DISTINCT user_id) FROM activity_logs 
-             WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)"
-        ) ?: 0;
+        // Active users this month (users who have activity logs) - safe fallback
+        try {
+            $stats['active_users_month'] = $this->db->fetchColumn(
+                "SELECT COUNT(DISTINCT user_id) FROM activity_logs 
+                 WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)"
+            ) ?: 0;
+        } catch (Exception $e) {
+            $stats['active_users_month'] = 0; // Fallback if activity_logs table doesn't exist
+        }
         
-        // Total activities today
-        $stats['activities_today'] = $this->db->fetchColumn(
-            "SELECT COUNT(*) FROM activity_logs WHERE DATE(created_at) = CURDATE()"
-        ) ?: 0;
+        // Total activities today - safe fallback
+        try {
+            $stats['activities_today'] = $this->db->fetchColumn(
+                "SELECT COUNT(*) FROM activity_logs WHERE DATE(created_at) = CURDATE()"
+            ) ?: 0;
+        } catch (Exception $e) {
+            $stats['activities_today'] = 0; // Fallback if activity_logs table doesn't exist
+        }
         
         return $stats;
     }
