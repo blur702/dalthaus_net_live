@@ -153,6 +153,8 @@ class Content extends BaseController
 
             if ($data['status'] === ContentModel::STATUS_PUBLISHED && empty($data['published_at'])) {
                 $data['published_at'] = date('Y-m-d H:i:s');
+            } elseif (empty($data['published_at'])) {
+                $data['published_at'] = null;
             }
 
             $content = ContentModel::create($data);
@@ -309,6 +311,8 @@ class Content extends BaseController
             
             if ($data['status'] === ContentModel::STATUS_PUBLISHED && empty($content->getAttribute('published_at'))) {
                 $data['published_at'] = date('Y-m-d H:i:s');
+            } elseif (empty($data['published_at'])) {
+                $data['published_at'] = null;
             }
             
             // Set updated data on content model
