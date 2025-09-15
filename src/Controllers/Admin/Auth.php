@@ -92,26 +92,35 @@ class Auth extends BaseController
             return;
         }
 
-        if ($this->auth->attempt($username, $password)) {
-            // Use JavaScript redirect immediately - most reliable method
-            echo '<!DOCTYPE html><html><head><title>Login Successful</title></head><body>';
-            echo '<script type="text/javascript">';
-            echo 'window.location.replace("/admin/dashboard");';
-            echo '</script>';
-            echo '<noscript>';
-            echo '<meta http-equiv="refresh" content="0;url=/admin/dashboard">';
-            echo '<p>Login successful. <a href="/admin/dashboard">Click here to continue to dashboard</a></p>';
-            echo '</noscript>';
-            echo '</body></html>';
-            exit();
-        } else {
-            $remainingLockout = $this->auth->getRemainingLockoutTime($username);
-            if ($remainingLockout > 0) {
-                $minutes = ceil($remainingLockout / 60);
-                $this->setFlash("error", "Invalid credentials. Locked for {$minutes} minute(s).");
+        try {
+            if ($this->auth->attempt($username, $password)) {
+                // Use JavaScript redirect immediately - most reliable method
+                echo '<!DOCTYPE html><html><head><title>Login Successful</title></head><body>';
+                echo '<script type="text/javascript">';
+                echo 'window.location.replace("/admin/dashboard");';
+                echo '</script>';
+                echo '<noscript>';
+                echo '<meta http-equiv="refresh" content="0;url=/admin/dashboard">';
+                echo '<p>Login successful. <a href="/admin/dashboard">Click here to continue to dashboard</a></p>';
+                echo '</noscript>';
+                echo '</body></html>';
+                exit();
             } else {
-                $this->setFlash("error", "Invalid username or password.");
+                $remainingLockout = $this->auth->getRemainingLockoutTime($username);
+                if ($remainingLockout > 0) {
+                    $minutes = ceil($remainingLockout / 60);
+                    $this->setFlash("error", "Invalid credentials. Locked for {$minutes} minute(s).");
+                } else {
+                    $this->setFlash("error", "Invalid username or password.");
+                }
+                $this->redirect("/admin/login");
             }
+        } catch (\Exception $e) {
+            // Log the actual error for debugging
+            error_log("Authentication error: " . $e->getMessage());
+            
+            // Show user-friendly error message
+            $this->setFlash("error", "Login system temporarily unavailable. Please try again later.");
             $this->redirect("/admin/login");
         }
     }
