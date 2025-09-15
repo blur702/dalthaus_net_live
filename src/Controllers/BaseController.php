@@ -47,29 +47,54 @@ abstract class BaseController
 
     protected function render(string $template, array $data = []): void
     {
+        // DEBUG: Log render start
+        error_log("BaseController::render() - Starting render for template: $template");
+        
         // Add site settings to all views
         if (!isset($data['settings'])) {
+            error_log("BaseController::render() - Getting settings");
             $data['settings'] = Settings::getAll();
+            error_log("BaseController::render() - Settings loaded successfully");
         }
         
         // Add current_user to all admin views
-        if (!isset($data['current_user']) && $this->getCurrentUserId()) {
-            $userModel = new \CMS\Models\User();
-            $user = $userModel->find($this->getCurrentUserId());
-            $data['current_user'] = $user ? $user->toArray() : null;
+        if (!isset($data['current_user'])) {
+            $currentUserId = $this->getCurrentUserId();
+            error_log("BaseController::render() - Current user ID: " . ($currentUserId ?? 'null'));
+            
+            if ($currentUserId) {
+                error_log("BaseController::render() - Loading user model");
+                try {
+                    $userModel = new \CMS\Models\User();
+                    $user = $userModel->find($currentUserId);
+                    $data['current_user'] = $user ? $user->toArray() : null;
+                    error_log("BaseController::render() - User loaded successfully");
+                } catch (Exception $e) {
+                    error_log("BaseController::render() - User loading failed: " . $e->getMessage());
+                    $data['current_user'] = null;
+                }
+            } else {
+                $data['current_user'] = null;
+            }
         }
         
         // Add CSRF token if not already set
         if (!isset($data['csrf_token'])) {
+            error_log("BaseController::render() - Generating CSRF token");
             $data['csrf_token'] = $this->generateCsrfToken();
+            error_log("BaseController::render() - CSRF token generated");
         }
         
         // Add flash messages if not already set
         if (!isset($data['flash'])) {
+            error_log("BaseController::render() - Getting flash messages");
             $data['flash'] = $this->getFlash();
+            error_log("BaseController::render() - Flash messages retrieved");
         }
         
+        error_log("BaseController::render() - About to call view->render()");
         echo $this->view->render($template, $data);
+        error_log("BaseController::render() - View rendered successfully");
     }
 
     protected function redirect(string $url, int $statusCode = 302): void
