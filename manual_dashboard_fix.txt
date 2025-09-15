@@ -1,0 +1,59 @@
+MANUAL FIX FOR DASHBOARD EXCEPTION HANDLING
+============================================
+
+THE PROBLEM:
+The dashboard is failing because it tries to query the 'activity_logs' table which doesn't exist.
+Although there are try-catch blocks, they're not working because the Exception class isn't imported.
+
+THE FIX:
+Add "use Exception;" to the imports in Dashboard.php
+
+STEPS TO FIX MANUALLY:
+
+1. Login to your hosting control panel (cPanel/DirectAdmin)
+
+2. Navigate to File Manager
+
+3. Go to: /public_html/src/Controllers/Admin/Dashboard.php
+
+4. Edit the file and find this section at the top (around line 5-12):
+
+namespace CMS\Controllers\Admin;
+
+use CMS\Controllers\BaseController;
+use CMS\Models\Content;
+use CMS\Models\ActivityLog;
+use CMS\Models\User;
+use CMS\Models\Page;
+use CMS\Utils\Auth;
+
+5. Add this line after "use CMS\Utils\Auth;":
+
+use Exception;
+
+So it becomes:
+
+namespace CMS\Controllers\Admin;
+
+use CMS\Controllers\BaseController;
+use CMS\Models\Content;
+use CMS\Models\ActivityLog;
+use CMS\Models\User;
+use CMS\Models\Page;
+use CMS\Utils\Auth;
+use Exception;
+
+6. Save the file
+
+7. Test the dashboard at: https://dalthaus.net/admin/dashboard
+
+The dashboard should now load without errors. The activity statistics will show as 0 
+until the activity_logs table is created, but the dashboard will work.
+
+VERIFICATION:
+After applying the fix, the dashboard should:
+- Load without showing any error messages
+- Display all statistics (some may be 0)
+- Allow you to navigate to other admin sections
+
+If you still see errors after this fix, the issue may be elsewhere.

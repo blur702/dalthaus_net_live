@@ -38,7 +38,7 @@ return [
         'name' => 'CMS Application',
         'version' => '1.0.0',
         'timezone' => 'America/New_York',
-        'debug' => true,
+        'debug' => false,
         'base_url' => 'http://localhost',
         'upload_path' => __DIR__ . '/../uploads/',
         'max_upload_size' => 10485760, // 10MB in bytes

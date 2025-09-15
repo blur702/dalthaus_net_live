@@ -10,6 +10,7 @@ use CMS\Models\ActivityLog;
 use CMS\Models\User;
 use CMS\Models\Page;
 use CMS\Utils\Auth;
+use Exception;
 
 /**
  * Admin Dashboard Controller
