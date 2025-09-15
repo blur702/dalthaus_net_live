@@ -115,6 +115,12 @@ class Auth
         
         // Generate CSRF token
         $this->generateCsrfToken();
+        
+        // Explicitly save session to ensure data persists
+        session_write_close();
+        
+        // Restart session for continued use
+        session_start();
     }
 
     /**
