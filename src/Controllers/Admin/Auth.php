@@ -93,28 +93,15 @@ class Auth extends BaseController
         }
 
         if ($this->auth->attempt($username, $password)) {
-            // Don't set flash message since we're redirecting
-            // $this->setFlash("success", "Welcome back!");
-            
-            // Clean any output buffers that might interfere
-            while (ob_get_level()) {
-                ob_end_clean();
-            }
-            
-            // Check if headers have already been sent
-            if (!headers_sent()) {
-                // Try PHP redirect
-                header("Location: /admin/dashboard", true, 302);
-                exit();
-            }
-            
-            // Fallback: HTML/JavaScript redirect
-            echo '<!DOCTYPE html><html><head>';
+            // Use JavaScript redirect immediately - most reliable method
+            echo '<!DOCTYPE html><html><head><title>Login Successful</title></head><body>';
+            echo '<script type="text/javascript">';
+            echo 'window.location.replace("/admin/dashboard");';
+            echo '</script>';
+            echo '<noscript>';
             echo '<meta http-equiv="refresh" content="0;url=/admin/dashboard">';
-            echo '<script>window.location.href="/admin/dashboard";</script>';
-            echo '</head><body>';
-            echo '<p>Login successful. Redirecting to dashboard...</p>';
-            echo '<p><a href="/admin/dashboard">Click here if not redirected</a></p>';
+            echo '<p>Login successful. <a href="/admin/dashboard">Click here to continue to dashboard</a></p>';
+            echo '</noscript>';
             echo '</body></html>';
             exit();
         } else {
