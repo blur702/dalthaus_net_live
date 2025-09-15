@@ -151,7 +151,7 @@ class Auth
      */
     public function check(): bool
     {
-        if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+        if (!isset($_SESSION['logged_in']) || empty($_SESSION['logged_in'])) {
             return false;
         }
 

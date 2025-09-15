@@ -160,7 +160,7 @@ abstract class BaseController
     {
         return isset($_SESSION['user_id']) && 
                isset($_SESSION['logged_in']) && 
-               $_SESSION['logged_in'] === true;
+               !empty($_SESSION['logged_in']); // Accept both true and 1
     }
 
     protected function isAjax(): bool
