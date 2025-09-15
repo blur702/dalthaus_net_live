@@ -74,6 +74,17 @@ abstract class BaseController
 
     protected function redirect(string $url, int $statusCode = 302): void
     {
+        // Check if headers have already been sent
+        if (headers_sent($filename, $linenum)) {
+            // Log the error for debugging
+            error_log("Headers already sent in {$filename} on line {$linenum}. Cannot redirect to {$url}");
+            
+            // Fallback to JavaScript redirect
+            echo "<script>window.location.href = '" . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . "';</script>";
+            echo "<noscript><meta http-equiv='refresh' content='0;url=" . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . "'></noscript>";
+            exit;
+        }
+        
         header("Location: {$url}", true, $statusCode);
         exit;
     }

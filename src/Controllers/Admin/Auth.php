@@ -95,6 +95,7 @@ class Auth extends BaseController
         if ($this->auth->attempt($username, $password)) {
             $this->setFlash("success", "Welcome back!");
             $this->redirect("/admin/dashboard");
+            return; // Ensure execution stops after redirect
         } else {
             $remainingLockout = $this->auth->getRemainingLockoutTime($username);
             if ($remainingLockout > 0) {
