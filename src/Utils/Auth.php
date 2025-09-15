@@ -101,9 +101,6 @@ class Auth
      */
     private function startSession(array $user): void
     {
-        // Regenerate session ID for security
-        session_regenerate_id(true);
-        
         // Store user data in session
         $_SESSION['user_id'] = (int) $user['user_id'];
         $_SESSION['username'] = $user['username'];
@@ -116,8 +113,18 @@ class Auth
         // Generate CSRF token
         $this->generateCsrfToken();
         
-        // Explicitly save session to ensure data persists
+        // Debug: Log session data immediately after setting
+        error_log("Auth::startSession() - Setting session data");
+        error_log("Auth::startSession() - user_id: " . $_SESSION['user_id']);
+        error_log("Auth::startSession() - logged_in: " . var_export($_SESSION['logged_in'], true));
+        
+        // Force session save to disk
         session_write_close();
+        session_start();
+        
+        // Debug: Verify session was saved and reloaded
+        error_log("Auth::startSession() - After reload - user_id: " . ($_SESSION['user_id'] ?? 'MISSING'));
+        error_log("Auth::startSession() - After reload - logged_in: " . var_export($_SESSION['logged_in'] ?? 'MISSING', true));
         
         // Restart session for continued use
         session_start();
