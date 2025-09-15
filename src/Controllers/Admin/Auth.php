@@ -57,6 +57,11 @@ class Auth extends BaseController
      */
     public function authenticate(): void
     {
+        // DEBUG: Confirm this method is being called
+        if (isset($_GET['debug'])) {
+            die("DEBUG: authenticate() method was called. POST data: " . print_r($_POST, true));
+        }
+        
         if (!$this->isPost()) {
             $this->redirect("/admin/login");
             return;
