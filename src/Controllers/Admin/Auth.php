@@ -97,6 +97,18 @@ class Auth extends BaseController
         error_log("Login attempt for user '{$username}': " . ($attemptResult ? 'SUCCESS' : 'FAILED'));
         
         if ($attemptResult) {
+            // TEMPORARY DEBUG: Show success instead of redirecting
+            if (isset($_GET['debug'])) {
+                echo "<h1>Login Successful!</h1>";
+                echo "<p>User authenticated successfully.</p>";
+                echo "<p>Session data:</p><pre>";
+                print_r($_SESSION);
+                echo "</pre>";
+                echo "<p>Headers sent: " . (headers_sent($f, $l) ? "Yes at $f:$l" : "No") . "</p>";
+                echo "<p><a href='/admin/dashboard'>Click here to go to dashboard</a></p>";
+                exit;
+            }
+            
             error_log("Setting flash message and redirecting to /admin/dashboard");
             $this->setFlash("success", "Welcome back!");
             
