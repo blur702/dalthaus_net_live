@@ -56,7 +56,7 @@ return [
         'password_min_length' => 8,
         'login_max_attempts' => 5,
         'login_lockout_time' => 900, // 15 minutes
-        'secure_cookies' => false, // Set to true for HTTPS
+        'secure_cookies' => true, // Required for HTTPS sites like https://dalthaus.net
         'cookie_httponly' => true,
         'cookie_samesite' => 'Strict'
     ],
