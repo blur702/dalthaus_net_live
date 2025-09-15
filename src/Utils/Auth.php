@@ -101,8 +101,8 @@ class Auth
      */
     private function startSession(array $user): void
     {
-        // Regenerate session ID for security
-        session_regenerate_id(true);
+        // TEMPORARY: Skip session ID regeneration to test if this causes issues
+        // session_regenerate_id(true);
         
         // Store user data in session
         $_SESSION['user_id'] = (int) $user['user_id'];
