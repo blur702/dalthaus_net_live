@@ -77,24 +77,77 @@ class Dashboard extends BaseController
             echo "<p><a href='/admin/dashboard'>Try normal dashboard</a></p>";
             return;
         }
-        // Get dashboard statistics
-        $stats = $this->getDashboardStats();
         
-        // Get recent content
-        $recentContent = $this->getRecentContent();
+        // TEMPORARY: Test minimal render bypass
+        if (isset($_GET['debug_minimal'])) {
+            echo "<h1>Minimal Dashboard Test</h1>";
+            echo "<p>✓ Authentication passed</p>";
+            echo "<p>✓ Reached index() method</p>";
+            echo "<p>✓ Bypassing all data loading</p>";
+            echo "<p>Now testing minimal render...</p>";
+            
+            $this->render('admin/dashboard/index', [
+                'stats' => [],
+                'recent_content' => [],
+                'recent_activity' => [],
+                'activity_stats' => [],
+                'greeting' => 'Hello',
+                'content_trends' => ['dates' => [], 'articles' => [], 'photobooks' => []],
+                'page_title' => 'Dashboard Test',
+                'system_health' => [],
+                'draft_reminders' => [],
+                'most_viewed' => [],
+            ]);
+            return;
+        }
         
-        // Get recent activity
-        $recentActivity_raw = ActivityLog::getRecentActivity(10);
-        $recentActivity = array_map(function($item) {
-            return is_object($item) && method_exists($item, 'toArray') ? $item->toArray() : $item;
-        }, $recentActivity_raw);
+        // DEBUG: Check each data loading step
+        error_log("Dashboard::index() - Step 1: About to get dashboard stats");
+        try {
+            // Get dashboard statistics
+            $stats = $this->getDashboardStats();
+            error_log("Dashboard::index() - Step 1: Dashboard stats loaded successfully");
+        } catch (Exception $e) {
+            error_log("Dashboard::index() - Step 1 FAILED: " . $e->getMessage());
+            throw $e;
+        }
         
-        // Get activity stats for different periods
-        $activityStats = [
-            'today' => ActivityLog::getActivityStats('today'),
-            'week' => ActivityLog::getActivityStats('week'),
-            'month' => ActivityLog::getActivityStats('month')
-        ];
+        error_log("Dashboard::index() - Step 2: About to get recent content");
+        try {
+            // Get recent content
+            $recentContent = $this->getRecentContent();
+            error_log("Dashboard::index() - Step 2: Recent content loaded successfully");
+        } catch (Exception $e) {
+            error_log("Dashboard::index() - Step 2 FAILED: " . $e->getMessage());
+            throw $e;
+        }
+        
+        error_log("Dashboard::index() - Step 3: About to get recent activity");
+        try {
+            // Get recent activity
+            $recentActivity_raw = ActivityLog::getRecentActivity(10);
+            $recentActivity = array_map(function($item) {
+                return is_object($item) && method_exists($item, 'toArray') ? $item->toArray() : $item;
+            }, $recentActivity_raw);
+            error_log("Dashboard::index() - Step 3: Recent activity loaded successfully");
+        } catch (Exception $e) {
+            error_log("Dashboard::index() - Step 3 FAILED: " . $e->getMessage());
+            throw $e;
+        }
+        
+        error_log("Dashboard::index() - Step 4: About to get activity stats");
+        try {
+            // Get activity stats for different periods
+            $activityStats = [
+                'today' => ActivityLog::getActivityStats('today'),
+                'week' => ActivityLog::getActivityStats('week'),
+                'month' => ActivityLog::getActivityStats('month')
+            ];
+            error_log("Dashboard::index() - Step 4: Activity stats loaded successfully");
+        } catch (Exception $e) {
+            error_log("Dashboard::index() - Step 4 FAILED: " . $e->getMessage());
+            throw $e;
+        }
         
         // Get time-based greeting
         $hour = (int)date('G');
