@@ -57,11 +57,6 @@ class Auth extends BaseController
      */
     public function authenticate(): void
     {
-        // DEBUG: Confirm this method is being called
-        if (isset($_GET['debug'])) {
-            die("DEBUG: authenticate() method was called. POST data: " . print_r($_POST, true));
-        }
-        
         if (!$this->isPost()) {
             $this->redirect("/admin/login");
             return;
@@ -97,35 +92,17 @@ class Auth extends BaseController
             return;
         }
 
-        // Debug: Log the attempt result
-        $attemptResult = $this->auth->attempt($username, $password);
-        error_log("Login attempt for user '{$username}': " . ($attemptResult ? 'SUCCESS' : 'FAILED'));
-        
-        if ($attemptResult) {
-            // TEMPORARY DEBUG: Show success instead of redirecting
-            if (isset($_GET['debug'])) {
-                echo "<h1>Login Successful!</h1>";
-                echo "<p>User authenticated successfully.</p>";
-                echo "<p>Session data:</p><pre>";
-                print_r($_SESSION);
-                echo "</pre>";
-                echo "<p>Headers sent: " . (headers_sent($f, $l) ? "Yes at $f:$l" : "No") . "</p>";
-                echo "<p><a href='/admin/dashboard'>Click here to go to dashboard</a></p>";
-                exit;
-            }
-            
-            error_log("Setting flash message and redirecting to /admin/dashboard");
+        if ($this->auth->attempt($username, $password)) {
             $this->setFlash("success", "Welcome back!");
             
-            // Debug: Check if headers already sent
-            if (headers_sent($file, $line)) {
-                error_log("Headers already sent in {$file} at line {$line} before redirect");
+            // Clean any output buffers that might interfere
+            while (ob_get_level()) {
+                ob_end_clean();
             }
             
-            error_log("About to redirect to /admin/dashboard");
-            $this->redirect("/admin/dashboard");
-            error_log("This should never be logged - after redirect");
-            return; // Ensure execution stops after redirect
+            // Force redirect with absolute URL and immediate exit
+            header("Location: /admin/dashboard", true, 302);
+            exit();
         } else {
             $remainingLockout = $this->auth->getRemainingLockoutTime($username);
             if ($remainingLockout > 0) {
