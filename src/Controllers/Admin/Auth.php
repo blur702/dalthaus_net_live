@@ -94,17 +94,9 @@ class Auth extends BaseController
 
         try {
             if ($this->auth->attempt($username, $password)) {
-                // Use JavaScript redirect immediately - most reliable method
-                echo '<!DOCTYPE html><html><head><title>Login Successful</title></head><body>';
-                echo '<script type="text/javascript">';
-                echo 'window.location.replace("/admin/dashboard");';
-                echo '</script>';
-                echo '<noscript>';
-                echo '<meta http-equiv="refresh" content="0;url=/admin/dashboard">';
-                echo '<p>Login successful. <a href="/admin/dashboard">Click here to continue to dashboard</a></p>';
-                echo '</noscript>';
-                echo '</body></html>';
-                exit();
+                // Use proper HTTP redirect - most reliable method
+                $this->redirect("/admin/dashboard");
+                return;
             } else {
                 $remainingLockout = $this->auth->getRemainingLockoutTime($username);
                 if ($remainingLockout > 0) {
