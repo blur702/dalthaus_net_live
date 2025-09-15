@@ -93,15 +93,29 @@ class Auth extends BaseController
         }
 
         if ($this->auth->attempt($username, $password)) {
-            $this->setFlash("success", "Welcome back!");
+            // Don't set flash message since we're redirecting
+            // $this->setFlash("success", "Welcome back!");
             
             // Clean any output buffers that might interfere
             while (ob_get_level()) {
                 ob_end_clean();
             }
             
-            // Force redirect with absolute URL and immediate exit
-            header("Location: /admin/dashboard", true, 302);
+            // Check if headers have already been sent
+            if (!headers_sent()) {
+                // Try PHP redirect
+                header("Location: /admin/dashboard", true, 302);
+                exit();
+            }
+            
+            // Fallback: HTML/JavaScript redirect
+            echo '<!DOCTYPE html><html><head>';
+            echo '<meta http-equiv="refresh" content="0;url=/admin/dashboard">';
+            echo '<script>window.location.href="/admin/dashboard";</script>';
+            echo '</head><body>';
+            echo '<p>Login successful. Redirecting to dashboard...</p>';
+            echo '<p><a href="/admin/dashboard">Click here if not redirected</a></p>';
+            echo '</body></html>';
             exit();
         } else {
             $remainingLockout = $this->auth->getRemainingLockoutTime($username);
