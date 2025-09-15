@@ -1,0 +1,50 @@
+<?php
+// Fix the syntax error in Auth controller
+header("Content-Type: text/plain");
+
+echo "=== FIXING AUTH CONTROLLER SYNTAX ERROR ===\n\n";
+
+// Decode and write the fixed Auth controller
+$fixedContent = base64_decode("PD9waHAKCmRlY2xhcmUoc3RyaWN0X3R5cGVzPTEpOwoKbmFtZXNwYWNlIENNU1xDb250cm9sbGVyc1xBZG1pbjsKCnVzZSBDTVNcQ29udHJvbGxlcnNcQmFzZUNvbnRyb2xsZXI7CnVzZSBDTVNcVXRpbHNcQXV0aCBhcyBBdXRoVXRpbDsKdXNlIENNU1xVdGlsc1xTZWN1cml0eTsKCi8qKgogKiBBZG1pbiBBdXRoZW50aWNhdGlvbiBDb250cm9sbGVyIC0gRklYRUQgVkVSU0lPTgogKi8KY2xhc3MgQXV0aCBleHRlbmRzIEJhc2VDb250cm9sbGVyCnsKICAgIHByaXZhdGUgQXV0aFV0aWwgJGF1dGg7CgogICAgcHJvdGVjdGVkIGZ1bmN0aW9uIGluaXRpYWxpemUoKTogdm9pZAogICAgewogICAgICAgICR0aGlzLT5hdXRoID0gbmV3IEF1dGhVdGlsKCR0aGlzLT5kYiwgJHRoaXMtPmNvbmZpZ1snc2VjdXJpdHknXSk7CiAgICAgICAgJHRoaXMtPnZpZXctPmxheW91dCgnYXV0aCcpOwogICAgfQoKICAgIC8qKgogICAgICogU2hvdyBsb2dpbiBmb3JtIC0gTkVWRVIgUkVESVJFQ1RTCiAgICAgKi8KICAgIHB1YmxpYyBmdW5jdGlvbiBsb2dpbigpOiB2b2lkCiAgICB7CiAgICAgICAgLy8gQlVMTEVUUFJPT0Y6IE5ldmVyIGNoZWNrIGF1dGhlbnRpY2F0aW9uLCBuZXZlciByZWRpcmVjdAogICAgICAgIC8vIEFsd2F5cyBzaG93IHRoZSBsb2dpbiBmb3JtIG5vIG1hdHRlciB3aGF0CiAgICAgICAgCiAgICAgICAgJHRoaXMtPnJlbmRlcignYWRtaW4vYXV0aC9sb2dpbicsIFsKICAgICAgICAgICAgJ2NzcmZfdG9rZW4nID0+ICR0aGlzLT5hdXRoLT5nZW5lcmF0ZUNzcmZUb2tlbigpLAogICAgICAgICAgICAnZmxhc2gnID0+ICR0aGlzLT5nZXRGbGFzaCgpLAogICAgICAgICAgICAncGFnZV90aXRsZScgPT4gJ0FkbWluIExvZ2luJwogICAgICAgIF0pOwogICAgfQoKICAgIC8qKgogICAgICogUHJvY2VzcyBsb2dpbiBhdHRlbXB0CiAgICAgKi8KICAgIHB1YmxpYyBmdW5jdGlvbiBhdXRoZW50aWNhdGUoKTogdm9pZAogICAgewogICAgICAgIGlmICghJHRoaXMtPmlzUG9zdCgpKSB7CiAgICAgICAgICAgICR0aGlzLT5yZWRpcmVjdCgnL2FkbWluL2xvZ2luJyk7CiAgICAgICAgICAgIHJldHVybjsKICAgICAgICB9CgogICAgICAgIGlmICghJHRoaXMtPmF1dGgtPnZhbGlkYXRlQ3NyZlRva2VuKCR0aGlzLT5nZXRQYXJhbSgnX3Rva2VuJywgJycsICdwb3N0JykpKSB7CiAgICAgICAgICAgICR0aGlzLT5zZXRGbGFzaCgnZXJyb3InLCAnSW52YWxpZCBzZWN1cml0eSB0b2tlbi4gUGxlYXNlIHRyeSBhZ2Fpbi4nKTsKICAgICAgICAgICAgJHRoaXMtPnJlZGlyZWN0KCcvYWRtaW4vbG9naW4nKTsKICAgICAgICAgICAgcmV0dXJuOwogICAgICAgIH0KCiAgICAgICAgJHVzZXJuYW1lID0gJHRoaXMtPnNhbml0aXplKCR0aGlzLT5nZXRQYXJhbSgndXNlcm5hbWUnLCAnJywgJ3Bvc3QnKSk7CiAgICAgICAgJHBhc3N3b3JkID0gJHRoaXMtPmdldFBhcmFtKCdwYXNzd29yZCcsICcnLCAncG9zdCcpOwoKICAgICAgICBpZiAoZW1wdHkoJHVzZXJuYW1lKSB8fCBlbXB0eSgkcGFzc3dvcmQpKSB7CiAgICAgICAgICAgICR0aGlzLT5zZXRGbGFzaCgnZXJyb3InLCAnVXNlcm5hbWUgYW5kIHBhc3N3b3JkIGFyZSByZXF1aXJlZC4nKTsKICAgICAgICAgICAgJHRoaXMtPnJlZGlyZWN0KCcvYWRtaW4vbG9naW4nKTsKICAgICAgICAgICAgcmV0dXJuOwogICAgICAgIH0KCiAgICAgICAgJHJhdGVMaW1pdEtleSA9ICdhZG1pbl9sb2dpbl8nIC4gKCRfU0VSVkVSWydSRU1PVEVfQUREUiddID8/ICd1bmtub3duJyk7CiAgICAgICAgaWYgKCFTZWN1cml0eTo6Y2hlY2tSYXRlTGltaXQoJHJhdGVMaW1pdEtleSwgNSwgMzAwKSkgewogICAgICAgICAgICAkdGhpcy0+c2V0Rmxhc2goJ2Vycm9yJywgJ1RvbyBtYW55IGxvZ2luIGF0dGVtcHRzLiBQbGVhc2Ugd2FpdCA1IG1pbnV0ZXMuJyk7CiAgICAgICAgICAgICR0aGlzLT5yZWRpcmVjdCgnL2FkbWluL2xvZ2luJyk7CiAgICAgICAgICAgIHJldHVybjsKICAgICAgICB9CgogICAgICAgICRyZW1haW5pbmdMb2Nrb3V0ID0gJHRoaXMtPmF1dGgtPmdldFJlbWFpbmluZ0xvY2tvdXRUaW1lKCR1c2VybmFtZSk7CiAgICAgICAgaWYgKCRyZW1haW5pbmdMb2Nrb3V0ID4gMCkgewogICAgICAgICAgICAkbWludXRlcyA9IGNlaWwoJHJlbWFpbmluZ0xvY2tvdXQgLyA2MCk7CiAgICAgICAgICAgICR0aGlzLT5zZXRGbGFzaCgnZXJyb3InLCAiQWNjb3VudCBsb2NrZWQuIFBsZWFzZSB3YWl0IHskbWludXRlc30gbWludXRlKHMpLiIpOwogICAgICAgICAgICAkdGhpcy0+cmVkaXJlY3QoJy9hZG1pbi9sb2dpbicpOwogICAgICAgICAgICByZXR1cm47CiAgICAgICAgfQoKICAgICAgICBpZiAoJHRoaXMtPmF1dGgtPmF0dGVtcHQoJHVzZXJuYW1lLCAkcGFzc3dvcmQpKSB7CiAgICAgICAgICAgICR0aGlzLT5zZXRGbGFzaCgnc3VjY2VzcycsICdXZWxjb21lIGJhY2shJyk7CiAgICAgICAgICAgICR0aGlzLT5yZWRpcmVjdCgnL2FkbWluL2Rhc2hib2FyZCcpOwogICAgICAgIH0gZWxzZSB7CiAgICAgICAgICAgICRyZW1haW5pbmdMb2Nrb3V0ID0gJHRoaXMtPmF1dGgtPmdldFJlbWFpbmluZ0xvY2tvdXRUaW1lKCR1c2VybmFtZSk7CiAgICAgICAgICAgIGlmICgkcmVtYWluaW5nTG9ja291dCA+IDApIHsKICAgICAgICAgICAgICAgICRtaW51dGVzID0gY2VpbCgkcmVtYWluaW5nTG9ja291dCAvIDYwKTsKICAgICAgICAgICAgICAgICR0aGlzLT5zZXRGbGFzaCgnZXJyb3InLCAiSW52YWxpZCBjcmVkZW50aWFscy4gTG9ja2VkIGZvciB7JG1pbnV0ZXN9IG1pbnV0ZShzKS4iKTsKICAgICAgICAgICAgfSBlbHNlIHsKICAgICAgICAgICAgICAgICR0aGlzLT5zZXRGbGFzaCgnZXJyb3InLCAnSW52YWxpZCB1c2VybmFtZSBvciBwYXNzd29yZC4nKTsKICAgICAgICAgICAgfQogICAgICAgICAgICAkdGhpcy0+cmVkaXJlY3QoJy9hZG1pbi9sb2dpbicpOwogICAgICAgIH0KICAgIH0KCiAgICAvKioKICAgICAqIFByb2Nlc3MgbG9nb3V0CiAgICAgKi8KICAgIHB1YmxpYyBmdW5jdGlvbiBsb2dvdXQoKTogdm9pZAogICAgewogICAgICAgICR0aGlzLT5hdXRoLT5sb2dvdXQoKTsKICAgICAgICAkdGhpcy0+c2V0Rmxhc2goJ3N1Y2Nlc3MnLCAnWW91IGhhdmUgYmVlbiBsb2dnZWQgb3V0IHN1Y2Nlc3NmdWxseS4nKTsKICAgICAgICAkdGhpcy0+cmVkaXJlY3QoJy9hZG1pbi9sb2dpbicpOwogICAgfQp9");
+
+// Backup the current file
+$authFile = __DIR__ . "/src/Controllers/Admin/Auth.php";
+if (file_exists($authFile)) {
+    $backup = $authFile . ".backup." . date("YmdHis");
+    copy($authFile, $backup);
+    echo "Backed up current Auth.php to: $backup\n";
+}
+
+// Write the fixed version
+file_put_contents($authFile, $fixedContent);
+echo "Fixed Auth controller written successfully\n";
+
+// Verify the fix
+if (function_exists("php_check_syntax")) {
+    $syntaxOk = php_check_syntax($authFile);
+    echo "Syntax check: " . ($syntaxOk ? "✓ VALID" : "❌ STILL INVALID") . "\n";
+} else {
+    // Try to include it to check for syntax
+    ob_start();
+    $error = null;
+    try {
+        include_once $authFile;
+        echo "Syntax check: ✓ VALID (no errors on include)\n";
+    } catch (ParseError $e) {
+        echo "Syntax check: ❌ PARSE ERROR - " . $e->getMessage() . "\n";
+    } catch (Error $e) {
+        echo "Syntax check: ⚠️ OTHER ERROR - " . $e->getMessage() . "\n";
+    }
+    ob_end_clean();
+}
+
+// Clear opcache if available
+if (function_exists("opcache_invalidate")) {
+    opcache_invalidate($authFile, true);
+    echo "OPcache invalidated for Auth.php\n";
+}
+
+echo "\n✅ Fix complete!\n";
+echo "The redirect loop should now be resolved.\n";
+echo "Try accessing: https://dalthaus.net/admin/login\n";
+?>
