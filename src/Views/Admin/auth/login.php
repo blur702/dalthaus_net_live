@@ -14,7 +14,7 @@
     </div>
 <?php endif; ?>
 
-<form class="mt-8 space-y-6" action="/admin/login" method="POST">
+<form class="mt-8 space-y-6" action="/admin/login" method="POST" id="loginForm">
     <input type="hidden" name="_token" value="<?= $this->escape($csrf_token) ?>">
     
     <div class="space-y-4">
@@ -49,6 +49,35 @@
         </button>
     </div>
 </form>
+
+<script>
+// Debug form submission
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+    console.log('Form submit event triggered');
+    console.log('Form action:', this.action);
+    console.log('Form method:', this.method);
+    
+    // Log form data
+    const formData = new FormData(this);
+    console.log('Form data:');
+    for (let [key, value] of formData.entries()) {
+        console.log(key + ':', value);
+    }
+    
+    // Don't prevent default - let form submit normally
+    console.log('Allowing form to submit...');
+});
+
+// Also log if page is reloading
+window.addEventListener('beforeunload', function() {
+    console.log('Page is about to unload/reload');
+});
+
+// Log any redirects
+if (window.performance && window.performance.navigation) {
+    console.log('Navigation type:', window.performance.navigation.type);
+}
+</script>
 
 <div class="mt-6 text-center space-y-2">
     <div>
