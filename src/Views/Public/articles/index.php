@@ -41,31 +41,11 @@
                         <?= $article->getFormattedPublishedDate() ?>
                     </div>
                     
-                    <?php if ($article->getAttribute('teaser')): ?>
+                    <?php $teaserText = $article->getTeaserOrExcerpt(250); ?>
+                    <?php if (!empty($teaserText)): ?>
                     <div class="text-gray-900 mb-3 leading-relaxed">
                         <p class="mb-3">
-                            <?= nl2br($this->escape($article->getAttribute('teaser'))) ?>
-                        </p>
-                        <p class="mb-3">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna 
-                            aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea 
-                            commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu 
-                            feugiat nulla facilisis at vero eros et accumsan et iusto &lt;- (articleTEASER TEXT)
-                        </p>
-                    </div>
-                    <?php else: ?>
-                    <div class="text-gray-900 mb-3 leading-relaxed">
-                        <p class="mb-3">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna 
-                            aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea 
-                            commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu 
-                            feugiat nulla facilisis at vero eros et accumsan et iusto
-                        </p>
-                        <p class="mb-3">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna 
-                            aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea 
-                            commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu 
-                            feugiat nulla facilisis at vero eros et accumsan et iusto &lt;- (articleTEASER TEXT)
+                            <?= nl2br($this->escape($teaserText)) ?>
                         </p>
                     </div>
                     <?php endif; ?>

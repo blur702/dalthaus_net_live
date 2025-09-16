@@ -528,4 +528,43 @@ class Content extends BaseModel
         
         return self::countForAdmin($mappedFilters);
     }
+
+    /**
+     * Get teaser text or content excerpt for listing pages
+     * 
+     * @param int $maxLength Maximum length of excerpt
+     * @return string
+     */
+    public function getTeaserOrExcerpt(int $maxLength = 200): string
+    {
+        $teaser = trim($this->getAttribute('teaser') ?? '');
+        
+        // If we have a teaser, use it
+        if (!empty($teaser)) {
+            return $teaser;
+        }
+        
+        // Otherwise, create an excerpt from the body content
+        $body = strip_tags($this->getAttribute('body') ?? '');
+        $body = preg_replace('/\s+/', ' ', $body); // Normalize whitespace
+        $body = trim($body);
+        
+        if (empty($body)) {
+            return '';
+        }
+        
+        if (strlen($body) <= $maxLength) {
+            return $body;
+        }
+        
+        // Truncate at word boundary
+        $excerpt = substr($body, 0, $maxLength);
+        $lastSpace = strrpos($excerpt, ' ');
+        
+        if ($lastSpace !== false) {
+            $excerpt = substr($excerpt, 0, $lastSpace);
+        }
+        
+        return $excerpt . '...';
+    }
 }
