@@ -438,6 +438,12 @@ document.getElementById('userForm').addEventListener('submit', function(e) {
         return;
     }
     
+    if (displayName.length > 100) {
+        alert('Display name must be less than 100 characters');
+        e.preventDefault();
+        return;
+    }
+    
     if (!email || !isValidEmail(email)) {
         alert('Please enter a valid email address');
         e.preventDefault();

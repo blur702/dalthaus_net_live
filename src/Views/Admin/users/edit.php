@@ -535,12 +535,25 @@ function resetPassword() {
 // Form validation
 document.getElementById('userForm').addEventListener('submit', function(e) {
     const username = document.getElementById('username').value.trim();
+    const displayName = document.getElementById('display_name').value.trim();
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
     const confirmPassword = document.getElementById('confirm_password').value;
     
     if (!username || username.length < 3) {
         alert('Username must be at least 3 characters long');
+        e.preventDefault();
+        return;
+    }
+    
+    if (!displayName || displayName.length < 2) {
+        alert('Display name must be at least 2 characters long');
+        e.preventDefault();
+        return;
+    }
+    
+    if (displayName.length > 100) {
+        alert('Display name must be less than 100 characters');
         e.preventDefault();
         return;
     }
