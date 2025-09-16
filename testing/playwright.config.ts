@@ -1,7 +1,7 @@
 import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
-  testDir: './tests/e2e',
+  testDir: './e2e',
   timeout: 120000, // 2 minutes for each test
   expect: {
     timeout: 30000
@@ -11,11 +11,11 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: 1, // Single worker for sequential execution
   reporter: [
-    ['html', { outputFolder: 'test-results/html-report' }],
-    ['json', { outputFile: 'test-results/test-results.json' }],
+    ['html', { outputFolder: 'results/html-report' }],
+    ['json', { outputFile: 'results/test-results.json' }],
     ['list']
   ],
-  outputDir: 'test-results/',
+  outputDir: 'results/',
   use: {
     baseURL: 'https://dalthaus.net',
     headless: false, // Show browser for debugging

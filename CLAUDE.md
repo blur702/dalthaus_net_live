@@ -76,16 +76,17 @@ Password: (130Bpm)
 
 ### Testing
 ```bash
-# Run E2E tests
-php run_e2e_tests.php
-
-# Run PHPUnit tests (if configured)
-make test
-make test-unit
-make test-integration
+# Run Playwright E2E tests
+npm test
 
 # Run specific test
-vendor/bin/phpunit tests/path/to/TestFile.php
+npm run test:diagnosis
+
+# Run tests with headed browser
+npm run test:headed
+
+# Debug tests
+npm run test:debug
 ```
 
 ### Code Quality
