@@ -304,8 +304,9 @@ class Content extends BaseModel
             return [];
         }
         
-        // Split by TinyMCE pagebreak delimiter
-        $pages = preg_split('/<hr\s+class=["\']mce-pagebreak["\'][^>]*>/i', $body);
+        // Split by TinyMCE pagebreak delimiters (supports both formats)
+        // TinyMCE 6 uses <!-- pagebreak --> comments, older versions use <hr class="mce-pagebreak" />
+        $pages = preg_split('/(?:<!--\s*pagebreak\s*-->|<hr\s+class=["\']mce-pagebreak["\'][^>]*>)/i', $body);
         
         // Trim pages and filter out completely empty ones
         $pages = array_map('trim', $pages);
@@ -340,11 +341,19 @@ class Content extends BaseModel
             </div>
         </div>';
         
-        // Replace all page break tags with the visual indicator
+        // Replace all page break tags with the visual indicator (supports both formats)
+        // First replace TinyMCE 6 comment format
+        $content = preg_replace(
+            '/<!--\s*pagebreak\s*-->/i',
+            $pageBreakHtml,
+            $body
+        );
+        
+        // Then replace older hr tag format
         $content = preg_replace(
             '/<hr\s+class=["\']mce-pagebreak["\'][^>]*>/i',
             $pageBreakHtml,
-            $body
+            $content
         );
         
         return $content;

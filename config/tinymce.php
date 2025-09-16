@@ -48,6 +48,7 @@ return [
             'pagebreak'
         ],
         'toolbar' => 'undo redo | blocks | bold italic forecolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | pagebreak | image link media | code fullscreen | help',
+        'pagebreak_separator' => '<!-- pagebreak -->',
         'content_style' => 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 14px; }',
         'images_upload_url' => '/admin/content/upload-image',
         'images_upload_credentials' => true,

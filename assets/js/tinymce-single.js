@@ -77,6 +77,7 @@
             menubar: false,
             plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table help wordcount pagebreak',
             toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | link image | pagebreak code',
+            pagebreak_separator: '<!-- pagebreak -->',
             images_upload_url: '/admin/upload/tinymce',
             automatic_uploads: true,
             images_reuse_filename: true,

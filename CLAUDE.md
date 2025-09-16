@@ -76,6 +76,12 @@ Password: (130Bpm)
 
 ### Testing
 ```bash
+# Run PHPUnit tests
+composer test
+
+# Run with coverage
+composer test-coverage
+
 # Run Playwright E2E tests
 npm test
 
@@ -91,29 +97,32 @@ npm run test:debug
 
 ### Code Quality
 ```bash
-# Check coding standards
-make cs-check
+# Check coding standards (PSR-12)
+composer cs-check
 
-# Fix coding standards
-make cs-fix
+# Fix coding standards automatically
+composer cs-fix
 
-# Run static analysis
-make analyse
+# Run static analysis (PHPStan)
+composer analyse
 
 # Run all quality checks
-make quality
+composer quality
 ```
 
 ### Development Workflow
 ```bash
-# Setup development environment
-make setup
+# Install PHP dependencies
+composer install
+
+# Install Node dependencies
+npm install
 
 # Start development server
-make dev-server
+php -S localhost:8000 router.php
 
 # Watch tests during development
-make test-watch
+npm run test:headed
 ```
 
 ## Critical Implementation Details
