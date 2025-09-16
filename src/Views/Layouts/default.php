@@ -17,6 +17,11 @@
     <link rel="icon" href="<?= $this->escape('/uploads/' . $settings['favicon']) ?>">
     <?php endif; ?>
     
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400;0,700;1,400;1,700&family=Gelasio:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -24,7 +29,7 @@
     <style>
         /* Dead-flat-simple design philosophy */
         body {
-            font-family: Georgia, serif;
+            font-family: 'Gelasio', Georgia, serif;
             font-size: 12pt;
             line-height: 1.15;
             color: rgb(20, 20, 20);
@@ -64,6 +69,7 @@
             color: #333;
             background: white;
             transition: all 0.2s ease;
+            font-style: italic;
         }
         
         .read-more:hover {
@@ -73,7 +79,7 @@
         
         /* Typography from design specs */
         h1, h2, h3, h4, h5, h6 {
-            font-family: Arial, sans-serif;
+            font-family: 'Arimo', Arial, sans-serif;
         }
         
         .overlay-text {
@@ -195,17 +201,17 @@
         <div class="max-w-7xl mx-auto px-4 py-6">
             <div class="flex justify-between items-start">
                 <div>
-                    <h1 class="text-xl font-bold text-gray-900" style="font-family: Arial, sans-serif;">
+                    <h1 class="text-xl font-bold text-gray-900" style="font-family: 'Arimo', Arial, sans-serif;">
                         <a href="/" class="hover:text-gray-700 no-underline">
                             <?= $this->escape($settings['site_title'] ?? 'SITE TITLE') ?>
                         </a>
                     </h1>
                     <?php if (!empty($settings['site_motto'])): ?>
-                    <p class="text-gray-900 text-sm mt-0" style="font-family: Arial, sans-serif;">
+                    <p class="text-gray-900 text-sm mt-0" style="font-family: 'Arimo', Arial, sans-serif;">
                         <?= $this->escape($settings['site_motto']) ?>
                     </p>
                     <?php else: ?>
-                    <p class="text-gray-900 text-sm mt-0" style="font-family: Arial, sans-serif;">
+                    <p class="text-gray-900 text-sm mt-0" style="font-family: 'Arimo', Arial, sans-serif;">
                         SITE MOTTO
                     </p>
                     <?php endif; ?>
@@ -259,7 +265,7 @@
         </div>
         <div class="side-menu-content">
             <nav>
-                <ul class="space-y-4" style="font-family: Arial, sans-serif;">
+                <ul class="space-y-4" style="font-family: 'Arimo', Arial, sans-serif;">
                     <li><a href="/" class="block text-gray-900 hover:text-gray-600 py-2 text-lg no-underline">Home</a></li>
                     <li><a href="/articles" class="block text-gray-900 hover:text-gray-600 py-2 text-lg no-underline">Articles</a></li>
                     <li><a href="/photobooks" class="block text-gray-900 hover:text-gray-600 py-2 text-lg no-underline">Photobooks</a></li>

@@ -2,7 +2,7 @@
 <div class="max-w-4xl mx-auto">
     <!-- Article Header -->
     <header class="mb-8 text-center">
-        <h1 class="text-2xl font-bold text-gray-900 mb-2" style="font-family: Arial, sans-serif;">
+        <h1 class="text-2xl font-bold text-gray-900 mb-2" style="font-family: 'Arimo', Arial, sans-serif;">
             <?= $this->escape($article->getAttribute('title')) ?>
         </h1>
         
@@ -14,7 +14,7 @@
     <!-- Article Content -->
     <article class="prose max-w-none">
         <?php if ($total_pages > 1): ?>
-        <h2 class="text-lg font-bold mb-4" style="font-family: Arial, sans-serif;">
+        <h2 class="text-lg font-bold mb-4" style="font-family: 'Arimo', Arial, sans-serif;">
             Article Section <?= $current_page ?> of <?= $total_pages ?>
         </h2>
         <?php endif; ?>

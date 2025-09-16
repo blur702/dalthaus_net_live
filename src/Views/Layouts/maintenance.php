@@ -11,13 +11,18 @@
     <link rel="icon" href="<?= $this->escape('/uploads/settings/' . $settings['favicon']) ?>">
     <?php endif; ?>
     
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400;0,700;1,400;1,700&family=Gelasio:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Custom CSS for maintenance page -->
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arimo', Arial, sans-serif;
             background-color: rgb(248, 248, 248);
             margin: 0;
             padding: 0;

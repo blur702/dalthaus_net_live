@@ -8,7 +8,7 @@
             <article>
                 <!-- Content -->
                 <div class="flex-1 content-text">
-                    <h3 class="text-xl font-bold mb-2" style="font-family: Arial, sans-serif;">
+                    <h3 class="text-xl font-bold mb-2" style="font-family: 'Arimo', Arial, sans-serif;">
                         <a href="<?= $this->escape($article->getUrl()) ?>" 
                            class="text-gray-900 hover:text-gray-700 no-underline">
                             <?= $this->escape($article->getAttribute('title')) ?>
