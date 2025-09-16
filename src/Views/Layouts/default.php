@@ -177,11 +177,21 @@
             border-color: #ccc;
             color: #ccc;
         }
+        
+        /* Header with background image */
+        .site-header {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url('/images/site-top-photo.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            position: relative;
+        }
     </style>
 </head>
 <body>
     <!-- Header -->
-    <header class="border-b border-gray-200">
+    <header class="site-header border-b border-gray-200">
         <div class="max-w-7xl mx-auto px-4 py-6">
             <div class="flex justify-between items-start">
                 <div>
