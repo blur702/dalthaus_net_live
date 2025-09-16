@@ -145,6 +145,7 @@ class Users extends BaseController
             // Get form data
             $data = [
                 'username' => $this->sanitize($this->getParam('username', '', 'post')),
+                'display_name' => $this->sanitize($this->getParam('display_name', '', 'post')),
                 'email' => $this->sanitize($this->getParam('email', '', 'post')),
                 'password' => $this->getParam('password', '', 'post')
             ];
@@ -163,6 +164,13 @@ class Users extends BaseController
             $userId = $this->auth->createUser($data['username'], $data['email'], $data['password']);
             
             if ($userId !== false) {
+                // Update display_name for the newly created user
+                $user = UserModel::find($userId);
+                if ($user) {
+                    $user->setAttribute('display_name', $data['display_name']);
+                    $user->save();
+                }
+                
                 $this->setFlash('success', 'User "' . $data['username'] . '" created successfully.');
                 $this->redirect('/admin/users/' . $userId . '/edit');
             } else {
@@ -265,6 +273,7 @@ class Users extends BaseController
             // Get form data
             $data = [
                 'username' => $this->sanitize($this->getParam('username', '', 'post')),
+                'display_name' => $this->sanitize($this->getParam('display_name', '', 'post')),
                 'email' => $this->sanitize($this->getParam('email', '', 'post')),
                 'password' => $this->getParam('password', '', 'post')
             ];
@@ -281,6 +290,7 @@ class Users extends BaseController
 
             // Update user attributes
             $user->setAttribute('username', $data['username']);
+            $user->setAttribute('display_name', $data['display_name']);
             $user->setAttribute('email', $data['email']);
 
             // Update password if provided
