@@ -180,7 +180,7 @@
         
         /* Header with background image */
         .site-header {
-            background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url('/images/site-top-photo.jpg');
+            background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url('/assets/site-top-photo.jpg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
