@@ -1,11 +1,5 @@
 <!-- Articles Listing Page -->
 <div class="max-w-4xl mx-auto">
-    <!-- Page Title -->
-    <div class="mb-8 text-center">
-        <h2 class="text-2xl font-bold text-gray-900 mb-4" style="font-family: Arial, sans-serif;">
-            Articles
-        </h2>
-    </div>
     
     <?php if (!empty($articles)): ?>
         <!-- Articles List -->
