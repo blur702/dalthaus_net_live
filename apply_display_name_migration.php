@@ -5,14 +5,17 @@
  */
 
 require_once __DIR__ . '/vendor/autoload.php';
-require_once __DIR__ . '/config/config.php';
 
-use CMS\Core\Database;
+use CMS\Utils\Database;
 
 try {
     echo "Applying display_name migration...\n";
     
-    $db = Database::getInstance();
+    // Load configuration
+    $config = require __DIR__ . '/config/config.php';
+    
+    // Initialize database with configuration
+    $db = Database::getInstance($config['database']);
     
     // Read and execute the migration SQL
     $migrationSql = file_get_contents(__DIR__ . '/migrations/add_display_name_to_users.sql');
