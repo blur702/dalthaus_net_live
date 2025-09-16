@@ -62,24 +62,44 @@
         }
         
         .read-more {
-            border: 1px solid #333;
+            border: 1px solid rgb(20, 20, 20);
             padding: 0.5rem 1rem;
             text-decoration: none;
             display: inline-block;
-            color: #333;
+            color: rgb(20, 20, 20);
             background: white;
             transition: all 0.2s ease;
             font-style: italic;
         }
         
         .read-more:hover {
-            background: #333;
+            background: rgb(20, 20, 20);
             color: white;
         }
         
         /* Typography from design specs */
         h1, h2, h3, h4, h5, h6 {
             font-family: 'Arimo', Arial, sans-serif;
+            color: rgb(20, 20, 20) !important;
+        }
+        
+        /* Override Tailwind gray colors to use consistent dark gray */
+        .text-gray-900, .text-gray-800, .text-gray-700, .text-gray-600 {
+            color: rgb(20, 20, 20) !important;
+        }
+        
+        /* Ensure all text elements use consistent dark gray */
+        p, div, span, a, li, td, th, caption {
+            color: rgb(20, 20, 20);
+        }
+        
+        /* Links that should remain styled as links */
+        a:not(.no-underline):not(.read-more) {
+            color: rgb(20, 20, 20);
+        }
+        
+        a:hover:not(.no-underline):not(.read-more) {
+            color: rgb(20, 20, 20);
         }
         
         .overlay-text {
@@ -159,8 +179,8 @@
         .pagination a,
         .pagination span {
             padding: 0.5rem 0.75rem;
-            border: 1px solid #333;
-            color: #333;
+            border: 1px solid rgb(20, 20, 20);
+            color: rgb(20, 20, 20);
             text-decoration: none;
             background: white;
             min-width: 2.5rem;
@@ -168,12 +188,12 @@
         }
         
         .pagination a:hover {
-            background: #333;
+            background: rgb(20, 20, 20);
             color: white;
         }
         
         .pagination .current {
-            background: #333;
+            background: rgb(20, 20, 20);
             color: white;
         }
         

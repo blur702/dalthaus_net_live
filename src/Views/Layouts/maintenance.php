@@ -64,7 +64,7 @@
         }
         
         .maintenance-message {
-            color: #666;
+            color: rgb(20, 20, 20);
             font-size: 1.125rem;
             line-height: 1.6;
             margin-bottom: 2rem;
@@ -75,7 +75,7 @@
             padding: 1rem;
             background: #f8f8f8;
             border-radius: 8px;
-            color: #666;
+            color: rgb(20, 20, 20);
             font-size: 0.875rem;
             border: 1px solid #e5e5e5;
         }
