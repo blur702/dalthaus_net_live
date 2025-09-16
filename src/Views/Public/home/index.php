@@ -21,7 +21,7 @@
                             </h3>
                             
                             <div class="text-sm text-gray-600 mb-3">
-                                <?= $this->escape($article->getAttribute('username') ?? 'Unknown') ?> / 
+                                <?= $this->escape($article->getAttribute('display_name') ?? $article->getAttribute('username') ?? 'Unknown') ?> / 
                                 <?= $article->getFormattedPublishedDate() ?>
                             </div>
                             
@@ -87,7 +87,7 @@
                             </h3>
                             
                             <div class="text-sm text-gray-600 mb-3">
-                                <?= $this->escape($photobook->getAttribute('username') ?? 'Unknown') ?> / 
+                                <?= $this->escape($photobook->getAttribute('display_name') ?? $photobook->getAttribute('username') ?? 'Unknown') ?> / 
                                 <?= $photobook->getFormattedPublishedDate() ?>
                             </div>
                             

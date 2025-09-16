@@ -53,8 +53,24 @@
                         <?php if (isset($form_errors['username'])): ?>
                         <p class="mt-1 text-sm text-red-600" id="username-error"><?= $this->escape($form_errors['username']) ?></p>
                         <?php else: ?>
-                        <p class="mt-1 text-sm text-gray-500">Username must be 3-50 characters, letters, numbers, and underscores only</p>
+                        <p class="mt-1 text-sm text-gray-500">Username for login (3-50 characters, letters, numbers, and underscores only)</p>
                         <p class="mt-1 text-sm" id="username-message" style="display: none;"></p>
+                        <?php endif; ?>
+                    </div>
+
+                    <!-- Display Name -->
+                    <div>
+                        <label for="display_name" class="block text-sm font-medium text-gray-700 mb-1">
+                            Display Name <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="display_name" id="display_name" required maxlength="100"
+                               value="<?= $this->escape($form_data['display_name'] ?? $user->getAttribute('display_name')) ?>"
+                               class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm <?= isset($form_errors['display_name']) ? 'border-red-300' : '' ?>"
+                               placeholder="John Doe">
+                        <?php if (isset($form_errors['display_name'])): ?>
+                        <p class="mt-1 text-sm text-red-600"><?= $this->escape($form_errors['display_name']) ?></p>
+                        <?php else: ?>
+                        <p class="mt-1 text-sm text-gray-500">Name shown on the frontend (2-100 characters)</p>
                         <?php endif; ?>
                     </div>
 

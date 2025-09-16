@@ -16,7 +16,7 @@
                     </h3>
                     
                     <div class="text-sm text-gray-900 mb-3">
-                        <?= $this->escape($article->getAttribute('username') ?? 'author') ?> / 
+                        <?= $this->escape($article->getAttribute('display_name') ?? $article->getAttribute('username') ?? 'author') ?> / 
                         <?= $article->getFormattedPublishedDate() ?>
                     </div>
                     

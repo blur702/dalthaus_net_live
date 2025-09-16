@@ -31,7 +31,7 @@
                     </h3>
                     
                     <div class="text-sm text-gray-900 mb-3">
-                        <?= $this->escape($photobook->getAttribute('username') ?? 'author') ?> / 
+                        <?= $this->escape($photobook->getAttribute('display_name') ?? $photobook->getAttribute('username') ?? 'author') ?> / 
                         <?= $photobook->getFormattedPublishedDate() ?>
                     </div>
                     

@@ -214,8 +214,9 @@ class User extends BaseModel
 
         // Search filter
         if (!empty($filters['search'])) {
-            $whereClauses[] = "(u.username LIKE ? OR u.email LIKE ?)";
+            $whereClauses[] = "(u.username LIKE ? OR u.email LIKE ? OR u.display_name LIKE ?)";
             $searchTerm = '%' . $filters['search'] . '%';
+            $params[] = $searchTerm;
             $params[] = $searchTerm;
             $params[] = $searchTerm;
         }
@@ -268,8 +269,9 @@ class User extends BaseModel
 
         // Search filter
         if (!empty($filters['search'])) {
-            $whereClauses[] = "(u.username LIKE ? OR u.email LIKE ?)";
+            $whereClauses[] = "(u.username LIKE ? OR u.email LIKE ? OR u.display_name LIKE ?)";
             $searchTerm = '%' . $filters['search'] . '%';
+            $params[] = $searchTerm;
             $params[] = $searchTerm;
             $params[] = $searchTerm;
         }
@@ -295,13 +297,13 @@ class User extends BaseModel
     }
 
     /**
-     * Get user display name (username)
+     * Get user display name (fallback to username if not set)
      * 
      * @return string
      */
     public function getDisplayName(): string
     {
-        return $this->getAttribute('username') ?? 'Unknown';
+        return $this->getAttribute('display_name') ?? $this->getAttribute('username') ?? 'Unknown';
     }
 
     /**
@@ -347,6 +349,15 @@ class User extends BaseModel
             $errors['email'] = 'Email must be less than 100 characters';
         } elseif (!self::isEmailAvailable($data['email'], $excludeUserId)) {
             $errors['email'] = 'Email is already taken';
+        }
+
+        // Display name validation
+        if (empty($data['display_name'])) {
+            $errors['display_name'] = 'Display name is required';
+        } elseif (strlen($data['display_name']) < 2) {
+            $errors['display_name'] = 'Display name must be at least 2 characters long';
+        } elseif (strlen($data['display_name']) > 100) {
+            $errors['display_name'] = 'Display name must be less than 100 characters';
         }
 
         // Password validation (only for new users or when password is provided)

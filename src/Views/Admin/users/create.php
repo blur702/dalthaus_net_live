@@ -42,33 +42,49 @@
                     <?php if (isset($form_errors['username'])): ?>
                     <p class="mt-1 text-sm text-red-600" id="username-error"><?= $this->escape($form_errors['username']) ?></p>
                     <?php else: ?>
-                    <p class="mt-1 text-sm text-gray-500">Username must be 3-50 characters, letters, numbers, and underscores only</p>
+                    <p class="mt-1 text-sm text-gray-500">Username for login (3-50 characters, letters, numbers, and underscores only)</p>
                     <p class="mt-1 text-sm" id="username-message" style="display: none;"></p>
                     <?php endif; ?>
                 </div>
 
-                <!-- Email -->
+                <!-- Display Name -->
                 <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
-                        Email Address <span class="text-red-500">*</span>
+                    <label for="display_name" class="block text-sm font-medium text-gray-700 mb-1">
+                        Display Name <span class="text-red-500">*</span>
                     </label>
-                    <div class="relative">
-                        <input type="email" name="email" id="email" required maxlength="255"
-                               value="<?= $this->escape($form_data['email'] ?? '') ?>"
-                               class="block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out sm:text-sm <?= isset($form_errors['email']) ? 'border-red-300 bg-red-50' : 'bg-white hover:border-gray-400' ?>"
-                               placeholder="john@example.com"
-                               onblur="checkEmail()">
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center" id="email-status" style="display: none;">
-                            <!-- Status icons will be inserted here -->
-                        </div>
-                    </div>
-                    <?php if (isset($form_errors['email'])): ?>
-                    <p class="mt-1 text-sm text-red-600" id="email-error"><?= $this->escape($form_errors['email']) ?></p>
+                    <input type="text" name="display_name" id="display_name" required maxlength="100"
+                           value="<?= $this->escape($form_data['display_name'] ?? '') ?>"
+                           class="block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out sm:text-sm <?= isset($form_errors['display_name']) ? 'border-red-300 bg-red-50' : 'bg-white hover:border-gray-400' ?>"
+                           placeholder="John Doe">
+                    <?php if (isset($form_errors['display_name'])): ?>
+                    <p class="mt-1 text-sm text-red-600"><?= $this->escape($form_errors['display_name']) ?></p>
                     <?php else: ?>
-                    <p class="mt-1 text-sm text-gray-500">Valid email address required</p>
-                    <p class="mt-1 text-sm" id="email-message" style="display: none;"></p>
+                    <p class="mt-1 text-sm text-gray-500">Name shown on the frontend (2-100 characters)</p>
                     <?php endif; ?>
                 </div>
+            </div>
+
+            <!-- Email Section -->
+            <div class="mb-6">
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
+                    Email Address <span class="text-red-500">*</span>
+                </label>
+                <div class="relative">
+                    <input type="email" name="email" id="email" required maxlength="255"
+                           value="<?= $this->escape($form_data['email'] ?? '') ?>"
+                           class="block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out sm:text-sm <?= isset($form_errors['email']) ? 'border-red-300 bg-red-50' : 'bg-white hover:border-gray-400' ?>"
+                           placeholder="john@example.com"
+                           onblur="checkEmail()">
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center" id="email-status" style="display: none;">
+                        <!-- Status icons will be inserted here -->
+                    </div>
+                </div>
+                <?php if (isset($form_errors['email'])): ?>
+                <p class="mt-1 text-sm text-red-600" id="email-error"><?= $this->escape($form_errors['email']) ?></p>
+                <?php else: ?>
+                <p class="mt-1 text-sm text-gray-500">Valid email address required</p>
+                <p class="mt-1 text-sm" id="email-message" style="display: none;"></p>
+                <?php endif; ?>
             </div>
 
             <!-- Password -->
@@ -405,12 +421,19 @@ function checkPasswordMatch() {
 // Form validation
 document.getElementById('userForm').addEventListener('submit', function(e) {
     const username = document.getElementById('username').value.trim();
+    const displayName = document.getElementById('display_name').value.trim();
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
     const confirmPassword = document.getElementById('confirm_password').value;
     
     if (!username || username.length < 3) {
         alert('Username must be at least 3 characters long');
+        e.preventDefault();
+        return;
+    }
+    
+    if (!displayName || displayName.length < 2) {
+        alert('Display name must be at least 2 characters long');
         e.preventDefault();
         return;
     }

@@ -50,7 +50,7 @@ class Content extends BaseModel
     {
         $instance = new static();
         
-        $query = "SELECT c.*, u.username 
+        $query = "SELECT c.*, u.username, u.display_name 
                   FROM {$instance->table} c 
                   LEFT JOIN users u ON c.user_id = u.user_id
                   WHERE c.content_type = ? AND c.status = ?
@@ -103,7 +103,7 @@ class Content extends BaseModel
     {
         $instance = new static();
         
-        $query = "SELECT c.*, u.username 
+        $query = "SELECT c.*, u.username, u.display_name 
                   FROM {$instance->table} c 
                   LEFT JOIN users u ON c.user_id = u.user_id
                   WHERE c.url_alias = ? AND c.status = ?";
@@ -123,7 +123,7 @@ class Content extends BaseModel
     {
         $instance = new static();
         
-        $query = "SELECT c.*, u.username 
+        $query = "SELECT c.*, u.username, u.display_name 
                   FROM {$instance->table} c 
                   LEFT JOIN users u ON c.user_id = u.user_id";
         
@@ -373,7 +373,7 @@ class Content extends BaseModel
         }
 
         return $this->db->fetchRow(
-            'SELECT user_id, username, email FROM users WHERE user_id = ?',
+            'SELECT user_id, username, email, display_name FROM users WHERE user_id = ?',
             [$userId]
         ) ?: null;
     }

@@ -7,7 +7,7 @@
         </h1>
         
         <div class="text-sm text-gray-900 mb-4">
-            <?= $this->escape($author['username'] ?? 'author') ?> / <?= $article->getFormattedPublishedDate() ?>
+            <?= $this->escape($author['display_name'] ?? $author['username'] ?? 'author') ?> / <?= $article->getFormattedPublishedDate() ?>
         </div>
     </header>
 
