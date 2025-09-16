@@ -11,22 +11,7 @@
         <!-- Articles List -->
         <div class="space-y-8">
             <?php foreach ($articles as $article): ?>
-            <article class="flex gap-6">
-                <!-- Teaser Image -->
-                <?php if ($article->getAttribute('teaser_image')): ?>
-                <div class="flex-shrink-0 w-64">
-                    <img src="<?= $this->escape($article->getTeaserImageUrl()) ?>" 
-                         alt="<?= $this->escape($article->getAttribute('title')) ?>"
-                         class="teaser-image w-full">
-                </div>
-                <?php else: ?>
-                <div class="flex-shrink-0 w-64">
-                    <div class="teaser-image bg-black text-white flex items-center justify-center text-lg font-bold">
-                        TEASER IMAGE
-                    </div>
-                </div>
-                <?php endif; ?>
-                
+            <article>
                 <!-- Content -->
                 <div class="flex-1 content-text">
                     <h3 class="text-xl font-bold mb-2" style="font-family: Arial, sans-serif;">

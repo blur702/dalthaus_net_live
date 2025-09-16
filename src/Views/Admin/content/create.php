@@ -72,15 +72,17 @@
                 </div>
 
                 <!-- Images -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 <?= $content_type === 'photobook' ? 'md:grid-cols-2' : '' ?> gap-6">
                     <div>
                         <label for="featured_image_upload" class="block text-sm font-medium text-gray-700 mb-1">Featured Image</label>
                         <input type="file" name="featured_image" id="featured_image_upload" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-lg file:border file:border-gray-300 file:text-sm file:font-medium file:bg-white file:text-gray-700 hover:file:bg-gray-50 file:transition file:duration-150 file:ease-in-out cursor-pointer"/>
                     </div>
+                    <?php if ($content_type === 'photobook'): ?>
                     <div>
                         <label for="teaser_image_upload" class="block text-sm font-medium text-gray-700 mb-1">Teaser Image</label>
                         <input type="file" name="teaser_image" id="teaser_image_upload" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-lg file:border file:border-gray-300 file:text-sm file:font-medium file:bg-white file:text-gray-700 hover:file:bg-gray-50 file:transition file:duration-150 file:ease-in-out cursor-pointer"/>
                     </div>
+                    <?php endif; ?>
                 </div>
             </div>
 

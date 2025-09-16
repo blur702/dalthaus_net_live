@@ -54,7 +54,7 @@
                 </div>
 
                 <!-- Images -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 <?= $content->getAttribute('content_type') === 'photobook' ? 'md:grid-cols-2' : '' ?> gap-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Featured Image</label>
                         <?php if ($content->getAttribute('featured_image')): ?>
@@ -63,6 +63,7 @@
                         <input type="file" name="featured_image" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-lg file:border file:border-gray-300 file:text-sm file:font-medium file:bg-white file:text-gray-700 hover:file:bg-gray-50 file:transition file:duration-150 file:ease-in-out cursor-pointer"/>
                         <p class="mt-1 text-xs text-gray-500">Upload a new image to replace the current one.</p>
                     </div>
+                    <?php if ($content->getAttribute('content_type') === 'photobook'): ?>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Teaser Image</label>
                         <?php if ($content->getAttribute('teaser_image')): ?>
@@ -71,6 +72,7 @@
                         <input type="file" name="teaser_image" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-lg file:border file:border-gray-300 file:text-sm file:font-medium file:bg-white file:text-gray-700 hover:file:bg-gray-50 file:transition file:duration-150 file:ease-in-out cursor-pointer"/>
                         <p class="mt-1 text-xs text-gray-500">Upload a new image to replace the current one.</p>
                     </div>
+                    <?php endif; ?>
                 </div>
             </div>
 

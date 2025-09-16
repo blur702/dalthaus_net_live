@@ -63,7 +63,7 @@
                     <div class="flex-1 flex items-center space-x-4">
                         <!-- Image -->
                         <div class="flex-shrink-0 w-16">
-                            <?php if ($item['teaser_image']): ?>
+                            <?php if ($item['content_type'] === 'photobook' && $item['teaser_image']): ?>
                             <img class="admin-image-43 rounded" src="/uploads/<?= $this->escape($item['teaser_image']) ?>" alt="<?= $this->escape($item['title']) ?>">
                             <?php else: ?>
                             <div class="admin-image-43 bg-gray-300 rounded flex items-center justify-center">

@@ -562,8 +562,8 @@ class Content extends BaseController
             }
         }
         
-        // Handle teaser image upload
-        if (!empty($_FILES['teaser_image']['name'])) {
+        // Handle teaser image upload (only for photobooks)
+        if (!empty($_FILES['teaser_image']['name']) && ($data['content_type'] ?? '') === 'photobook') {
             $teaserPath = $uploadBasePath . 'teasers/' . $yearMonth . '/';
             
             // Create directory if it doesn't exist
