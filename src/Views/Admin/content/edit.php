@@ -57,8 +57,20 @@
                 <div class="grid grid-cols-1 <?= $content->getAttribute('content_type') === 'photobook' ? 'md:grid-cols-2' : '' ?> gap-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Featured Image</label>
-                        <?php if ($content->getAttribute('featured_image')): ?>
-                            <div class="mb-2 max-w-xs"><img src="/uploads/<?= $this->escape($content->getAttribute('featured_image')) ?>" alt="Current featured image" class="admin-image-43 rounded-md border border-gray-200"></div>
+                        <?php if ($content->getAttribute('featured_image')): 
+                            $imagePath = $content->getAttribute('featured_image');
+                            // Handle both relative and absolute paths
+                            $imageUrl = (strpos($imagePath, '/') === 0) ? $imagePath : '/uploads/' . $imagePath;
+                        ?>
+                            <div class="mb-2 max-w-xs">
+                                <img src="<?= $this->escape($imageUrl) ?>" 
+                                     alt="Current featured image" 
+                                     class="admin-image-43 rounded-md border border-gray-200"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                <div style="display:none" class="text-sm text-red-600 p-2 border border-red-200 rounded">
+                                    Image not found: <?= $this->escape($imagePath) ?>
+                                </div>
+                            </div>
                         <?php endif; ?>
                         <input type="file" name="featured_image" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-lg file:border file:border-gray-300 file:text-sm file:font-medium file:bg-white file:text-gray-700 hover:file:bg-gray-50 file:transition file:duration-150 file:ease-in-out cursor-pointer"/>
                         <p class="mt-1 text-xs text-gray-500">Upload a new image to replace the current one.</p>
@@ -66,8 +78,20 @@
                     <?php if ($content->getAttribute('content_type') === 'photobook'): ?>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Teaser Image</label>
-                        <?php if ($content->getAttribute('teaser_image')): ?>
-                            <div class="mb-2 max-w-xs"><img src="/uploads/<?= $this->escape($content->getAttribute('teaser_image')) ?>" alt="Current teaser image" class="admin-image-43 rounded-md border border-gray-200"></div>
+                        <?php if ($content->getAttribute('teaser_image')): 
+                            $teaserImagePath = $content->getAttribute('teaser_image');
+                            // Handle both relative and absolute paths
+                            $teaserImageUrl = (strpos($teaserImagePath, '/') === 0) ? $teaserImagePath : '/uploads/' . $teaserImagePath;
+                        ?>
+                            <div class="mb-2 max-w-xs">
+                                <img src="<?= $this->escape($teaserImageUrl) ?>" 
+                                     alt="Current teaser image" 
+                                     class="admin-image-43 rounded-md border border-gray-200"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                <div style="display:none" class="text-sm text-red-600 p-2 border border-red-200 rounded">
+                                    Image not found: <?= $this->escape($teaserImagePath) ?>
+                                </div>
+                            </div>
                         <?php endif; ?>
                         <input type="file" name="teaser_image" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-lg file:border file:border-gray-300 file:text-sm file:font-medium file:bg-white file:text-gray-700 hover:file:bg-gray-50 file:transition file:duration-150 file:ease-in-out cursor-pointer"/>
                         <p class="mt-1 text-xs text-gray-500">Upload a new image to replace the current one.</p>
