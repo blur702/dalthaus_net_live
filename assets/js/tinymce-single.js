@@ -87,6 +87,16 @@
             inline: false,
             promotion: false,
             branding: false,
+            // Fix image display issues
+            relative_urls: false,
+            remove_script_host: false,
+            document_base_url: window.location.origin + '/',
+            // Ensure images load properly in editor
+            verify_html: false,
+            // Image handling options
+            image_advtab: true,
+            image_caption: true,
+            image_title: true,
             setup: function(editor) {
                 editor.on('init', function() {
                     console.log('TinyMCE editor initialized:', editor.id);
