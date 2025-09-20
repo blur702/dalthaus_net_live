@@ -71,5 +71,7 @@
     };
 })();
 </script>
+<!-- Slug Generator -->
+<script src="/assets/js/slug-generator.js"></script>
 <!-- TinyMCE - Only for this page -->
 <script src="/assets/js/tinymce-single.js"></script>
