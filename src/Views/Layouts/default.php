@@ -221,17 +221,17 @@
         <div class="max-w-7xl mx-auto px-4 py-6">
             <div class="flex justify-between items-start">
                 <div>
-                    <h1 class="text-xl font-bold text-gray-900" style="font-family: 'Arimo', Arial, sans-serif;">
+                    <h1 class="font-bold text-gray-900" style="font-family: 'Arimo', Arial, sans-serif; font-size: 24px;">
                         <a href="/" class="hover:text-gray-700 no-underline">
                             <?= $this->escape($settings['site_title'] ?? 'SITE TITLE') ?>
                         </a>
                     </h1>
                     <?php if (!empty($settings['site_motto'])): ?>
-                    <p class="text-gray-900 text-sm mt-0" style="font-family: 'Arimo', Arial, sans-serif;">
+                    <p class="text-gray-900 mt-0" style="font-family: 'Arimo', Arial, sans-serif; font-size: 18px;">
                         <?= $this->escape($settings['site_motto']) ?>
                     </p>
                     <?php else: ?>
-                    <p class="text-gray-900 text-sm mt-0" style="font-family: 'Arimo', Arial, sans-serif;">
+                    <p class="text-gray-900 mt-0" style="font-family: 'Arimo', Arial, sans-serif; font-size: 18px;">
                         SITE MOTTO
                     </p>
                     <?php endif; ?>
