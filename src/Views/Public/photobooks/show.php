@@ -49,11 +49,6 @@
     </article>
 
     <?php if ($total_pages > 1): ?>
-    <!-- Photobook Navigation -->
-    <div class="mt-8 mb-8 text-center border-t border-b border-gray-300 py-4">
-        <div class="text-sm text-gray-900 mb-2">Pages in this Photobook</div>
-        <div class="text-xs text-gray-600">Page <?= $current_page ?> of <?= $total_pages ?></div>
-    </div>
 
     <!-- Page Navigation -->
     <div class="pagination">
