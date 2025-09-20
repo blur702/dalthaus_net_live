@@ -80,8 +80,10 @@ class Photobooks extends BaseController
             return;
         }
 
-        // Show full content with page break indicators
-        $content = $photobook->getContentWithPageBreaks();
+        // Show paginated content based on TinyMCE page breaks
+        $contentPages = $photobook->getContentPages();
+        $currentPage = max(1, min(count($contentPages), (int) $this->getParam('p', 1)));
+        $currentContent = $contentPages[$currentPage - 1] ?? '';
 
         // Get author information
         $author = $photobook->getAuthor();
@@ -89,7 +91,9 @@ class Photobooks extends BaseController
         // Render photobook template
         $this->render('photobooks/show', [
             'photobook' => $photobook,
-            'content' => $content,
+            'content' => $currentContent,
+            'current_page' => $currentPage,
+            'total_pages' => count($contentPages),
             'author' => $author,
             'page_title' => $photobook->getAttribute('title'),
             'meta_description' => $photobook->getAttribute('meta_description'),

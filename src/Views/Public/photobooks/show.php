@@ -47,4 +47,38 @@
             <?php endif; ?>
         </div>
     </article>
+
+    <?php if ($total_pages > 1): ?>
+    <!-- Photobook Navigation -->
+    <div class="mt-8 mb-8 text-center border-t border-b border-gray-300 py-4">
+        <div class="text-sm text-gray-900 mb-2">Pages in this Photobook</div>
+        <div class="text-xs text-gray-600">Page <?= $current_page ?> of <?= $total_pages ?></div>
+    </div>
+
+    <!-- Page Navigation -->
+    <div class="pagination">
+        <!-- Previous Page -->
+        <?php if ($current_page > 1): ?>
+        <a href="<?= $this->escape($photobook->getUrl() . '?p=' . ($current_page - 1)) ?>" aria-label="Previous page">&lt;</a>
+        <?php else: ?>
+        <span class="disabled">&lt;</span>
+        <?php endif; ?>
+
+        <!-- Page Numbers -->
+        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+            <?php if ($i == $current_page): ?>
+            <span class="current"><?= $i ?></span>
+            <?php else: ?>
+            <a href="<?= $this->escape($photobook->getUrl() . '?p=' . $i) ?>"><?= $i ?></a>
+            <?php endif; ?>
+        <?php endfor; ?>
+
+        <!-- Next Page -->
+        <?php if ($current_page < $total_pages): ?>
+        <a href="<?= $this->escape($photobook->getUrl() . '?p=' . ($current_page + 1)) ?>" aria-label="Next page">&gt;</a>
+        <?php else: ?>
+        <span class="disabled">&gt;</span>
+        <?php endif; ?>
+    </div>
+    <?php endif; ?>
 </div>

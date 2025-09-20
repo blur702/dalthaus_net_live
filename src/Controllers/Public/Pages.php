@@ -48,13 +48,17 @@ class Pages extends BaseController
             return;
         }
 
-        // Show full content with page break indicators
-        $content = $page->getContentWithPageBreaks();
+        // Show paginated content based on TinyMCE page breaks
+        $contentPages = $page->getContentPages();
+        $currentPage = max(1, min(count($contentPages), (int) $this->getParam('p', 1)));
+        $currentContent = $contentPages[$currentPage - 1] ?? '';
 
         // Render page template
         $this->render('pages/show', [
             'page' => $page,
-            'content' => $content,
+            'content' => $currentContent,
+            'current_page' => $currentPage,
+            'total_pages' => count($contentPages),
             'page_title' => $page->getAttribute('title'),
             'meta_description' => $page->getAttribute('meta_description'),
             'meta_keywords' => $page->getAttribute('meta_keywords')

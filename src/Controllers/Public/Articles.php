@@ -80,8 +80,10 @@ class Articles extends BaseController
             return;
         }
 
-        // Show full content with page break indicators
-        $content = $article->getContentWithPageBreaks();
+        // Show paginated content based on TinyMCE page breaks
+        $contentPages = $article->getContentPages();
+        $currentPage = max(1, min(count($contentPages), (int) $this->getParam('p', 1)));
+        $currentContent = $contentPages[$currentPage - 1] ?? '';
 
         // Get author information
         $author = $article->getAuthor();
@@ -89,7 +91,9 @@ class Articles extends BaseController
         // Render article template
         $this->render('articles/show', [
             'article' => $article,
-            'content' => $content,
+            'content' => $currentContent,
+            'current_page' => $currentPage,
+            'total_pages' => count($contentPages),
             'author' => $author,
             'page_title' => $article->getAttribute('title'),
             'meta_description' => $article->getAttribute('meta_description'),
