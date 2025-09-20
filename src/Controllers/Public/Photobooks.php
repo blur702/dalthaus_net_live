@@ -80,8 +80,8 @@ class Photobooks extends BaseController
             return;
         }
 
-        // Show full content (removed view mode logic)
-        $content = $photobook->getAttribute('body');
+        // Show full content with page break indicators
+        $content = $photobook->getContentWithPageBreaks();
 
         // Get author information
         $author = $photobook->getAuthor();
