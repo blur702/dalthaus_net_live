@@ -9,14 +9,6 @@
         <div class="text-sm text-gray-900 mb-4">
             <?= $this->escape($author['display_name'] ?? $author['username'] ?? 'author') ?> / <?= $photobook->getFormattedPublishedDate() ?>
         </div>
-        
-        <?php if ($photobook->getAttribute('teaser_image')): ?>
-        <div class="mb-6">
-            <img src="<?= $this->escape($photobook->getTeaserImageUrl()) ?>" 
-                 alt="<?= $this->escape($photobook->getAttribute('title')) ?>"
-                 class="teaser-image mx-auto max-w-md">
-        </div>
-        <?php endif; ?>
     </header>
     
     
