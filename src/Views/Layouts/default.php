@@ -55,10 +55,22 @@
             text-align: left;
             margin: 0;
             padding: 0;
+            line-height: 1.6;
         }
-        
+
         .content-text p {
             margin: 0 0 1em 0;
+        }
+
+        @media (max-width: 640px) {
+            .content-text {
+                font-size: 16px;
+                line-height: 1.7;
+            }
+
+            .content-text p {
+                margin: 0 0 1.25em 0;
+            }
         }
         
         .read-more {
@@ -70,17 +82,42 @@
             background: white;
             transition: all 0.2s ease;
             font-style: italic;
+            touch-action: manipulation;
         }
-        
+
         .read-more:hover {
             background: rgb(20, 20, 20);
             color: white;
+        }
+
+        @media (max-width: 640px) {
+            .read-more {
+                padding: 0.75rem 1.25rem;
+                font-size: 0.875rem;
+                width: 100%;
+                text-align: center;
+                margin-top: 1rem;
+            }
         }
         
         /* Typography from design specs */
         h1, h2, h3, h4, h5, h6 {
             font-family: 'Arimo', Arial, sans-serif;
             color: rgb(20, 20, 20) !important;
+        }
+
+        @media (max-width: 640px) {
+            h1 {
+                font-size: 1.5rem;
+                line-height: 1.3;
+                margin-bottom: 1rem;
+            }
+
+            h2 {
+                font-size: 1.25rem;
+                line-height: 1.4;
+                margin-bottom: 0.75rem;
+            }
         }
         
         /* Override Tailwind gray colors to use consistent dark gray */
@@ -174,17 +211,33 @@
             align-items: center;
             gap: 0.25rem;
             margin: 2rem 0;
+            flex-wrap: wrap;
         }
-        
+
         .pagination a,
         .pagination span {
-            padding: 0.5rem 0.75rem;
+            padding: 0.75rem 1rem;
             border: 1px solid rgb(20, 20, 20);
             color: rgb(20, 20, 20);
             text-decoration: none;
             background: white;
             min-width: 2.5rem;
             text-align: center;
+            touch-action: manipulation;
+        }
+
+        @media (max-width: 640px) {
+            .pagination {
+                gap: 0.125rem;
+                margin: 1.5rem 0;
+            }
+
+            .pagination a,
+            .pagination span {
+                padding: 0.5rem 0.75rem;
+                min-width: 2rem;
+                font-size: 0.875rem;
+            }
         }
         
         .pagination a:hover {
