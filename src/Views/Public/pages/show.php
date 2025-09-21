@@ -1,8 +1,8 @@
 <!-- Static Page Display -->
-<div class="max-w-4xl mx-auto">
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Page Header -->
-    <header class="mb-8 text-center">
-        <h1 class="text-2xl font-bold text-gray-900 mb-4" style="font-family: 'Arimo', Arial, sans-serif;">
+    <header class="mb-6 sm:mb-8 text-center">
+        <h1 class="text-xl sm:text-2xl font-bold text-gray-900 mb-4 leading-tight" style="font-family: 'Arimo', Arial, sans-serif;">
             <?= $this->escape($page->getAttribute('title')) ?>
         </h1>
     </header>
@@ -25,11 +25,6 @@
     
     <!-- Page Content -->
     <article class="prose max-w-none">
-        <?php if ($total_pages > 1 && (!isset($view_mode) || $view_mode === 'paginated')): ?>
-        <h2 class="text-lg font-bold mb-4" style="font-family: 'Arimo', Arial, sans-serif;">
-            Page Section title
-        </h2>
-        <?php endif; ?>
         
         <div class="content-text leading-relaxed text-gray-900">
             <?php if (!empty($content)): ?>

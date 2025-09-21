@@ -1,11 +1,11 @@
 <!-- Article Display Page -->
-<div class="max-w-4xl mx-auto">
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Article Header -->
-    <header class="mb-8 text-center">
-        <h1 class="text-2xl font-bold text-gray-900 mb-2" style="font-family: 'Arimo', Arial, sans-serif;">
+    <header class="mb-6 sm:mb-8 text-center">
+        <h1 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2 leading-tight" style="font-family: 'Arimo', Arial, sans-serif;">
             <?= $this->escape($article->getAttribute('title')) ?>
         </h1>
-        
+
         <div class="text-sm text-gray-900 mb-4">
             <?= $this->escape($author['display_name'] ?? $author['username'] ?? 'author') ?> / <?= $article->getFormattedPublishedDate() ?>
         </div>
@@ -13,11 +13,6 @@
 
     <!-- Article Content -->
     <article class="prose max-w-none">
-        <?php if ($total_pages > 1): ?>
-        <h2 class="text-lg font-bold mb-4" style="font-family: 'Arimo', Arial, sans-serif;">
-            Article Section <?= $current_page ?> of <?= $total_pages ?>
-        </h2>
-        <?php endif; ?>
         
         <div class="content-text leading-relaxed text-gray-900">
             <?php if (!empty($content)): ?>

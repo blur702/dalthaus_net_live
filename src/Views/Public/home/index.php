@@ -4,7 +4,7 @@
     <div class="lg:col-span-2">
         <div class="mb-8">
             <h2 class="text-2xl font-bold text-gray-900 mb-6 border-b border-gray-300 pb-2">
-                Articles
+
             </h2>
             
             <?php if (!empty($articles)): ?>
@@ -55,7 +55,7 @@
     <div class="lg:col-span-1">
         <div class="mb-8">
             <h2 class="text-2xl font-bold text-gray-900 mb-6 border-b border-gray-300 pb-2">
-                Photobooks
+
             </h2>
             
             <?php if (!empty($photobooks)): ?>
