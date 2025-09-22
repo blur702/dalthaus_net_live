@@ -1,50 +1,50 @@
 <!-- Photobooks Listing Page -->
-<div class="max-w-4xl mx-auto">
-    
+<div class="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8">
+
     <?php if (!empty($photobooks)): ?>
         <!-- Photobooks List -->
-        <div class="space-y-8">
+        <div class="space-y-6 sm:space-y-8">
             <?php foreach ($photobooks as $photobook): ?>
-            <article class="flex gap-6">
+            <article class="flex flex-col sm:flex-row gap-4 sm:gap-6">
                 <!-- Teaser Image -->
                 <?php if ($photobook->getAttribute('teaser_image')): ?>
-                <div class="flex-shrink-0 w-64">
-                    <img src="<?= $this->escape($photobook->getTeaserImageUrl()) ?>" 
+                <div class="flex-shrink-0 w-full sm:w-64">
+                    <img src="<?= $this->escape($photobook->getTeaserImageUrl()) ?>"
                          alt="<?= $this->escape($photobook->getAttribute('title')) ?>"
                          class="teaser-image w-full">
                 </div>
                 <?php else: ?>
-                <div class="flex-shrink-0 w-64">
-                    <div class="teaser-image bg-black text-white flex items-center justify-center text-lg font-bold">
+                <div class="flex-shrink-0 w-full sm:w-64">
+                    <div class="teaser-image bg-black text-white flex items-center justify-center text-base sm:text-lg font-bold">
                         TEASER IMAGE
                     </div>
                 </div>
                 <?php endif; ?>
                 
                 <!-- Content -->
-                <div class="flex-1 content-text">
-                    <h3 class="text-xl font-bold mb-2" style="font-family: 'Arimo', Arial, sans-serif;">
-                        <a href="<?= $this->escape($photobook->getUrl()) ?>" 
+                <div class="flex-1 content-text px-1 sm:px-0">
+                    <h3 class="text-lg sm:text-xl font-bold mb-2 leading-tight" style="font-family: 'Arimo', Arial, sans-serif;">
+                        <a href="<?= $this->escape($photobook->getUrl()) ?>"
                            class="text-gray-900 hover:text-gray-700 no-underline">
                             <?= $this->escape($photobook->getAttribute('title')) ?>
                         </a>
                     </h3>
-                    
-                    <div class="text-sm text-gray-900 mb-3">
-                        <?= $this->escape($photobook->getAttribute('display_name') ?? $photobook->getAttribute('username') ?? 'author') ?> / 
+
+                    <div class="text-xs sm:text-sm text-gray-900 mb-2 sm:mb-3">
+                        <?= $this->escape($photobook->getAttribute('display_name') ?? $photobook->getAttribute('username') ?? 'author') ?> /
                         <?= $photobook->getFormattedPublishedDate() ?>
                     </div>
                     
-                    <?php $teaserText = $photobook->getTeaserOrExcerpt(250); ?>
+                    <?php $teaserText = $photobook->getTeaserOrExcerpt(200); ?>
                     <?php if (!empty($teaserText)): ?>
-                    <div class="text-gray-900 mb-3 leading-relaxed">
-                        <p class="mb-3">
+                    <div class="text-gray-900 mb-3 leading-relaxed text-sm sm:text-base">
+                        <p class="mb-2 sm:mb-3">
                             <?= nl2br($this->escape($teaserText)) ?>
                         </p>
                     </div>
                     <?php endif; ?>
-                    
-                    <a href="<?= $this->escape($photobook->getUrl()) ?>" class="read-more">
+
+                    <a href="<?= $this->escape($photobook->getUrl()) ?>" class="read-more text-sm sm:text-base">
                         Read More
                     </a>
                 </div>
@@ -59,8 +59,8 @@
         ?>
         
     <?php else: ?>
-        <div class="text-center py-12">
-            <p class="text-gray-600 italic">No photobooks available.</p>
+        <div class="text-center py-8 sm:py-12 px-4">
+            <p class="text-gray-600 italic text-sm sm:text-base">No photobooks available.</p>
         </div>
     <?php endif; ?>
 </div>
