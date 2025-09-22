@@ -1,12 +1,12 @@
 <!-- Photobook Display Page -->
-<div class="max-w-4xl mx-auto">
+<div class="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8">
     <!-- Photobook Header -->
-    <header class="mb-8 text-center">
-        <h1 class="text-2xl font-bold text-gray-900 mb-2" style="font-family: 'Arimo', Arial, sans-serif;">
+    <header class="mb-4 sm:mb-6 lg:mb-8 text-center">
+        <h1 class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 leading-tight px-2 sm:px-0" style="font-family: 'Arimo', Arial, sans-serif;">
             <?= $this->escape($photobook->getAttribute('title')) ?>
         </h1>
-        
-        <div class="text-sm text-gray-900 mb-4">
+
+        <div class="text-xs sm:text-sm text-gray-900 mb-3 sm:mb-4">
             <?= $this->escape($author['display_name'] ?? $author['username'] ?? 'author') ?> / <?= $photobook->getFormattedPublishedDate() ?>
         </div>
     </header>
@@ -15,7 +15,7 @@
     <!-- Photobook Content -->
     <article class="prose max-w-none">
         
-        <div class="content-text leading-relaxed text-gray-900">
+        <div class="content-text leading-relaxed text-gray-900 px-1 sm:px-0">
             <?php if (!empty($content)): ?>
                 <?= $content ?>
             <?php else: ?>
