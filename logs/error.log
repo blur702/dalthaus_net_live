@@ -106,3 +106,7 @@
 [14-Sep-2025 17:47:52 America/New_York] Database connection successful
 [14-Sep-2025 17:48:00 America/New_York] Database connection attempt: DSN=mysql:host=localhost;dbname=cms_db;charset=utf8mb4, User=cms_user
 [14-Sep-2025 17:48:00 America/New_York] Database connection successful
+[16-Sep-2025 19:25:34 America/New_York] Uncaught exception: Database connection failed: SQLSTATE[HY000] [1045] Access denied for user 'dalthaus_maincms'@'localhost' (using password: YES) in E:\OneDrive\Documents\My Web Sites\dalthaus-net-live\dalthaus_net_live\src\Utils\Database.php:91
+[20-Sep-2025 17:37:10 America/New_York] Uncaught exception: Database connection failed: SQLSTATE[HY000] [1045] Access denied for user 'dalthaus_maincms'@'localhost' (using password: YES) in E:\OneDrive\Documents\My Web Sites\dalthaus-net-live\dalthaus_net_live\src\Utils\Database.php:91
+[20-Sep-2025 17:37:30 America/New_York] Uncaught exception: Database connection failed: SQLSTATE[HY000] [1045] Access denied for user 'dalthaus_maincms'@'localhost' (using password: YES) in E:\OneDrive\Documents\My Web Sites\dalthaus-net-live\dalthaus_net_live\src\Utils\Database.php:91
+[20-Sep-2025 17:37:51 America/New_York] Uncaught exception: Database connection failed: SQLSTATE[HY000] [1045] Access denied for user 'dalthaus_maincms'@'localhost' (using password: YES) in E:\OneDrive\Documents\My Web Sites\dalthaus-net-live\dalthaus_net_live\src\Utils\Database.php:91
