@@ -309,7 +309,7 @@
     <footer class="border-t border-gray-200 mt-16">
         <div class="max-w-7xl mx-auto px-4 py-6">
             <div class="text-center text-gray-900 text-xs">
-                <p>copyright <?= date('Y') ?>, <?= $this->escape($settings['site_title'] ?? 'site title') ?></p>
+                <p>copyright <?= date('Y') ?>, Don Althaus, M.A.</p>
                 <?php if (!empty($footer_menu)): ?>
                 <div class="mt-2">
                     <?php foreach ($footer_menu as $item): ?>
