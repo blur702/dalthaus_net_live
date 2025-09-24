@@ -36,9 +36,9 @@ class Home extends BaseController
      */
     public function index(): void
     {
-        // Get recent articles (3 most recent)
-        $articles = Content::getPublishedArticles(3);
-        
+        // Get recent articles (20 most recent)
+        $articles = Content::getPublishedArticles(20);
+
         // Get recent photobooks (3 most recent)
         $photobooks = Content::getPublishedPhotobooks(3);
 
