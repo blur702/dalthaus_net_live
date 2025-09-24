@@ -57,20 +57,21 @@
         <?php else: ?>
         <span class="disabled">&lt;</span>
         <?php endif; ?>
-        
+
         <!-- Page Numbers -->
-        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+        <?php
+        // Calculate the range of pages to display (2 before, current, 2 after)
+        $start_page = max(1, $current_page - 2);
+        $end_page = min($total_pages, $current_page + 2);
+
+        for ($i = $start_page; $i <= $end_page; $i++): ?>
             <?php if ($i == $current_page): ?>
             <span class="current"><?= $i ?></span>
             <?php else: ?>
             <a href="<?= $this->escape($article->getUrl() . '?p=' . $i) ?>"><?= $i ?></a>
             <?php endif; ?>
         <?php endfor; ?>
-        
-        <?php if ($total_pages > 8): ?>
-        <span>...</span>
-        <?php endif; ?>
-        
+
         <!-- Next Page -->
         <?php if ($current_page < $total_pages): ?>
         <a href="<?= $this->escape($article->getUrl() . '?p=' . ($current_page + 1)) ?>" aria-label="Next page">&gt;</a>

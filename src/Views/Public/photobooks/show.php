@@ -60,7 +60,12 @@
         <?php endif; ?>
 
         <!-- Page Numbers -->
-        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+        <?php
+        // Calculate the range of pages to display (2 before, current, 2 after)
+        $start_page = max(1, $current_page - 2);
+        $end_page = min($total_pages, $current_page + 2);
+
+        for ($i = $start_page; $i <= $end_page; $i++): ?>
             <?php if ($i == $current_page): ?>
             <span class="current"><?= $i ?></span>
             <?php else: ?>
