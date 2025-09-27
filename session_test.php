@@ -37,6 +37,9 @@ echo "Actually Using Secure: " . ($useSecure ? 'true' : 'false') . "\n";
 echo "CMS Config - HttpOnly: " . ($config['security']['cookie_httponly'] ? 'true' : 'false') . "\n";
 echo "CMS Config - SameSite: " . $config['security']['cookie_samesite'] . "\n";
 echo "HTTPS Check: " . (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'HTTPS' : 'HTTP') . "\n";
+echo "Session Save Path: " . session_save_path() . "\n";
+echo "Session Module Name: " . session_module_name() . "\n";
+echo "Session Cache Limiter: " . session_cache_limiter() . "\n";
 echo "Session Cookie Params:\n";
 print_r(session_get_cookie_params());
 
