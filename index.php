@@ -75,6 +75,38 @@ session_set_cookie_params([
 
 session_name($config['security']['session_name']);
 
+// Initialize database connection for session handler
+try {
+    $db = CMS\Utils\Database::getInstance($config['database']);
+
+    // Check if we need to use database sessions (when file sessions fail)
+    $testSessionId = session_create_id();
+    $sessionData = "test_data_" . time();
+    $testResult = @file_put_contents(session_save_path() . "/sess_" . $testSessionId, $sessionData);
+
+    if ($testResult === false || !@unlink(session_save_path() . "/sess_" . $testSessionId)) {
+        // File sessions not working, use database sessions
+        require_once __DIR__ . '/config/session_fix.php';
+        $sessionHandler = new DatabaseSessionHandler($db->getConnection());
+        session_set_save_handler($sessionHandler, true);
+
+        // Create sessions table if it doesn't exist
+        $db->execute("CREATE TABLE IF NOT EXISTS user_sessions (
+            session_id VARCHAR(128) PRIMARY KEY,
+            session_data TEXT,
+            expires DATETIME,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            INDEX idx_expires (expires)
+        )");
+
+        error_log("Using database sessions due to file session storage issues");
+    }
+} catch (Exception $e) {
+    error_log("Session handler setup error: " . $e->getMessage());
+    // Continue with default file sessions
+}
+
 // Check if this is a public content page that should be cached
 $request_uri = $_SERVER['REQUEST_URI'] ?? '';
 $is_cacheable = (

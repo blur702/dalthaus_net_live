@@ -58,7 +58,7 @@ return [
      * Security Configuration
      */
     'security' => [
-        'session_name' => 'cms_session_' . hash('sha256', $_SERVER['HTTP_HOST'] ?? 'default'),
+        'session_name' => 'cms_session', // Simplified to match working configuration
         'session_lifetime' => 3600, // 1 hour
         'csrf_token_name' => '_token',
         'password_min_length' => 12, // Increased from 8
@@ -70,7 +70,7 @@ return [
         'login_lockout_time' => 900, // 15 minutes
         'secure_cookies' => true, // MUST be true for HTTPS
         'cookie_httponly' => true,
-        'cookie_samesite' => 'Strict',
+        'cookie_samesite' => 'Lax', // Changed from Strict to fix admin navigation authentication
         'force_https' => true,
         'enable_2fa' => false, // Enable when 2FA is implemented
         'api_rate_limit' => 100, // Requests per minute
