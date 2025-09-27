@@ -21,7 +21,7 @@ try {
 
     // Check for user 'kevin'
     echo "<h3>User 'kevin' Details:</h3>";
-    $stmt = $pdo->prepare("SELECT id, username, password_hash, is_admin, created_at FROM users WHERE username = ?");
+    $stmt = $pdo->prepare("SELECT user_id, username, password_hash, is_admin, created_at FROM users WHERE username = ?");
     $stmt->execute(['kevin']);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -68,11 +68,11 @@ try {
 
         // Show all users
         echo "<h3>All Users in Database:</h3>";
-        $result = $pdo->query("SELECT id, username, is_admin, created_at FROM users ORDER BY id");
+        $result = $pdo->query("SELECT user_id, username, is_admin, created_at FROM users ORDER BY user_id");
         echo "<table border='1'>";
         echo "<tr><th>ID</th><th>Username</th><th>Is Admin</th><th>Created At</th></tr>";
         foreach ($result as $row) {
-            echo "<tr><td>{$row['id']}</td><td>{$row['username']}</td><td>{$row['is_admin']}</td><td>{$row['created_at']}</td></tr>";
+            echo "<tr><td>{$row['user_id']}</td><td>{$row['username']}</td><td>{$row['is_admin']}</td><td>{$row['created_at']}</td></tr>";
         }
         echo "</table>";
     }
