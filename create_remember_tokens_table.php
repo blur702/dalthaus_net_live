@@ -23,7 +23,7 @@ try {
     // Create table SQL
     $sql = "CREATE TABLE IF NOT EXISTS `remember_tokens` (
         `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-        `user_id` INT(11) UNSIGNED NOT NULL,
+        `user_id` INT(11) NOT NULL,
         `token_hash` VARCHAR(64) NOT NULL,
         `expires_at` DATETIME NOT NULL,
         `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
