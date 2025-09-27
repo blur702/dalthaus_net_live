@@ -232,12 +232,15 @@ class View
 
     /**
      * Escape HTML output
-     * 
-     * @param string $string String to escape
+     *
+     * @param string|null $string String to escape
      * @return string
      */
-    public function escape(string $string): string
+    public function escape(?string $string): string
     {
+        if ($string === null) {
+            return '';
+        }
         return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
     }
 
