@@ -169,6 +169,13 @@ abstract class BaseController
 
     protected function requireAuth(): void
     {
+        // Set cache control headers to prevent browser from caching admin pages
+        // This fixes the back button issue where users see cached admin pages after logout
+        header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+        header('Cache-Control: post-check=0, pre-check=0', false);
+        header('Pragma: no-cache');
+        header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
+
         // Check both user_id and logged_in flag for consistency
         if (!$this->isAuthenticated()) {
             $this->setFlash('error', 'You must be logged in to view this page.');

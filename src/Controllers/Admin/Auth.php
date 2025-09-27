@@ -39,12 +39,18 @@ class Auth extends BaseController
      */
     public function login(): void
     {
+        // Set cache control headers to prevent caching of login page
+        header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+        header('Cache-Control: post-check=0, pre-check=0', false);
+        header('Pragma: no-cache');
+        header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
+
         // BULLETPROOF: Never check authentication, never redirect
         // Always show the login form no matter what
-        
+
         // If user is already logged in, they can still see the login page
         // This prevents ANY possibility of redirect loops
-        
+
         $this->render("admin/auth/login", [
             "csrf_token" => $this->auth->generateCsrfToken(),
             "flash" => $this->getFlash(),

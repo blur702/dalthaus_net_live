@@ -51,7 +51,7 @@ return [
      */
     'security' => [
         'session_name' => 'cms_session',
-        'session_lifetime' => 3600, // 1 hour
+        'session_lifetime' => 86400, // 24 hours
         'csrf_token_name' => '_token',
         'password_min_length' => 8,
         'login_max_attempts' => 5,
