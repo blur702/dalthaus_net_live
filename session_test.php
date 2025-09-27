@@ -4,12 +4,15 @@
 // Load the same configuration as the main app
 $config = require __DIR__ . '/config/config.php';
 
+// Test different cookie configurations
+$useSecure = isset($_GET['nosecure']) ? false : $config['security']['secure_cookies'];
+
 // Apply the exact same session configuration as index.php
 session_set_cookie_params([
     'lifetime' => $config['security']['session_lifetime'],
     'path' => '/',
     'domain' => '',
-    'secure' => $config['security']['secure_cookies'],
+    'secure' => $useSecure,
     'httponly' => $config['security']['cookie_httponly'],
     'samesite' => $config['security']['cookie_samesite']
 ]);
@@ -30,8 +33,10 @@ echo "Session ID: " . session_id() . "\n";
 echo "Session Name: " . session_name() . "\n";
 echo "Test Value: " . ($_SESSION['test_value'] ?? 'NOT SET') . "\n";
 echo "CMS Config - Secure Cookies: " . ($config['security']['secure_cookies'] ? 'true' : 'false') . "\n";
+echo "Actually Using Secure: " . ($useSecure ? 'true' : 'false') . "\n";
 echo "CMS Config - HttpOnly: " . ($config['security']['cookie_httponly'] ? 'true' : 'false') . "\n";
 echo "CMS Config - SameSite: " . $config['security']['cookie_samesite'] . "\n";
+echo "HTTPS Check: " . (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'HTTPS' : 'HTTP') . "\n";
 echo "Session Cookie Params:\n";
 print_r(session_get_cookie_params());
 
