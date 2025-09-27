@@ -31,14 +31,25 @@
         
         <div>
             <label for="password" class="sr-only">Password</label>
-            <input id="password" 
-                   name="password" 
-                   type="password" 
-                   required 
-                   class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-400 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm bg-white hover:border-gray-400 transition duration-150 ease-in-out" 
+            <input id="password"
+                   name="password"
+                   type="password"
+                   required
+                   class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-400 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm bg-white hover:border-gray-400 transition duration-150 ease-in-out"
                    placeholder="Enter your password"
                    autocomplete="current-password">
         </div>
+    </div>
+
+    <div class="flex items-center">
+        <input id="remember_me"
+               name="remember_me"
+               type="checkbox"
+               value="1"
+               class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+        <label for="remember_me" class="ml-2 block text-sm text-gray-900">
+            Remember me for 30 days
+        </label>
     </div>
 
     <div>

@@ -76,6 +76,7 @@ class Auth extends BaseController
 
         $username = $this->sanitize($this->getParam("username", "", "post"));
         $password = $this->getParam("password", "", "post");
+        $rememberMe = $this->getParam("remember_me", "", "post") === "1";
 
         if (empty($username) || empty($password)) {
             $this->setFlash("error", "Username and password are required.");
@@ -99,7 +100,7 @@ class Auth extends BaseController
         }
 
         try {
-            if ($this->auth->attempt($username, $password)) {
+            if ($this->auth->attempt($username, $password, $rememberMe)) {
                 // Use proper HTTP redirect - most reliable method
                 $this->redirect("/admin/dashboard");
                 return;

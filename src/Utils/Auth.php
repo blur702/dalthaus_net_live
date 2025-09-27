@@ -42,12 +42,13 @@ class Auth
 
     /**
      * Attempt to authenticate user
-     * 
+     *
      * @param string $username Username or email
      * @param string $password Password
+     * @param bool $rememberMe Whether to set remember me cookie
      * @return bool True if authentication successful
      */
-    public function attempt(string $username, string $password): bool
+    public function attempt(string $username, string $password, bool $rememberMe = false): bool
     {
         // Check for login lockout
         if ($this->isLockedOut($username)) {
@@ -56,7 +57,7 @@ class Auth
 
         // Find user by username or email
         $user = $this->findUser($username);
-        
+
         if ($user === false) {
             $this->recordFailedAttempt($username);
             return false;
@@ -70,10 +71,10 @@ class Auth
 
         // Clear failed attempts on successful login
         $this->clearFailedAttempts($username);
-        
+
         // Start user session
-        $this->startSession($user);
-        
+        $this->startSession($user, $rememberMe);
+
         return true;
     }
 
@@ -95,12 +96,16 @@ class Auth
 
     /**
      * Start user session
-     * 
+     *
      * @param array $user User data
+     * @param bool $rememberMe Whether to set remember me cookie
      * @return void
      */
-    private function startSession(array $user): void
+    private function startSession(array $user, bool $rememberMe = false): void
     {
+        // Regenerate session ID for security (prevent session fixation)
+        session_regenerate_id(true);
+
         // Store user data in session
         $_SESSION['user_id'] = (int) $user['user_id'];
         $_SESSION['username'] = $user['username'];
@@ -109,75 +114,108 @@ class Auth
         $_SESSION['is_admin'] = true; // All users in this system are admins for now
         $_SESSION['login_time'] = time();
         $_SESSION['last_activity'] = time();
-        
+
         // Generate CSRF token
         $this->generateCsrfToken();
-        
+
+        // Handle remember me functionality
+        if ($rememberMe) {
+            // Generate secure token
+            $token = bin2hex(random_bytes(32));
+            $hashedToken = hash('sha256', $token);
+
+            // Store token in database
+            $this->storeRememberToken($user['user_id'], $hashedToken);
+
+            // Set remember me cookie (30 days)
+            $cookieParams = [
+                'expires' => time() + (30 * 24 * 60 * 60),
+                'path' => '/',
+                'domain' => '',
+                'secure' => $this->config['secure_cookies'] ?? false,
+                'httponly' => true,
+                'samesite' => 'Strict'
+            ];
+
+            setcookie('remember_token', $user['user_id'] . ':' . $token, $cookieParams);
+        }
+
         // Debug: Log session data immediately after setting
         error_log("Auth::startSession() - Setting session data");
         error_log("Auth::startSession() - user_id: " . $_SESSION['user_id']);
         error_log("Auth::startSession() - logged_in: " . var_export($_SESSION['logged_in'], true));
-        
-        // Force session save to disk
-        session_write_close();
-        session_start();
-        
-        // Debug: Verify session was saved and reloaded
-        error_log("Auth::startSession() - After reload - user_id: " . ($_SESSION['user_id'] ?? 'MISSING'));
-        error_log("Auth::startSession() - After reload - logged_in: " . var_export($_SESSION['logged_in'] ?? 'MISSING', true));
-        
-        // Restart session for continued use
-        session_start();
+        error_log("Auth::startSession() - session_id: " . session_id());
     }
 
     /**
      * Log out current user
-     * 
+     *
      * @return void
      */
     public function logout(): void
     {
+        // Clear remember me token from database if user is logged in
+        if (isset($_SESSION['user_id'])) {
+            try {
+                $this->db->execute(
+                    'DELETE FROM remember_tokens WHERE user_id = ?',
+                    [$_SESSION['user_id']]
+                );
+            } catch (\Exception $e) {
+                // Log error but continue with logout
+                error_log("Failed to clear remember tokens: " . $e->getMessage());
+            }
+        }
+
+        // Clear remember me cookie
+        $this->clearRememberCookie();
+
         // Clear session data
         $_SESSION = [];
-        
+
         // Destroy session cookie
         if (isset($_COOKIE[session_name()])) {
             setcookie(
-                session_name(), 
-                '', 
-                time() - 3600, 
-                '/', 
-                '', 
-                $this->config['secure_cookies'] ?? false, 
+                session_name(),
+                '',
+                time() - 3600,
+                '/',
+                '',
+                $this->config['secure_cookies'] ?? false,
                 true
             );
         }
-        
+
         // Destroy session
         session_destroy();
     }
 
     /**
      * Check if user is authenticated
-     * 
+     *
      * @return bool
      */
     public function check(): bool
     {
-        if (!isset($_SESSION['logged_in']) || empty($_SESSION['logged_in'])) {
-            return false;
+        // First check if already logged in via session
+        if (isset($_SESSION['logged_in']) && !empty($_SESSION['logged_in'])) {
+            // Check session timeout
+            if ($this->isSessionExpired()) {
+                $this->logout();
+                return false;
+            }
+
+            // Update last activity time
+            $_SESSION['last_activity'] = time();
+            return true;
         }
 
-        // Check session timeout
-        if ($this->isSessionExpired()) {
-            $this->logout();
-            return false;
+        // Check for remember me cookie
+        if (isset($_COOKIE['remember_token'])) {
+            return $this->attemptRememberLogin();
         }
 
-        // Update last activity time
-        $_SESSION['last_activity'] = time();
-        
-        return true;
+        return false;
     }
 
     /**
@@ -489,5 +527,125 @@ class Auth
         }
 
         return $updated > 0;
+    }
+
+    /**
+     * Store remember me token in database
+     *
+     * @param int $userId User ID
+     * @param string $hashedToken Hashed token
+     * @return void
+     */
+    private function storeRememberToken(int $userId, string $hashedToken): void
+    {
+        try {
+            // Remove any existing tokens for this user
+            $this->db->execute(
+                'DELETE FROM remember_tokens WHERE user_id = ?',
+                [$userId]
+            );
+
+            // Store new token
+            $this->db->insert('remember_tokens', [
+                'user_id' => $userId,
+                'token_hash' => $hashedToken,
+                'expires_at' => date('Y-m-d H:i:s', time() + (30 * 24 * 60 * 60))
+            ]);
+        } catch (\Exception $e) {
+            // Log error but don't fail authentication
+            error_log("Failed to store remember token: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Attempt to login using remember me cookie
+     *
+     * @return bool
+     */
+    private function attemptRememberLogin(): bool
+    {
+        $cookie = $_COOKIE['remember_token'] ?? '';
+        if (empty($cookie)) {
+            return false;
+        }
+
+        // Parse cookie
+        $parts = explode(':', $cookie, 2);
+        if (count($parts) !== 2) {
+            $this->clearRememberCookie();
+            return false;
+        }
+
+        [$userId, $token] = $parts;
+        $hashedToken = hash('sha256', $token);
+
+        try {
+            // Find token in database
+            $tokenData = $this->db->fetchRow(
+                'SELECT * FROM remember_tokens WHERE user_id = ? AND token_hash = ? AND expires_at > NOW()',
+                [(int)$userId, $hashedToken]
+            );
+
+            if ($tokenData === false) {
+                $this->clearRememberCookie();
+                return false;
+            }
+
+            // Find user
+            $user = $this->db->fetchRow(
+                'SELECT user_id, username, email, created_at FROM users WHERE user_id = ?',
+                [(int)$userId]
+            );
+
+            if ($user === false) {
+                $this->clearRememberCookie();
+                return false;
+            }
+
+            // Start session without regenerating remember token
+            $this->startSessionFromRemember($user);
+            return true;
+
+        } catch (\Exception $e) {
+            error_log("Remember login failed: " . $e->getMessage());
+            $this->clearRememberCookie();
+            return false;
+        }
+    }
+
+    /**
+     * Start session from remember me login
+     *
+     * @param array $user User data
+     * @return void
+     */
+    private function startSessionFromRemember(array $user): void
+    {
+        // Regenerate session ID for security
+        session_regenerate_id(true);
+
+        // Store user data in session
+        $_SESSION['user_id'] = (int) $user['user_id'];
+        $_SESSION['username'] = $user['username'];
+        $_SESSION['email'] = $user['email'];
+        $_SESSION['logged_in'] = true;
+        $_SESSION['is_admin'] = true;
+        $_SESSION['login_time'] = time();
+        $_SESSION['last_activity'] = time();
+        $_SESSION['remembered'] = true; // Mark as remembered login
+
+        // Generate CSRF token
+        $this->generateCsrfToken();
+    }
+
+    /**
+     * Clear remember me cookie
+     *
+     * @return void
+     */
+    private function clearRememberCookie(): void
+    {
+        setcookie('remember_token', '', time() - 3600, '/', '',
+                 $this->config['secure_cookies'] ?? false, true);
     }
 }

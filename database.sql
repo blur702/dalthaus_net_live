@@ -198,4 +198,18 @@ INSERT IGNORE INTO `settings` (`setting_key`, `setting_value`) VALUES
 INSERT IGNORE INTO `users` (`username`, `email`, `password_hash`, `is_admin`) VALUES
 ('kevin', 'kevin@example.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 1);
 
+-- Remember tokens table for persistent authentication
+CREATE TABLE IF NOT EXISTS `remember_tokens` (
+    `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `user_id` INT(11) UNSIGNED NOT NULL,
+    `token_hash` VARCHAR(64) NOT NULL,
+    `expires_at` DATETIME NOT NULL,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    KEY `idx_user_id` (`user_id`),
+    KEY `idx_token_hash` (`token_hash`),
+    KEY `idx_expires_at` (`expires_at`),
+    CONSTRAINT `fk_remember_tokens_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 COMMIT;
