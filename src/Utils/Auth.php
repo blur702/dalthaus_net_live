@@ -557,10 +557,10 @@ class Auth
             error_log("Auth::storeRememberToken() - Inserted token with ID: $insertId");
             error_log("Auth::storeRememberToken() - SUCCESS");
         } catch (\Exception $e) {
-            // Log error but don't fail authentication
+            // Log error but don't fail authentication - allow login to succeed
             error_log("Auth::storeRememberToken() - FAILED: " . $e->getMessage());
             error_log("Auth::storeRememberToken() - Stack trace: " . $e->getTraceAsString());
-            throw $e; // Re-throw to see if this is causing login failure
+            // Don't re-throw - login should succeed even if remember token storage fails
         }
     }
 

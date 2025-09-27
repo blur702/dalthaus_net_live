@@ -10,7 +10,9 @@
     "grep": {},
     "grepInvert": null,
     "maxFailures": 0,
-    "metadata": {},
+    "metadata": {
+      "actualWorkers": 1
+    },
     "preserveOutput": "always",
     "reporter": [
       [
@@ -40,7 +42,9 @@
         "outputDir": "E:/OneDrive/Documents/My Web Sites/dalthaus-net-live/dalthaus_net_live/testing/results",
         "repeatEach": 1,
         "retries": 0,
-        "metadata": {},
+        "metadata": {
+          "actualWorkers": 1
+        },
         "id": "diagnosis",
         "name": "diagnosis",
         "testDir": "E:/OneDrive/Documents/My Web Sites/dalthaus-net-live/dalthaus_net_live/testing/e2e",
@@ -58,17 +62,376 @@
     "workers": 1,
     "webServer": null
   },
-  "suites": [],
-  "errors": [
+  "suites": [
     {
-      "message": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments.",
-      "stack": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments."
+      "title": "live-login-navigation.spec.js",
+      "file": "live-login-navigation.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Live Site Login and Navigation Test",
+          "file": "live-login-navigation.spec.js",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Complete authentication flow and navigation validation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "diagnosis",
+                  "projectName": "diagnosis",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7903,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "=== STARTING LIVE SITE LOGIN AND NAVIGATION TEST ===\n\n"
+                        },
+                        {
+                          "text": "Step 1: Initial State Setup\n"
+                        },
+                        {
+                          "text": "✓ Cleared all cookies and sessions\n"
+                        },
+                        {
+                          "text": "✓ Navigated to login page\n"
+                        },
+                        {
+                          "text": "✓ Login form is present with username and password fields\n\n"
+                        },
+                        {
+                          "text": "Step 2: Authentication Process\n"
+                        },
+                        {
+                          "text": "✓ Filled username: kevin\n"
+                        },
+                        {
+                          "text": "✓ Filled password: (hidden)\n"
+                        },
+                        {
+                          "text": "→ Submitting login form...\n"
+                        },
+                        {
+                          "text": "✓ Successfully authenticated and redirected to dashboard\n"
+                        },
+                        {
+                          "text": "  Current URL: https://dalthaus.net/admin/dashboard\n\n"
+                        },
+                        {
+                          "text": "Step 3: Session Monitoring\n"
+                        },
+                        {
+                          "text": "✓ Session cookie found: cms_session\n"
+                        },
+                        {
+                          "text": "  Domain: dalthaus.net\n"
+                        },
+                        {
+                          "text": "  HttpOnly: true\n"
+                        },
+                        {
+                          "text": "  Secure: true\n\n"
+                        },
+                        {
+                          "text": "Step 4: Testing Navigation Links\n"
+                        },
+                        {
+                          "text": "\u001b[33mNaN\u001b[39m\n"
+                        },
+                        {
+                          "text": "\nTesting: Articles Link\n"
+                        },
+                        {
+                          "text": "\u001b[33mNaN\u001b[39m\n"
+                        },
+                        {
+                          "text": "  Link href: /admin/content?type=article\n"
+                        },
+                        {
+                          "text": "  → Clicked Articles link\n"
+                        },
+                        {
+                          "text": "  Current URL: https://dalthaus.net/admin/content?type=article\n"
+                        },
+                        {
+                          "text": "✓ SUCCESS: Reached Articles page\n"
+                        },
+                        {
+                          "text": "  User remains authenticated\n"
+                        },
+                        {
+                          "text": "  Page title: Content Management - Storytelling In Photography\n"
+                        },
+                        {
+                          "text": "  → Returned to dashboard for next test\n"
+                        },
+                        {
+                          "text": "\nTesting: Content Link\n"
+                        },
+                        {
+                          "text": "\u001b[33mNaN\u001b[39m\n"
+                        },
+                        {
+                          "text": "  Link href: /admin/content\n"
+                        },
+                        {
+                          "text": "  → Clicked Content link\n"
+                        },
+                        {
+                          "text": "  Current URL: https://dalthaus.net/admin/content\n"
+                        },
+                        {
+                          "text": "✓ SUCCESS: Reached Content page\n"
+                        },
+                        {
+                          "text": "  User remains authenticated\n"
+                        },
+                        {
+                          "text": "  Page title: Content Management - Storytelling In Photography\n"
+                        },
+                        {
+                          "text": "  → Returned to dashboard for next test\n"
+                        },
+                        {
+                          "text": "\nTesting: Pages Link\n"
+                        },
+                        {
+                          "text": "\u001b[33mNaN\u001b[39m\n"
+                        },
+                        {
+                          "text": "  Link href: /admin/pages\n"
+                        },
+                        {
+                          "text": "  → Clicked Pages link\n"
+                        },
+                        {
+                          "text": "  Current URL: https://dalthaus.net/admin/pages\n"
+                        },
+                        {
+                          "text": "✓ SUCCESS: Reached Pages page\n"
+                        },
+                        {
+                          "text": "  User remains authenticated\n"
+                        },
+                        {
+                          "text": "  Page title: Page Management - Storytelling In Photography\n"
+                        },
+                        {
+                          "text": "  → Returned to dashboard for next test\n"
+                        },
+                        {
+                          "text": "\nTesting: Users Link\n"
+                        },
+                        {
+                          "text": "\u001b[33mNaN\u001b[39m\n"
+                        },
+                        {
+                          "text": "  Link href: /admin/users\n"
+                        },
+                        {
+                          "text": "  → Clicked Users link\n"
+                        },
+                        {
+                          "text": "  Current URL: https://dalthaus.net/admin/users\n"
+                        },
+                        {
+                          "text": "✓ SUCCESS: Reached Users page\n"
+                        },
+                        {
+                          "text": "  User remains authenticated\n"
+                        },
+                        {
+                          "text": "  Page title: User Management - Storytelling In Photography\n"
+                        },
+                        {
+                          "text": "  → Returned to dashboard for next test\n"
+                        },
+                        {
+                          "text": "\nTesting: Settings Link\n"
+                        },
+                        {
+                          "text": "\u001b[33mNaN\u001b[39m\n"
+                        },
+                        {
+                          "text": "  Link href: /admin/settings\n"
+                        },
+                        {
+                          "text": "  → Clicked Settings link\n"
+                        },
+                        {
+                          "text": "  Current URL: https://dalthaus.net/admin/settings\n"
+                        },
+                        {
+                          "text": "✓ SUCCESS: Reached Settings page\n"
+                        },
+                        {
+                          "text": "  User remains authenticated\n"
+                        },
+                        {
+                          "text": "  Page title: \n"
+                        },
+                        {
+                          "text": "  → Returned to dashboard for next test\n"
+                        },
+                        {
+                          "text": "\nNaN\n"
+                        },
+                        {
+                          "text": "Step 5: Final Session Validation\n"
+                        },
+                        {
+                          "text": "✓ Session maintained throughout navigation\n"
+                        },
+                        {
+                          "text": "  Final URL: https://dalthaus.net/admin/dashboard\n"
+                        },
+                        {
+                          "text": "✓ Direct access to protected pages works\n"
+                        },
+                        {
+                          "text": "✓ Authentication is stable\n\n"
+                        },
+                        {
+                          "text": "\u001b[33mNaN\u001b[39m\n"
+                        },
+                        {
+                          "text": "TEST SUMMARY\n"
+                        },
+                        {
+                          "text": "\u001b[33mNaN\u001b[39m\n"
+                        },
+                        {
+                          "text": "✓ Login form accessible\n"
+                        },
+                        {
+                          "text": "✓ Authentication successful\n"
+                        },
+                        {
+                          "text": "✓ Session cookie established\n"
+                        },
+                        {
+                          "text": "\nCRITICAL ISSUE STATUS:\n"
+                        },
+                        {
+                          "text": "The \"Articles\" link navigation issue appears to be RESOLVED\n"
+                        },
+                        {
+                          "text": "User can now click Articles without being redirected to login\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-27T20:24:39.890Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "E:\\OneDrive\\Documents\\My Web Sites\\dalthaus-net-live\\dalthaus_net_live\\testing\\results\\live-login-navigation-Live-1701a-w-and-navigation-validation-diagnosis\\test-finished-1.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "754fa71c460d74c8f8fb-a1b37b9cded290667e47",
+              "file": "live-login-navigation.spec.js",
+              "line": 4,
+              "column": 7
+            },
+            {
+              "title": "Verify Articles link specifically",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "diagnosis",
+                  "projectName": "diagnosis",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3456,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "\n=== FOCUSED TEST: Articles Link Issue ===\n\n"
+                        },
+                        {
+                          "text": "✓ Logged in successfully\n"
+                        },
+                        {
+                          "text": "  Current URL: https://dalthaus.net/admin/dashboard\n\n"
+                        },
+                        {
+                          "text": "Testing Articles Link:\n"
+                        },
+                        {
+                          "text": "\u001b[33mNaN\u001b[39m\n"
+                        },
+                        {
+                          "text": "Articles link href: /admin/content?type=article\n"
+                        },
+                        {
+                          "text": "Final URL after click: https://dalthaus.net/admin/content?type=article\n\n"
+                        },
+                        {
+                          "text": "✓ ISSUE RESOLVED: Articles link works correctly\n"
+                        },
+                        {
+                          "text": "  User remains authenticated\n"
+                        },
+                        {
+                          "text": "  Successfully accessed content management page\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-27T20:24:47.974Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "E:\\OneDrive\\Documents\\My Web Sites\\dalthaus-net-live\\dalthaus_net_live\\testing\\results\\live-login-navigation-Live-d0d34--Articles-link-specifically-diagnosis\\test-finished-1.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "754fa71c460d74c8f8fb-14a889ec5b3096cf541d",
+              "file": "live-login-navigation.spec.js",
+              "line": 243,
+              "column": 7
+            }
+          ]
+        }
+      ]
     }
   ],
+  "errors": [],
   "stats": {
-    "startTime": "2025-09-27T20:07:21.817Z",
-    "duration": 13.243000000000052,
-    "expected": 0,
+    "startTime": "2025-09-27T20:24:39.199Z",
+    "duration": 12856.539,
+    "expected": 2,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0
