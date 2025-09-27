@@ -163,7 +163,7 @@
     <!-- Pagination -->
     <?php if ($pagination['total_pages'] > 1): ?>
     <div class="bg-white px-6 py-3 border-t border-gray-200">
-        <?= $this->render('public/partials/pagination', [
+        <?= $this->render('admin/partials/pagination', [
             'pagination' => $pagination,
             'baseUrl' => '/admin/pages?' . http_build_query(array_filter($filters))
         ]); ?>

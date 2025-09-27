@@ -85,7 +85,7 @@
             // Pre-build the base URL with the correct filters before passing it to the partial.
             // This simplifies the partial and removes the source of the fatal error.
             $baseUrl = '/admin/users?' . http_build_query(array_filter($filters));
-            echo $this->render('public/partials/pagination', [
+            echo $this->render('admin/partials/pagination', [
                 'current_page' => $pagination['current_page'],
                 'total_pages'  => $pagination['total_pages'],
                 'base_url'     => $baseUrl

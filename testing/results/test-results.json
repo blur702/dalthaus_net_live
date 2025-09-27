@@ -10,9 +10,7 @@
     "grep": {},
     "grepInvert": null,
     "maxFailures": 0,
-    "metadata": {
-      "actualWorkers": 1
-    },
+    "metadata": {},
     "preserveOutput": "always",
     "reporter": [
       [
@@ -42,9 +40,7 @@
         "outputDir": "E:/OneDrive/Documents/My Web Sites/dalthaus-net-live/dalthaus_net_live/testing/results",
         "repeatEach": 1,
         "retries": 0,
-        "metadata": {
-          "actualWorkers": 1
-        },
+        "metadata": {},
         "id": "diagnosis",
         "name": "diagnosis",
         "testDir": "E:/OneDrive/Documents/My Web Sites/dalthaus-net-live/dalthaus_net_live/testing/e2e",
@@ -62,203 +58,17 @@
     "workers": 1,
     "webServer": null
   },
-  "suites": [
+  "suites": [],
+  "errors": [
     {
-      "title": "remember-me-focused.spec.js",
-      "file": "remember-me-focused.spec.js",
-      "column": 0,
-      "line": 0,
-      "specs": [],
-      "suites": [
-        {
-          "title": "Focused Remember Me Test",
-          "file": "remember-me-focused.spec.js",
-          "line": 3,
-          "column": 6,
-          "specs": [
-            {
-              "title": "Isolate remember me issue with network monitoring",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 120000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "diagnosis",
-                  "projectName": "diagnosis",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 11604,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "🔍 FOCUSED REMEMBER ME ANALYSIS\n"
-                        },
-                        {
-                          "text": "===============================\n"
-                        },
-                        {
-                          "text": "\n1️⃣ Navigating to login page...\n"
-                        },
-                        {
-                          "text": "✅ Login page loaded\n"
-                        },
-                        {
-                          "text": "\n2️⃣ Testing WITHOUT remember me (control)...\n"
-                        },
-                        {
-                          "text": "Submitting WITHOUT remember me...\n"
-                        },
-                        {
-                          "text": "Result URL: https://dalthaus.net/admin/dashboard\n"
-                        },
-                        {
-                          "text": "✅ CONTROL TEST PASSED: Login without remember me works\n"
-                        },
-                        {
-                          "text": "\nNetwork activity during control test:\n"
-                        },
-                        {
-                          "text": "  REQUEST: POST https://dalthaus.net/admin/login\n"
-                        },
-                        {
-                          "text": "  RESPONSE: 302 https://dalthaus.net/admin/login\n"
-                        },
-                        {
-                          "text": "  REQUEST: GET https://dalthaus.net/admin/dashboard\n"
-                        },
-                        {
-                          "text": "  RESPONSE: 200 https://dalthaus.net/admin/dashboard\n"
-                        },
-                        {
-                          "text": "\n3️⃣ Testing WITH remember me...\n"
-                        },
-                        {
-                          "text": "✅ Form filled with remember me CHECKED\n"
-                        },
-                        {
-                          "text": "Submitting WITH remember me...\n"
-                        },
-                        {
-                          "text": "Result URL: https://dalthaus.net/admin/login\n"
-                        },
-                        {
-                          "text": "\nNetwork activity during remember me test:\n"
-                        },
-                        {
-                          "text": "  REQUEST: POST https://dalthaus.net/admin/login\n"
-                        },
-                        {
-                          "text": "  RESPONSE: 302 https://dalthaus.net/admin/login\n"
-                        },
-                        {
-                          "text": "    → Redirect to: /admin/login\n"
-                        },
-                        {
-                          "text": "  REQUEST: GET https://dalthaus.net/admin/login\n"
-                        },
-                        {
-                          "text": "  RESPONSE: 200 https://dalthaus.net/admin/login\n"
-                        },
-                        {
-                          "text": "\n4️⃣ ANALYSIS\n"
-                        },
-                        {
-                          "text": "===========\n"
-                        },
-                        {
-                          "text": "❌ FAILED: Remember me prevented login\n"
-                        },
-                        {
-                          "text": "🐛 Remember me functionality is broken\n"
-                        },
-                        {
-                          "text": "\nLogin response analysis:\n"
-                        },
-                        {
-                          "text": "  Status: 302\n"
-                        },
-                        {
-                          "text": "  → Redirect detected\n"
-                        },
-                        {
-                          "text": "  Status: 200\n"
-                        },
-                        {
-                          "text": "  → Stayed on login page (login failed)\n"
-                        },
-                        {
-                          "text": "📸 Screenshot saved for debugging\n"
-                        },
-                        {
-                          "text": "\n❌ CONCLUSION: Remember me functionality is BROKEN\n"
-                        },
-                        {
-                          "text": "💡 LIKELY CAUSE: Exception in storeRememberToken method\n"
-                        },
-                        {
-                          "text": "💡 RECOMMENDATION: Check server-side PHP error logs\n"
-                        },
-                        {
-                          "text": "\n5️⃣ FINAL COMPARISON\n"
-                        },
-                        {
-                          "text": "===================\n"
-                        },
-                        {
-                          "text": "Without remember me: ✅ SUCCESS\n"
-                        },
-                        {
-                          "text": "With remember me:    ❌ FAILED\n"
-                        },
-                        {
-                          "text": "\n🔍 ROOT CAUSE IDENTIFIED:\n"
-                        },
-                        {
-                          "text": "The remember me checkbox specifically breaks the login process\n"
-                        },
-                        {
-                          "text": "This indicates an error in the storeRememberToken() method\n"
-                        },
-                        {
-                          "text": "or related database operations.\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-09-27T19:31:50.819Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "E:\\OneDrive\\Documents\\My Web Sites\\dalthaus-net-live\\dalthaus_net_live\\testing\\results\\remember-me-focused-Focuse-86057-sue-with-network-monitoring-diagnosis\\test-finished-1.png"
-                        }
-                      ]
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "71f83346386623eccc8f-294815d4b50f575400ef",
-              "file": "remember-me-focused.spec.js",
-              "line": 8,
-              "column": 7
-            }
-          ]
-        }
-      ]
+      "message": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments.",
+      "stack": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments."
     }
   ],
-  "errors": [],
   "stats": {
-    "startTime": "2025-09-27T19:31:50.141Z",
-    "duration": 13195.536,
-    "expected": 1,
+    "startTime": "2025-09-27T20:07:21.817Z",
+    "duration": 13.243000000000052,
+    "expected": 0,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0
