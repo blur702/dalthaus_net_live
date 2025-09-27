@@ -138,7 +138,7 @@ class Auth
                 'domain' => '',
                 'secure' => $this->config['secure_cookies'] ?? false,
                 'httponly' => true,
-                'samesite' => 'Strict'
+                'samesite' => 'Lax'
             ];
 
             $cookieValue = $user['user_id'] . ':' . $token;

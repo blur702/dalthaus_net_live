@@ -76,7 +76,7 @@ class Auth extends BaseController
 
         $username = $this->sanitize($this->getParam("username", "", "post"));
         $password = $this->getParam("password", "", "post");
-        $rememberMe = $this->getParam("remember_me", "", "post") === "1";
+        $rememberMe = !empty($this->getParam("remember_me", "", "post"));
 
         if (empty($username) || empty($password)) {
             $this->setFlash("error", "Username and password are required.");
