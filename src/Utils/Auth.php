@@ -120,12 +120,16 @@ class Auth
 
         // Handle remember me functionality
         if ($rememberMe) {
+            error_log("Auth::startSession() - Remember me requested");
+
             // Generate secure token
             $token = bin2hex(random_bytes(32));
             $hashedToken = hash('sha256', $token);
+            error_log("Auth::startSession() - Generated token for user: " . $user['user_id']);
 
             // Store token in database
             $this->storeRememberToken($user['user_id'], $hashedToken);
+            error_log("Auth::startSession() - Stored token in database");
 
             // Set remember me cookie (30 days)
             $cookieParams = [
@@ -137,7 +141,9 @@ class Auth
                 'samesite' => 'Strict'
             ];
 
-            setcookie('remember_token', $user['user_id'] . ':' . $token, $cookieParams);
+            $cookieValue = $user['user_id'] . ':' . $token;
+            setcookie('remember_token', $cookieValue, $cookieParams);
+            error_log("Auth::startSession() - Set remember cookie: $cookieValue");
         }
 
         // Debug: Log session data immediately after setting
@@ -536,18 +542,25 @@ class Auth
     private function storeRememberToken(int $userId, string $hashedToken): void
     {
         try {
+            error_log("Auth::storeRememberToken() - Starting for user_id: $userId");
+
             // Remove any existing tokens for this user
-            $this->db->delete('remember_tokens', 'user_id = ?', [$userId]);
+            $deleted = $this->db->delete('remember_tokens', 'user_id = ?', [$userId]);
+            error_log("Auth::storeRememberToken() - Deleted $deleted existing tokens");
 
             // Store new token
-            $this->db->insert('remember_tokens', [
+            $insertId = $this->db->insert('remember_tokens', [
                 'user_id' => $userId,
                 'token_hash' => $hashedToken,
                 'expires_at' => date('Y-m-d H:i:s', time() + (30 * 24 * 60 * 60))
             ]);
+            error_log("Auth::storeRememberToken() - Inserted token with ID: $insertId");
+            error_log("Auth::storeRememberToken() - SUCCESS");
         } catch (\Exception $e) {
             // Log error but don't fail authentication
-            error_log("Failed to store remember token: " . $e->getMessage());
+            error_log("Auth::storeRememberToken() - FAILED: " . $e->getMessage());
+            error_log("Auth::storeRememberToken() - Stack trace: " . $e->getTraceAsString());
+            throw $e; // Re-throw to see if this is causing login failure
         }
     }
 
