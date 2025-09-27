@@ -20,7 +20,7 @@ try {
 
     echo "Connected to database successfully!\n";
 
-    // Create table SQL
+    // Create table SQL - without foreign key for now
     $sql = "CREATE TABLE IF NOT EXISTS `remember_tokens` (
         `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
         `user_id` INT(11) NOT NULL,
@@ -30,8 +30,7 @@ try {
         PRIMARY KEY (`id`),
         KEY `idx_user_id` (`user_id`),
         KEY `idx_token_hash` (`token_hash`),
-        KEY `idx_expires_at` (`expires_at`),
-        CONSTRAINT `fk_remember_tokens_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
+        KEY `idx_expires_at` (`expires_at`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
 
     // Execute the SQL
