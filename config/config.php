@@ -58,7 +58,7 @@ return [
         'login_lockout_time' => 900, // 15 minutes
         'secure_cookies' => true, // Required for HTTPS sites like https://dalthaus.net
         'cookie_httponly' => true,
-        'cookie_samesite' => 'Strict'
+        'cookie_samesite' => 'Lax' // Changed from Strict to fix admin navigation authentication
     ],
 
     /**
