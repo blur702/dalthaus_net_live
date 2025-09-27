@@ -4,6 +4,48 @@
 # Enable RewriteEngine
 RewriteEngine On
 
+# Cloudflare IP Restoration - Get real visitor IPs
+<IfModule mod_cloudflare.c>
+    CloudFlareRemoteIPHeader CF-Connecting-IP
+    CloudFlareRemoteIPTrustedProxy 173.245.48.0/20
+    CloudFlareRemoteIPTrustedProxy 103.21.244.0/22
+    CloudFlareRemoteIPTrustedProxy 103.22.200.0/22
+    CloudFlareRemoteIPTrustedProxy 103.31.4.0/22
+    CloudFlareRemoteIPTrustedProxy 141.101.64.0/18
+    CloudFlareRemoteIPTrustedProxy 108.162.192.0/18
+    CloudFlareRemoteIPTrustedProxy 190.93.240.0/20
+    CloudFlareRemoteIPTrustedProxy 188.114.96.0/20
+    CloudFlareRemoteIPTrustedProxy 197.234.240.0/22
+    CloudFlareRemoteIPTrustedProxy 198.41.128.0/17
+    CloudFlareRemoteIPTrustedProxy 162.158.0.0/15
+    CloudFlareRemoteIPTrustedProxy 172.64.0.0/13
+    CloudFlareRemoteIPTrustedProxy 131.0.72.0/22
+    CloudFlareRemoteIPTrustedProxy 104.16.0.0/13
+    CloudFlareRemoteIPTrustedProxy 104.24.0.0/14
+</IfModule>
+
+# Alternative method if mod_cloudflare is not available
+<IfModule !mod_cloudflare.c>
+    <IfModule mod_remoteip.c>
+        RemoteIPHeader CF-Connecting-IP
+        RemoteIPTrustedProxy 173.245.48.0/20
+        RemoteIPTrustedProxy 103.21.244.0/22
+        RemoteIPTrustedProxy 103.22.200.0/22
+        RemoteIPTrustedProxy 103.31.4.0/22
+        RemoteIPTrustedProxy 141.101.64.0/18
+        RemoteIPTrustedProxy 108.162.192.0/18
+        RemoteIPTrustedProxy 190.93.240.0/20
+        RemoteIPTrustedProxy 188.114.96.0/20
+        RemoteIPTrustedProxy 197.234.240.0/22
+        RemoteIPTrustedProxy 198.41.128.0/17
+        RemoteIPTrustedProxy 162.158.0.0/15
+        RemoteIPTrustedProxy 172.64.0.0/13
+        RemoteIPTrustedProxy 131.0.72.0/22
+        RemoteIPTrustedProxy 104.16.0.0/13
+        RemoteIPTrustedProxy 104.24.0.0/14
+    </IfModule>
+</IfModule>
+
 # Set the base directory if in a subdirectory
 # RewriteBase /
 
@@ -45,12 +87,13 @@ Options -Indexes
 #     Deny from all
 # </Files>
 
-# PHP Configuration for shared hosting
+# PHP Configuration for shared hosting - Optimized for Cloudflare
+# Cloudflare has a 100-second timeout, so we set lower values
 <IfModule mod_php7.c>
     php_value upload_max_filesize 20M
     php_value post_max_size 25M
-    php_value max_execution_time 300
-    php_value max_input_time 300
+    php_value max_execution_time 90
+    php_value max_input_time 60
     php_value memory_limit 256M
     php_value session.gc_maxlifetime 86400
 </IfModule>
@@ -58,8 +101,8 @@ Options -Indexes
 <IfModule mod_php8.c>
     php_value upload_max_filesize 20M
     php_value post_max_size 25M
-    php_value max_execution_time 300
-    php_value max_input_time 300
+    php_value max_execution_time 90
+    php_value max_input_time 60
     php_value memory_limit 256M
     php_value session.gc_maxlifetime 86400
 </IfModule>
