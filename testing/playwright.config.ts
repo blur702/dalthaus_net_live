@@ -11,7 +11,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: 1, // Single worker for sequential execution
   reporter: [
-    ['html', { outputFolder: 'results/html-report' }],
+    ['html', { outputFolder: 'reports/html-report' }],
     ['json', { outputFile: 'results/test-results.json' }],
     ['list']
   ],

@@ -1,7 +1,7 @@
 {
   "config": {
-    "configFile": "/Users/kevin/Desktop/dalthuaus_net_live/playwright.config.ts",
-    "rootDir": "/Users/kevin/Desktop/dalthuaus_net_live/tests/e2e",
+    "configFile": "E:\\OneDrive\\Documents\\My Web Sites\\dalthaus-net-live\\dalthaus_net_live\\testing\\playwright.config.ts",
+    "rootDir": "E:/OneDrive/Documents/My Web Sites/dalthaus-net-live/dalthaus_net_live/testing/e2e",
     "forbidOnly": false,
     "fullyParallel": false,
     "globalSetup": null,
@@ -18,13 +18,13 @@
       [
         "html",
         {
-          "outputFolder": "test-results/html-report"
+          "outputFolder": "reports/html-report"
         }
       ],
       [
         "json",
         {
-          "outputFile": "test-results/test-results.json"
+          "outputFile": "results/test-results.json"
         }
       ],
       [
@@ -39,7 +39,7 @@
     "quiet": false,
     "projects": [
       {
-        "outputDir": "/Users/kevin/Desktop/dalthuaus_net_live/test-results",
+        "outputDir": "E:/OneDrive/Documents/My Web Sites/dalthaus-net-live/dalthaus_net_live/testing/results",
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
@@ -47,7 +47,7 @@
         },
         "id": "diagnosis",
         "name": "diagnosis",
-        "testDir": "/Users/kevin/Desktop/dalthuaus_net_live/tests/e2e",
+        "testDir": "E:/OneDrive/Documents/My Web Sites/dalthaus-net-live/dalthaus_net_live/testing/e2e",
         "testIgnore": [],
         "testMatch": [
           "**/*.@(spec|test).?(c|m)[jt]s?(x)"
@@ -64,20 +64,20 @@
   },
   "suites": [
     {
-      "title": "database-diagnosis.spec.ts",
-      "file": "database-diagnosis.spec.ts",
+      "title": "remember-me-focused.spec.js",
+      "file": "remember-me-focused.spec.js",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "Database Connection Diagnosis",
-          "file": "database-diagnosis.spec.ts",
-          "line": 9,
+          "title": "Focused Remember Me Test",
+          "file": "remember-me-focused.spec.js",
+          "line": 3,
           "column": 6,
           "specs": [
             {
-              "title": "Admin page database connection diagnosis",
+              "title": "Isolate remember me issue with network monitoring",
               "ok": true,
               "tags": [],
               "tests": [
@@ -92,88 +92,151 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 4344,
+                      "duration": 11604,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "\n=== Testing Admin Page ===\n"
+                          "text": "🔍 FOCUSED REMEMBER ME ANALYSIS\n"
                         },
                         {
-                          "text": "→ GET https://dalthaus.net/admin\n"
+                          "text": "===============================\n"
                         },
                         {
-                          "text": "← 302 https://dalthaus.net/admin\n"
+                          "text": "\n1️⃣ Navigating to login page...\n"
                         },
                         {
-                          "text": "→ GET https://dalthaus.net/admin/login\n"
+                          "text": "✅ Login page loaded\n"
                         },
                         {
-                          "text": "← 200 https://dalthaus.net/admin/login\n"
+                          "text": "\n2️⃣ Testing WITHOUT remember me (control)...\n"
                         },
                         {
-                          "text": "→ GET https://cdn.tailwindcss.com/\n"
+                          "text": "Submitting WITHOUT remember me...\n"
                         },
                         {
-                          "text": "← 302 https://cdn.tailwindcss.com/\n"
+                          "text": "Result URL: https://dalthaus.net/admin/dashboard\n"
                         },
                         {
-                          "text": "→ GET https://cdn.tailwindcss.com/3.4.17\n"
+                          "text": "✅ CONTROL TEST PASSED: Login without remember me works\n"
                         },
                         {
-                          "text": "← 200 https://cdn.tailwindcss.com/3.4.17\n"
+                          "text": "\nNetwork activity during control test:\n"
                         },
                         {
-                          "text": "Console [warning]: cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation\n"
+                          "text": "  REQUEST: POST https://dalthaus.net/admin/login\n"
                         },
                         {
-                          "text": "→ GET https://dalthaus.net/cdn-cgi/challenge-platform/scripts/jsd/main.js\n"
+                          "text": "  RESPONSE: 302 https://dalthaus.net/admin/login\n"
                         },
                         {
-                          "text": "← 302 https://dalthaus.net/cdn-cgi/challenge-platform/scripts/jsd/main.js\n"
+                          "text": "  REQUEST: GET https://dalthaus.net/admin/dashboard\n"
                         },
                         {
-                          "text": "→ GET https://dalthaus.net/cdn-cgi/challenge-platform/h/g/scripts/jsd/f78657f80e4b/main.js?\n"
+                          "text": "  RESPONSE: 200 https://dalthaus.net/admin/dashboard\n"
                         },
                         {
-                          "text": "← 200 https://dalthaus.net/cdn-cgi/challenge-platform/h/g/scripts/jsd/f78657f80e4b/main.js?\n"
+                          "text": "\n3️⃣ Testing WITH remember me...\n"
                         },
                         {
-                          "text": "→ POST https://dalthaus.net/cdn-cgi/challenge-platform/h/g/jsd/r/0.8196738149472228:1757877139:htd5QGWzaXrNZsUEaXrBjIhFiQMr53rXDfTb2EUYWwk/97f28eba6950c936\n"
+                          "text": "✅ Form filled with remember me CHECKED\n"
                         },
                         {
-                          "text": "Console [error]: Failed to load resource: the server responded with a status of 404 ()\n"
+                          "text": "Submitting WITH remember me...\n"
                         },
                         {
-                          "text": "Admin page response status: \u001b[33m200\u001b[39m\n"
+                          "text": "Result URL: https://dalthaus.net/admin/login\n"
                         },
                         {
-                          "text": "Database error indicators found: \u001b[33mfalse\u001b[39m\n"
+                          "text": "\nNetwork activity during remember me test:\n"
                         },
                         {
-                          "text": "Correct database references found: \u001b[33mfalse\u001b[39m\n"
+                          "text": "  REQUEST: POST https://dalthaus.net/admin/login\n"
                         },
                         {
-                          "text": "Has login form: \u001b[33mtrue\u001b[39m\n"
+                          "text": "  RESPONSE: 302 https://dalthaus.net/admin/login\n"
                         },
                         {
-                          "text": "Has error message: \u001b[33mfalse\u001b[39m\n"
+                          "text": "    → Redirect to: /admin/login\n"
                         },
                         {
-                          "text": "Final URL: https://dalthaus.net/admin/login\n"
+                          "text": "  REQUEST: GET https://dalthaus.net/admin/login\n"
                         },
                         {
-                          "text": "\n=== Test Summary Generated ===\n"
+                          "text": "  RESPONSE: 200 https://dalthaus.net/admin/login\n"
+                        },
+                        {
+                          "text": "\n4️⃣ ANALYSIS\n"
+                        },
+                        {
+                          "text": "===========\n"
+                        },
+                        {
+                          "text": "❌ FAILED: Remember me prevented login\n"
+                        },
+                        {
+                          "text": "🐛 Remember me functionality is broken\n"
+                        },
+                        {
+                          "text": "\nLogin response analysis:\n"
+                        },
+                        {
+                          "text": "  Status: 302\n"
+                        },
+                        {
+                          "text": "  → Redirect detected\n"
+                        },
+                        {
+                          "text": "  Status: 200\n"
+                        },
+                        {
+                          "text": "  → Stayed on login page (login failed)\n"
+                        },
+                        {
+                          "text": "📸 Screenshot saved for debugging\n"
+                        },
+                        {
+                          "text": "\n❌ CONCLUSION: Remember me functionality is BROKEN\n"
+                        },
+                        {
+                          "text": "💡 LIKELY CAUSE: Exception in storeRememberToken method\n"
+                        },
+                        {
+                          "text": "💡 RECOMMENDATION: Check server-side PHP error logs\n"
+                        },
+                        {
+                          "text": "\n5️⃣ FINAL COMPARISON\n"
+                        },
+                        {
+                          "text": "===================\n"
+                        },
+                        {
+                          "text": "Without remember me: ✅ SUCCESS\n"
+                        },
+                        {
+                          "text": "With remember me:    ❌ FAILED\n"
+                        },
+                        {
+                          "text": "\n🔍 ROOT CAUSE IDENTIFIED:\n"
+                        },
+                        {
+                          "text": "The remember me checkbox specifically breaks the login process\n"
+                        },
+                        {
+                          "text": "This indicates an error in the storeRememberToken() method\n"
+                        },
+                        {
+                          "text": "or related database operations.\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-09-14T20:15:35.590Z",
+                      "startTime": "2025-09-27T19:31:50.819Z",
                       "annotations": [],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "/Users/kevin/Desktop/dalthuaus_net_live/test-results/database-diagnosis-Databas-3c6f4-tabase-connection-diagnosis-diagnosis/test-finished-1.png"
+                          "path": "E:\\OneDrive\\Documents\\My Web Sites\\dalthaus-net-live\\dalthaus_net_live\\testing\\results\\remember-me-focused-Focuse-86057-sue-with-network-monitoring-diagnosis\\test-finished-1.png"
                         }
                       ]
                     }
@@ -181,643 +244,9 @@
                   "status": "expected"
                 }
               ],
-              "id": "0e15b259adc607a32a70-3dbe52fb2b5485db55ac",
-              "file": "database-diagnosis.spec.ts",
-              "line": 38,
-              "column": 7
-            },
-            {
-              "title": "Diagnose page configuration check",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 120000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "diagnosis",
-                  "projectName": "diagnosis",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 2115,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "\n=== Testing Diagnose Page ===\n"
-                        },
-                        {
-                          "text": "→ GET https://dalthaus.net/diagnose.php\n"
-                        },
-                        {
-                          "text": "← 200 https://dalthaus.net/diagnose.php\n"
-                        },
-                        {
-                          "text": "Diagnose page response status: \u001b[33m200\u001b[39m\n"
-                        },
-                        {
-                          "text": "Database host found: \u001b[90mundefined\u001b[39m\n"
-                        },
-                        {
-                          "text": "Database name found: \u001b[90mundefined\u001b[39m\n"
-                        },
-                        {
-                          "text": "Database user found: \u001b[90mundefined\u001b[39m\n"
-                        },
-                        {
-                          "text": "Contains old database references: \u001b[33mfalse\u001b[39m\n"
-                        },
-                        {
-                          "text": "Contains correct database references: \u001b[33mtrue\u001b[39m\n"
-                        },
-                        {
-                          "text": "\n=== Test Summary Generated ===\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-09-14T20:15:41.150Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "/Users/kevin/Desktop/dalthuaus_net_live/test-results/database-diagnosis-Databas-13229-se-page-configuration-check-diagnosis/test-finished-1.png"
-                        }
-                      ]
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "0e15b259adc607a32a70-afb861691e946ab5475e",
-              "file": "database-diagnosis.spec.ts",
-              "line": 101,
-              "column": 7
-            },
-            {
-              "title": "Agent status and configuration test",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 120000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "diagnosis",
-                  "projectName": "diagnosis",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 1938,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "\n=== Testing Agent Status ===\n"
-                        },
-                        {
-                          "text": "→ GET https://dalthaus.net/agent.php?action=test&key=dalthaus_agent_key_2025\n"
-                        },
-                        {
-                          "text": "← 200 https://dalthaus.net/agent.php?action=test&key=dalthaus_agent_key_2025\n"
-                        },
-                        {
-                          "text": "Agent test response status: \u001b[33m200\u001b[39m\n"
-                        },
-                        {
-                          "text": "Agent response preview: {\"success\":true,\"message\":\"Agent is operational\",\"php_version\":\"8.4.12\",\"directory\":\"\\/home\\/dalthaus\\/public_html\",\"timestamp\":\"2025-09-14T16:15:44-04:00\"}\n"
-                        },
-                        {
-                          "text": "Agent JSON response: {\n  \"success\": true,\n  \"message\": \"Agent is operational\",\n  \"php_version\": \"8.4.12\",\n  \"directory\": \"/home/dalthaus/public_html\",\n  \"timestamp\": \"2025-09-14T16:15:44-04:00\"\n}\n"
-                        },
-                        {
-                          "text": "Database config in agent response: Not found\n"
-                        },
-                        {
-                          "text": "Config file path in agent response: Not found\n"
-                        },
-                        {
-                          "text": "\n=== Test Summary Generated ===\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-09-14T20:15:43.289Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "/Users/kevin/Desktop/dalthuaus_net_live/test-results/database-diagnosis-Databas-00b81-atus-and-configuration-test-diagnosis/test-finished-1.png"
-                        }
-                      ]
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "0e15b259adc607a32a70-da08887b1d1e4868700b",
-              "file": "database-diagnosis.spec.ts",
-              "line": 151,
-              "column": 7
-            },
-            {
-              "title": "Configuration file analysis via different endpoints",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 120000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "diagnosis",
-                  "projectName": "diagnosis",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 7211,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "\n=== Testing Configuration Endpoints ===\n"
-                        },
-                        {
-                          "text": "\n--- Testing /check_server_config.php ---\n"
-                        },
-                        {
-                          "text": "→ GET https://dalthaus.net/check_server_config.php\n"
-                        },
-                        {
-                          "text": "← 404 https://dalthaus.net/check_server_config.php\n"
-                        },
-                        {
-                          "text": "Console [error]: Failed to load resource: the server responded with a status of 404 ()\n"
-                        },
-                        {
-                          "text": "→ GET https://dalthaus.net/cdn-cgi/challenge-platform/scripts/jsd/main.js\n"
-                        },
-                        {
-                          "text": "← 302 https://dalthaus.net/cdn-cgi/challenge-platform/scripts/jsd/main.js\n"
-                        },
-                        {
-                          "text": "→ GET https://dalthaus.net/cdn-cgi/challenge-platform/h/g/scripts/jsd/f78657f80e4b/main.js?\n"
-                        },
-                        {
-                          "text": "← 200 https://dalthaus.net/cdn-cgi/challenge-platform/h/g/scripts/jsd/f78657f80e4b/main.js?\n"
-                        },
-                        {
-                          "text": "→ POST https://dalthaus.net/cdn-cgi/challenge-platform/h/g/jsd/r/0.8196738149472228:1757877139:htd5QGWzaXrNZsUEaXrBjIhFiQMr53rXDfTb2EUYWwk/97f28eebfd7007b0\n"
-                        },
-                        {
-                          "text": "← 200 https://dalthaus.net/cdn-cgi/challenge-platform/h/g/jsd/r/0.8196738149472228:1757877139:htd5QGWzaXrNZsUEaXrBjIhFiQMr53rXDfTb2EUYWwk/97f28eebfd7007b0\n"
-                        },
-                        {
-                          "text": "/check_server_config.php response status: \u001b[33m404\u001b[39m\n"
-                        },
-                        {
-                          "text": "\n--- Testing /test_config_check.php ---\n"
-                        },
-                        {
-                          "text": "→ GET https://dalthaus.net/test_config_check.php\n"
-                        },
-                        {
-                          "text": "← 500 https://dalthaus.net/test_config_check.php\n"
-                        },
-                        {
-                          "text": "/test_config_check.php failed: page.goto: net::ERR_HTTP_RESPONSE_CODE_FAILURE at https://dalthaus.net/test_config_check.php\nCall log:\n\u001b[2m  - navigating to \"https://dalthaus.net/test_config_check.php\", waiting until \"networkidle\"\u001b[22m\n\n"
-                        },
-                        {
-                          "text": "\n--- Testing /debug.php ---\n"
-                        },
-                        {
-                          "text": "Console [error]: Failed to load resource: the server responded with a status of 500 ()\n"
-                        },
-                        {
-                          "text": "→ GET https://dalthaus.net/debug.php\n"
-                        },
-                        {
-                          "text": "← 500 https://dalthaus.net/debug.php\n"
-                        },
-                        {
-                          "text": "/debug.php failed: page.goto: net::ERR_HTTP_RESPONSE_CODE_FAILURE at https://dalthaus.net/debug.php\nCall log:\n\u001b[2m  - navigating to \"https://dalthaus.net/debug.php\", waiting until \"networkidle\"\u001b[22m\n\n"
-                        },
-                        {
-                          "text": "\n--- Testing /show_errors.php ---\n"
-                        },
-                        {
-                          "text": "Console [error]: Failed to load resource: the server responded with a status of 500 ()\n"
-                        },
-                        {
-                          "text": "→ GET https://dalthaus.net/show_errors.php\n"
-                        },
-                        {
-                          "text": "← 200 https://dalthaus.net/show_errors.php\n"
-                        },
-                        {
-                          "text": "→ GET https://cdn.tailwindcss.com/\n"
-                        },
-                        {
-                          "text": "← 302 https://cdn.tailwindcss.com/\n"
-                        },
-                        {
-                          "text": "→ GET https://cdn.tailwindcss.com/3.4.17\n"
-                        },
-                        {
-                          "text": "← 200 https://cdn.tailwindcss.com/3.4.17\n"
-                        },
-                        {
-                          "text": "Console [warning]: cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation\n"
-                        },
-                        {
-                          "text": "/show_errors.php response status: \u001b[33m200\u001b[39m\n"
-                        },
-                        {
-                          "text": "/show_errors.php - Old DB refs: \u001b[33mfalse\u001b[39m\n"
-                        },
-                        {
-                          "text": "/show_errors.php - Correct DB refs: \u001b[33mfalse\u001b[39m\n"
-                        },
-                        {
-                          "text": "/show_errors.php preview: Error Display EnabledLoading application...\n\n\n\n\n    \n    \n    Home - My CMS\n    \n        \n        \n        \n    \n    \n    \n    \n    \n        /* Dead-flat-simple design philosophy */\n        body {\n            font-family: Georgia, serif;\n            font-size: 12pt;\n            line-height: 1.15;\n  \n"
-                        },
-                        {
-                          "text": "\n--- Testing /test_database_config.php ---\n"
-                        },
-                        {
-                          "text": "→ GET https://dalthaus.net/test_database_config.php\n"
-                        },
-                        {
-                          "text": "← 404 https://dalthaus.net/test_database_config.php\n"
-                        },
-                        {
-                          "text": "Console [error]: Failed to load resource: the server responded with a status of 404 ()\n"
-                        },
-                        {
-                          "text": "/test_database_config.php response status: \u001b[33m404\u001b[39m\n"
-                        },
-                        {
-                          "text": "\n=== Test Summary Generated ===\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-09-14T20:15:45.259Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "/Users/kevin/Desktop/dalthuaus_net_live/test-results/database-diagnosis-Databas-085a0-sis-via-different-endpoints-diagnosis/test-finished-1.png"
-                        }
-                      ]
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "0e15b259adc607a32a70-325d425b9bd5e1944818",
-              "file": "database-diagnosis.spec.ts",
-              "line": 204,
-              "column": 7
-            },
-            {
-              "title": "Network and file system analysis",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 120000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "diagnosis",
-                  "projectName": "diagnosis",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 5730,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "\n=== Network and File System Analysis ===\n"
-                        },
-                        {
-                          "text": "→ GET https://dalthaus.net/\n"
-                        },
-                        {
-                          "text": "← 200 https://dalthaus.net/\n"
-                        },
-                        {
-                          "text": "→ GET https://cdn.tailwindcss.com/\n"
-                        },
-                        {
-                          "text": "← 302 https://cdn.tailwindcss.com/\n"
-                        },
-                        {
-                          "text": "→ GET https://cdn.tailwindcss.com/3.4.17\n"
-                        },
-                        {
-                          "text": "← 200 https://cdn.tailwindcss.com/3.4.17\n"
-                        },
-                        {
-                          "text": "Console [warning]: cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation\n"
-                        },
-                        {
-                          "text": "→ GET https://dalthaus.net/cdn-cgi/challenge-platform/scripts/jsd/main.js\n"
-                        },
-                        {
-                          "text": "Homepage response status: \u001b[33m200\u001b[39m\n"
-                        },
-                        {
-                          "text": "← 302 https://dalthaus.net/cdn-cgi/challenge-platform/scripts/jsd/main.js\n"
-                        },
-                        {
-                          "text": "→ GET https://dalthaus.net/cdn-cgi/challenge-platform/h/g/scripts/jsd/f78657f80e4b/main.js?\n"
-                        },
-                        {
-                          "text": "← 200 https://dalthaus.net/cdn-cgi/challenge-platform/h/g/scripts/jsd/f78657f80e4b/main.js?\n"
-                        },
-                        {
-                          "text": "→ POST https://dalthaus.net/cdn-cgi/challenge-platform/h/g/jsd/r/0.8196738149472228:1757877139:htd5QGWzaXrNZsUEaXrBjIhFiQMr53rXDfTb2EUYWwk/97f28f1a0e4f0816\n"
-                        },
-                        {
-                          "text": "→ GET https://dalthaus.net/config.php\n"
-                        },
-                        {
-                          "text": "← 200 https://dalthaus.net/cdn-cgi/challenge-platform/h/g/jsd/r/0.8196738149472228:1757877139:htd5QGWzaXrNZsUEaXrBjIhFiQMr53rXDfTb2EUYWwk/97f28f1a0e4f0816\n"
-                        },
-                        {
-                          "text": "← 404 https://dalthaus.net/config.php\n"
-                        },
-                        {
-                          "text": "Console [error]: Failed to load resource: the server responded with a status of 404 ()\n"
-                        },
-                        {
-                          "text": "→ GET https://dalthaus.net/cdn-cgi/challenge-platform/scripts/jsd/main.js\n"
-                        },
-                        {
-                          "text": "← 200 https://dalthaus.net/cdn-cgi/challenge-platform/scripts/jsd/main.js\n"
-                        },
-                        {
-                          "text": "→ POST https://dalthaus.net/cdn-cgi/challenge-platform/h/g/jsd/r/0.8196738149472228:1757877139:htd5QGWzaXrNZsUEaXrBjIhFiQMr53rXDfTb2EUYWwk/97f28f268e670816\n"
-                        },
-                        {
-                          "text": "/config.php status: \u001b[33m404\u001b[39m\n"
-                        },
-                        {
-                          "text": "→ GET https://dalthaus.net/config/config.php\n"
-                        },
-                        {
-                          "text": "← 200 https://dalthaus.net/cdn-cgi/challenge-platform/h/g/jsd/r/0.8196738149472228:1757877139:htd5QGWzaXrNZsUEaXrBjIhFiQMr53rXDfTb2EUYWwk/97f28f268e670816\n"
-                        },
-                        {
-                          "text": "← 404 https://dalthaus.net/config/config.php\n"
-                        },
-                        {
-                          "text": "Console [error]: Failed to load resource: the server responded with a status of 404 ()\n"
-                        },
-                        {
-                          "text": "/config/config.php status: \u001b[33m404\u001b[39m\n"
-                        },
-                        {
-                          "text": "→ GET https://dalthaus.net/config.production.php\n"
-                        },
-                        {
-                          "text": "← 404 https://dalthaus.net/config.production.php\n"
-                        },
-                        {
-                          "text": "Console [error]: Failed to load resource: the server responded with a status of 404 ()\n"
-                        },
-                        {
-                          "text": "/config.production.php status: \u001b[33m404\u001b[39m\n"
-                        },
-                        {
-                          "text": "→ GET https://dalthaus.net/.env\n"
-                        },
-                        {
-                          "text": "← 403 https://dalthaus.net/.env\n"
-                        },
-                        {
-                          "text": "Console [error]: Failed to load resource: the server responded with a status of 403 ()\n"
-                        },
-                        {
-                          "text": "/.env status: \u001b[33m403\u001b[39m\n"
-                        },
-                        {
-                          "text": "→ GET https://dalthaus.net/composer.json\n"
-                        },
-                        {
-                          "text": "← 404 https://dalthaus.net/composer.json\n"
-                        },
-                        {
-                          "text": "Console [error]: Failed to load resource: the server responded with a status of 404 ()\n"
-                        },
-                        {
-                          "text": "/composer.json status: \u001b[33m404\u001b[39m\n"
-                        },
-                        {
-                          "text": "→ GET https://dalthaus.net/phpinfo.php\n"
-                        },
-                        {
-                          "text": "← 404 https://dalthaus.net/phpinfo.php\n"
-                        },
-                        {
-                          "text": "Console [error]: Failed to load resource: the server responded with a status of 404 ()\n"
-                        },
-                        {
-                          "text": "/phpinfo.php status: \u001b[33m404\u001b[39m\n"
-                        },
-                        {
-                          "text": "\n=== Test Summary Generated ===\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-09-14T20:15:52.499Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "/Users/kevin/Desktop/dalthuaus_net_live/test-results/database-diagnosis-Databas-4295a-rk-and-file-system-analysis-diagnosis/test-finished-1.png"
-                        }
-                      ]
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "0e15b259adc607a32a70-574b1bce75c0ef5c08fc",
-              "file": "database-diagnosis.spec.ts",
-              "line": 261,
-              "column": 7
-            },
-            {
-              "title": "Database connection attempt simulation",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 120000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "diagnosis",
-                  "projectName": "diagnosis",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 4937,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "\n=== Database Connection Simulation ===\n"
-                        },
-                        {
-                          "text": "\n--- Testing database access on / ---\n"
-                        },
-                        {
-                          "text": "→ GET https://dalthaus.net/\n"
-                        },
-                        {
-                          "text": "← 200 https://dalthaus.net/\n"
-                        },
-                        {
-                          "text": "→ GET https://cdn.tailwindcss.com/\n"
-                        },
-                        {
-                          "text": "← 302 https://cdn.tailwindcss.com/\n"
-                        },
-                        {
-                          "text": "→ GET https://cdn.tailwindcss.com/3.4.17\n"
-                        },
-                        {
-                          "text": "← 200 https://cdn.tailwindcss.com/3.4.17\n"
-                        },
-                        {
-                          "text": "Console [warning]: cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation\n"
-                        },
-                        {
-                          "text": "→ GET https://dalthaus.net/cdn-cgi/challenge-platform/scripts/jsd/main.js\n"
-                        },
-                        {
-                          "text": "/ status: \u001b[33m200\u001b[39m\n"
-                        },
-                        {
-                          "text": "← 302 https://dalthaus.net/cdn-cgi/challenge-platform/scripts/jsd/main.js\n"
-                        },
-                        {
-                          "text": "→ GET https://dalthaus.net/cdn-cgi/challenge-platform/h/g/scripts/jsd/f78657f80e4b/main.js?\n"
-                        },
-                        {
-                          "text": "\n--- Testing database access on /admin ---\n"
-                        },
-                        {
-                          "text": "← 200 https://dalthaus.net/cdn-cgi/challenge-platform/h/g/scripts/jsd/f78657f80e4b/main.js?\n"
-                        },
-                        {
-                          "text": "→ POST https://dalthaus.net/cdn-cgi/challenge-platform/h/g/jsd/r/0.8196738149472228:1757877139:htd5QGWzaXrNZsUEaXrBjIhFiQMr53rXDfTb2EUYWwk/97f28f3aaa445758\n"
-                        },
-                        {
-                          "text": "→ GET https://dalthaus.net/admin\n"
-                        },
-                        {
-                          "text": "← 200 https://dalthaus.net/cdn-cgi/challenge-platform/h/g/jsd/r/0.8196738149472228:1757877139:htd5QGWzaXrNZsUEaXrBjIhFiQMr53rXDfTb2EUYWwk/97f28f3aaa445758\n"
-                        },
-                        {
-                          "text": "← 302 https://dalthaus.net/admin\n"
-                        },
-                        {
-                          "text": "→ GET https://dalthaus.net/admin/login\n"
-                        },
-                        {
-                          "text": "← 200 https://dalthaus.net/admin/login\n"
-                        },
-                        {
-                          "text": "→ GET https://cdn.tailwindcss.com/\n"
-                        },
-                        {
-                          "text": "← 200 https://cdn.tailwindcss.com/\n"
-                        },
-                        {
-                          "text": "Console [warning]: cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation\n"
-                        },
-                        {
-                          "text": "/admin status: \u001b[33m200\u001b[39m\n"
-                        },
-                        {
-                          "text": "\n--- Testing database access on /articles ---\n"
-                        },
-                        {
-                          "text": "→ GET https://dalthaus.net/articles\n"
-                        },
-                        {
-                          "text": "← 200 https://dalthaus.net/articles\n"
-                        },
-                        {
-                          "text": "→ GET https://cdn.tailwindcss.com/\n"
-                        },
-                        {
-                          "text": "← 200 https://cdn.tailwindcss.com/\n"
-                        },
-                        {
-                          "text": "Console [warning]: cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation\n"
-                        },
-                        {
-                          "text": "/articles status: \u001b[33m200\u001b[39m\n"
-                        },
-                        {
-                          "text": "\n--- Testing database access on /photobooks ---\n"
-                        },
-                        {
-                          "text": "→ GET https://dalthaus.net/photobooks\n"
-                        },
-                        {
-                          "text": "← 200 https://dalthaus.net/photobooks\n"
-                        },
-                        {
-                          "text": "→ GET https://cdn.tailwindcss.com/\n"
-                        },
-                        {
-                          "text": "← 200 https://cdn.tailwindcss.com/\n"
-                        },
-                        {
-                          "text": "Console [warning]: cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation\n"
-                        },
-                        {
-                          "text": "/photobooks status: \u001b[33m200\u001b[39m\n"
-                        },
-                        {
-                          "text": "\n=== Test Summary Generated ===\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-09-14T20:15:58.280Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "/Users/kevin/Desktop/dalthuaus_net_live/test-results/database-diagnosis-Databas-a0448-nnection-attempt-simulation-diagnosis/test-finished-1.png"
-                        }
-                      ]
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "0e15b259adc607a32a70-a0e69b4c9afb84a2e6f4",
-              "file": "database-diagnosis.spec.ts",
-              "line": 305,
+              "id": "71f83346386623eccc8f-294815d4b50f575400ef",
+              "file": "remember-me-focused.spec.js",
+              "line": 8,
               "column": 7
             }
           ]
@@ -827,9 +256,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-09-14T20:15:34.403Z",
-    "duration": 29384.108,
-    "expected": 6,
+    "startTime": "2025-09-27T19:31:50.141Z",
+    "duration": 13195.536,
+    "expected": 1,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

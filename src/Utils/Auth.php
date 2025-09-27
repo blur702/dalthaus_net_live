@@ -157,10 +157,7 @@ class Auth
         // Clear remember me token from database if user is logged in
         if (isset($_SESSION['user_id'])) {
             try {
-                $this->db->execute(
-                    'DELETE FROM remember_tokens WHERE user_id = ?',
-                    [$_SESSION['user_id']]
-                );
+                $this->db->delete('remember_tokens', 'user_id = ?', [$_SESSION['user_id']]);
             } catch (\Exception $e) {
                 // Log error but continue with logout
                 error_log("Failed to clear remember tokens: " . $e->getMessage());
@@ -540,10 +537,7 @@ class Auth
     {
         try {
             // Remove any existing tokens for this user
-            $this->db->execute(
-                'DELETE FROM remember_tokens WHERE user_id = ?',
-                [$userId]
-            );
+            $this->db->delete('remember_tokens', 'user_id = ?', [$userId]);
 
             // Store new token
             $this->db->insert('remember_tokens', [
