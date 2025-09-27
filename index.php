@@ -74,7 +74,30 @@ session_set_cookie_params([
 ]);
 
 session_name($config['security']['session_name']);
-session_start();
+
+// Check if this is a public content page that should be cached
+$request_uri = $_SERVER['REQUEST_URI'] ?? '';
+$is_cacheable = (
+    strpos($request_uri, '/admin') === false &&
+    strpos($request_uri, '/login') === false &&
+    strpos($request_uri, '/logout') === false &&
+    (strpos($request_uri, '/article/') !== false ||
+     strpos($request_uri, '/photobook/') !== false ||
+     strpos($request_uri, '/page/') !== false ||
+     strpos($request_uri, '/assets/') !== false)
+);
+
+// Start session but control cache headers for cacheable pages
+if ($is_cacheable) {
+    // For cacheable content, start session read-only without no-cache headers
+    ini_set('session.cache_limiter', '');
+    session_start();
+    // Set cache headers for Cloudflare
+    header('Cache-Control: public, max-age=7200'); // 2 hours
+} else {
+    // For non-cacheable pages (admin, forms, etc), use normal session with no-cache
+    session_start();
+}
 
 // Set timezone
 date_default_timezone_set($config['app']['timezone']);
