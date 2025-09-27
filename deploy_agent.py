@@ -126,24 +126,37 @@ class DeploymentAgent:
     def test_database_connection(self):
         """Test database connection using server config"""
         print("\n--- Testing database connection ---")
-        
+
         try:
-            success, config = self.agent.connect_to_database_from_config(self.config_path)
-            
+            result = self.agent.connect_to_database_from_config(self.config_path)
+
+            # Handle both tuple return and potential boolean return for backward compatibility
+            if isinstance(result, tuple):
+                success, config = result
+            else:
+                success = result
+                config = {}
+
             if success:
                 print("[SUCCESS] Database connection successful!")
-                
-                # Test a simple query
-                result = self.agent.smart_mysql_query("SHOW TABLES", config_path=self.config_path)
-                if result:
-                    tables = [row[list(row.keys())[0]] for row in result]
-                    print(f"Database tables: {', '.join(tables)}")
-                
+
+                # Test a simple query - smart_mysql_query returns (bool, str)
+                query_success, query_output = self.agent.smart_mysql_query("SHOW TABLES", config_path=self.config_path)
+                if query_success and query_output:
+                    # Parse the output to show table names
+                    lines = query_output.strip().split('\n')
+                    if len(lines) > 1:  # Skip header if present
+                        tables = [line.strip() for line in lines if line.strip() and not line.startswith('Tables_in')]
+                        if tables:
+                            print(f"Found {len(tables)} database tables")
+                            for table in tables[:5]:  # Show first 5 tables
+                                print(f"  - {table}")
+
                 return True
             else:
                 print("[ERROR] Database connection failed!")
                 return False
-                
+
         except Exception as e:
             print(f"[ERROR] Database test error: {e}")
             return False
