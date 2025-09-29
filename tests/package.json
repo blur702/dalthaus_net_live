@@ -1,0 +1,13 @@
+{
+  "name": "dalthaus-server-tests",
+  "version": "1.0.0",
+  "description": "Server-side testing for dalthaus.net",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0"
+  }
+}
