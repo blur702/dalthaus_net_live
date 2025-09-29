@@ -1,7 +1,7 @@
 {
   "config": {
-    "configFile": "E:\\OneDrive\\Documents\\My Web Sites\\dalthaus-net-live\\dalthaus_net_live\\testing\\playwright.config.ts",
-    "rootDir": "E:/OneDrive/Documents/My Web Sites/dalthaus-net-live/dalthaus_net_live/testing/e2e",
+    "configFile": "e:\\OneDrive\\Documents\\My Web Sites\\dalthaus-net-live\\dalthaus_net_live\\testing\\playwright.config.ts",
+    "rootDir": "e:/OneDrive/Documents/My Web Sites/dalthaus-net-live/dalthaus_net_live/testing/e2e",
     "forbidOnly": false,
     "fullyParallel": false,
     "globalSetup": null,
@@ -37,13 +37,13 @@
     "quiet": false,
     "projects": [
       {
-        "outputDir": "E:/OneDrive/Documents/My Web Sites/dalthaus-net-live/dalthaus_net_live/testing/results",
+        "outputDir": "e:/OneDrive/Documents/My Web Sites/dalthaus-net-live/dalthaus_net_live/testing/results",
         "repeatEach": 1,
         "retries": 0,
         "metadata": {},
         "id": "diagnosis",
         "name": "diagnosis",
-        "testDir": "E:/OneDrive/Documents/My Web Sites/dalthaus-net-live/dalthaus_net_live/testing/e2e",
+        "testDir": "e:/OneDrive/Documents/My Web Sites/dalthaus-net-live/dalthaus_net_live/testing/e2e",
         "testIgnore": [],
         "testMatch": [
           "**/*.@(spec|test).?(c|m)[jt]s?(x)"
@@ -61,13 +61,13 @@
   "suites": [],
   "errors": [
     {
-      "message": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments.",
-      "stack": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments."
+      "message": "Error: No tests found",
+      "stack": "Error: No tests found"
     }
   ],
   "stats": {
-    "startTime": "2025-09-29T14:21:39.711Z",
-    "duration": 11.423000000000002,
+    "startTime": "2025-09-29T21:35:31.946Z",
+    "duration": 310.8710000000001,
     "expected": 0,
     "skipped": 0,
     "unexpected": 0,

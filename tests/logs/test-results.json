@@ -64,65 +64,125 @@
   },
   "suites": [
     {
-      "title": "final-manual.spec.ts",
-      "file": "final-manual.spec.ts",
+      "title": "dual-image-production-test.spec.js",
+      "file": "dual-image-production-test.spec.js",
       "column": 0,
       "line": 0,
-      "specs": [
+      "specs": [],
+      "suites": [
         {
-          "title": "Final Manual Screenshot Verification",
-          "ok": true,
-          "tags": [],
-          "tests": [
+          "title": "Dual Image Production Test",
+          "file": "dual-image-production-test.spec.js",
+          "line": 3,
+          "column": 6,
+          "specs": [
             {
-              "timeout": 30000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "chromium",
-              "projectName": "chromium",
-              "results": [
+              "title": "should test dual image functionality on production",
+              "ok": false,
+              "tags": [],
+              "tests": [
                 {
-                  "workerIndex": 0,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 6072,
-                  "errors": [],
-                  "stdout": [
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
                     {
-                      "text": "✅ Screenshot saved: Content reorder page working\n"
-                    },
-                    {
-                      "text": "✅ Screenshot saved: Pages reorder page working\n"
-                    },
-                    {
-                      "text": "🎉 FINAL VERIFICATION: Both reorder pages are now working correctly!\n"
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 7042,
+                      "error": {
+                        "message": "Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'toolbar')\n    at eval (eval at evaluate (:291:30), <anonymous>:4:52)\n    at UtilityScript.evaluate (<anonymous>:293:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+                        "stack": "Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'toolbar')\n    at eval (eval at evaluate (:291:30), <anonymous>:4:52)\n    at UtilityScript.evaluate (<anonymous>:293:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at eval (eval at evaluate (:291:30), <anonymous>:4:52)\n    at UtilityScript.evaluate (<anonymous>:293:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at E:\\OneDrive\\Documents\\My Web Sites\\dalthaus-net-live\\dalthaus_net_live\\tests\\e2e\\dual-image-production-test.spec.js:57:46",
+                        "location": {
+                          "file": "eval at evaluate (:291:30), <anonymous>",
+                          "column": 52,
+                          "line": 4
+                        }
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "eval at evaluate (:291:30), <anonymous>",
+                            "column": 52,
+                            "line": 4
+                          },
+                          "message": "Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'toolbar')\n    at eval (eval at evaluate (:291:30), <anonymous>:4:52)\n    at UtilityScript.evaluate (<anonymous>:293:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at eval (eval at evaluate (:291:30), <anonymous>:4:52)\n    at UtilityScript.evaluate (<anonymous>:293:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at E:\\OneDrive\\Documents\\My Web Sites\\dalthaus-net-live\\dalthaus_net_live\\tests\\e2e\\dual-image-production-test.spec.js:57:46"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "🔍 Testing dual image on production...\n"
+                        },
+                        {
+                          "text": "✅ Production login successful\n"
+                        },
+                        {
+                          "text": "✅ Content creation page loaded\n"
+                        },
+                        {
+                          "text": "🔍 Checking for dual image button...\n"
+                        },
+                        {
+                          "text": "Found 0 toolbar buttons\n"
+                        },
+                        {
+                          "text": "❌ Dual image button not found in toolbar\n"
+                        },
+                        {
+                          "text": "Hidden dual image button count: 0\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-29T21:41:48.319Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "E:\\OneDrive\\Documents\\My Web Sites\\dalthaus-net-live\\dalthaus_net_live\\tests\\logs\\test-results\\dual-image-production-test-d4fa4-functionality-on-production-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "E:\\OneDrive\\Documents\\My Web Sites\\dalthaus-net-live\\dalthaus_net_live\\tests\\logs\\test-results\\dual-image-production-test-d4fa4-functionality-on-production-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "E:\\OneDrive\\Documents\\My Web Sites\\dalthaus-net-live\\dalthaus_net_live\\tests\\logs\\test-results\\dual-image-production-test-d4fa4-functionality-on-production-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "eval at evaluate (:291:30), <anonymous>",
+                        "column": 52,
+                        "line": 4
+                      }
                     }
                   ],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2025-09-29T15:24:28.439Z",
-                  "annotations": [],
-                  "attachments": []
+                  "status": "unexpected"
                 }
               ],
-              "status": "expected"
+              "id": "638fb13c0e2493badef4-d0fdc2f6103862ed668e",
+              "file": "dual-image-production-test.spec.js",
+              "line": 4,
+              "column": 5
             }
-          ],
-          "id": "0c7ade524a1ffdc9ecc8-a16fbf044f670baf738c",
-          "file": "final-manual.spec.ts",
-          "line": 3,
-          "column": 5
+          ]
         }
       ]
     }
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-09-29T15:24:27.757Z",
-    "duration": 6882.144,
-    "expected": 1,
+    "startTime": "2025-09-29T21:41:47.644Z",
+    "duration": 8121.569,
+    "expected": 0,
     "skipped": 0,
-    "unexpected": 0,
+    "unexpected": 1,
     "flaky": 0
   }
 }

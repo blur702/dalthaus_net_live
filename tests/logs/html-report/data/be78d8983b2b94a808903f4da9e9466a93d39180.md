@@ -1,0 +1,123 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e4]:
+      - navigation [ref=e5]:
+        - link "CMS" [ref=e6] [cursor=pointer]:
+          - /url: /admin/dashboard
+        - link "Articles" [ref=e7] [cursor=pointer]:
+          - /url: /admin/articles
+        - link "Photobooks" [ref=e8] [cursor=pointer]:
+          - /url: /admin/photobooks
+        - link "Pages" [ref=e9] [cursor=pointer]:
+          - /url: /admin/pages
+        - link "Menus" [ref=e10] [cursor=pointer]:
+          - /url: /admin/menus
+        - link "Users" [ref=e11] [cursor=pointer]:
+          - /url: /admin/users
+        - link "Settings" [ref=e12] [cursor=pointer]:
+          - /url: /admin/settings
+      - button "kevin" [ref=e15] [cursor=pointer]:
+        - generic [ref=e16] [cursor=pointer]: kevin
+        - img [ref=e17] [cursor=pointer]
+  - main [ref=e19]:
+    - generic [ref=e20]:
+      - generic [ref=e21]:
+        - heading "Create Article" [level=2] [ref=e22]
+        - link "Back to Content" [ref=e23] [cursor=pointer]:
+          - /url: /admin/content
+          - img [ref=e24] [cursor=pointer]
+          - text: Back to Content
+      - generic [ref=e27]:
+        - generic [ref=e28]:
+          - generic [ref=e29]:
+            - generic [ref=e30]:
+              - text: Title
+              - generic [ref=e31]: "*"
+            - textbox "Title *" [ref=e32]
+          - generic [ref=e33]:
+            - generic [ref=e34]:
+              - text: URL Alias
+              - generic [ref=e35]: "*"
+            - textbox "URL Alias *" [ref=e36]
+            - paragraph [ref=e37]: Auto-generated from title if left blank.
+          - generic [ref=e38]:
+            - generic [ref=e39]:
+              - text: Content
+              - generic [ref=e40]: "*"
+            - application [ref=e41]:
+              - generic [ref=e42]:
+                - group [ref=e44]:
+                  - group [ref=e45]:
+                    - toolbar [ref=e46]:
+                      - button "Undo" [disabled] [ref=e47]:
+                        - img [ref=e49]
+                      - button "Redo" [disabled] [ref=e51]:
+                        - img [ref=e53]
+                    - toolbar [ref=e55]:
+                      - button "Block Paragraph" [ref=e56]:
+                        - generic [ref=e57]: Paragraph
+                        - img [ref=e59]
+                    - toolbar [ref=e61]:
+                      - button "Bold" [ref=e62]:
+                        - img [ref=e64]
+                      - button "Italic" [ref=e66]:
+                        - img [ref=e68]
+                    - toolbar [ref=e70]:
+                      - button "Align left" [ref=e71]:
+                        - img [ref=e73]
+                      - button "Align center" [ref=e75]:
+                        - img [ref=e77]
+                      - button "Align right" [ref=e79]:
+                        - img [ref=e81]
+                    - toolbar [ref=e83]:
+                      - button "Bullet list" [ref=e84]:
+                        - img [ref=e86]
+                        - img [ref=e88]
+                      - button "Numbered list" [ref=e90]:
+                        - img [ref=e92]
+                        - img [ref=e94]
+                      - button "Decrease indent" [disabled] [ref=e96]:
+                        - img [ref=e98]
+                      - button "Increase indent" [ref=e100]:
+                        - img [ref=e102]
+                    - toolbar [ref=e104]:
+                      - button "Insert/edit link" [ref=e105]:
+                        - img [ref=e107]
+                      - button "Insert/edit image" [ref=e109]:
+                        - img [ref=e111]
+                    - toolbar [ref=e113]:
+                      - button "Page break" [ref=e114]:
+                        - img [ref=e116]
+                      - button "Source code" [ref=e119]:
+                        - img [ref=e121]
+                - iframe [ref=e126]:
+                  - generic "Rich Text Area. Press ALT-0 for help." [active] [ref=f1e1]:
+                    - text: Write your content here...
+                    - paragraph [ref=f1e2]
+                - generic [ref=e127]:
+                  - generic [ref=e128]:
+                    - navigation [ref=e129]:
+                      - button "p" [ref=e130]
+                    - generic [ref=e131]: Press Alt+0 for help
+                    - generic [ref=e132]:
+                      - button "0 words" [ref=e133]
+                      - link "Powered by Tiny" [ref=e135]:
+                        - /url: https://www.tiny.cloud/powered-by-tiny?utm_campaign=poweredby&utm_source=tiny&utm_medium=referral&utm_content=v6
+                        - img [ref=e136]
+                  - img [ref=e139]
+          - generic [ref=e142]:
+            - generic [ref=e143]: Teaser
+            - textbox "Teaser" [ref=e144]
+            - paragraph [ref=e145]: A short description shown on listing pages.
+          - generic [ref=e147]:
+            - generic [ref=e148]: Featured Image
+            - button "Featured Image" [ref=e149] [cursor=pointer]
+        - generic [ref=e150]:
+          - button "Save as Draft" [ref=e151] [cursor=pointer]:
+            - img [ref=e152] [cursor=pointer]
+            - text: Save as Draft
+          - button "Create & Publish" [ref=e154] [cursor=pointer]
+```

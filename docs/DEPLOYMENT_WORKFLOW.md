@@ -35,8 +35,8 @@ dalthaus_net_live/
 │   └── deployment/        # Deployment scripts
 │       ├── ssh_config.template.py # Configuration template
 │       └── ssh_config.py  # Local credentials (gitignored)
+├── CLAUDE.md               # Project instructions for Claude
 ├── docs/                   # Documentation
-│   ├── CLAUDE.md          # Project instructions for Claude
 │   └── DEPLOYMENT_WORKFLOW.md # This document
 └── SSH_AGENT_README.md   # SSH agent documentation
 ```

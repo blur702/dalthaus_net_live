@@ -269,6 +269,54 @@
             background-attachment: fixed;
             position: relative;
         }
+
+        /* Image Modal Styles */
+        .image-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .image-modal img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 10000;
+        }
+
+        .modal-close:hover {
+            opacity: 0.7;
+        }
+
+        /* Clickable images */
+        .clickable-image {
+            transition: opacity 0.2s ease;
+            cursor: pointer;
+        }
+
+        .clickable-image:hover {
+            opacity: 0.9;
+        }
     </style>
 </head>
 <body>
@@ -379,10 +427,47 @@
             document.body.style.overflow = ''; // Restore body scroll
         }
 
+        // Global image modal functions
+        window.openImageModal = function(src, alt) {
+            const modal = document.createElement('div');
+            modal.className = 'image-modal';
+            modal.innerHTML = `
+                <span class="modal-close" onclick="closeImageModal()">&times;</span>
+                <img src="${src}" alt="${alt || ''}" onclick="event.stopPropagation()">
+            `;
+
+            // Close modal when clicking on overlay
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeImageModal();
+                }
+            });
+
+            // Close modal with Escape key
+            const handleEscape = function(e) {
+                if (e.key === 'Escape') {
+                    closeImageModal();
+                    document.removeEventListener('keydown', handleEscape);
+                }
+            };
+            document.addEventListener('keydown', handleEscape);
+
+            document.body.appendChild(modal);
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+        };
+
+        window.closeImageModal = function() {
+            const modal = document.querySelector('.image-modal');
+            if (modal) {
+                modal.remove();
+                document.body.style.overflow = ''; // Restore scrolling
+            }
+        };
+
         // Image lazy loading implementation
         document.addEventListener('DOMContentLoaded', function() {
             const images = document.querySelectorAll('img[data-src]');
-            
+
             if ('IntersectionObserver' in window) {
                 const imageObserver = new IntersectionObserver(function(entries, observer) {
                     entries.forEach(function(entry) {
@@ -394,7 +479,7 @@
                         }
                     });
                 });
-                
+
                 images.forEach(function(img) {
                     imageObserver.observe(img);
                 });

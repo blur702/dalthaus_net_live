@@ -67,6 +67,202 @@
             max-width: 64px;
             max-height: 48px;
         }
+
+        /* Dual Image Dialog Styles */
+        .dual-image-dialog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dual-image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .dual-image-content {
+            position: relative;
+            background: white;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .dual-image-header {
+            padding: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dual-image-header h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6b7280;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            color: #374151;
+        }
+
+        .dual-image-body {
+            padding: 20px;
+        }
+
+        .upload-section {
+            margin-bottom: 20px;
+        }
+
+        .upload-section label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .upload-section input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            border: 2px dashed #d1d5db;
+            border-radius: 6px;
+            background: #f9fafb;
+            margin-top: 5px;
+        }
+
+        .form-fields {
+            margin-bottom: 20px;
+        }
+
+        .form-fields label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .form-fields input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            margin-top: 4px;
+        }
+
+        .dialog-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .btn-cancel, .btn-insert {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid;
+        }
+
+        .btn-cancel {
+            background: white;
+            color: #6b7280;
+            border-color: #d1d5db;
+        }
+
+        .btn-cancel:hover {
+            background: #f9fafb;
+        }
+
+        .btn-insert {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .btn-insert:hover {
+            background: #2563eb;
+        }
+
+        .btn-insert:disabled {
+            background: #9ca3af;
+            border-color: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        /* Image Modal Styles */
+        .image-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .image-modal img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 10000;
+        }
+
+        .modal-close:hover {
+            opacity: 0.7;
+        }
+
+        /* Clickable images */
+        .clickable-image {
+            transition: opacity 0.2s ease;
+        }
+
+        .clickable-image:hover {
+            opacity: 0.9;
+        }
     </style>
 
     <!-- Sortable.js for drag and drop reordering -->
@@ -154,7 +350,7 @@
                     tinymce.init({
                         selector: 'textarea#body',
                         plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table help wordcount pagebreak',
-                        toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | link image | pagebreak code',
+                        toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | link image dualimage | pagebreak code',
                         height: 500,
                         menubar: false,
                         images_upload_url: '/admin/upload/tinymce',
@@ -171,8 +367,17 @@
                                 form.dataset.tinymceSetup = 'true';
                             }
                         },
-                        // Error handling
+                        // Error handling and custom setup
                         setup: function(editor) {
+                            // Add custom dual image button
+                            editor.ui.registry.addButton('dualimage', {
+                                text: '🖼️📱',
+                                tooltip: 'Insert image with modal view',
+                                onAction: function() {
+                                    showDualImageDialog(editor);
+                                }
+                            });
+
                             editor.on('LoadContent', function(e) {
                                 console.log('TinyMCE content loaded');
                             });
@@ -202,6 +407,114 @@
             }
         });
 
+        // Dual Image Dialog Function
+        function showDualImageDialog(editor) {
+            const dialog = document.createElement('div');
+            dialog.className = 'dual-image-dialog';
+            dialog.innerHTML = `
+                <div class="dual-image-overlay" onclick="closeDualImageDialog()"></div>
+                <div class="dual-image-content">
+                    <div class="dual-image-header">
+                        <h3>Insert Image with Modal View</h3>
+                        <button onclick="closeDualImageDialog()" class="close-btn">&times;</button>
+                    </div>
+                    <div class="dual-image-body">
+                        <form id="dualImageForm" enctype="multipart/form-data">
+                            <div class="upload-section">
+                                <label>
+                                    <strong>Display Image</strong> (shown on page)
+                                    <input type="file" name="display_image" accept="image/*" required>
+                                </label>
+                            </div>
+                            <div class="upload-section">
+                                <label>
+                                    <strong>Modal Image</strong> (shown when clicked - optional)
+                                    <input type="file" name="modal_image" accept="image/*">
+                                </label>
+                            </div>
+                            <div class="form-fields">
+                                <label>
+                                    Alt Text
+                                    <input type="text" id="altText" placeholder="Describe the image">
+                                </label>
+                                <label>
+                                    Width (optional)
+                                    <input type="number" id="imageWidth" placeholder="e.g., 300">
+                                </label>
+                            </div>
+                            <div class="dialog-actions">
+                                <button type="button" onclick="closeDualImageDialog()" class="btn-cancel">Cancel</button>
+                                <button type="submit" class="btn-insert">Insert Image</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(dialog);
+
+            // Handle form submission
+            document.getElementById('dualImageForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                uploadDualImage(editor, this);
+            });
+        }
+
+        function closeDualImageDialog() {
+            const dialog = document.querySelector('.dual-image-dialog');
+            if (dialog) {
+                dialog.remove();
+            }
+        }
+
+        function uploadDualImage(editor, form) {
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('.btn-insert');
+            const originalText = submitBtn.textContent;
+
+            submitBtn.textContent = 'Uploading...';
+            submitBtn.disabled = true;
+
+            fetch('/admin/upload/dual-image', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.images) {
+                    const displayImage = data.images.display_image;
+                    const modalImage = data.images.modal_image || displayImage;
+                    const altText = document.getElementById('altText').value || '';
+                    const width = document.getElementById('imageWidth').value;
+
+                    // Create unique ID for modal functionality
+                    const imageId = 'img_' + Date.now();
+
+                    // Build image HTML with modal functionality
+                    let imageHtml = `<img src="${displayImage}" alt="${altText}" id="${imageId}" class="clickable-image"`;
+                    if (width) {
+                        imageHtml += ` width="${width}"`;
+                    }
+                    imageHtml += ` data-modal-src="${modalImage}"`;
+                    imageHtml += ` onclick="openImageModal('${modalImage}', '${altText}')" style="cursor: pointer;">`;
+
+                    // Insert into editor
+                    editor.insertContent(imageHtml);
+                    closeDualImageDialog();
+                } else {
+                    alert('Upload failed: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('Upload error:', error);
+                alert('Upload failed: ' + error.message);
+            })
+            .finally(() => {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            });
+        }
+
         // Auto-dismiss flash messages
         setTimeout(function() {
             const flashMessage = document.querySelector('.flash-message');
@@ -211,6 +524,43 @@
                 setTimeout(() => flashMessage.remove(), 500);
             }
         }, 5000);
+
+        // Global image modal functions for frontend
+        window.openImageModal = function(src, alt) {
+            const modal = document.createElement('div');
+            modal.className = 'image-modal';
+            modal.innerHTML = `
+                <span class="modal-close" onclick="closeImageModal()">&times;</span>
+                <img src="${src}" alt="${alt || ''}" onclick="event.stopPropagation()">
+            `;
+
+            // Close modal when clicking on overlay
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeImageModal();
+                }
+            });
+
+            // Close modal with Escape key
+            const handleEscape = function(e) {
+                if (e.key === 'Escape') {
+                    closeImageModal();
+                    document.removeEventListener('keydown', handleEscape);
+                }
+            };
+            document.addEventListener('keydown', handleEscape);
+
+            document.body.appendChild(modal);
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+        };
+
+        window.closeImageModal = function() {
+            const modal = document.querySelector('.image-modal');
+            if (modal) {
+                modal.remove();
+                document.body.style.overflow = ''; // Restore scrolling
+            }
+        };
     </script>
 </body>
 </html>

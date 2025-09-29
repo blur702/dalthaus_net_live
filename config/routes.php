@@ -59,8 +59,9 @@ return function(Router $router) {
         $router->get('/photobooks/reorder', 'Photobooks', 'reorder');
         $router->post('/photobooks/update-order', 'Photobooks', 'updateOrder');
 
-        // **FIXED:** Dedicated image upload route
+        // **FIXED:** Dedicated image upload routes
         $router->post('/upload/tinymce', 'Upload', 'tinymce');
+        $router->post('/upload/dual-image', 'Upload', 'dualImage');
 
         // Page management
         $router->get('/pages', 'Pages', 'index');
