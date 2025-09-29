@@ -64,6 +64,8 @@
             object-fit: cover;
             width: 100%;
             height: auto;
+            max-width: 64px;
+            max-height: 48px;
         }
     </style>
 </head>

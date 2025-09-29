@@ -9,13 +9,15 @@
                 <!-- Teaser Image -->
                 <?php if ($photobook->getAttribute('teaser_image')): ?>
                 <div class="flex-shrink-0 w-full sm:w-64">
-                    <img src="<?= $this->escape($photobook->getTeaserImageUrl()) ?>"
-                         alt="<?= $this->escape($photobook->getAttribute('title')) ?>"
-                         class="teaser-image w-full">
+                    <div class="h-48 sm:h-48 overflow-hidden">
+                        <img src="<?= $this->escape($photobook->getTeaserImageUrl()) ?>"
+                             alt="<?= $this->escape($photobook->getAttribute('title')) ?>"
+                             class="teaser-image w-full h-full object-cover">
+                    </div>
                 </div>
                 <?php else: ?>
                 <div class="flex-shrink-0 w-full sm:w-64">
-                    <div class="teaser-image bg-black text-white flex items-center justify-center text-base sm:text-lg font-bold">
+                    <div class="teaser-image h-48 sm:h-48 bg-black text-white flex items-center justify-center text-base sm:text-lg font-bold">
                         TEASER IMAGE
                     </div>
                 </div>

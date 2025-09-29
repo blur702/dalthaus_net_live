@@ -49,6 +49,9 @@
             color: white;
             font-weight: bold;
             font-size: 1.125rem;
+            max-height: 200px;
+            height: auto;
+            width: 100%;
         }
         
         .content-text {

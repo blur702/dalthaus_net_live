@@ -111,7 +111,7 @@
                 <tr class="hover:bg-gray-50">
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="flex items-center">
-                            <?php if ($item['content_type'] === 'photobook' && $item['teaser_image']): ?>
+                            <?php if ($item['teaser_image']): ?>
                             <div class="flex-shrink-0 w-16">
                                 <img class="admin-image-43 rounded" src="/uploads/<?= $this->escape($item['teaser_image']) ?>" alt="<?= $this->escape($item['title']) ?>">
                             </div>

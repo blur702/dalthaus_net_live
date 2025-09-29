@@ -64,14 +64,14 @@
                     <article>
                         <!-- Teaser Image -->
                         <?php if ($photobook->getAttribute('teaser_image')): ?>
-                        <div class="mb-3">
-                            <img src="<?= $this->escape($photobook->getTeaserImageUrl()) ?>" 
+                        <div class="mb-3 h-48 overflow-hidden">
+                            <img src="<?= $this->escape($photobook->getTeaserImageUrl()) ?>"
                                  alt="<?= $this->escape($photobook->getAttribute('title')) ?>"
-                                 class="teaser-image w-full">
+                                 class="teaser-image w-full h-full object-cover">
                         </div>
                         <?php else: ?>
                         <div class="mb-3 w-full">
-                            <div class="teaser-image bg-black text-white flex items-center justify-center text-lg font-bold">
+                            <div class="teaser-image h-48 bg-black text-white flex items-center justify-center text-lg font-bold">
                                 TEASER IMAGE
                             </div>
                         </div>
