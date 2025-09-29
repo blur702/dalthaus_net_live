@@ -412,13 +412,29 @@ class Content extends BaseController
         }
         
         try {
-            $order = $this->getParam('order', [], 'post');
-            
-            if (empty($order) || !is_array($order)) {
-                throw new Exception('Invalid order data');
+            $orderJson = $this->getParam('order', '', 'post');
+
+            if (empty($orderJson)) {
+                throw new Exception('No order data provided');
             }
-            
-            if (ContentModel::updateSortOrder($order)) {
+
+            // Parse JSON order data
+            $orderData = json_decode($orderJson, true);
+
+            if (!is_array($orderData)) {
+                throw new Exception('Invalid order data format');
+            }
+
+            // Transform from [{"id":15,"position":1},...] to ["15" => 1,...]
+            $transformedOrder = [];
+            foreach ($orderData as $item) {
+                if (!isset($item['id']) || !isset($item['position'])) {
+                    throw new Exception('Invalid order item format');
+                }
+                $transformedOrder[(string)$item['id']] = (int)$item['position'];
+            }
+
+            if (ContentModel::updateSortOrder($transformedOrder)) {
                 $this->renderJson(['success' => true, 'message' => 'Order updated successfully']);
             } else {
                 throw new Exception('Failed to update order');
