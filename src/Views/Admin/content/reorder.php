@@ -222,7 +222,7 @@ function saveOrder() {
     
     const formData = new FormData();
     formData.append('order', JSON.stringify(orderData));
-    formData.append('csrf_token', '<?= $csrf_token ?>');
+    formData.append('_token', '<?= $csrf_token ?>');
     
     // Disable save button during request
     const saveButton = event.target;

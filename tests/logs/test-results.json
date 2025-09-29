@@ -1,0 +1,128 @@
+{
+  "config": {
+    "configFile": "E:\\OneDrive\\Documents\\My Web Sites\\dalthaus-net-live\\dalthaus_net_live\\tests\\playwright.config.ts",
+    "rootDir": "E:/OneDrive/Documents/My Web Sites/dalthaus-net-live/dalthaus_net_live/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "html",
+        {
+          "outputFolder": "./logs/html-report"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "./logs/test-results.json"
+        }
+      ],
+      [
+        "list",
+        null
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "E:/OneDrive/Documents/My Web Sites/dalthaus-net-live/dalthaus_net_live/tests/logs/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "E:/OneDrive/Documents/My Web Sites/dalthaus-net-live/dalthaus_net_live/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.55.0",
+    "workers": 6,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "final-manual.spec.ts",
+      "file": "final-manual.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Final Manual Screenshot Verification",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6072,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "✅ Screenshot saved: Content reorder page working\n"
+                    },
+                    {
+                      "text": "✅ Screenshot saved: Pages reorder page working\n"
+                    },
+                    {
+                      "text": "🎉 FINAL VERIFICATION: Both reorder pages are now working correctly!\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2025-09-29T15:24:28.439Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0c7ade524a1ffdc9ecc8-a16fbf044f670baf738c",
+          "file": "final-manual.spec.ts",
+          "line": 3,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2025-09-29T15:24:27.757Z",
+    "duration": 6882.144,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}
