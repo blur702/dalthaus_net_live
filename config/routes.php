@@ -49,6 +49,16 @@ return function(Router $router) {
         $router->post('/content/{id}/update', 'Content', 'update');
         $router->post('/content/{id}/delete', 'Content', 'delete');
 
+        // Articles management
+        $router->get('/articles', 'Articles', 'index');
+        $router->get('/articles/reorder', 'Articles', 'reorder');
+        $router->post('/articles/update-order', 'Articles', 'updateOrder');
+
+        // Photobooks management
+        $router->get('/photobooks', 'Photobooks', 'index');
+        $router->get('/photobooks/reorder', 'Photobooks', 'reorder');
+        $router->post('/photobooks/update-order', 'Photobooks', 'updateOrder');
+
         // **FIXED:** Dedicated image upload route
         $router->post('/upload/tinymce', 'Upload', 'tinymce');
 
