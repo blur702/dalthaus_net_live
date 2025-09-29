@@ -76,11 +76,13 @@ CREATE TABLE IF NOT EXISTS `pages` (
   `meta_title` varchar(255) DEFAULT NULL,
   `meta_description` varchar(500) DEFAULT NULL,
   `meta_keywords` varchar(500) DEFAULT NULL,
+  `sort_order` int(11) NOT NULL DEFAULT '0',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`page_id`),
   UNIQUE KEY `url_alias` (`url_alias`),
-  KEY `idx_updated_at` (`updated_at`)
+  KEY `idx_updated_at` (`updated_at`),
+  KEY `idx_sort_order` (`sort_order`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------

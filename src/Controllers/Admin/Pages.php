@@ -547,8 +547,64 @@ class Pages extends BaseController
     }
 
     /**
+     * Display page reordering interface
+     *
+     * @return void
+     */
+    public function reorder(): void
+    {
+        $pages = PageModel::getForReordering();
+
+        $this->render('admin/pages/reorder', [
+            'pages' => $pages,
+            'page_title' => 'Reorder Pages'
+        ]);
+    }
+
+    /**
+     * Update page sort order via AJAX
+     *
+     * @return void
+     */
+    public function updateOrder(): void
+    {
+        if (!$this->isPost()) {
+            $this->renderJson(['success' => false, 'message' => 'Invalid request method']);
+            return;
+        }
+
+        if (!$this->validateCsrfToken()) {
+            $this->renderJson(['success' => false, 'message' => 'Security token validation failed']);
+            return;
+        }
+
+        try {
+            $orderData = json_decode($this->getParam('order', '[]', 'post'), true);
+
+            if (empty($orderData) || !is_array($orderData)) {
+                throw new Exception('Invalid order data');
+            }
+
+            // Transform the data to the format expected by updateSortOrder
+            $sortData = [];
+            foreach ($orderData as $item) {
+                $sortData[$item['id']] = $item['position'];
+            }
+
+            if (PageModel::updateSortOrder($sortData)) {
+                $this->renderJson(['success' => true, 'message' => 'Order updated successfully']);
+            } else {
+                throw new Exception('Failed to update order');
+            }
+        } catch (Exception $e) {
+            error_log('Update page order error: ' . $e->getMessage());
+            $this->renderJson(['success' => false, 'message' => 'An error occurred while updating order']);
+        }
+    }
+
+    /**
      * Preview page content
-     * 
+     *
      * @return void
      */
     public function preview(string $id = ''): void

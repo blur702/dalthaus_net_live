@@ -389,12 +389,74 @@ class Page extends BaseModel
 
     /**
      * Update the updated_at timestamp
-     * 
+     *
      * @return bool
      */
     public function touch(): bool
     {
         $this->setAttribute('updated_at', date('Y-m-d H:i:s'));
         return $this->save();
+    }
+
+    /**
+     * Get pages for reordering
+     *
+     * @return array
+     */
+    public static function getForReordering(): array
+    {
+        $instance = new static();
+
+        $query = "SELECT page_id, title, url_alias, sort_order
+                  FROM {$instance->table}
+                  ORDER BY sort_order ASC, title ASC";
+
+        return self::query($query);
+    }
+
+    /**
+     * Update sort order for multiple pages
+     *
+     * @param array $orderData Array of ['id' => order] pairs
+     * @return bool
+     */
+    public static function updateSortOrder(array $orderData): bool
+    {
+        $instance = new static();
+
+        try {
+            $instance->db->beginTransaction();
+
+            foreach ($orderData as $id => $order) {
+                $instance->db->update(
+                    $instance->table,
+                    ['sort_order' => $order],
+                    'page_id = ?',
+                    [$id]
+                );
+            }
+
+            $instance->db->commit();
+            return true;
+        } catch (\Exception $e) {
+            $instance->db->rollback();
+            return false;
+        }
+    }
+
+    /**
+     * Get the next available sort order
+     *
+     * @return int
+     */
+    public static function getNextSortOrder(): int
+    {
+        $instance = new static();
+
+        $maxOrder = $instance->db->fetchColumn(
+            "SELECT MAX(sort_order) FROM {$instance->table}"
+        );
+
+        return ((int) $maxOrder) + 1;
     }
 }

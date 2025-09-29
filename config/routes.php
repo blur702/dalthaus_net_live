@@ -45,8 +45,8 @@ return function(Router $router) {
         $router->get('/content/{id}/edit', 'Content', 'edit');
         $router->post('/content/{id}/update', 'Content', 'update');
         $router->post('/content/{id}/delete', 'Content', 'delete');
-        $router->get('/reorder', 'Content', 'reorder');
-        $router->post('/reorder', 'Content', 'updateOrder');
+        $router->get('/content/reorder', 'Content', 'reorder');
+        $router->post('/content/update-order', 'Content', 'updateOrder');
         $router->post('/content/autosave', 'Content', 'autosave');
 
         // **FIXED:** Dedicated image upload route
@@ -59,6 +59,8 @@ return function(Router $router) {
         $router->get('/pages/{id}/edit', 'Pages', 'edit');
         $router->post('/pages/{id}/update', 'Pages', 'update');
         $router->post('/pages/{id}/delete', 'Pages', 'delete');
+        $router->get('/pages/reorder', 'Pages', 'reorder');
+        $router->post('/pages/update-order', 'Pages', 'updateOrder');
 
         // Settings management
         $router->get('/settings', 'Settings', 'index');

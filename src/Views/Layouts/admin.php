@@ -68,6 +68,9 @@
             max-height: 48px;
         }
     </style>
+
+    <!-- Sortable.js for drag and drop reordering -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 </head>
 <body class="bg-gray-100">
     <header class="bg-white border-b border-gray-200">
