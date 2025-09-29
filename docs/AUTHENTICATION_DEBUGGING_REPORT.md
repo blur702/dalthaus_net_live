@@ -176,7 +176,7 @@ npx playwright test tests/auth-persistence-debug.spec.js
 ### Step 3: Deploy
 ```bash
 # Deploy using SSH agent
-python deploy_agent.py deploy main
+python agents/deploy_agent.py deploy main
 ```
 
 ### Step 4: Verify Production

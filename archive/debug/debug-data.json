@@ -1,0 +1,626 @@
+{
+  "timestamp": "2025-09-27T19:59:26.714Z",
+  "testServer": "https://dalthaus.net",
+  "steps": [
+    {
+      "step": 1,
+      "action": "Navigate to login page",
+      "url": "https://dalthaus.net/admin/login",
+      "cookies": [
+        {
+          "name": "cms_session",
+          "value": "5cf4e36633f5cd3b6a7c...",
+          "domain": "dalthaus.net",
+          "path": "/",
+          "httpOnly": true,
+          "secure": true,
+          "sameSite": "Strict"
+        },
+        {
+          "name": "cf_clearance",
+          "value": "R7Ob1qc.Y98qR1ta0itt...",
+          "domain": ".dalthaus.net",
+          "path": "/",
+          "httpOnly": true,
+          "secure": true,
+          "sameSite": "None"
+        }
+      ]
+    },
+    {
+      "step": 2,
+      "action": "Login and redirect to dashboard",
+      "loginResponseStatus": 302,
+      "loginResponseHeaders": {
+        "alt-svc": "h3=\":443\"; ma=86400",
+        "cache-control": "no-cache, no-store, must-revalidate, max-age=0",
+        "cf-cache-status": "DYNAMIC",
+        "cf-ray": "985d94e94dde8de7-IAD",
+        "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.tiny.cloud https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.tailwindcss.com https://cdn.tiny.cloud https://cdn.jsdelivr.net; img-src 'self' data: https: blob:; font-src 'self' https://cdnjs.cloudflare.com data:; connect-src 'self' https://cdn.tiny.cloud https://cdn.jsdelivr.net; frame-src 'self' https://cdn.tiny.cloud; frame-ancestors 'none'; base-uri 'self'; form-action 'self';",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Sat, 27 Sep 2025 19:59:28 GMT",
+        "expires": "Thu, 19 Nov 1981 08:52:00 GMT",
+        "location": "/admin/dashboard",
+        "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+        "permissions-policy": "geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), accelerometer=(), gyroscope=()",
+        "pragma": "no-cache",
+        "referrer-policy": "strict-origin-when-cross-origin",
+        "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=fq5pRyIDm526DrKB1tYa8AIkpgxyLQ%2FbMhw%2FdewsPW4I3KvLbttc2RG4TqE73oCgkkaHVCRbBJT%2BuehXrice88TcMdRxmMsCTZ2p%2B3lLatmas0hhFjFgWA%3D%3D\"}]}",
+        "server": "cloudflare",
+        "strict-transport-security": "max-age=63072000; includeSubDomains",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "SAMEORIGIN",
+        "x-turbo-charged-by": "LiteSpeed",
+        "x-xss-protection": "1; mode=block"
+      },
+      "currentUrl": "https://dalthaus.net/admin/dashboard",
+      "cookiesAfterLogin": [
+        {
+          "name": "cf_clearance",
+          "value": "R7Ob1qc.Y98qR1ta0itt...",
+          "domain": ".dalthaus.net",
+          "path": "/",
+          "httpOnly": true,
+          "secure": true,
+          "sameSite": "None",
+          "expires": 1790539167.393188
+        },
+        {
+          "name": "cms_session",
+          "value": "234e77fbc62bf52ba193...",
+          "domain": "dalthaus.net",
+          "path": "/",
+          "httpOnly": true,
+          "secure": true,
+          "sameSite": "Strict",
+          "expires": 1759089568.526022
+        }
+      ]
+    },
+    {
+      "step": 3,
+      "action": "Click Articles menu item",
+      "articlesHref": "/admin/content?type=article",
+      "cookiesBeforeClick": [
+        {
+          "name": "cf_clearance",
+          "value": "R7Ob1qc.Y98qR1ta0itt...",
+          "domain": ".dalthaus.net",
+          "path": "/"
+        },
+        {
+          "name": "cms_session",
+          "value": "234e77fbc62bf52ba193...",
+          "domain": "dalthaus.net",
+          "path": "/"
+        }
+      ],
+      "cookiesAfterClick": [
+        {
+          "name": "cf_clearance",
+          "value": "R7Ob1qc.Y98qR1ta0itt...",
+          "domain": ".dalthaus.net",
+          "path": "/"
+        },
+        {
+          "name": "cms_session",
+          "value": "234e77fbc62bf52ba193...",
+          "domain": "dalthaus.net",
+          "path": "/"
+        }
+      ],
+      "urlAfterClick": "https://dalthaus.net/admin/login",
+      "responseStatus": 302,
+      "responseHeaders": {
+        "alt-svc": "h3=\":443\"; ma=86400",
+        "cache-control": "no-cache, no-store, must-revalidate, max-age=0\npost-check=0,pre-check=0",
+        "cf-cache-status": "DYNAMIC",
+        "cf-ray": "985d94f1ce528de7-IAD",
+        "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.tiny.cloud https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.tailwindcss.com https://cdn.tiny.cloud https://cdn.jsdelivr.net; img-src 'self' data: https: blob:; font-src 'self' https://cdnjs.cloudflare.com data:; connect-src 'self' https://cdn.tiny.cloud https://cdn.jsdelivr.net; frame-src 'self' https://cdn.tiny.cloud; frame-ancestors 'none'; base-uri 'self'; form-action 'self';",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Sat, 27 Sep 2025 19:59:29 GMT",
+        "expires": "Sat, 26 Jul 1997 05:00:00 GMT",
+        "location": "/admin/login",
+        "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+        "permissions-policy": "geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), accelerometer=(), gyroscope=()",
+        "pragma": "no-cache",
+        "referrer-policy": "strict-origin-when-cross-origin",
+        "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=dj9gXVvfPpgj2nV8llFpjV72614wRl7PIAKDOZt2psgKCsTqqs%2FL0l6TnoOqzkw7hh1VXDhxeMbyhFEfONo01wAi6U78%2BQconTifyZS%2Bvj6fk3lRhus9pw%3D%3D\"}]}",
+        "server": "cloudflare",
+        "strict-transport-security": "max-age=63072000; includeSubDomains",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "SAMEORIGIN",
+        "x-turbo-charged-by": "LiteSpeed",
+        "x-xss-protection": "1; mode=block"
+      },
+      "networkRequests": [
+        {
+          "type": "request",
+          "timestamp": "2025-09-27T19:59:29.399Z",
+          "method": "GET",
+          "url": "https://dalthaus.net/admin/content?type=article",
+          "headers": {
+            "accept-language": "en-US",
+            "referer": "https://dalthaus.net/admin/dashboard",
+            "upgrade-insecure-requests": "1",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"Not=A?Brand\";v=\"24\", \"Chromium\";v=\"140\"",
+            "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": "\"Windows\""
+          },
+          "postData": null
+        },
+        {
+          "type": "request",
+          "timestamp": "2025-09-27T19:59:29.462Z",
+          "method": "GET",
+          "url": "https://dalthaus.net/admin/login",
+          "headers": {
+            "accept-language": "en-US",
+            "referer": "https://dalthaus.net/admin/dashboard",
+            "upgrade-insecure-requests": "1",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"Not=A?Brand\";v=\"24\", \"Chromium\";v=\"140\"",
+            "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": "\"Windows\""
+          },
+          "postData": null
+        }
+      ],
+      "networkResponses": [
+        {
+          "type": "response",
+          "timestamp": "2025-09-27T19:59:29.462Z",
+          "url": "https://dalthaus.net/admin/content?type=article",
+          "status": 302,
+          "statusText": "",
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cache-control": "no-cache, no-store, must-revalidate, max-age=0\npost-check=0,pre-check=0",
+            "cf-cache-status": "DYNAMIC",
+            "cf-ray": "985d94f1ce528de7-IAD",
+            "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.tiny.cloud https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.tailwindcss.com https://cdn.tiny.cloud https://cdn.jsdelivr.net; img-src 'self' data: https: blob:; font-src 'self' https://cdnjs.cloudflare.com data:; connect-src 'self' https://cdn.tiny.cloud https://cdn.jsdelivr.net; frame-src 'self' https://cdn.tiny.cloud; frame-ancestors 'none'; base-uri 'self'; form-action 'self';",
+            "content-type": "text/html; charset=UTF-8",
+            "date": "Sat, 27 Sep 2025 19:59:29 GMT",
+            "expires": "Sat, 26 Jul 1997 05:00:00 GMT",
+            "location": "/admin/login",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "permissions-policy": "geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), accelerometer=(), gyroscope=()",
+            "pragma": "no-cache",
+            "referrer-policy": "strict-origin-when-cross-origin",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=dj9gXVvfPpgj2nV8llFpjV72614wRl7PIAKDOZt2psgKCsTqqs%2FL0l6TnoOqzkw7hh1VXDhxeMbyhFEfONo01wAi6U78%2BQconTifyZS%2Bvj6fk3lRhus9pw%3D%3D\"}]}",
+            "server": "cloudflare",
+            "strict-transport-security": "max-age=63072000; includeSubDomains",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-turbo-charged-by": "LiteSpeed",
+            "x-xss-protection": "1; mode=block"
+          }
+        },
+        {
+          "type": "response",
+          "timestamp": "2025-09-27T19:59:29.524Z",
+          "url": "https://dalthaus.net/admin/login",
+          "status": 200,
+          "statusText": "",
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cache-control": "no-store, no-cache, must-revalidate, max-age=0\npost-check=0,pre-check=0",
+            "cf-cache-status": "DYNAMIC",
+            "cf-ray": "985d94f22e558de7-IAD",
+            "content-encoding": "zstd",
+            "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.tiny.cloud https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.tailwindcss.com https://cdn.tiny.cloud https://cdn.jsdelivr.net; img-src 'self' data: https: blob:; font-src 'self' https://cdnjs.cloudflare.com data:; connect-src 'self' https://cdn.tiny.cloud https://cdn.jsdelivr.net; frame-src 'self' https://cdn.tiny.cloud; frame-ancestors 'none'; base-uri 'self'; form-action 'self';",
+            "content-type": "text/html; charset=UTF-8",
+            "date": "Sat, 27 Sep 2025 19:59:29 GMT",
+            "expires": "Sat, 26 Jul 1997 05:00:00 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "permissions-policy": "geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), accelerometer=(), gyroscope=()",
+            "pragma": "no-cache",
+            "referrer-policy": "strict-origin-when-cross-origin",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=uZPKa53jJ4w1JHzCFEkKZmH9d5BP%2BF0Czq1jhaUARL4c4tFn8CrsvuC4uqLiZXuZdp4cFdF5SploYP7pS8HPvBVfUYgkIV04B%2BzO3fISeH3Sf4qHe%2F39vA%3D%3D\"}]}",
+            "server": "cloudflare",
+            "strict-transport-security": "max-age=63072000; includeSubDomains",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-turbo-charged-by": "LiteSpeed",
+            "x-xss-protection": "1; mode=block"
+          }
+        }
+      ]
+    },
+    {
+      "step": 4,
+      "action": "Authentication check after Articles click",
+      "isOnLoginPage": true,
+      "isOnArticlesPage": false,
+      "currentUrl": "https://dalthaus.net/admin/login",
+      "pageTitle": "Admin Login"
+    },
+    {
+      "step": 5,
+      "action": "Click Content menu item",
+      "href": "/admin/content",
+      "beforeUrl": "https://dalthaus.net/admin/dashboard",
+      "afterUrl": "https://dalthaus.net/admin/login",
+      "redirectedToLogin": true,
+      "cookieCountBefore": 2,
+      "cookieCountAfter": 2,
+      "networkRequests": 2,
+      "networkResponses": 2
+    },
+    {
+      "step": 6,
+      "action": "Click Pages menu item",
+      "href": "/admin/pages",
+      "beforeUrl": "https://dalthaus.net/admin/dashboard",
+      "afterUrl": "https://dalthaus.net/admin/pages",
+      "redirectedToLogin": false,
+      "cookieCountBefore": 2,
+      "cookieCountAfter": 2,
+      "networkRequests": 1,
+      "networkResponses": 1
+    },
+    {
+      "step": 7,
+      "action": "Click Users menu item",
+      "href": "/admin/users",
+      "beforeUrl": "https://dalthaus.net/admin/pages",
+      "afterUrl": "https://dalthaus.net/admin/users",
+      "redirectedToLogin": false,
+      "cookieCountBefore": 2,
+      "cookieCountAfter": 2,
+      "networkRequests": 1,
+      "networkResponses": 1
+    },
+    {
+      "step": 8,
+      "action": "Click Settings menu item",
+      "href": "/admin/settings",
+      "beforeUrl": "https://dalthaus.net/admin/users",
+      "afterUrl": "https://dalthaus.net/admin/settings",
+      "redirectedToLogin": false,
+      "cookieCountBefore": 2,
+      "cookieCountAfter": 2,
+      "networkRequests": 1,
+      "networkResponses": 1
+    },
+    {
+      "step": 10,
+      "action": "Direct URL access to /admin/content",
+      "attemptedUrl": "https://dalthaus.net/admin/content",
+      "resultUrl": "https://dalthaus.net/admin/login",
+      "redirectedToLogin": true,
+      "cookies": [
+        {
+          "name": "cf_clearance",
+          "domain": ".dalthaus.net",
+          "path": "/"
+        },
+        {
+          "name": "cms_session",
+          "domain": "dalthaus.net",
+          "path": "/"
+        }
+      ],
+      "networkLogs": [
+        {
+          "type": "request",
+          "timestamp": "2025-09-27T19:59:42.900Z",
+          "method": "GET",
+          "url": "https://dalthaus.net/admin/content",
+          "headers": {
+            "accept-language": "en-US",
+            "upgrade-insecure-requests": "1",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"Not=A?Brand\";v=\"24\", \"Chromium\";v=\"140\"",
+            "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": "\"Windows\""
+          },
+          "postData": null
+        },
+        {
+          "type": "response",
+          "timestamp": "2025-09-27T19:59:42.963Z",
+          "url": "https://dalthaus.net/admin/content",
+          "status": 302,
+          "statusText": "",
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cache-control": "no-cache, no-store, must-revalidate, max-age=0\npost-check=0,pre-check=0",
+            "cf-cache-status": "DYNAMIC",
+            "cf-ray": "985d954629168de7-IAD",
+            "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.tiny.cloud https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.tailwindcss.com https://cdn.tiny.cloud https://cdn.jsdelivr.net; img-src 'self' data: https: blob:; font-src 'self' https://cdnjs.cloudflare.com data:; connect-src 'self' https://cdn.tiny.cloud https://cdn.jsdelivr.net; frame-src 'self' https://cdn.tiny.cloud; frame-ancestors 'none'; base-uri 'self'; form-action 'self';",
+            "content-type": "text/html; charset=UTF-8",
+            "date": "Sat, 27 Sep 2025 19:59:43 GMT",
+            "expires": "Sat, 26 Jul 1997 05:00:00 GMT",
+            "location": "/admin/login",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "permissions-policy": "geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), accelerometer=(), gyroscope=()",
+            "pragma": "no-cache",
+            "referrer-policy": "strict-origin-when-cross-origin",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=EPRJaQqs2HZlIbnaC8a4vXcSHVNZps8lGT6A56NS9aTzIATWeRdBLiRSVX1zEScF7I6PLn2UXY0YWInOEhMUTMY5o5YvnEvk0Aq1M%2Bxgt7sgtXejenfhuQ%3D%3D\"}]}",
+            "server": "cloudflare",
+            "strict-transport-security": "max-age=63072000; includeSubDomains",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-turbo-charged-by": "LiteSpeed",
+            "x-xss-protection": "1; mode=block"
+          }
+        },
+        {
+          "type": "request",
+          "timestamp": "2025-09-27T19:59:42.963Z",
+          "method": "GET",
+          "url": "https://dalthaus.net/admin/login",
+          "headers": {
+            "accept-language": "en-US",
+            "upgrade-insecure-requests": "1",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"Not=A?Brand\";v=\"24\", \"Chromium\";v=\"140\"",
+            "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": "\"Windows\""
+          },
+          "postData": null
+        },
+        {
+          "type": "response",
+          "timestamp": "2025-09-27T19:59:43.025Z",
+          "url": "https://dalthaus.net/admin/login",
+          "status": 200,
+          "statusText": "",
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cache-control": "no-store, no-cache, must-revalidate, max-age=0\npost-check=0,pre-check=0",
+            "cf-cache-status": "DYNAMIC",
+            "cf-ray": "985d9546991b8de7-IAD",
+            "content-encoding": "zstd",
+            "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.tiny.cloud https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.tailwindcss.com https://cdn.tiny.cloud https://cdn.jsdelivr.net; img-src 'self' data: https: blob:; font-src 'self' https://cdnjs.cloudflare.com data:; connect-src 'self' https://cdn.tiny.cloud https://cdn.jsdelivr.net; frame-src 'self' https://cdn.tiny.cloud; frame-ancestors 'none'; base-uri 'self'; form-action 'self';",
+            "content-type": "text/html; charset=UTF-8",
+            "date": "Sat, 27 Sep 2025 19:59:43 GMT",
+            "expires": "Sat, 26 Jul 1997 05:00:00 GMT",
+            "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+            "permissions-policy": "geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), accelerometer=(), gyroscope=()",
+            "pragma": "no-cache",
+            "referrer-policy": "strict-origin-when-cross-origin",
+            "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=wu0wk9Af2VY%2BHGyngbmLUOey93iAd3JhJIAPMNwT8lu%2Bg4dH1Ey6gS2IRylTVRpP2BFiGnEgeWnV38V%2FSUu7RoaC5OHApg59pyBZEQwULHpEYvBU48kKhw%3D%3D\"}]}",
+            "server": "cloudflare",
+            "strict-transport-security": "max-age=63072000; includeSubDomains",
+            "vary": "Accept-Encoding",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-turbo-charged-by": "LiteSpeed",
+            "x-xss-protection": "1; mode=block"
+          }
+        }
+      ]
+    }
+  ],
+  "sessionAnalysis": {
+    "totalCookies": 2,
+    "sessionCookies": [
+      {
+        "name": "cms_session",
+        "domain": "dalthaus.net",
+        "path": "/",
+        "secure": true,
+        "httpOnly": true,
+        "sameSite": "Strict",
+        "expires": 1759089576.015241
+      }
+    ],
+    "authCookies": []
+  },
+  "consoleLogs": [
+    {
+      "timestamp": "2025-09-27T19:59:27.158Z",
+      "type": "warning",
+      "text": "cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:27.213Z",
+      "type": "log",
+      "text": "Navigation type: 0"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:27.352Z",
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 ()"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:28.035Z",
+      "type": "log",
+      "text": "Form submit event triggered"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:28.035Z",
+      "type": "log",
+      "text": "Form action: https://dalthaus.net/admin/login"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:28.035Z",
+      "type": "log",
+      "text": "Form method: post"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:28.035Z",
+      "type": "log",
+      "text": "Form data:"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:28.035Z",
+      "type": "log",
+      "text": "_token: 7f2c679db9a8eb73891a8fcceea2dc25e4ff7fc7ec813e001fee58526f1d51ac"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:28.037Z",
+      "type": "log",
+      "text": "username: kevin"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:28.037Z",
+      "type": "log",
+      "text": "password: (130Bpm)"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:28.037Z",
+      "type": "log",
+      "text": "Allowing form to submit..."
+    },
+    {
+      "timestamp": "2025-09-27T19:59:28.039Z",
+      "type": "log",
+      "text": "Page is about to unload/reload"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:28.609Z",
+      "type": "warning",
+      "text": "cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:29.530Z",
+      "type": "warning",
+      "text": "cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:29.563Z",
+      "type": "log",
+      "text": "Navigation type: 0"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:32.683Z",
+      "type": "log",
+      "text": "Form submit event triggered"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:32.683Z",
+      "type": "log",
+      "text": "Form action: https://dalthaus.net/admin/login"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:32.683Z",
+      "type": "log",
+      "text": "Form method: post"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:32.684Z",
+      "type": "log",
+      "text": "Form data:"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:32.684Z",
+      "type": "log",
+      "text": "_token: 7f2c679db9a8eb73891a8fcceea2dc25e4ff7fc7ec813e001fee58526f1d51ac"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:32.684Z",
+      "type": "log",
+      "text": "username: kevin"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:32.684Z",
+      "type": "log",
+      "text": "password: (130Bpm)"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:32.684Z",
+      "type": "log",
+      "text": "Allowing form to submit..."
+    },
+    {
+      "timestamp": "2025-09-27T19:59:32.690Z",
+      "type": "log",
+      "text": "Page is about to unload/reload"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:33.202Z",
+      "type": "warning",
+      "text": "cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:33.418Z",
+      "type": "warning",
+      "text": "cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:33.451Z",
+      "type": "log",
+      "text": "Navigation type: 0"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:35.554Z",
+      "type": "log",
+      "text": "Form submit event triggered"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:35.554Z",
+      "type": "log",
+      "text": "Form action: https://dalthaus.net/admin/login"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:35.555Z",
+      "type": "log",
+      "text": "Form method: post"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:35.555Z",
+      "type": "log",
+      "text": "Form data:"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:35.555Z",
+      "type": "log",
+      "text": "_token: 7f2c679db9a8eb73891a8fcceea2dc25e4ff7fc7ec813e001fee58526f1d51ac"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:35.555Z",
+      "type": "log",
+      "text": "username: kevin"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:35.555Z",
+      "type": "log",
+      "text": "password: (130Bpm)"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:35.555Z",
+      "type": "log",
+      "text": "Allowing form to submit..."
+    },
+    {
+      "timestamp": "2025-09-27T19:59:35.560Z",
+      "type": "log",
+      "text": "Page is about to unload/reload"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:36.095Z",
+      "type": "warning",
+      "text": "cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:36.247Z",
+      "type": "warning",
+      "text": "cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:38.480Z",
+      "type": "warning",
+      "text": "cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:40.759Z",
+      "type": "warning",
+      "text": "cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:43.032Z",
+      "type": "warning",
+      "text": "cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation"
+    },
+    {
+      "timestamp": "2025-09-27T19:59:43.062Z",
+      "type": "log",
+      "text": "Navigation type: 0"
+    }
+  ]
+}

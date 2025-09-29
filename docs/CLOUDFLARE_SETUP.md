@@ -69,7 +69,7 @@
 
 1. **Check Origin Server Health**
    ```bash
-   python deploy_agent.py health
+   python agents/deploy_agent.py health
    ```
 
 2. **Enable Development Mode** (temporarily)

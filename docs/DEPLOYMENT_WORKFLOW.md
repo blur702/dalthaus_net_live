@@ -27,12 +27,17 @@ dalthaus_net_live/
 ├── config/                 # Configuration files
 ├── assets/                 # Frontend assets
 ├── uploads/               # User uploads
-├── ssh_agent.py           # Core SSH functionality
-├── deploy_agent.py        # Deployment automation
-├── ssh_config.template.py # Configuration template
-├── ssh_config.py          # Local credentials (gitignored)
-├── CLAUDE.md             # Project instructions for Claude
-├── DEPLOYMENT_WORKFLOW.md # This document
+├── agents/                 # Deployment and automation agents
+│   ├── ssh_agent.py       # Core SSH functionality
+│   ├── deploy_agent.py    # Deployment automation
+│   └── server_debug_agent.py # Server debugging
+├── scripts/                # Utility and deployment scripts
+│   └── deployment/        # Deployment scripts
+│       ├── ssh_config.template.py # Configuration template
+│       └── ssh_config.py  # Local credentials (gitignored)
+├── docs/                   # Documentation
+│   ├── CLAUDE.md          # Project instructions for Claude
+│   └── DEPLOYMENT_WORKFLOW.md # This document
 └── SSH_AGENT_README.md   # SSH agent documentation
 ```
 
@@ -96,10 +101,10 @@ dalthaus_net_live/
 6. **Deploy to Production**
    ```bash
    # Check current server status
-   python deploy_agent.py status
+   python agents/deploy_agent.py status
    
    # Deploy latest changes
-   python deploy_agent.py deploy main
+   python agents/deploy_agent.py deploy main
    ```
 
 ## 🤖 **SSH Agent Usage**
@@ -110,19 +115,19 @@ The SSH agent provides secure, automated deployment without storing credentials 
 
 ```bash
 # Check git status on production server
-python deploy_agent.py status
+python agents/deploy_agent.py status
 
 # Pull latest code from GitHub to server
-python deploy_agent.py pull [branch]
+python agents/deploy_agent.py pull [branch]
 
 # Full deployment workflow
-python deploy_agent.py deploy [branch]
+python agents/deploy_agent.py deploy [branch]
 
 # Test database configuration reading
-python deploy_agent.py db
+python agents/deploy_agent.py db
 
 # Server health check
-python deploy_agent.py health
+python agents/deploy_agent.py health
 ```
 
 ### **What the Deploy Agent Does**
@@ -191,20 +196,20 @@ SSH_CONFIG = {
 python -c "import socket; s=socket.socket(); s.settimeout(5); print('Port open' if s.connect_ex(('mi3-cl9-its2.a2hosting.com', 7822))==0 else 'Port closed'); s.close()"
 
 # Verify SSH config
-python -c "from ssh_config import SSH_CONFIG; print(SSH_CONFIG.keys())"
+python -c "from scripts.deployment.ssh_config import SSH_CONFIG; print(SSH_CONFIG.keys())"
 
 # Test SSH agent connection
-python deploy_agent.py status
+python agents/deploy_agent.py status
 ```
 
 ### **Git Issues on Server**
 
 ```bash
 # Check git status
-python deploy_agent.py status
+python agents/deploy_agent.py status
 
 # Manual git pull
-python deploy_agent.py pull main
+python agents/deploy_agent.py pull main
 
 # Check git log
 ssh dalthaus@mi3-cl9-its2.a2hosting.com -p 7822
@@ -216,7 +221,7 @@ git log --oneline -5
 
 ```bash
 # Test database config reading
-python deploy_agent.py db
+python agents/deploy_agent.py db
 
 # Check config file on server
 python -c "
@@ -236,14 +241,14 @@ if agent.connect():
 - [ ] Install Python dependencies (`pip install paramiko`)
 - [ ] Copy `ssh_config.template.py` to `ssh_config.py`
 - [ ] Configure SSH credentials in `ssh_config.py`
-- [ ] Test connection: `python deploy_agent.py status`
+- [ ] Test connection: `python agents/deploy_agent.py status`
 
 ### **Before Each Deployment**
 - [ ] Test changes locally (if possible)
 - [ ] Commit changes with descriptive message
 - [ ] Push to GitHub
-- [ ] Check server status: `python deploy_agent.py status`
-- [ ] Deploy: `python deploy_agent.py deploy main`
+- [ ] Check server status: `python agents/deploy_agent.py status`
+- [ ] Deploy: `python agents/deploy_agent.py deploy main`
 - [ ] Verify deployment success
 
 ### **After Each Deployment**
@@ -332,15 +337,15 @@ def custom_server_operation():
 ## 🔄 **Maintenance**
 
 ### **Regular Tasks**
-- Monitor server health with `python deploy_agent.py health`
+- Monitor server health with `python agents/deploy_agent.py health`
 - Clean up old backup files on server
 - Update dependencies as needed
 - Review and rotate SSH credentials periodically
 
 ### **Emergency Procedures**
-- If deployment fails, check `python deploy_agent.py status`
-- For database issues, verify config with `python deploy_agent.py db`
-- For SSH issues, test connection with `python deploy_agent.py status`
+- If deployment fails, check `python agents/deploy_agent.py status`
+- For database issues, verify config with `python agents/deploy_agent.py db`
+- For SSH issues, test connection with `python agents/deploy_agent.py status`
 - Contact hosting provider for server-level issues
 
 ---

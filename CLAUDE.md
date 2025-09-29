@@ -13,17 +13,17 @@ This is a PHP/MySQL CMS application with MVC architecture. The system provides c
 ### Quick Deployment
 ```bash
 # Deploy to production server
-python deploy_agent.py deploy main
+python agents/deploy_agent.py deploy main
 
 # Check server status
-python deploy_agent.py status
+python agents/deploy_agent.py status
 ```
 
 ### SSH Agent Setup
-1. Copy `ssh_config.template.py` to `ssh_config.py`
+1. Copy `scripts/deployment/ssh_config.template.py` to `scripts/deployment/ssh_config.py`
 2. Configure production server credentials
 3. Install dependencies: `pip install paramiko`
-4. Test connection: `python deploy_agent.py status`
+4. Test connection: `python agents/deploy_agent.py status`
 
 **Note**: `ssh_config.py` contains credentials and is gitignored for security.
 

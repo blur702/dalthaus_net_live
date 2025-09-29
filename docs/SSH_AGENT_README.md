@@ -44,19 +44,19 @@ SSH_CONFIG = {
 
 ```bash
 # Check git status on server
-python deploy_agent.py status
+python agents/deploy_agent.py status
 
 # Pull latest code from GitHub  
-python deploy_agent.py pull [branch]
+python agents/deploy_agent.py pull [branch]
 
 # Full deployment workflow
-python deploy_agent.py deploy [branch]
+python agents/deploy_agent.py deploy [branch]
 
 # Test database configuration
-python deploy_agent.py db
+python agents/deploy_agent.py db
 
 # Server health check
-python deploy_agent.py health
+python agents/deploy_agent.py health
 ```
 
 ### Development Workflow
@@ -65,7 +65,7 @@ python deploy_agent.py health
 2. **Commit and push to GitHub**
 3. **Deploy to server:**
    ```bash
-   python deploy_agent.py deploy main
+   python agents/deploy_agent.py deploy main
    ```
 
 ## 🔧 Advanced Usage
@@ -145,30 +145,30 @@ python -c "import socket; s=socket.socket(); s.settimeout(5); print('Port open' 
 ### Configuration Issues
 ```bash
 # Verify config file
-python -c "from ssh_config import SSH_CONFIG; print(SSH_CONFIG)"
+python -c "from scripts.deployment.ssh_config import SSH_CONFIG; print(SSH_CONFIG)"
 ```
 
 ### Git Issues
 ```bash
 # Check git status manually
-python deploy_agent.py status
+python agents/deploy_agent.py status
 ```
 
 ## 📚 Examples
 
 ### Deploy Latest Code
 ```bash
-python deploy_agent.py deploy main
+python agents/deploy_agent.py deploy main
 ```
 
 ### Check What Changed
 ```bash
-python deploy_agent.py status
+python agents/deploy_agent.py status
 ```
 
 ### Test Database Connection
 ```bash
-python deploy_agent.py db
+python agents/deploy_agent.py db
 ```
 
 The SSH agent provides a secure, efficient way to manage your production server without compromising security or requiring server-side deployment scripts.

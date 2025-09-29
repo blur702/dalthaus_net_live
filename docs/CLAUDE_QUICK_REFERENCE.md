@@ -4,7 +4,7 @@
 
 ## 🚨 **CRITICAL: Read First**
 
-1. **SSH Agent Available**: Use `python deploy_agent.py` for production deployments
+1. **SSH Agent Available**: Use `python agents/deploy_agent.py` for production deployments
 2. **Credentials Security**: NEVER commit `ssh_config.py` - it's gitignored
 3. **Deployment Process**: Local → GitHub → SSH Pull (not direct upload)
 4. **Database Schema**: See actual table structure before making model changes
@@ -20,9 +20,9 @@ pip install paramiko                     # Install dependencies
 php -S localhost:8000 router.php
 
 # Production Deployment
-python deploy_agent.py deploy main       # Full deployment
-python deploy_agent.py status           # Check git status
-python deploy_agent.py db               # Test database config
+python agents/deploy_agent.py deploy main       # Full deployment
+python agents/deploy_agent.py status           # Check git status
+python agents/deploy_agent.py db               # Test database config
 ```
 
 ## 🏗️ **Architecture Quick Facts**
@@ -59,7 +59,7 @@ uploads/                # File uploads
 1. **Make changes locally**
 2. **Test if possible** (`php -S localhost:8000 router.php`)
 3. **Commit with good message**
-4. **Deploy**: `python deploy_agent.py deploy main`
+4. **Deploy**: `python agents/deploy_agent.py deploy main`
 5. **Verify**: Check live site functionality
 
 ## 🗄️ **Database Quick Reference**
@@ -86,16 +86,16 @@ uploads/                # File uploads
 ## 🚀 **SSH Agent Commands**
 
 ```bash
-python deploy_agent.py status    # Git status on server
-python deploy_agent.py pull      # Pull latest code
-python deploy_agent.py deploy    # Full deployment  
-python deploy_agent.py db        # Test database config
-python deploy_agent.py health    # Server health check
+python agents/deploy_agent.py status    # Git status on server
+python agents/deploy_agent.py pull      # Pull latest code
+python agents/deploy_agent.py deploy    # Full deployment  
+python agents/deploy_agent.py db        # Test database config
+python agents/deploy_agent.py health    # Server health check
 ```
 
 ## 📋 **Before Making Changes**
 
-1. **Check current git status**: `python deploy_agent.py status`
+1. **Check current git status**: `python agents/deploy_agent.py status`
 2. **Read recent commits**: `git log --oneline -5`
 3. **Understand the issue**: Test locally if possible
 4. **Check database schema**: Don't assume field names exist
@@ -104,7 +104,7 @@ python deploy_agent.py health    # Server health check
 
 1. **Test functionality**: Verify changes work
 2. **Commit properly**: Descriptive message with Claude signature
-3. **Deploy**: `python deploy_agent.py deploy main`
+3. **Deploy**: `python agents/deploy_agent.py deploy main`
 4. **Verify**: Check live site works correctly
 
 ## 📖 **Documentation Files**
