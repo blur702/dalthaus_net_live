@@ -76,9 +76,16 @@ class Auth extends BaseController
 
         $username = $this->sanitize($this->getParam("username", "", "post"));
         $password = $this->getParam("password", "", "post");
-        $rememberMe = !empty($this->getParam("remember_me", "", "post"));
+        $rememberMeParam = $this->getParam("remember_me", "", "post");
+        $rememberMe = !empty($rememberMeParam);
+
+        // Debug logging
+        error_log("Auth::authenticate() - username: $username");
+        error_log("Auth::authenticate() - remember_me param: '$rememberMeParam'");
+        error_log("Auth::authenticate() - remember_me bool: " . ($rememberMe ? 'true' : 'false'));
 
         if (empty($username) || empty($password)) {
+            error_log("Auth::authenticate() - Empty username or password");
             $this->setFlash("error", "Username and password are required.");
             $this->redirect("/admin/login");
             return;
@@ -100,11 +107,14 @@ class Auth extends BaseController
         }
 
         try {
+            error_log("Auth::authenticate() - About to call auth->attempt()");
             if ($this->auth->attempt($username, $password, $rememberMe)) {
+                error_log("Auth::authenticate() - Login successful, redirecting to dashboard");
                 // Use proper HTTP redirect - most reliable method
                 $this->redirect("/admin/dashboard");
                 return;
             } else {
+                error_log("Auth::authenticate() - Login failed");
                 $remainingLockout = $this->auth->getRemainingLockoutTime($username);
                 if ($remainingLockout > 0) {
                     $minutes = ceil($remainingLockout / 60);
@@ -117,7 +127,8 @@ class Auth extends BaseController
         } catch (\Exception $e) {
             // Log the actual error for debugging
             error_log("Authentication error: " . $e->getMessage());
-            
+            error_log("Authentication error stack: " . $e->getTraceAsString());
+
             // Show user-friendly error message
             $this->setFlash("error", "Login system temporarily unavailable. Please try again later.");
             $this->redirect("/admin/login");

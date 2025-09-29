@@ -128,7 +128,7 @@ class Auth
             error_log("Auth::startSession() - Generated token for user: " . $user['user_id']);
 
             // Store token in database
-            $this->storeRememberToken($user['user_id'], $hashedToken);
+            $this->storeRememberToken((int)$user['user_id'], $hashedToken);
             error_log("Auth::startSession() - Stored token in database");
 
             // Set remember me cookie (30 days)
