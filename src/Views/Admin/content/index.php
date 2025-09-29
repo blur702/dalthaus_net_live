@@ -109,7 +109,7 @@
             <tbody class="bg-white divide-y divide-gray-200">
                 <?php foreach ($content as $item): ?>
                 <tr class="hover:bg-gray-50">
-                    <td class="px-6 py-4 whitespace-nowrap">
+                    <td class="px-6 py-4">
                         <div class="flex items-center">
                             <?php if ($item['teaser_image']): ?>
                             <div class="flex-shrink-0 w-16">
@@ -126,8 +126,8 @@
                                 </svg>
                             </div>
                             <?php endif; ?>
-                            <div class="ml-4">
-                                <div class="text-sm font-medium text-gray-900">
+                            <div class="ml-4 max-w-md">
+                                <div class="text-sm font-medium text-gray-900 break-words">
                                     <a href="/<?= $item['content_type'] ?>/<?= $item['url_alias'] ?>" target="_blank" class="hover:text-blue-600 hover:underline">
                                         <?= $this->escape($item['title']) ?>
                                     </a>
