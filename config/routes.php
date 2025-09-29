@@ -41,13 +41,13 @@ return function(Router $router) {
         // Content management
         $router->get('/content', 'Content', 'index');
         $router->get('/content/create', 'Content', 'create');
+        $router->get('/content/reorder', 'Content', 'reorder');
         $router->post('/content/store', 'Content', 'store');
+        $router->post('/content/update-order', 'Content', 'updateOrder');
+        $router->post('/content/autosave', 'Content', 'autosave');
         $router->get('/content/{id}/edit', 'Content', 'edit');
         $router->post('/content/{id}/update', 'Content', 'update');
         $router->post('/content/{id}/delete', 'Content', 'delete');
-        $router->get('/content/reorder', 'Content', 'reorder');
-        $router->post('/content/update-order', 'Content', 'updateOrder');
-        $router->post('/content/autosave', 'Content', 'autosave');
 
         // **FIXED:** Dedicated image upload route
         $router->post('/upload/tinymce', 'Upload', 'tinymce');
@@ -55,12 +55,12 @@ return function(Router $router) {
         // Page management
         $router->get('/pages', 'Pages', 'index');
         $router->get('/pages/create', 'Pages', 'create');
+        $router->get('/pages/reorder', 'Pages', 'reorder');
         $router->post('/pages/store', 'Pages', 'store');
+        $router->post('/pages/update-order', 'Pages', 'updateOrder');
         $router->get('/pages/{id}/edit', 'Pages', 'edit');
         $router->post('/pages/{id}/update', 'Pages', 'update');
         $router->post('/pages/{id}/delete', 'Pages', 'delete');
-        $router->get('/pages/reorder', 'Pages', 'reorder');
-        $router->post('/pages/update-order', 'Pages', 'updateOrder');
 
         // Settings management
         $router->get('/settings', 'Settings', 'index');
