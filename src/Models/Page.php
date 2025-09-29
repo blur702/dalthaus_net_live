@@ -411,7 +411,8 @@ class Page extends BaseModel
                   FROM {$instance->table}
                   ORDER BY sort_order ASC, title ASC";
 
-        return self::query($query);
+        // Return arrays directly instead of model objects for view compatibility
+        return $instance->db->fetchAll($query);
     }
 
     /**

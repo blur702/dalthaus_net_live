@@ -241,7 +241,8 @@ class Content extends BaseModel
 
         $query .= " ORDER BY sort_order ASC, title ASC";
 
-        return self::query($query, $params);
+        // Return arrays directly instead of model objects for view compatibility
+        return $instance->db->fetchAll($query, $params);
     }
 
     /**
