@@ -20,12 +20,41 @@ python agents/deploy_agent.py status
 ```
 
 ### SSH Agent Setup
-1. Copy `scripts/deployment/ssh_config.template.py` to `scripts/deployment/ssh_config.py`
-2. Configure production server credentials
-3. Install dependencies: `pip install paramiko`
-4. Test connection: `python agents/deploy_agent.py status`
+1. Create a `.env` file in the project root with your SSH credentials:
+   ```
+   SSH_USER=your_username
+   SSH_PASS=your_password
+   WEB_ROOT=/home/username/public_html
+   CONFIG_PATH=/home/username/public_html/config/config.php
+   ```
+2. Install dependencies: `pip install paramiko python-dotenv`
+3. Test connection: `python3 agents/deploy_agent.py status`
 
-**Note**: `ssh_config.py` contains credentials and is gitignored for security.
+**Note**: `.env` contains credentials and is gitignored for security.
+
+### Deployment Commands
+```bash
+# Check server status and git repository
+python3 agents/deploy_agent.py status
+
+# Deploy code to production
+python3 agents/deploy_agent.py deploy main
+
+# Pull latest code only
+python3 agents/deploy_agent.py pull main
+
+# Test database connection
+python3 agents/deploy_agent.py db
+
+# Server health check
+python3 agents/deploy_agent.py health
+```
+
+### Production Server Details
+- **Host:** mi3-cl9-its2.a2hosting.com
+- **Port:** 7822
+- **Web Root:** /home/dalthaus/public_html
+- **Config:** /home/dalthaus/public_html/config/config.php
 
 ## Key Architecture
 
@@ -189,3 +218,36 @@ npm run test:headed
 - Debug mode configured in `config/config.php`
 - Custom exception handler for database connection errors
 - 404 and 500 error pages with appropriate HTTP status codes
+
+## Cloudflare Development Mode
+
+### Disabling Cloudflare Cache During Development
+When actively developing, Cloudflare's caching can interfere with seeing changes immediately. Use these scripts to control caching:
+
+#### Disable Caching (Development Mode)
+```bash
+# Add cache bypass headers to .htaccess
+python3 disable_cloudflare_cache.py
+```
+This script adds headers that tell Cloudflare and browsers not to cache pages.
+
+#### Re-enable Caching (Production Mode)
+```bash
+# Remove development headers from .htaccess
+python3 remove_dev_headers.py
+```
+Run this when development is complete to restore normal caching.
+
+#### Alternative Methods
+1. **Cloudflare Dashboard**: Enable "Development Mode" in Cloudflare dashboard
+   - Go to: Settings > Caching > Configuration > Development Mode
+   - This bypasses cache for 3 hours
+
+2. **Page Rules**: Create a Page Rule in Cloudflare
+   - Pattern: `*dalthaus.net/*`
+   - Setting: Cache Level = Bypass
+
+### Important Notes
+- **index.html redirect**: The site uses an index.html that redirects to index.php for compatibility
+- When index.html is missing, direct access to `/index.php` may return 404 due to Apache/Cloudflare interaction
+- Always test with cache bypass during development: `curl "https://dalthaus.net/?nocache=$(date +%s)"`
