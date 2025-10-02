@@ -15,7 +15,9 @@
       "Bash(npx playwright test:*)",
       "Bash(curl:*)",
       "Bash(cd:*)",
-      "Bash(php:*)"
+      "Bash(php:*)",
+      "Bash(python3:*)",
+      "Bash(git log:*)"
     ],
     "deny": [],
     "ask": []

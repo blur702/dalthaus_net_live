@@ -16,12 +16,16 @@ import json
 import re
 import ast
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 
 class SSHAgent:
     """A comprehensive SSH agent for remote server operations"""
     
-    def __init__(self, host: str, username: str, password: str, port: int = 22):
+    def __init__(self, host: str = "mi3-cl9-its2.a2hosting.com", username: str = os.getenv("SSH_USER"), password: str = os.getenv("SSH_PASS"), port: int = 7822):
         self.host = host
         self.username = username
         self.password = password
@@ -975,20 +979,8 @@ def main():
     print("SSH Agent - Remote Server Management Tool")
     print("=" * 50)
     
-    # Get connection details
-    host = input("Enter host: ")
-    username = input("Enter username: ")
-    password = input("Enter password: ")
-    port = input("Enter port (default 22): ") or "22"
-    
-    try:
-        port = int(port)
-    except ValueError:
-        print("Invalid port number, using default 22")
-        port = 22
-    
     # Create agent and connect
-    agent = SSHAgent(host, username, password, port)
+    agent = SSHAgent()
     
     if not agent.connect():
         print("Failed to connect to server")

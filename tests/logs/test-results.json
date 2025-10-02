@@ -1,7 +1,7 @@
 {
   "config": {
-    "configFile": "E:\\OneDrive\\Documents\\My Web Sites\\dalthaus-net-live\\dalthaus_net_live\\tests\\playwright.config.ts",
-    "rootDir": "E:/OneDrive/Documents/My Web Sites/dalthaus-net-live/dalthaus_net_live/tests/e2e",
+    "configFile": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/tests/playwright.config.ts",
+    "rootDir": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/tests/e2e",
     "forbidOnly": false,
     "fullyParallel": true,
     "globalSetup": null,
@@ -10,9 +10,7 @@
     "grep": {},
     "grepInvert": null,
     "maxFailures": 0,
-    "metadata": {
-      "actualWorkers": 1
-    },
+    "metadata": {},
     "preserveOutput": "always",
     "reporter": [
       [
@@ -39,15 +37,13 @@
     "quiet": false,
     "projects": [
       {
-        "outputDir": "E:/OneDrive/Documents/My Web Sites/dalthaus-net-live/dalthaus_net_live/tests/logs/test-results",
+        "outputDir": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/tests/logs/test-results",
         "repeatEach": 1,
         "retries": 0,
-        "metadata": {
-          "actualWorkers": 1
-        },
+        "metadata": {},
         "id": "chromium",
         "name": "chromium",
-        "testDir": "E:/OneDrive/Documents/My Web Sites/dalthaus-net-live/dalthaus_net_live/tests/e2e",
+        "testDir": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/tests/e2e",
         "testIgnore": [],
         "testMatch": [
           "**/*.@(spec|test).?(c|m)[jt]s?(x)"
@@ -58,131 +54,33 @@
     "shard": null,
     "updateSnapshots": "missing",
     "updateSourceMethod": "patch",
-    "version": "1.55.0",
+    "version": "1.55.1",
     "workers": 6,
     "webServer": null
   },
-  "suites": [
+  "suites": [],
+  "errors": [
     {
-      "title": "dual-image-production-test.spec.js",
-      "file": "dual-image-production-test.spec.js",
-      "column": 0,
-      "line": 0,
-      "specs": [],
-      "suites": [
-        {
-          "title": "Dual Image Production Test",
-          "file": "dual-image-production-test.spec.js",
-          "line": 3,
-          "column": 6,
-          "specs": [
-            {
-              "title": "should test dual image functionality on production",
-              "ok": false,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "failed",
-                      "duration": 7042,
-                      "error": {
-                        "message": "Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'toolbar')\n    at eval (eval at evaluate (:291:30), <anonymous>:4:52)\n    at UtilityScript.evaluate (<anonymous>:293:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
-                        "stack": "Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'toolbar')\n    at eval (eval at evaluate (:291:30), <anonymous>:4:52)\n    at UtilityScript.evaluate (<anonymous>:293:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at eval (eval at evaluate (:291:30), <anonymous>:4:52)\n    at UtilityScript.evaluate (<anonymous>:293:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at E:\\OneDrive\\Documents\\My Web Sites\\dalthaus-net-live\\dalthaus_net_live\\tests\\e2e\\dual-image-production-test.spec.js:57:46",
-                        "location": {
-                          "file": "eval at evaluate (:291:30), <anonymous>",
-                          "column": 52,
-                          "line": 4
-                        }
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "eval at evaluate (:291:30), <anonymous>",
-                            "column": 52,
-                            "line": 4
-                          },
-                          "message": "Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'toolbar')\n    at eval (eval at evaluate (:291:30), <anonymous>:4:52)\n    at UtilityScript.evaluate (<anonymous>:293:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at eval (eval at evaluate (:291:30), <anonymous>:4:52)\n    at UtilityScript.evaluate (<anonymous>:293:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at E:\\OneDrive\\Documents\\My Web Sites\\dalthaus-net-live\\dalthaus_net_live\\tests\\e2e\\dual-image-production-test.spec.js:57:46"
-                        }
-                      ],
-                      "stdout": [
-                        {
-                          "text": "🔍 Testing dual image on production...\n"
-                        },
-                        {
-                          "text": "✅ Production login successful\n"
-                        },
-                        {
-                          "text": "✅ Content creation page loaded\n"
-                        },
-                        {
-                          "text": "🔍 Checking for dual image button...\n"
-                        },
-                        {
-                          "text": "Found 0 toolbar buttons\n"
-                        },
-                        {
-                          "text": "❌ Dual image button not found in toolbar\n"
-                        },
-                        {
-                          "text": "Hidden dual image button count: 0\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-09-29T21:41:48.319Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "E:\\OneDrive\\Documents\\My Web Sites\\dalthaus-net-live\\dalthaus_net_live\\tests\\logs\\test-results\\dual-image-production-test-d4fa4-functionality-on-production-chromium\\test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "E:\\OneDrive\\Documents\\My Web Sites\\dalthaus-net-live\\dalthaus_net_live\\tests\\logs\\test-results\\dual-image-production-test-d4fa4-functionality-on-production-chromium\\video.webm"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "E:\\OneDrive\\Documents\\My Web Sites\\dalthaus-net-live\\dalthaus_net_live\\tests\\logs\\test-results\\dual-image-production-test-d4fa4-functionality-on-production-chromium\\error-context.md"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "eval at evaluate (:291:30), <anonymous>",
-                        "column": 52,
-                        "line": 4
-                      }
-                    }
-                  ],
-                  "status": "unexpected"
-                }
-              ],
-              "id": "638fb13c0e2493badef4-d0fdc2f6103862ed668e",
-              "file": "dual-image-production-test.spec.js",
-              "line": 4,
-              "column": 5
-            }
-          ]
-        }
-      ]
+      "message": "Error: Playwright Test did not expect test() to be called here.\nMost common reasons include:\n- You are calling test() in a configuration file.\n- You are calling test() in a file that is imported by the configuration file.\n- You have two different versions of @playwright/test. This usually happens\n  when one of the dependencies in your package.json depends on @playwright/test.",
+      "stack": "Error: Playwright Test did not expect test() to be called here.\nMost common reasons include:\n- You are calling test() in a configuration file.\n- You are calling test() in a file that is imported by the configuration file.\n- You have two different versions of @playwright/test. This usually happens\n  when one of the dependencies in your package.json depends on @playwright/test.\n    at TestTypeImpl._currentSuite (/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/node_modules/playwright/lib/common/testType.js:74:13)\n    at TestTypeImpl._createTest (/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/node_modules/playwright/lib/common/testType.js:87:24)\n    at /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/node_modules/playwright/lib/transform/transform.js:275:12\n    at Object.<anonymous> (/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/tests/e2e/front-page-check.spec.ts:3:5)",
+      "location": {
+        "file": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/tests/e2e/front-page-check.spec.ts",
+        "column": 5,
+        "line": 3
+      },
+      "snippet": "\u001b[90m   at \u001b[39mfront-page-check.spec.ts:3\n\n  1 | import { test, expect } from '@playwright/test';\n  2 |\n> 3 | test('Front page should load successfully', async ({ page }) => {\n    |     ^\n  4 |   console.log('Starting front page test...');\n  5 |   \n  6 |   // Navigate to the site"
+    },
+    {
+      "message": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments.",
+      "stack": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments."
     }
   ],
-  "errors": [],
   "stats": {
-    "startTime": "2025-09-29T21:41:47.644Z",
-    "duration": 8121.569,
+    "startTime": "2025-10-01T23:47:36.072Z",
+    "duration": 139.88799999999992,
     "expected": 0,
     "skipped": 0,
-    "unexpected": 1,
+    "unexpected": 0,
     "flaky": 0
   }
 }

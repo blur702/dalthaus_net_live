@@ -19,31 +19,12 @@ class DeploymentAgent:
     """High-level deployment agent for the CMS"""
     
     def __init__(self):
-        # Load SSH configuration
-        try:
-            from ssh_config import SSH_CONFIG
-            self.host = SSH_CONFIG["host"]
-            self.username = SSH_CONFIG["username"]
-            self.password = SSH_CONFIG["password"]
-            self.port = SSH_CONFIG["port"]
-            self.web_root = SSH_CONFIG["web_root"]
-            self.config_path = SSH_CONFIG["config_path"]
-        except ImportError:
-            print("[ERROR] ssh_config.py not found!")
-            print("Please copy ssh_config.template.py to ssh_config.py and configure your credentials")
-            sys.exit(1)
-        except KeyError as e:
-            print(f"[ERROR] Missing configuration key: {e}")
-            print("Please check your ssh_config.py file")
-            sys.exit(1)
-        
-        self.agent = None
+        self.web_root = os.getenv("WEB_ROOT")
+        self.config_path = os.getenv("CONFIG_PATH")
+        self.agent = SSHAgent()
     
     def connect(self):
         """Connect to the server"""
-        print(f"Connecting to {self.host}...")
-        self.agent = SSHAgent(self.host, self.username, self.password, self.port)
-        
         if self.agent.connect():
             print("[SUCCESS] Connected to server successfully!")
             return True
@@ -183,6 +164,84 @@ class DeploymentAgent:
             print(f"[ERROR] Health check error: {e}")
             return None
     
+    def check_index_files(self):
+        """Check for index files on production server"""
+        print("\n=== CHECKING INDEX FILES ON PRODUCTION SERVER ===")
+        
+        try:
+            # 1. Check for any index files
+            print("\n1. Checking for index.* files:")
+            result = self.agent.execute_command('ls -la /home/dalthaus/public_html/index.*')
+            print(f"Result: {result}")
+            
+            # 2. Check current working directory structure
+            print("\n2. Checking web root directory structure:")
+            result = self.agent.execute_command('ls -la /home/dalthaus/public_html/ | head -20')
+            print(f"Directory listing:\n{result}")
+            
+            # 3. Check git status specifically for index files
+            print("\n3. Checking git status for index files:")
+            result = self.agent.execute_command('cd /home/dalthaus/public_html && git status | grep -i index')
+            print(f"Git status (index files): {result}")
+            
+            # 4. Check if there are any backup files
+            print("\n4. Checking for backup files:")
+            result = self.agent.execute_command('ls -la /home/dalthaus/public_html/*.backup* 2>/dev/null || echo "No backup files found"')
+            print(f"Backup files:\n{result}")
+            
+            # 5. Check .htaccess for any rewrite rules
+            print("\n5. Checking .htaccess for index file directives:")
+            result = self.agent.execute_command('cd /home/dalthaus/public_html && grep -i "directoryindex\\|index" .htaccess || echo "No index directives found"')
+            print(f".htaccess index directives:\n{result}")
+            
+            # 6. Check if index.html exists in git history
+            print("\n6. Checking git log for index.html:")
+            result = self.agent.execute_command('cd /home/dalthaus/public_html && git log --oneline -5 --follow -- index.html')
+            print(f"Git log for index.html:\n{result}")
+            
+            # 7. Verify current commit matches local
+            print("\n7. Current commit on server:")
+            result = self.agent.execute_command('cd /home/dalthaus/public_html && git log -1 --format="%H %s"')
+            print(f"Current commit:\n{result}")
+            
+            # 8. Check what Apache is actually serving
+            print("\n8. Testing what file Apache is serving:")
+            result = self.agent.execute_command('cd /home/dalthaus/public_html && find . -name "index.*" -type f')
+            print(f"All index files found:\n{result}")
+            
+            return True
+            
+        except Exception as e:
+            print(f"[ERROR] Index file check error: {e}")
+            return False
+    
+    def execute_command(self, command):
+        """Execute arbitrary command on server"""
+        print(f"\n--- Executing: {command} ---")
+        
+        try:
+            exit_code, stdout, stderr = self.agent.execute_command(command)
+            
+            if exit_code == 0:
+                print("[SUCCESS] Command executed successfully!")
+                if stdout:
+                    print("Output:")
+                    print(stdout)
+            else:
+                print(f"[ERROR] Command failed with exit code {exit_code}")
+                if stderr:
+                    print("Error:")
+                    print(stderr)
+                if stdout:
+                    print("Output:")
+                    print(stdout)
+            
+            return exit_code == 0, stdout, stderr
+            
+        except Exception as e:
+            print(f"[ERROR] Command execution error: {e}")
+            return False, "", str(e)
+
     def deploy(self, branch="main"):
         """Full deployment process"""
         print("\n[DEPLOY] STARTING DEPLOYMENT")
@@ -227,6 +286,8 @@ def main():
         print("  python deploy_agent.py pull [branch]   - Pull code only")
         print("  python deploy_agent.py db              - Test database")
         print("  python deploy_agent.py health          - Health check")
+        print("  python deploy_agent.py checkindex      - Check index files")
+        print("  python deploy_agent.py exec 'command'  - Execute arbitrary command")
         return
     
     command = sys.argv[1].lower()
@@ -256,6 +317,22 @@ def main():
     elif command == "health":
         if agent.connect():
             agent.health_check()
+            agent.disconnect()
+    
+    elif command == "checkindex":
+        if agent.connect():
+            agent.check_index_files()
+            agent.disconnect()
+    
+    elif command == "exec":
+        if len(sys.argv) < 3:
+            print("Error: exec command requires a command to execute")
+            print("Usage: python deploy_agent.py exec 'command'")
+            return
+        
+        command_to_execute = sys.argv[2]
+        if agent.connect():
+            agent.execute_command(command_to_execute)
             agent.disconnect()
     
     else:
