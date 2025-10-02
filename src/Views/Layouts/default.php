@@ -309,13 +309,16 @@
         }
 
         /* Clickable images */
-        .clickable-image {
-            transition: opacity 0.2s ease;
+        .clickable-image,
+        .modal-image {
+            transition: opacity 0.2s ease, transform 0.2s ease;
             cursor: pointer;
         }
 
-        .clickable-image:hover {
-            opacity: 0.9;
+        .clickable-image:hover,
+        .modal-image:hover {
+            opacity: 0.8;
+            transform: scale(1.02);
         }
     </style>
 </head>
@@ -489,7 +492,78 @@
                     img.src = img.dataset.src;
                 });
             }
+
+            // Add modal functionality to all content images
+            addModalToContentImages();
+            
+            // Also run again after a delay to catch any dynamically loaded content
+            setTimeout(function() {
+                addModalToContentImages();
+            }, 2000);
         });
+
+        // Global function to add modal functionality to content images
+        window.addModalToContentImages = function() {
+            // Select images in content areas (articles and photobooks)
+            const contentSelectors = [
+                '.content-text img',
+                '.prose img', 
+                'article img',
+                '.photobook-content img',
+                '.article-content img',
+                'main img' // Add main img as fallback
+            ];
+            
+            contentSelectors.forEach(function(selector) {
+                const images = document.querySelectorAll(selector);
+                images.forEach(function(img) {
+                    // Skip if already has modal functionality
+                    if (img.hasAttribute('data-modal-enabled')) {
+                        return;
+                    }
+                    
+                    // Wait for image to load if not already loaded
+                    function processImage() {
+                        // Only add modal to images that are not tiny (likely not decorative)
+                        const width = img.naturalWidth || img.width;
+                        const height = img.naturalHeight || img.height;
+                        
+                        if (width > 100 && height > 50) {
+                            // Mark as having modal functionality
+                            img.setAttribute('data-modal-enabled', 'true');
+                            
+                            // Add cursor pointer style
+                            img.style.cursor = 'pointer';
+                            
+                            // Add click event listener
+                            img.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                const src = this.src;
+                                const alt = this.alt || 'Image';
+                                openImageModal(src, alt);
+                            });
+                            
+                            // Add hover effect class if not already present
+                            if (!img.classList.contains('modal-image')) {
+                                img.classList.add('modal-image');
+                            }
+                            
+                            console.log('Modal functionality added to image:', src.substring(src.lastIndexOf('/') + 1));
+                        }
+                    }
+                    
+                    // If image is already loaded, process immediately
+                    if (img.complete && img.naturalWidth > 0) {
+                        processImage();
+                    } else {
+                        // Wait for image to load
+                        img.addEventListener('load', processImage);
+                        // Also try after a short delay in case load event already fired
+                        setTimeout(processImage, 100);
+                    }
+                });
+            });
+        };
     </script>
 </body>
 </html>
