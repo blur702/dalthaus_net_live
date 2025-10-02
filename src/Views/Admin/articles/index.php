@@ -60,21 +60,21 @@
         <?php if (!empty($articles)): ?>
         <!-- Articles Table -->
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
+            <table class="min-w-full table-fixed divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Article</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        <th class="w-2/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Article</th>
+                        <th class="w-1/12 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="w-1/12 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order</th>
+                        <th class="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                        <th class="w-1/4 px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     <?php foreach ($articles as $article): ?>
                     <tr class="hover:bg-gray-50">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="flex items-center">
+                        <td class="px-6 py-4">
+                            <div class="flex items-start">
                                 <div class="flex-shrink-0 w-10 h-10">
                                     <div class="w-10 h-10 bg-blue-100 rounded flex items-center justify-center">
                                         <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -82,12 +82,12 @@
                                         </svg>
                                     </div>
                                 </div>
-                                <div class="ml-4">
-                                    <div class="text-sm font-medium text-gray-900">
+                                <div class="ml-4 min-w-0 flex-1">
+                                    <div class="text-sm font-medium text-gray-900 break-words">
                                         <?= $this->escape($article['title']) ?>
                                     </div>
                                     <?php if ($article['teaser']): ?>
-                                    <div class="text-sm text-gray-500">
+                                    <div class="text-sm text-gray-500 break-words">
                                         <?= $this->escape(substr(strip_tags($article['teaser']), 0, 60)) ?>...
                                     </div>
                                     <?php endif; ?>
@@ -105,14 +105,14 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             <?= date('M j, Y', strtotime($article['created_at'])) ?>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <div class="flex items-center justify-end space-x-2">
-                                <a href="/admin/content/<?= $article['content_id'] ?>/edit" class="text-blue-600 hover:text-blue-900">Edit</a>
-                                <a href="/articles/<?= $article['url_alias'] ?>" target="_blank" class="text-green-600 hover:text-green-900">View</a>
+                        <td class="px-6 py-4 text-right text-sm font-medium">
+                            <div class="flex items-center justify-end space-x-3 min-w-max">
+                                <a href="/admin/content/<?= $article['content_id'] ?>/edit" class="text-blue-600 hover:text-blue-900 whitespace-nowrap">Edit</a>
+                                <a href="/articles/<?= $article['url_alias'] ?>" target="_blank" class="text-green-600 hover:text-green-900 whitespace-nowrap">View</a>
                                 <form method="POST" action="/admin/content/<?= $article['content_id'] ?>/delete" class="inline"
                                       onsubmit="return confirm('Are you sure you want to delete this article?')">
                                     <input type="hidden" name="_token" value="<?= $csrf_token ?>">
-                                    <button type="submit" class="text-red-600 hover:text-red-900">Delete</button>
+                                    <button type="submit" class="text-red-600 hover:text-red-900 whitespace-nowrap">Delete</button>
                                 </form>
                             </div>
                         </td>
