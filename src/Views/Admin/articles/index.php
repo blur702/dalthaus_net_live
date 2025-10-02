@@ -108,7 +108,7 @@
                         <td class="px-6 py-4 text-right text-sm font-medium">
                             <div class="flex items-center justify-end space-x-3 min-w-max">
                                 <a href="/admin/content/<?= $article['content_id'] ?>/edit" class="text-blue-600 hover:text-blue-900 whitespace-nowrap">Edit</a>
-                                <a href="/articles/<?= $article['url_alias'] ?>" target="_blank" class="text-green-600 hover:text-green-900 whitespace-nowrap">View</a>
+                                <a href="/article/<?= $article['url_alias'] ?>" target="_blank" class="text-green-600 hover:text-green-900 whitespace-nowrap">View</a>
                                 <form method="POST" action="/admin/content/<?= $article['content_id'] ?>/delete" class="inline"
                                       onsubmit="return confirm('Are you sure you want to delete this article?')">
                                     <input type="hidden" name="_token" value="<?= $csrf_token ?>">
