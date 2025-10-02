@@ -97,7 +97,7 @@
                             <a href="/admin/content/<?= $article['content_id'] ?>/edit" class="text-blue-600 hover:text-blue-900 text-sm">
                                 Edit
                             </a>
-                            <a href="/articles/<?= $article['url_alias'] ?>" target="_blank" class="text-green-600 hover:text-green-900 text-sm">
+                            <a href="/article/<?= $article['url_alias'] ?>" target="_blank" class="text-green-600 hover:text-green-900 text-sm">
                                 View
                             </a>
                         </div>

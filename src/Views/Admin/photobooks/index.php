@@ -112,7 +112,7 @@
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <div class="flex items-center justify-end space-x-2">
                                 <a href="/admin/content/<?= $photobook['content_id'] ?>/edit" class="text-blue-600 hover:text-blue-900">Edit</a>
-                                <a href="/photobooks/<?= $photobook['url_alias'] ?>" target="_blank" class="text-green-600 hover:text-green-900">View</a>
+                                <a href="/photobook/<?= $photobook['url_alias'] ?>" target="_blank" class="text-green-600 hover:text-green-900">View</a>
                                 <form method="POST" action="/admin/content/<?= $photobook['content_id'] ?>/delete" class="inline"
                                       onsubmit="return confirm('Are you sure you want to delete this photobook?')">
                                     <input type="hidden" name="_token" value="<?= $csrf_token ?>">
