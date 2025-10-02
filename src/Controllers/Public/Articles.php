@@ -88,6 +88,11 @@ class Articles extends BaseController
         // Get author information
         $author = $article->getAuthor();
 
+        // Check if user can edit this content
+        $canEdit = $this->isAuthenticated() && 
+                   isset($_SESSION['is_admin']) && 
+                   $_SESSION['is_admin'];
+
         // Render article template
         $this->render('articles/show', [
             'article' => $article,
@@ -95,6 +100,7 @@ class Articles extends BaseController
             'current_page' => $currentPage,
             'total_pages' => count($contentPages),
             'author' => $author,
+            'can_edit' => $canEdit,
             'page_title' => $article->getAttribute('title'),
             'meta_description' => $article->getAttribute('meta_description'),
             'meta_keywords' => $article->getAttribute('meta_keywords')

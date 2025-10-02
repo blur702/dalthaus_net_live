@@ -88,6 +88,11 @@ class Photobooks extends BaseController
         // Get author information
         $author = $photobook->getAuthor();
 
+        // Check if user can edit this content
+        $canEdit = $this->isAuthenticated() && 
+                   isset($_SESSION['is_admin']) && 
+                   $_SESSION['is_admin'];
+
         // Render photobook template
         $this->render('photobooks/show', [
             'photobook' => $photobook,
@@ -95,6 +100,7 @@ class Photobooks extends BaseController
             'current_page' => $currentPage,
             'total_pages' => count($contentPages),
             'author' => $author,
+            'can_edit' => $canEdit,
             'page_title' => $photobook->getAttribute('title'),
             'meta_description' => $photobook->getAttribute('meta_description'),
             'meta_keywords' => $photobook->getAttribute('meta_keywords')
