@@ -64,20 +64,20 @@
   },
   "suites": [
     {
-      "title": "debug-raw-article-data.spec.js",
-      "file": "debug-raw-article-data.spec.js",
+      "title": "test-corrected-dual-image-modal.spec.js",
+      "file": "test-corrected-dual-image-modal.spec.js",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "Debug Raw Article Data",
-          "file": "debug-raw-article-data.spec.js",
+          "title": "Corrected Dual Image Modal System Test",
+          "file": "test-corrected-dual-image-modal.spec.js",
           "line": 3,
           "column": 6,
           "specs": [
             {
-              "title": "Extract raw article data from page to see url_alias values",
+              "title": "Should only add modal functionality to images with data-modal-src attribute",
               "ok": true,
               "tags": [],
               "tests": [
@@ -92,121 +92,25 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 5022,
+                      "duration": 4979,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "\n=== PAGE SCRIPT ANALYSIS ===\n"
+                          "text": "Image Analysis Results: {\n  \"totalImages\": 0,\n  \"imagesWithModalSrc\": 0,\n  \"imagesWithModalEnabled\": 0,\n  \"modalSrcImages\": [],\n  \"regularImages\": []\n}\n"
                         },
                         {
-                          "text": "Total scripts found: 5\n"
-                        },
-                        {
-                          "text": "Scripts containing \"article\": 0\n"
-                        },
-                        {
-                          "text": "\n=== RAW HTML ANALYSIS ===\n"
-                        },
-                        {
-                          "text": "\nRow 1 HTML:\n"
-                        },
-                        {
-                          "text": "\n                        <td class=\"px-6 py-4\">\n                            <div class=\"flex items-start\">\n                                <div class=\"flex-shrink-0 w-10 h-10\">\n                                    <div class=\"w-10 h-10 bg-blue-100 rounded flex items-center justify-center\">\n                                        <svg class=\"w-5 h-5 text-blue-600\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\">\n                                            <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z\"></path>\n                                        </svg>\n                                    </div>\n                                </div>\n                                <div class=\"ml-4 min-w-0 flex-1\">\n                                    <div class=\"text-sm font-medium text-gray-900 break-words\">\n                                        How I Learned To Stop Worrying – Protecting Your Work From AI                                    </div>\n                                                                        <div class=\"text-sm text-gray-500 break-words\">\n                                        As much as the misinformation is to the contrary, AI is not ...\n                                    </div>\n                                                                    </div>\n                            </div>\n                        </td>\n                        <td class=\"px-6 py-4 whitespace-nowrap\">\n                            <span class=\"inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800\">\n                                Published                            </span>\n                        </td>\n                        <td class=\"px-6 py-4 whitespace-nowrap text-sm text-gray-500\">\n                            #16                        </td>\n                        <td class=\"px-6 py-4 whitespace-nowrap text-sm text-gray-500\">\n                            Sep 27, 2025                        </td>\n                        <td class=\"px-6 py-4 text-right text-sm font-medium\">\n                            <div class=\"flex items-center justify-end space-x-3 min-w-max\">\n                                <a href=\"/admin/content/30/edit\" class=\"text-blue-600 hover:text-blue-900 whitespace-nowrap\">Edit</a>\n                                <a href=\"/articles/how-i-learned-to-stop-worrying-protecting-your-work-form-ai\" target=\"_blank\" class=\"text-green-600 hover:text-green-900 whitespace-nowrap\">View</a>\n                                <form method=\"POST\" action=\"/admin/content/30/delete\" class=\"inline\" onsubmit=\"return confirm('Are you sure you want to delete this article?')\">\n                                    <input type=\"hidden\" name=\"_token\" value=\"f98f32f554155c1b6bca980cbd2ed1142ea3ec8631f4a43b1fba8246451a3e9b\">\n                                    <button type=\"submit\" class=\"text-red-600 hover:text-red-900 whitespace-nowrap\">Delete</button>\n                                </form>\n                            </div>\n                        </td>\n                    \n"
-                        },
-                        {
-                          "text": "  Extracted View href: \"/articles/how-i-learned-to-stop-worrying-protecting-your-work-form-ai\"\n"
-                        },
-                        {
-                          "text": "\nRow 2 HTML:\n"
-                        },
-                        {
-                          "text": "\n                        <td class=\"px-6 py-4\">\n                            <div class=\"flex items-start\">\n                                <div class=\"flex-shrink-0 w-10 h-10\">\n                                    <div class=\"w-10 h-10 bg-blue-100 rounded flex items-center justify-center\">\n                                        <svg class=\"w-5 h-5 text-blue-600\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\">\n                                            <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z\"></path>\n                                        </svg>\n                                    </div>\n                                </div>\n                                <div class=\"ml-4 min-w-0 flex-1\">\n                                    <div class=\"text-sm font-medium text-gray-900 break-words\">\n                                        How I Learned To Stop Worrying – Understanding AI Imaging                                    </div>\n                                                                        <div class=\"text-sm text-gray-500 break-words\">\n                                        As much as the misinformation is to the contrary, AI is not ...\n                                    </div>\n                                                                    </div>\n                            </div>\n                        </td>\n                        <td class=\"px-6 py-4 whitespace-nowrap\">\n                            <span class=\"inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800\">\n                                Published                            </span>\n                        </td>\n                        <td class=\"px-6 py-4 whitespace-nowrap text-sm text-gray-500\">\n                            #15                        </td>\n                        <td class=\"px-6 py-4 whitespace-nowrap text-sm text-gray-500\">\n                            Sep 27, 2025                        </td>\n                        <td class=\"px-6 py-4 text-right text-sm font-medium\">\n                            <div class=\"flex items-center justify-end space-x-3 min-w-max\">\n                                <a href=\"/admin/content/29/edit\" class=\"text-blue-600 hover:text-blue-900 whitespace-nowrap\">Edit</a>\n                                <a href=\"/articles/how-i-learned-to-stop-worrying-understanding-ai-imaging\" target=\"_blank\" class=\"text-green-600 hover:text-green-900 whitespace-nowrap\">View</a>\n                                <form method=\"POST\" action=\"/admin/content/29/delete\" class=\"inline\" onsubmit=\"return confirm('Are you sure you want to delete this article?')\">\n                                    <input type=\"hidden\" name=\"_token\" value=\"f98f32f554155c1b6bca980cbd2ed1142ea3ec8631f4a43b1fba8246451a3e9b\">\n                                    <button type=\"submit\" class=\"text-red-600 hover:text-red-900 whitespace-nowrap\">Delete</button>\n                                </form>\n                            </div>\n                        </td>\n                    \n"
-                        },
-                        {
-                          "text": "  Extracted View href: \"/articles/how-i-learned-to-stop-worrying-understanding-ai-imaging\"\n"
-                        },
-                        {
-                          "text": "\nRow 3 HTML:\n"
-                        },
-                        {
-                          "text": "\n                        <td class=\"px-6 py-4\">\n                            <div class=\"flex items-start\">\n                                <div class=\"flex-shrink-0 w-10 h-10\">\n                                    <div class=\"w-10 h-10 bg-blue-100 rounded flex items-center justify-center\">\n                                        <svg class=\"w-5 h-5 text-blue-600\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\">\n                                            <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z\"></path>\n                                        </svg>\n                                    </div>\n                                </div>\n                                <div class=\"ml-4 min-w-0 flex-1\">\n                                    <div class=\"text-sm font-medium text-gray-900 break-words\">\n                                        Backgrounder – Smartphone Camera Image Signal Processing / Neural Engine Processing – Apple iPhone 15/16 Pro /Pro Max, Google 8 / 9 Pro / Pro XL                                    </div>\n                                                                        <div class=\"text-sm text-gray-500 break-words\">\n                                        This backgrounder is based on the Apple and Google smartphon...\n                                    </div>\n                                                                    </div>\n                            </div>\n                        </td>\n                        <td class=\"px-6 py-4 whitespace-nowrap\">\n                            <span class=\"inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800\">\n                                Published                            </span>\n                        </td>\n                        <td class=\"px-6 py-4 whitespace-nowrap text-sm text-gray-500\">\n                            #14                        </td>\n                        <td class=\"px-6 py-4 whitespace-nowrap text-sm text-gray-500\">\n                            Sep 26, 2025                        </td>\n                        <td class=\"px-6 py-4 text-right text-sm font-medium\">\n                            <div class=\"flex items-center justify-end space-x-3 min-w-max\">\n                                <a href=\"/admin/content/28/edit\" class=\"text-blue-600 hover:text-blue-900 whitespace-nowrap\">Edit</a>\n                                <a href=\"/articles/backgrounder-smartphone-camera-image-signal-processing-neural-engine-processing-apple-iphone-15-16-p\" target=\"_blank\" class=\"text-green-600 hover:text-green-900 whitespace-nowrap\">View</a>\n                                <form method=\"POST\" action=\"/admin/content/28/delete\" class=\"inline\" onsubmit=\"return confirm('Are you sure you want to delete this article?')\">\n                                    <input type=\"hidden\" name=\"_token\" value=\"f98f32f554155c1b6bca980cbd2ed1142ea3ec8631f4a43b1fba8246451a3e9b\">\n                                    <button type=\"submit\" class=\"text-red-600 hover:text-red-900 whitespace-nowrap\">Delete</button>\n                                </form>\n                            </div>\n                        </td>\n                    \n"
-                        },
-                        {
-                          "text": "  Extracted View href: \"/articles/backgrounder-smartphone-camera-image-signal-processing-neural-engine-processing-apple-iphone-15-16-p\"\n"
-                        },
-                        {
-                          "text": "\n=== DETAILED DOM INSPECTION ===\n"
-                        },
-                        {
-                          "text": "\nView Link 1:\n"
-                        },
-                        {
-                          "text": "  href property: \"https://dalthaus.net/articles/how-i-learned-to-stop-worrying-protecting-your-work-form-ai\"\n"
-                        },
-                        {
-                          "text": "  getAttribute('href'): \"/articles/how-i-learned-to-stop-worrying-protecting-your-work-form-ai\"\n"
-                        },
-                        {
-                          "text": "  Full element: <a href=\"/articles/how-i-learned-to-stop-worrying-protecting-your-work-form-ai\" target=\"_blank\" class=\"text-green-600 hover:text-green-900 whitespace-nowrap\">View</a>\n"
-                        },
-                        {
-                          "text": "\nView Link 2:\n"
-                        },
-                        {
-                          "text": "  href property: \"https://dalthaus.net/articles/how-i-learned-to-stop-worrying-understanding-ai-imaging\"\n"
-                        },
-                        {
-                          "text": "  getAttribute('href'): \"/articles/how-i-learned-to-stop-worrying-understanding-ai-imaging\"\n"
-                        },
-                        {
-                          "text": "  Full element: <a href=\"/articles/how-i-learned-to-stop-worrying-understanding-ai-imaging\" target=\"_blank\" class=\"text-green-600 hover:text-green-900 whitespace-nowrap\">View</a>\n"
-                        },
-                        {
-                          "text": "\nView Link 3:\n"
-                        },
-                        {
-                          "text": "  href property: \"https://dalthaus.net/articles/backgrounder-smartphone-camera-image-signal-processing-neural-engine-processing-apple-iphone-15-16-p\"\n"
-                        },
-                        {
-                          "text": "  getAttribute('href'): \"/articles/backgrounder-smartphone-camera-image-signal-processing-neural-engine-processing-apple-iphone-15-16-p\"\n"
-                        },
-                        {
-                          "text": "  Full element: <a href=\"/articles/backgrounder-smartphone-camera-image-signal-processing-neural-engine-processing-apple-iphone-15-16-p\" target=\"_blank\" class=\"text-green-600 hover:text-green-900 whitespace-nowrap\">View</a>\n"
-                        },
-                        {
-                          "text": "\nView Link 4:\n"
-                        },
-                        {
-                          "text": "  href property: \"https://dalthaus.net/articles/how-smartphone-cameras-are-redefining-photography\"\n"
-                        },
-                        {
-                          "text": "  getAttribute('href'): \"/articles/how-smartphone-cameras-are-redefining-photography\"\n"
-                        },
-                        {
-                          "text": "  Full element: <a href=\"/articles/how-smartphone-cameras-are-redefining-photography\" target=\"_blank\" class=\"text-green-600 hover:text-green-900 whitespace-nowrap\">View</a>\n"
-                        },
-                        {
-                          "text": "\nView Link 5:\n"
-                        },
-                        {
-                          "text": "  href property: \"https://dalthaus.net/articles/photography-s-new-paradigm\"\n"
-                        },
-                        {
-                          "text": "  getAttribute('href'): \"/articles/photography-s-new-paradigm\"\n"
-                        },
-                        {
-                          "text": "  Full element: <a href=\"/articles/photography-s-new-paradigm\" target=\"_blank\" class=\"text-green-600 hover:text-green-900 whitespace-nowrap\">View</a>\n"
+                          "text": "ℹ No images with data-modal-src found on this page\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-10-02T01:03:07.751Z",
+                      "startTime": "2025-10-02T22:51:29.290Z",
                       "annotations": [],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/results/debug-raw-article-data-Deb-70e44-age-to-see-url-alias-values-diagnosis/test-finished-1.png"
+                          "path": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/results/test-corrected-dual-image--7cd45-th-data-modal-src-attribute-diagnosis/test-finished-1.png"
                         }
                       ]
                     }
@@ -214,10 +118,195 @@
                   "status": "expected"
                 }
               ],
-              "id": "5ee78ef777a5df384d1e-09d008965f3b83ca03c4",
-              "file": "debug-raw-article-data.spec.js",
-              "line": 4,
-              "column": 7
+              "id": "9361f34cb2580b129faa-49b3b31fa9b4d31585c6",
+              "file": "test-corrected-dual-image-modal.spec.js",
+              "line": 5,
+              "column": 3
+            },
+            {
+              "title": "Test dual image modal button in admin TinyMCE editor",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "diagnosis",
+                  "projectName": "diagnosis",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8229,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "Dual image button exists in TinyMCE: \u001b[33mfalse\u001b[39m\n"
+                        },
+                        {
+                          "text": "⚠ Dual image button not found in TinyMCE toolbar\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-10-02T22:51:35.349Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/results/test-corrected-dual-image--f728b-ton-in-admin-TinyMCE-editor-diagnosis/test-finished-1.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9361f34cb2580b129faa-2643c6efcd81df1ea83f",
+              "file": "test-corrected-dual-image-modal.spec.js",
+              "line": 81,
+              "column": 3
+            },
+            {
+              "title": "Verify modal opens with correct image when data-modal-src is used",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "diagnosis",
+                  "projectName": "diagnosis",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3820,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "ℹ No images with data-modal-src found on this page\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-10-02T22:51:43.590Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/results/test-corrected-dual-image--05740-when-data-modal-src-is-used-diagnosis/test-finished-1.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9361f34cb2580b129faa-b4cfef98907a3cab0aef",
+              "file": "test-corrected-dual-image-modal.spec.js",
+              "line": 180,
+              "column": 3
+            },
+            {
+              "title": "Check that upload controller handles dual image upload correctly",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "diagnosis",
+                  "projectName": "diagnosis",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3700,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "Dual image upload endpoint test: {\n  status: \u001b[33m400\u001b[39m,\n  exists: \u001b[33mtrue\u001b[39m,\n  headers: {\n    \u001b[32m'alt-svc'\u001b[39m: \u001b[32m'h3=\":443\"; ma=86400'\u001b[39m,\n    \u001b[32m'cache-control'\u001b[39m: \u001b[32m'no-store, no-cache, must-revalidate, max-age=0, post-check=0,pre-check=0'\u001b[39m,\n    \u001b[32m'cf-cache-status'\u001b[39m: \u001b[32m'DYNAMIC'\u001b[39m,\n    \u001b[32m'cf-ray'\u001b[39m: \u001b[32m'9887c44e98363892-IAD'\u001b[39m,\n    \u001b[32m'content-length'\u001b[39m: \u001b[32m'37'\u001b[39m,\n    \u001b[32m'content-security-policy'\u001b[39m: \u001b[32m\"default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.tiny.cloud https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.tailwindcss.com https://cdn.tiny.cloud https://cdn.jsdelivr.net; img-src 'self' data: https: blob:; font-src 'self' https://cdnjs.cloudflare.com data:; connect-src 'self' https://cdn.tiny.cloud https://cdn.jsdelivr.net; frame-src 'self' https://cdn.tiny.cloud; frame-ancestors 'none'; base-uri 'self'; form-action 'self';\"\u001b[39m,\n    \u001b[32m'content-type'\u001b[39m: \u001b[32m'application/json; charset=UTF-8'\u001b[39m,\n    date: \u001b[32m'Thu, 02 Oct 2025 22:51:51 GMT'\u001b[39m,\n    expires: \u001b[32m'Sat, 26 Jul 1997 05:00:00 GMT'\u001b[39m,\n    nel: \u001b[32m'{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}'\u001b[39m,\n    \u001b[32m'permissions-policy'\u001b[39m: \u001b[32m'geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), accelerometer=(), gyroscope=()'\u001b[39m,\n    pragma: \u001b[32m'no-cache'\u001b[39m,\n    \u001b[32m'referrer-policy'\u001b[39m: \u001b[32m'strict-origin-when-cross-origin'\u001b[39m,\n    \u001b[32m'report-to'\u001b[39m: \u001b[32m'{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=LlZ2io%2BA14UZ2035u2keNY%2B8OD5ORWMPm1TlIruJflsJXIlkgelCG6EyjTQ5MAArYqDwoQzC96sQUwzrYjXF81lE2wdNA0HUrIV6xQO4FmJs4e%2FNSJgukQ%3D%3D\"}]}'\u001b[39m,\n    server: \u001b[32m'cloudflare'\u001b[39m,\n    \u001b[32m'strict-transport-security'\u001b[39m: \u001b[32m'max-age=63072000; includeSubDomains'\u001b[39m,\n    \u001b[32m'x-content-type-options'\u001b[39m: \u001b[32m'nosniff'\u001b[39m,\n    \u001b[32m'x-frame-options'\u001b[39m: \u001b[32m'SAMEORIGIN'\u001b[39m,\n    \u001b[32m'x-turbo-charged-by'\u001b[39m: \u001b[32m'LiteSpeed'\u001b[39m,\n    \u001b[32m'x-xss-protection'\u001b[39m: \u001b[32m'1; mode=block'\u001b[39m\n  }\n}\n"
+                        },
+                        {
+                          "text": "✓ Dual image upload endpoint exists and is accessible\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-10-02T22:51:47.428Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/results/test-corrected-dual-image--d558e-dual-image-upload-correctly-diagnosis/test-finished-1.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9361f34cb2580b129faa-2c60101ddb0b4822fb59",
+              "file": "test-corrected-dual-image-modal.spec.js",
+              "line": 263,
+              "column": 3
+            },
+            {
+              "title": "Verify JavaScript console shows correct processing for dual images",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "diagnosis",
+                  "projectName": "diagnosis",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4927,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "Modal-related console messages: []\n"
+                        },
+                        {
+                          "text": "ℹ No modal processing messages found (might indicate no dual images on page)\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-10-02T22:51:51.145Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/results/test-corrected-dual-image--99b4f--processing-for-dual-images-diagnosis/test-finished-1.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9361f34cb2580b129faa-3dd982aaf0357a67953f",
+              "file": "test-corrected-dual-image-modal.spec.js",
+              "line": 305,
+              "column": 3
             }
           ]
         }
@@ -226,9 +315,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-10-02T01:03:06.692Z",
-    "duration": 7378.826,
-    "expected": 1,
+    "startTime": "2025-10-02T22:51:28.504Z",
+    "duration": 27977.058,
+    "expected": 5,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

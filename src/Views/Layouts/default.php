@@ -320,6 +320,123 @@
             opacity: 0.8;
             transform: scale(1.02);
         }
+
+        /* Dual Image Dialog Styles */
+        .dual-image-dialog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dual-image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .dual-image-content {
+            position: relative;
+            background: white;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .dual-image-header {
+            padding: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dual-image-header h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6b7280;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            color: #374151;
+        }
+
+        .dual-image-body {
+            padding: 20px;
+        }
+
+        .dual-image-body .form-group {
+            margin-bottom: 16px;
+        }
+
+        .dual-image-body label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .dual-image-body input[type="file"],
+        .dual-image-body input[type="text"],
+        .dual-image-body input[type="number"] {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .dual-image-body small {
+            display: block;
+            margin-top: 4px;
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        .dual-image-body button[type="submit"] {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .dual-image-body button[type="submit"]:hover {
+            background: #2563eb;
+        }
+
+        .dual-image-body button[type="submit"]:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
@@ -502,16 +619,16 @@
             }, 2000);
         });
 
-        // Global function to add modal functionality to content images
+        // Global function to add modal functionality to content images with data-modal-src
         window.addModalToContentImages = function() {
-            // Select images in content areas (articles and photobooks)
+            // Select images in content areas that have data-modal-src attribute
             const contentSelectors = [
-                '.content-text img',
-                '.prose img', 
-                'article img',
-                '.photobook-content img',
-                '.article-content img',
-                'main img' // Add main img as fallback
+                '.content-text img[data-modal-src]',
+                '.prose img[data-modal-src]', 
+                'article img[data-modal-src]',
+                '.photobook-content img[data-modal-src]',
+                '.article-content img[data-modal-src]',
+                'main img[data-modal-src]' // Add main img as fallback
             ];
             
             contentSelectors.forEach(function(selector) {
@@ -522,34 +639,33 @@
                         return;
                     }
                     
+                    // Get the modal image source from data attribute
+                    const modalSrc = img.getAttribute('data-modal-src');
+                    if (!modalSrc) {
+                        return; // No modal image specified, skip this image
+                    }
+                    
                     // Wait for image to load if not already loaded
                     function processImage() {
-                        // Only add modal to images that are not tiny (likely not decorative)
-                        const width = img.naturalWidth || img.width;
-                        const height = img.naturalHeight || img.height;
+                        // Mark as having modal functionality
+                        img.setAttribute('data-modal-enabled', 'true');
                         
-                        if (width > 100 && height > 50) {
-                            // Mark as having modal functionality
-                            img.setAttribute('data-modal-enabled', 'true');
-                            
-                            // Add cursor pointer style
-                            img.style.cursor = 'pointer';
-                            
-                            // Add click event listener
-                            img.addEventListener('click', function(e) {
-                                e.preventDefault();
-                                const src = this.src;
-                                const alt = this.alt || 'Image';
-                                openImageModal(src, alt);
-                            });
-                            
-                            // Add hover effect class if not already present
-                            if (!img.classList.contains('modal-image')) {
-                                img.classList.add('modal-image');
-                            }
-                            
-                            console.log('Modal functionality added to image:', src.substring(src.lastIndexOf('/') + 1));
+                        // Add cursor pointer style
+                        img.style.cursor = 'pointer';
+                        
+                        // Add click event listener using the modal image source
+                        img.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            const alt = this.alt || 'Image';
+                            openImageModal(modalSrc, alt);
+                        });
+                        
+                        // Add hover effect class if not already present
+                        if (!img.classList.contains('modal-image')) {
+                            img.classList.add('modal-image');
                         }
+                        
+                        console.log('Modal functionality added to image with data-modal-src:', modalSrc.substring(modalSrc.lastIndexOf('/') + 1));
                     }
                     
                     // If image is already loaded, process immediately

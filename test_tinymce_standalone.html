@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TinyMCE Dual Image Button Test</title>
+    
+    <!-- Custom element protection BEFORE loading TinyMCE -->
+    <script>
+        (function() {
+            // Store the original customElements.define method
+            const originalDefine = window.customElements?.define;
+            if (!originalDefine) return;
+            
+            // Keep track of defined elements
+            const definedElements = new Set();
+            
+            // Override customElements.define to prevent redefinition
+            window.customElements.define = function(name, constructor, options) {
+                // Check if element is already defined
+                if (window.customElements.get(name) || definedElements.has(name)) {
+                    console.warn(`Custom element '${name}' already defined, skipping redefinition`);
+                    return;
+                }
+                
+                try {
+                    // Call original define method
+                    originalDefine.call(window.customElements, name, constructor, options);
+                    definedElements.add(name);
+                } catch (e) {
+                    console.warn(`Failed to define custom element '${name}':`, e.message);
+                }
+            };
+        })();
+    </script>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-status {
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        /* Dual Image Dialog Styles */
+        .dual-image-dialog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dual-image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .dual-image-content {
+            position: relative;
+            background: white;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .dual-image-header {
+            padding: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dual-image-header h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6b7280;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            color: #374151;
+        }
+
+        .dual-image-body {
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .form-group input[type="file"] {
+            border: 2px dashed #ddd;
+            background: #f9f9f9;
+        }
+
+        .form-group small {
+            color: #666;
+            font-size: 12px;
+        }
+
+        button[type="submit"] {
+            background: #007cba;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background: #005a87;
+        }
+
+        button[type="submit"]:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <h1>TinyMCE Dual Image Button Test</h1>
+    
+    <div id="test-results"></div>
+    
+    <h2>TinyMCE Editor</h2>
+    <textarea id="body" placeholder="This textarea will be replaced with TinyMCE...">
+        <p>Test content for TinyMCE editor.</p>
+        <p>Click the dual image button in the toolbar to test the functionality.</p>
+    </textarea>
+    
+    <h2>Test Console</h2>
+    <div id="console-output" style="background: #f5f5f5; padding: 10px; border: 1px solid #ddd; height: 200px; overflow-y: auto; font-family: monospace; font-size: 12px;"></div>
+    
+    <!-- Load TinyMCE from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js" referrerpolicy="origin"></script>
+    
+    <!-- Load our TinyMCE configuration -->
+    <script src="/assets/js/tinymce-single.js"></script>
+    
+    <script>
+        // Custom console to capture output
+        const consoleOutput = document.getElementById('console-output');
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        function addToConsole(message, type = 'log') {
+            const timestamp = new Date().toLocaleTimeString();
+            const div = document.createElement('div');
+            div.style.color = type === 'error' ? 'red' : type === 'warn' ? 'orange' : 'black';
+            div.textContent = `[${timestamp}] ${message}`;
+            consoleOutput.appendChild(div);
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addToConsole(args.join(' '), 'log');
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addToConsole(args.join(' '), 'error');
+        };
+        
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            addToConsole(args.join(' '), 'warn');
+        };
+        
+        // Test function to check dual image button
+        function runTests() {
+            const results = document.getElementById('test-results');
+            
+            // Test 1: Check if TinyMCE is loaded
+            setTimeout(() => {
+                let html = '<h3>Test Results:</h3>';
+                
+                if (typeof tinymce !== 'undefined') {
+                    html += '<div class="test-status success">✅ TinyMCE is loaded</div>';
+                    
+                    const editor = tinymce.get('body');
+                    if (editor) {
+                        html += '<div class="test-status success">✅ TinyMCE editor initialized</div>';
+                        
+                        // Test 2: Check if dual image button is registered
+                        const buttons = editor.ui.registry.getAll().buttons;
+                        if (buttons.dualimage) {
+                            html += '<div class="test-status success">✅ Dual image button is registered</div>';
+                        } else {
+                            html += '<div class="test-status error">❌ Dual image button is NOT registered</div>';
+                            html += '<div class="test-status info">Available buttons: ' + Object.keys(buttons).join(', ') + '</div>';
+                        }
+                        
+                        // Test 3: Check if button appears in toolbar
+                        setTimeout(() => {
+                            const toolbar = editor.getContainer().querySelector('.tox-toolbar');
+                            if (toolbar) {
+                                const buttons = toolbar.querySelectorAll('button');
+                                const dualImageButton = Array.from(buttons).find(btn => 
+                                    (btn.title && btn.title.includes('Insert image with modal view')) ||
+                                    (btn.textContent && btn.textContent.includes('🖼️📱'))
+                                );
+                                
+                                if (dualImageButton) {
+                                    html += '<div class="test-status success">✅ Dual image button found in toolbar</div>';
+                                    html += '<div class="test-status info">Button text: "' + (dualImageButton.textContent || '') + '"</div>';
+                                    html += '<div class="test-status info">Button title: "' + (dualImageButton.title || '') + '"</div>';
+                                } else {
+                                    html += '<div class="test-status error">❌ Dual image button NOT found in toolbar</div>';
+                                    const buttonTitles = Array.from(buttons).map(btn => btn.title || btn.textContent || 'No title').filter(t => t.trim());
+                                    html += '<div class="test-status info">Available buttons: ' + buttonTitles.join(', ') + '</div>';
+                                }
+                            } else {
+                                html += '<div class="test-status error">❌ TinyMCE toolbar not found</div>';
+                            }
+                            
+                            // Test 4: Check if showDualImageDialog function exists
+                            if (typeof showDualImageDialog === 'function') {
+                                html += '<div class="test-status success">✅ showDualImageDialog function is available</div>';
+                            } else {
+                                html += '<div class="test-status error">❌ showDualImageDialog function is NOT available</div>';
+                            }
+                            
+                            results.innerHTML = html;
+                        }, 1000);
+                        
+                    } else {
+                        html += '<div class="test-status error">❌ TinyMCE editor not initialized</div>';
+                        results.innerHTML = html;
+                    }
+                } else {
+                    html += '<div class="test-status error">❌ TinyMCE is not loaded</div>';
+                    results.innerHTML = html;
+                }
+            }, 3000); // Wait 3 seconds for TinyMCE to fully load
+        }
+        
+        // Run tests when page is loaded
+        window.addEventListener('load', () => {
+            console.log('Page loaded, starting tests...');
+            runTests();
+        });
+        
+        // Also run tests after a delay to ensure TinyMCE is loaded
+        setTimeout(runTests, 5000);
+    </script>
+</body>
+</html>

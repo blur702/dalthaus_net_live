@@ -98,8 +98,121 @@
             image_caption: true,
             image_title: true,
             setup: function(editor) {
+                console.log('TinyMCE setup function called for editor:', editor.id);
+                
+                // Add custom dual image button - using a different approach
+                console.log('About to register dual image button...');
+                
+                try {
+                    editor.ui.registry.addButton('dualimage', {
+                        text: '🖼️📱',
+                        tooltip: 'Insert image with modal view',
+                        onAction: function() {
+                            console.log('Dual image button clicked');
+                            if (typeof showDualImageDialog === 'function') {
+                                showDualImageDialog(editor);
+                            } else {
+                                console.error('showDualImageDialog function not found');
+                                alert('Dual image functionality not available');
+                            }
+                        }
+                    });
+                    console.log('✅ Dual image button registered successfully');
+                } catch (error) {
+                    console.error('❌ Failed to register dual image button:', error);
+                }
+                
+                // Let's also try adding it with a different name to test
+                try {
+                    editor.ui.registry.addButton('testbutton', {
+                        text: '🧪',
+                        tooltip: 'Test button',
+                        onAction: function() {
+                            console.log('Test button clicked');
+                            alert('Test button works!');
+                        }
+                    });
+                    console.log('✅ Test button registered successfully');
+                } catch (error) {
+                    console.error('❌ Failed to register test button:', error);
+                }
+
                 editor.on('init', function() {
                     console.log('TinyMCE editor initialized:', editor.id);
+                    
+                    // Manually add dual image button to toolbar after initialization
+                    setTimeout(() => {
+                        const container = editor.getContainer();
+                        console.log('Editor container found, attempting to add dual image button manually');
+                        
+                        // Try different toolbar selectors
+                        let toolbar = container.querySelector('.tox-toolbar');
+                        if (!toolbar) toolbar = container.querySelector('.tox-toolbar-primary');
+                        if (!toolbar) toolbar = container.querySelector('.mce-toolbar');
+                        if (!toolbar) toolbar = container.querySelector('[role="toolbar"]');
+                        
+                        if (toolbar) {
+                            console.log('✅ Toolbar found, attempting to inject dual image button');
+                            
+                            // Find the image button to insert our button after it
+                            let imageButton = toolbar.querySelector('button[title*="Insert"], button[aria-label*="Insert"]');
+                            if (!imageButton) {
+                                // Try different selectors for the image button
+                                imageButton = toolbar.querySelector('button[title*="Image"], button[aria-label*="Image"]');
+                            }
+                            if (!imageButton) {
+                                // Look for any button that might be the image button by icon or content
+                                const buttons = toolbar.querySelectorAll('button');
+                                imageButton = Array.from(buttons).find(btn => 
+                                    btn.innerHTML.includes('image') || 
+                                    btn.innerHTML.includes('Image') ||
+                                    btn.title.toLowerCase().includes('image') ||
+                                    btn.getAttribute('aria-label')?.toLowerCase().includes('image')
+                                );
+                            }
+                            if (!imageButton && toolbar.querySelectorAll('button').length > 5) {
+                                // Fallback: just use any button in the middle of the toolbar
+                                const buttons = toolbar.querySelectorAll('button');
+                                imageButton = buttons[Math.floor(buttons.length / 2)];
+                                console.log('Using fallback button position');
+                            }
+                            
+                            if (imageButton) {
+                                console.log('Found image button, creating dual image button');
+                                
+                                // Create the dual image button manually
+                                const dualImageBtn = document.createElement('button');
+                                dualImageBtn.type = 'button';
+                                dualImageBtn.textContent = '🖼️📱';
+                                dualImageBtn.title = 'Insert image with modal view';
+                                dualImageBtn.setAttribute('aria-label', 'Insert image with modal view');
+                                dualImageBtn.className = imageButton.className; // Copy styling from existing button
+                                dualImageBtn.style.marginLeft = '4px';
+                                
+                                // Add click handler
+                                dualImageBtn.addEventListener('click', (e) => {
+                                    e.preventDefault();
+                                    console.log('Manual dual image button clicked');
+                                    if (typeof showDualImageDialog === 'function') {
+                                        showDualImageDialog(editor);
+                                    } else {
+                                        alert('Dual image functionality not available');
+                                    }
+                                });
+                                
+                                // Insert after the image button
+                                imageButton.parentNode.insertBefore(dualImageBtn, imageButton.nextSibling);
+                                console.log('✅ Dual image button manually added to toolbar');
+                                
+                            } else {
+                                console.log('❌ Could not find image button to position dual image button');
+                            }
+                            
+                        } else {
+                            console.log('❌ No toolbar found for manual button injection');
+                            console.log('Container HTML preview:', container.innerHTML.substring(0, 300));
+                        }
+                    }, 1000); // Wait longer for toolbar to fully render
                     
                     // Auto-save on form submit
                     const form = editor.getElement().form;
@@ -129,36 +242,141 @@
                     setTimeout(() => addModalToNewImages(editor), 100);
                 });
 
-                // Function to add modal functionality to images in the editor
+                // Function to add modal functionality to images in the editor that have data-modal-src
                 function addModalToNewImages(editor) {
                     const editorBody = editor.getBody();
                     if (!editorBody) return;
 
-                    const images = editorBody.querySelectorAll('img');
+                    const images = editorBody.querySelectorAll('img[data-modal-src]');
                     images.forEach(function(img) {
                         // Skip if already has modal functionality
                         if (img.hasAttribute('data-modal-enabled') || img.onclick) {
                             return;
                         }
 
-                        // Only add modal to images that are not tiny (likely not decorative)
-                        if (img.width > 100 && img.height > 50) {
-                            // Mark as having modal functionality
-                            img.setAttribute('data-modal-enabled', 'true');
-                            
-                            // Add onclick handler for modal
-                            const src = img.src;
-                            const alt = img.alt || 'Image';
-                            img.setAttribute('onclick', `openImageModal('${src}', '${alt}')`);
-                            
-                            // Add styling
-                            img.style.cursor = 'pointer';
-                            if (!img.classList.contains('modal-image')) {
-                                img.classList.add('modal-image');
-                            }
+                        // Get the modal image source from data attribute
+                        const modalSrc = img.getAttribute('data-modal-src');
+                        if (!modalSrc) {
+                            return; // No modal image specified
+                        }
+
+                        // Mark as having modal functionality
+                        img.setAttribute('data-modal-enabled', 'true');
+                        
+                        // Add onclick handler for modal using the modal image source
+                        const alt = img.alt || 'Image';
+                        img.setAttribute('onclick', `openImageModal('${modalSrc}', '${alt}')`);
+                        
+                        // Add styling
+                        img.style.cursor = 'pointer';
+                        if (!img.classList.contains('modal-image')) {
+                            img.classList.add('modal-image');
                         }
                     });
                 }
+
+                // Global function to show dual image dialog
+                window.showDualImageDialog = function(editor) {
+                    const dialog = document.createElement('div');
+                    dialog.className = 'dual-image-dialog';
+                    dialog.innerHTML = `
+                        <div class="dual-image-overlay" onclick="closeDualImageDialog()"></div>
+                        <div class="dual-image-content">
+                            <div class="dual-image-header">
+                                <h3>Insert Image with Modal View</h3>
+                                <button onclick="closeDualImageDialog()" class="close-btn">&times;</button>
+                            </div>
+                            <div class="dual-image-body">
+                                <form id="dualImageForm" enctype="multipart/form-data">
+                                    <div class="form-group">
+                                        <label for="displayImage">Display Image (shown in content):</label>
+                                        <input type="file" name="display_image" accept="image/*" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="modalImage">Modal Image (shown when clicked, optional):</label>
+                                        <input type="file" name="modal_image" accept="image/*">
+                                        <small>If not provided, display image will be used for modal</small>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="altText">Alt Text:</label>
+                                        <input type="text" id="altText" placeholder="Image description">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="imageWidth">Width (optional):</label>
+                                        <input type="number" id="imageWidth" placeholder="e.g. 600">
+                                    </div>
+                                    <button type="submit">Upload and Insert</button>
+                                </form>
+                            </div>
+                        </div>
+                    `;
+                    
+                    document.body.appendChild(dialog);
+                    
+                    // Handle form submission
+                    document.getElementById('dualImageForm').addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        uploadDualImage(editor);
+                    });
+                };
+
+                // Global function to close dual image dialog
+                window.closeDualImageDialog = function() {
+                    const dialog = document.querySelector('.dual-image-dialog');
+                    if (dialog) {
+                        dialog.remove();
+                    }
+                };
+
+                // Global function to upload dual image
+                window.uploadDualImage = function(editor) {
+                    const form = document.getElementById('dualImageForm');
+                    const formData = new FormData(form);
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.textContent;
+                    
+                    submitBtn.textContent = 'Uploading...';
+                    submitBtn.disabled = true;
+                    
+                    fetch('/admin/upload/dual-image', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success && data.images) {
+                            const displayImage = data.images.display_image;
+                            const modalImage = data.images.modal_image || displayImage;
+                            const altText = document.getElementById('altText').value || '';
+                            const width = document.getElementById('imageWidth').value;
+
+                            // Create unique ID for modal functionality
+                            const imageId = 'img_' + Date.now();
+
+                            // Build image HTML with modal functionality
+                            let imageHtml = `<img src="${displayImage}" alt="${altText}" id="${imageId}" class="clickable-image"`;
+                            if (width) {
+                                imageHtml += ` width="${width}"`;
+                            }
+                            imageHtml += ` data-modal-src="${modalImage}"`;
+                            imageHtml += ` onclick="openImageModal('${modalImage}', '${altText}')" style="cursor: pointer;">`;
+
+                            // Insert into editor
+                            editor.insertContent(imageHtml);
+                            closeDualImageDialog();
+                        } else {
+                            alert('Upload failed: ' + (data.error || 'Unknown error'));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Upload error:', error);
+                        alert('Upload failed: ' + error.message);
+                    })
+                    .finally(() => {
+                        submitBtn.textContent = originalText;
+                        submitBtn.disabled = false;
+                    });
+                };
             }
         };
     }
@@ -186,6 +404,15 @@
             if (typeof tinymce === 'undefined') {
                 state.initInProgress = false;
                 return;
+            }
+            
+            // Register the dual image button globally BEFORE initialization
+            console.log('Registering dual image button globally before init');
+            
+            // Make sure showDualImageDialog is available globally
+            if (typeof window.showDualImageDialog !== 'function') {
+                console.log('Creating global showDualImageDialog function');
+                // We'll define this function after TinyMCE setup
             }
             
             // Check if custom elements are already registered
