@@ -118,6 +118,47 @@
                         });
                     }
                 });
+
+                // Add modal functionality to images when they are inserted
+                editor.on('NodeChange', function(e) {
+                    addModalToNewImages(editor);
+                });
+
+                // Add modal functionality after content is set
+                editor.on('SetContent', function(e) {
+                    setTimeout(() => addModalToNewImages(editor), 100);
+                });
+
+                // Function to add modal functionality to images in the editor
+                function addModalToNewImages(editor) {
+                    const editorBody = editor.getBody();
+                    if (!editorBody) return;
+
+                    const images = editorBody.querySelectorAll('img');
+                    images.forEach(function(img) {
+                        // Skip if already has modal functionality
+                        if (img.hasAttribute('data-modal-enabled') || img.onclick) {
+                            return;
+                        }
+
+                        // Only add modal to images that are not tiny (likely not decorative)
+                        if (img.width > 100 && img.height > 50) {
+                            // Mark as having modal functionality
+                            img.setAttribute('data-modal-enabled', 'true');
+                            
+                            // Add onclick handler for modal
+                            const src = img.src;
+                            const alt = img.alt || 'Image';
+                            img.setAttribute('onclick', `openImageModal('${src}', '${alt}')`);
+                            
+                            // Add styling
+                            img.style.cursor = 'pointer';
+                            if (!img.classList.contains('modal-image')) {
+                                img.classList.add('modal-image');
+                            }
+                        }
+                    });
+                }
             }
         };
     }
