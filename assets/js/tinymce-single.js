@@ -76,7 +76,7 @@
             height: 500,
             menubar: false,
             plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table help wordcount pagebreak',
-            toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | link image | pagebreak code',
+            toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | link image dualimage | pagebreak code',
             pagebreak_separator: '<!-- pagebreak -->',
             images_upload_url: '/admin/upload/tinymce',
             automatic_uploads: true,
@@ -273,6 +273,117 @@
                             img.classList.add('modal-image');
                         }
                     });
+                }
+
+                // Add CSS for dual image dialog
+                if (!document.getElementById('dual-image-styles')) {
+                    const style = document.createElement('style');
+                    style.id = 'dual-image-styles';
+                    style.textContent = `
+                        .dual-image-dialog {
+                            position: fixed;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            z-index: 9999;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                        }
+                        .dual-image-overlay {
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            background: rgba(0, 0, 0, 0.5);
+                            cursor: pointer;
+                        }
+                        .dual-image-content {
+                            position: relative;
+                            background: white;
+                            border-radius: 8px;
+                            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                            max-width: 500px;
+                            width: 90%;
+                            max-height: 90%;
+                            overflow-y: auto;
+                        }
+                        .dual-image-header {
+                            padding: 20px 20px 10px;
+                            border-bottom: 1px solid #eee;
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                        }
+                        .dual-image-header h3 {
+                            margin: 0;
+                            font-size: 18px;
+                            color: #333;
+                        }
+                        .close-btn {
+                            background: none;
+                            border: none;
+                            font-size: 24px;
+                            cursor: pointer;
+                            color: #666;
+                            padding: 0;
+                            width: 30px;
+                            height: 30px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                        }
+                        .close-btn:hover {
+                            color: #333;
+                        }
+                        .dual-image-body {
+                            padding: 20px;
+                        }
+                        .form-group {
+                            margin-bottom: 15px;
+                        }
+                        .form-group label {
+                            display: block;
+                            margin-bottom: 5px;
+                            font-weight: bold;
+                            color: #333;
+                        }
+                        .form-group input[type="file"],
+                        .form-group input[type="text"],
+                        .form-group input[type="number"] {
+                            width: 100%;
+                            padding: 8px 12px;
+                            border: 1px solid #ddd;
+                            border-radius: 4px;
+                            box-sizing: border-box;
+                        }
+                        .form-group small {
+                            display: block;
+                            margin-top: 5px;
+                            color: #666;
+                            font-size: 12px;
+                        }
+                        .dual-image-body button[type="submit"] {
+                            background: #007cba;
+                            color: white;
+                            border: none;
+                            padding: 10px 20px;
+                            border-radius: 4px;
+                            cursor: pointer;
+                            font-size: 14px;
+                            width: 100%;
+                        }
+                        .dual-image-body button[type="submit"]:hover {
+                            background: #005a87;
+                        }
+                        .dual-image-body button[type="submit"]:disabled {
+                            background: #ccc;
+                            cursor: not-allowed;
+                        }
+                    `;
+                    document.head.appendChild(style);
                 }
 
                 // Global function to show dual image dialog
