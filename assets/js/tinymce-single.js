@@ -76,7 +76,7 @@
             height: 500,
             menubar: false,
             plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table help wordcount pagebreak',
-            toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | link image dualimage | pagebreak code',
+            toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | link image dualimage modalimage testbutton | pagebreak code',
             pagebreak_separator: '<!-- pagebreak -->',
             images_upload_url: '/admin/upload/tinymce',
             automatic_uploads: true,
@@ -104,12 +104,16 @@
                 console.log('About to register dual image button...');
                 
                 try {
+                    // Register the dual image button with an icon
                     editor.ui.registry.addButton('dualimage', {
-                        text: '🖼️📱',
+                        text: 'Modal Image',
                         tooltip: 'Insert image with modal view',
+                        icon: 'image',
                         onAction: function() {
                             console.log('Dual image button clicked');
-                            if (typeof showDualImageDialog === 'function') {
+                            if (typeof window.showDualImageDialog === 'function') {
+                                window.showDualImageDialog(editor);
+                            } else if (typeof showDualImageDialog === 'function') {
                                 showDualImageDialog(editor);
                             } else {
                                 console.error('showDualImageDialog function not found');
@@ -122,10 +126,29 @@
                     console.error('❌ Failed to register dual image button:', error);
                 }
                 
+                // Add modalimage button as an alternative
+                try {
+                    editor.ui.registry.addButton('modalimage', {
+                        text: 'Modal Image',
+                        tooltip: 'Insert image with modal view (alternative)',
+                        onAction: function() {
+                            console.log('Modal image button clicked');
+                            if (typeof window.showDualImageDialog === 'function') {
+                                window.showDualImageDialog(editor);
+                            } else {
+                                alert('Modal image functionality not available');
+                            }
+                        }
+                    });
+                    console.log('✅ Modal image button registered successfully');
+                } catch (error) {
+                    console.error('❌ Failed to register modal image button:', error);
+                }
+
                 // Let's also try adding it with a different name to test
                 try {
                     editor.ui.registry.addButton('testbutton', {
-                        text: '🧪',
+                        text: 'TEST',
                         tooltip: 'Test button',
                         onAction: function() {
                             console.log('Test button clicked');
