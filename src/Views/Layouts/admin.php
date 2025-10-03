@@ -440,10 +440,30 @@
         window.openImageModal = function(src, alt) {
             const modal = document.createElement('div');
             modal.className = 'image-modal';
-            modal.innerHTML = `
-                <span class="modal-close" onclick="closeImageModal()">&times;</span>
-                <img src="${src}" alt="${alt || ''}" onclick="event.stopPropagation()">
-            `;
+            
+            // Create close button
+            const closeButton = document.createElement('span');
+            closeButton.className = 'modal-close';
+            closeButton.innerHTML = '&times;';
+            
+            // Create image
+            const image = document.createElement('img');
+            image.src = src;
+            image.alt = alt || '';
+            
+            // Add elements to modal
+            modal.appendChild(closeButton);
+            modal.appendChild(image);
+
+            // Add event listeners with proper scope
+            closeButton.addEventListener('click', function(e) {
+                e.stopPropagation();
+                closeImageModal();
+            });
+
+            image.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
 
             // Close modal when clicking on overlay
             modal.addEventListener('click', function(e) {
