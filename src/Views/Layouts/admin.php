@@ -51,6 +51,7 @@
     </script>
     
     <script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="/assets/js/tinymce-single.js"></script>
     
     <style>
         body { background-color: #f8f9fa; }
