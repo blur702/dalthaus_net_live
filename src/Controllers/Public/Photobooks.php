@@ -36,6 +36,19 @@ class Photobooks extends BaseController
      */
     public function index(): void
     {
+        // Handle database unavailable in development mode
+        if ($this->db === null) {
+            $this->render('photobooks/index', [
+                'photobooks' => [],
+                'current_page' => 1,
+                'total_pages' => 0,
+                'total_photobooks' => 0,
+                'page_title' => 'Photobooks',
+                'debug_message' => 'Database connection unavailable - showing empty photobooks list'
+            ]);
+            return;
+        }
+
         $page = max(1, (int) $this->getParam('page', 1));
         $itemsPerPage = $this->config['app']['items_per_page'];
         $offset = ($page - 1) * $itemsPerPage;
@@ -69,10 +82,29 @@ class Photobooks extends BaseController
      */
     public function show(string $alias): void
     {
+        // Handle database unavailable in development mode
+        if ($this->db === null) {
+            $this->render('photobooks/show', [
+                'photobook' => null,
+                'content' => '',
+                'current_page' => 1,
+                'total_pages' => 0,
+                'author' => null,
+                'can_edit' => false,
+                'page_title' => 'Photobook: ' . $alias,
+                'debug_message' => 'Database connection unavailable - showing placeholder for photobook: ' . $alias
+            ]);
+            return;
+        }
+
         // Find photobook by alias
         $photobook = Content::findByAlias($alias);
         
         if ($photobook === null || !$photobook->isPhotobook()) {
+            // Prevent Cloudflare from caching 404 responses
+            header('Cache-Control: no-cache, no-store, must-revalidate');
+            header('Pragma: no-cache');
+            header('Expires: 0');
             http_response_code(404);
             $this->render('errors/404', [
                 'page_title' => 'Photobook Not Found'

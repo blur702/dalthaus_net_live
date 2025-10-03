@@ -73,6 +73,10 @@ class Articles extends BaseController
         $article = Content::findByAlias($alias);
         
         if ($article === null || !$article->isArticle()) {
+            // Prevent Cloudflare from caching 404 responses
+            header('Cache-Control: no-cache, no-store, must-revalidate');
+            header('Pragma: no-cache');
+            header('Expires: 0');
             http_response_code(404);
             $this->render('errors/404', [
                 'page_title' => 'Article Not Found'

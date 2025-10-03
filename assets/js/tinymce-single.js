@@ -12,15 +12,46 @@
 (function() {
     'use strict';
     
-    // Global flags to prevent duplicate initialization
+    // Enhanced global state management with debugging
     window.TINYMCE_STATE = window.TINYMCE_STATE || {
         scriptLoaded: false,
         initialized: false,
         initInProgress: false,
-        customElementsRegistered: false
+        customElementsRegistered: false,
+        buttonRegistrationAttempts: 0,
+        lastError: null,
+        debugMode: window.ADMIN_DEBUG || false,
+        cacheBuster: window.CACHE_BUSTER || Date.now()
     };
     
     const state = window.TINYMCE_STATE;
+    
+    // Enhanced logging function
+    function debugLog(message, type = 'info') {
+        const timestamp = new Date().toLocaleTimeString();
+        const prefix = `[TinyMCE ${timestamp}]`;
+        
+        if (state.debugMode) {
+            switch (type) {
+                case 'error':
+                    console.error(prefix, message);
+                    break;
+                case 'warn':
+                    console.warn(prefix, message);
+                    break;
+                case 'success':
+                    console.log(`%c${prefix} ✅ ${message}`, 'color: green; font-weight: bold;');
+                    break;
+                default:
+                    console.log(prefix, message);
+            }
+        }
+        
+        // Store last error for debugging
+        if (type === 'error') {
+            state.lastError = { message, timestamp };
+        }
+    }
     
     function loadTinyMCE() {
         if (state.scriptLoaded) {
@@ -77,6 +108,8 @@
             menubar: false,
             plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table help wordcount pagebreak',
             toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | link image dualimage modalimage testbutton | pagebreak code',
+            // Force all buttons to be visible
+            toolbar_mode: 'floating',
             pagebreak_separator: '<!-- pagebreak -->',
             images_upload_url: '/admin/upload/tinymce',
             automatic_uploads: true,
@@ -98,75 +131,180 @@
             image_caption: true,
             image_title: true,
             setup: function(editor) {
-                console.log('TinyMCE setup function called for editor:', editor.id);
+                debugLog(`TinyMCE setup function called for editor: ${editor.id}`, 'info');
                 
-                // Add custom dual image button - using a different approach
-                console.log('About to register dual image button...');
+                // Enhanced button registration with multiple fallback strategies
+                debugLog('Starting enhanced button registration process...', 'info');
+                state.buttonRegistrationAttempts++;
                 
+                // Strategy 1: Register dual image button with enhanced error handling
                 try {
-                    // Register the dual image button with an icon
                     editor.ui.registry.addButton('dualimage', {
                         text: 'Modal Image',
                         tooltip: 'Insert image with modal view',
                         icon: 'image',
                         onAction: function() {
-                            console.log('Dual image button clicked');
+                            debugLog('Dual image button clicked', 'info');
                             if (typeof window.showDualImageDialog === 'function') {
                                 window.showDualImageDialog(editor);
                             } else if (typeof showDualImageDialog === 'function') {
                                 showDualImageDialog(editor);
                             } else {
-                                console.error('showDualImageDialog function not found');
-                                alert('Dual image functionality not available');
+                                debugLog('showDualImageDialog function not found', 'error');
+                                window.debugTinyMCE && window.debugTinyMCE();
+                                alert('Dual image functionality not available. Please refresh the page.');
                             }
                         }
                     });
-                    console.log('✅ Dual image button registered successfully');
+                    debugLog('Dual image button registered successfully', 'success');
                 } catch (error) {
-                    console.error('❌ Failed to register dual image button:', error);
+                    debugLog('Failed to register dual image button: ' + error.message, 'error');
                 }
                 
-                // Add modalimage button as an alternative
+                // Strategy 2: Register alternative modal image button
                 try {
                     editor.ui.registry.addButton('modalimage', {
-                        text: 'Modal Image',
+                        text: 'Modal',
                         tooltip: 'Insert image with modal view (alternative)',
                         onAction: function() {
-                            console.log('Modal image button clicked');
+                            debugLog('Modal image button clicked', 'info');
                             if (typeof window.showDualImageDialog === 'function') {
                                 window.showDualImageDialog(editor);
                             } else {
-                                alert('Modal image functionality not available');
+                                debugLog('Modal image functionality not available', 'error');
+                                alert('Modal image functionality not available. Please refresh the page.');
                             }
                         }
                     });
-                    console.log('✅ Modal image button registered successfully');
+                    debugLog('Modal image button registered successfully', 'success');
                 } catch (error) {
-                    console.error('❌ Failed to register modal image button:', error);
+                    debugLog('Failed to register modal image button: ' + error.message, 'error');
                 }
 
-                // Let's also try adding it with a different name to test
+                // Strategy 3: Register test/debug button
                 try {
                     editor.ui.registry.addButton('testbutton', {
-                        text: 'TEST',
-                        tooltip: 'Test button',
+                        text: 'DEBUG',
+                        tooltip: 'Debug TinyMCE functionality',
                         onAction: function() {
-                            console.log('Test button clicked');
-                            alert('Test button works!');
+                            debugLog('Debug button clicked', 'info');
+                            // Run comprehensive debug check
+                            window.debugTinyMCE && window.debugTinyMCE();
+                            alert(`TinyMCE Debug Info:\n\nButtons registered: ${state.buttonRegistrationAttempts}\nCache buster: ${state.cacheBuster}\nLast error: ${state.lastError ? state.lastError.message : 'None'}\n\nCheck console for detailed info.`);
                         }
                     });
-                    console.log('✅ Test button registered successfully');
+                    debugLog('Debug button registered successfully', 'success');
                 } catch (error) {
-                    console.error('❌ Failed to register test button:', error);
+                    debugLog('Failed to register debug button: ' + error.message, 'error');
                 }
+                
+                // Strategy 4: Force button visibility check
+                setTimeout(() => {
+                    try {
+                        const registeredButtons = editor.ui.registry.getAll().buttons;
+                        const customButtons = ['dualimage', 'modalimage', 'testbutton'];
+                        let allRegistered = true;
+                        
+                        customButtons.forEach(buttonName => {
+                            if (!registeredButtons[buttonName]) {
+                                allRegistered = false;
+                                debugLog(`Button '${buttonName}' registration failed - attempting re-registration`, 'warn');
+                                
+                                // Attempt re-registration
+                                try {
+                                    if (buttonName === 'dualimage') {
+                                        editor.ui.registry.addButton('dualimage_retry', {
+                                            text: '📸',
+                                            tooltip: 'Insert modal image (retry)',
+                                            onAction: () => window.showDualImageDialog && window.showDualImageDialog(editor)
+                                        });
+                                    }
+                                } catch (retryError) {
+                                    debugLog(`Button retry failed: ${retryError.message}`, 'error');
+                                }
+                            }
+                        });
+                        
+                        if (allRegistered) {
+                            debugLog('All custom buttons registered successfully!', 'success');
+                        }
+                    } catch (checkError) {
+                        debugLog(`Button registration check failed: ${checkError.message}`, 'error');
+                    }
+                }, 500);
 
                 editor.on('init', function() {
-                    console.log('TinyMCE editor initialized:', editor.id);
+                    debugLog(`TinyMCE editor initialized: ${editor.id}`, 'success');
+                    
+                    // Enhanced debug: Check button registration status
+                    const registeredButtons = editor.ui.registry.getAll().buttons;
+                    debugLog(`All registered TinyMCE buttons (${Object.keys(registeredButtons).length}): ${Object.keys(registeredButtons).join(', ')}`, 'info');
+                    
+                    // Enhanced custom button verification
+                    const customButtons = ['dualimage', 'modalimage', 'testbutton', 'dualimage_retry'];
+                    let registeredCount = 0;
+                    
+                    customButtons.forEach(buttonName => {
+                        if (registeredButtons[buttonName]) {
+                            debugLog(`Button '${buttonName}' is registered and available`, 'success');
+                            registeredCount++;
+                        } else {
+                            debugLog(`Button '${buttonName}' is NOT registered`, 'error');
+                        }
+                    });
+                    
+                    // Store registration status for debugging
+                    window.TINYMCE_BUTTON_STATUS = {
+                        total: customButtons.length,
+                        registered: registeredCount,
+                        missing: customButtons.length - registeredCount,
+                        timestamp: new Date().toISOString()
+                    };
+                    
+                    // Enhanced toolbar configuration check
+                    debugLog(`Toolbar configuration: ${editor.settings.toolbar}`, 'info');
+                    
+                    // Validate toolbar contains our buttons
+                    const toolbarConfig = editor.settings.toolbar;
+                    const requiredButtons = ['dualimage', 'modalimage', 'testbutton'];
+                    const missingFromToolbar = requiredButtons.filter(btn => !toolbarConfig.includes(btn));
+                    
+                    if (missingFromToolbar.length > 0) {
+                        debugLog(`Buttons missing from toolbar config: ${missingFromToolbar.join(', ')}`, 'warn');
+                    } else {
+                        debugLog('All custom buttons are included in toolbar configuration', 'success');
+                    }
+                    
+                    // Check if buttons are visible in the UI
+                    setTimeout(() => {
+                        const container = editor.getContainer();
+                        const toolbar = container.querySelector('.tox-toolbar') || container.querySelector('.tox-toolbar-primary');
+                        if (toolbar) {
+                            const allButtons = toolbar.querySelectorAll('button');
+                            debugLog(`Found ${allButtons.length} buttons in toolbar DOM`, 'info');
+                            
+                            // Look for our custom buttons by title or aria-label
+                            customButtons.forEach(buttonName => {
+                                const found = Array.from(allButtons).some(btn => 
+                                    btn.title?.toLowerCase().includes('modal') ||
+                                    btn.title?.toLowerCase().includes('test') ||
+                                    btn.title?.toLowerCase().includes('dual') ||
+                                    btn.getAttribute('aria-label')?.toLowerCase().includes('modal') ||
+                                    btn.getAttribute('aria-label')?.toLowerCase().includes('test') ||
+                                    btn.getAttribute('aria-label')?.toLowerCase().includes('dual')
+                                );
+                                const status = found ? 'YES' : 'NO';
+                                debugLog(`Button '${buttonName}' visible in UI: ${status}`, found ? 'success' : 'error');
+                            });
+                        } else {
+                            debugLog('Could not find TinyMCE toolbar element', 'error');
+                        }
+                    }, 2000); // Wait 2 seconds for UI to fully render
                     
                     // Manually add dual image button to toolbar after initialization
                     setTimeout(() => {
                         const container = editor.getContainer();
-                        console.log('Editor container found, attempting to add dual image button manually');
+                        debugLog('Editor container found, attempting manual button injection', 'info');
                         
                         // Try different toolbar selectors
                         let toolbar = container.querySelector('.tox-toolbar');
@@ -175,7 +313,7 @@
                         if (!toolbar) toolbar = container.querySelector('[role="toolbar"]');
                         
                         if (toolbar) {
-                            console.log('✅ Toolbar found, attempting to inject dual image button');
+                            debugLog('Toolbar found, attempting to inject dual image button', 'info');
                             
                             // Find the image button to insert our button after it
                             let imageButton = toolbar.querySelector('button[title*="Insert"], button[aria-label*="Insert"]');
@@ -197,11 +335,11 @@
                                 // Fallback: just use any button in the middle of the toolbar
                                 const buttons = toolbar.querySelectorAll('button');
                                 imageButton = buttons[Math.floor(buttons.length / 2)];
-                                console.log('Using fallback button position');
+                                debugLog('Using fallback button position for manual injection', 'info');
                             }
                             
                             if (imageButton) {
-                                console.log('Found image button, creating dual image button');
+                                debugLog('Found image button reference, creating manual dual image button', 'info');
                                 
                                 // Create the dual image button manually
                                 const dualImageBtn = document.createElement('button');
@@ -212,28 +350,31 @@
                                 dualImageBtn.className = imageButton.className; // Copy styling from existing button
                                 dualImageBtn.style.marginLeft = '4px';
                                 
-                                // Add click handler
+                                // Add enhanced click handler with debugging
                                 dualImageBtn.addEventListener('click', (e) => {
                                     e.preventDefault();
-                                    console.log('Manual dual image button clicked');
-                                    if (typeof showDualImageDialog === 'function') {
+                                    debugLog('Manual dual image button clicked', 'info');
+                                    if (typeof window.showDualImageDialog === 'function') {
+                                        window.showDualImageDialog(editor);
+                                    } else if (typeof showDualImageDialog === 'function') {
                                         showDualImageDialog(editor);
                                     } else {
-                                        alert('Dual image functionality not available');
+                                        debugLog('Dual image functionality not available via manual button', 'error');
+                                        alert('Dual image functionality not available. Please try refreshing the page.');
                                     }
                                 });
                                 
                                 // Insert after the image button
                                 imageButton.parentNode.insertBefore(dualImageBtn, imageButton.nextSibling);
-                                console.log('✅ Dual image button manually added to toolbar');
+                                debugLog('Dual image button manually added to toolbar', 'success');
                                 
                             } else {
-                                console.log('❌ Could not find image button to position dual image button');
+                                debugLog('Could not find image button to position dual image button', 'error');
                             }
                             
                         } else {
-                            console.log('❌ No toolbar found for manual button injection');
-                            console.log('Container HTML preview:', container.innerHTML.substring(0, 300));
+                            debugLog('No toolbar found for manual button injection', 'error');
+                            debugLog(`Container HTML preview: ${container.innerHTML.substring(0, 300)}`, 'info');
                         }
                     }, 1000); // Wait longer for toolbar to fully render
                     
@@ -518,7 +659,7 @@
     function initTinyMCE() {
         // Skip if already initialized or in progress
         if (state.initialized || state.initInProgress) {
-            console.log('TinyMCE initialization already completed or in progress');
+            debugLog('TinyMCE initialization already completed or in progress', 'info');
             return;
         }
         
@@ -543,10 +684,11 @@
             // Register the dual image button globally BEFORE initialization
             console.log('Registering dual image button globally before init');
             
-            // Make sure showDualImageDialog is available globally
+            // Ensure showDualImageDialog is available globally
             if (typeof window.showDualImageDialog !== 'function') {
-                console.log('Creating global showDualImageDialog function');
-                // We'll define this function after TinyMCE setup
+                debugLog('showDualImageDialog not found globally - this may cause button issues', 'warn');
+            } else {
+                debugLog('showDualImageDialog function is available globally', 'success');
             }
             
             // Check if custom elements are already registered
@@ -556,17 +698,17 @@
             if (customElementsExist && !state.customElementsRegistered) {
                 // Mark that custom elements have been registered
                 state.customElementsRegistered = true;
-                console.log('TinyMCE custom elements detected as already registered');
+                debugLog('TinyMCE custom elements detected as already registered', 'info');
             }
             
             // Remove any existing editor instances
             try {
                 if (tinymce.get().length > 0) {
-                    console.log('Removing existing TinyMCE instances');
+                    debugLog('Removing existing TinyMCE instances', 'info');
                     tinymce.remove();
                 }
             } catch (e) {
-                console.error('Error removing TinyMCE instances:', e);
+                debugLog('Error removing TinyMCE instances: ' + e.message, 'error');
             }
             
             // Initialize TinyMCE
@@ -575,16 +717,16 @@
                     state.initialized = true;
                     state.initInProgress = false;
                     state.customElementsRegistered = true;
-                    console.log('TinyMCE initialization complete');
+                    debugLog('TinyMCE initialization complete', 'success');
                 }).catch(err => {
                     // If we get a custom element error, it means TinyMCE is already loaded
                     // Just mark as initialized and continue
                     if (err.message && err.message.includes('already been defined')) {
                         state.initialized = true;
                         state.customElementsRegistered = true;
-                        console.log('TinyMCE already initialized (custom elements exist)');
+                        debugLog('TinyMCE already initialized (custom elements exist)', 'info');
                     } else {
-                        console.error('TinyMCE initialization error:', err);
+                        debugLog('TinyMCE initialization error: ' + err.message, 'error');
                     }
                     state.initInProgress = false;
                 });
@@ -593,16 +735,113 @@
                 if (err.message && err.message.includes('already been defined')) {
                     state.initialized = true;
                     state.customElementsRegistered = true;
-                    console.log('TinyMCE already initialized (caught sync error)');
+                    debugLog('TinyMCE already initialized (caught sync error)', 'info');
                 } else {
-                    console.error('Failed to initialize TinyMCE:', err);
+                    debugLog('Failed to initialize TinyMCE: ' + err.message, 'error');
                 }
                 state.initInProgress = false;
             }
         }).catch(err => {
-            console.error('Failed to load TinyMCE:', err);
+            debugLog('Failed to load TinyMCE: ' + err.message, 'error');
             state.initInProgress = false;
         });
+    }
+    
+    // Enhanced global debugging function
+    window.debugTinyMCE = function() {
+        console.group('🔍 TinyMCE Comprehensive Debug Report');
+        console.log('Generated at:', new Date().toLocaleString());
+        console.log('Cache buster:', state.cacheBuster);
+        console.log('Button registration attempts:', state.buttonRegistrationAttempts);
+        
+        if (typeof tinymce === 'undefined') {
+            console.error('❌ TinyMCE is not loaded');
+            console.log('Troubleshooting: Check network tab for failed script loads');
+            console.groupEnd();
+            return;
+        }
+        
+        const editors = tinymce.get();
+        console.log(`Found ${editors.length} TinyMCE editor(s)`);
+        
+        editors.forEach((editor, index) => {
+            console.log(`\n--- Editor ${index + 1} (${editor.id}) ---`);
+            console.log('Toolbar config:', editor.settings.toolbar);
+            
+            const registeredButtons = editor.ui.registry.getAll().buttons;
+            const customButtons = ['dualimage', 'modalimage', 'testbutton'];
+            
+            customButtons.forEach(buttonName => {
+                const isRegistered = !!registeredButtons[buttonName];
+                console.log(`${buttonName}: ${isRegistered ? '✅ Registered' : '❌ Not registered'}`);
+                
+                if (isRegistered) {
+                    const buttonConfig = registeredButtons[buttonName];
+                    console.log(`  - Text: ${buttonConfig.text || 'N/A'}`);
+                    console.log(`  - Tooltip: ${buttonConfig.tooltip || 'N/A'}`);
+                }
+            });
+            
+            // Check DOM for buttons
+            const container = editor.getContainer();
+            if (container) {
+                const toolbar = container.querySelector('.tox-toolbar') || container.querySelector('.tox-toolbar-primary');
+                if (toolbar) {
+                    const buttons = toolbar.querySelectorAll('button');
+                    console.log(`Toolbar has ${buttons.length} button elements`);
+                    
+                    const modalButtons = Array.from(buttons).filter(btn => 
+                        btn.title?.toLowerCase().includes('modal') ||
+                        btn.title?.toLowerCase().includes('test') ||
+                        btn.title?.toLowerCase().includes('dual') ||
+                        btn.textContent?.toLowerCase().includes('modal') ||
+                        btn.textContent?.toLowerCase().includes('test')
+                    );
+                    console.log(`Found ${modalButtons.length} custom button(s) in DOM`);
+                    modalButtons.forEach(btn => {
+                        console.log(`  - Button: ${btn.title || btn.textContent || 'No title'}`);
+                    });
+                } else {
+                    console.error('❌ Could not find toolbar element');
+                }
+            } else {
+                console.error('❌ Could not find editor container');
+            }
+        });
+        
+        console.group('📊 Browser & Session Info');
+        console.log('User agent:', navigator.userAgent);
+        console.log('Local storage available:', typeof(Storage) !== 'undefined');
+        console.log('Cookies enabled:', navigator.cookieEnabled);
+        console.log('Page load time:', performance.timing ? (performance.timing.loadEventEnd - performance.timing.navigationStart) + 'ms' : 'N/A');
+        console.log('Button status:', window.TINYMCE_BUTTON_STATUS || 'Not available');
+        console.groupEnd();
+        
+        console.group('🛠️ Troubleshooting Steps');
+        console.log('%c1. Clear browser cache completely and hard refresh (Ctrl+F5)', 'font-weight: bold; color: #e74c3c;');
+        console.log('%c2. Try incognito/private browsing mode', 'font-weight: bold; color: #f39c12;');
+        console.log('%c3. Check Network tab for 404 errors on JS files', 'font-weight: bold; color: #3498db;');
+        console.log('%c4. Verify no JavaScript errors in console before TinyMCE loads', 'font-weight: bold; color: #9b59b6;');
+        console.log('%c5. Test with different browser or device', 'font-weight: bold; color: #1abc9c;');
+        console.log('%c6. Check if other admin users see the buttons', 'font-weight: bold; color: #34495e;');
+        console.log('%c7. Contact admin if problem persists', 'font-weight: bold; color: #e67e22;');
+        console.groupEnd();
+        
+        console.groupEnd();
+    };
+    
+    // Make debug function available globally with enhanced info
+    if (state.debugMode) {
+        debugLog('Debug function available: window.debugTinyMCE()', 'info');
+        debugLog(`Cache buster: ${state.cacheBuster}`, 'info');
+        
+        // Auto-run debug after initialization if there are issues
+        setTimeout(() => {
+            if (state.lastError) {
+                debugLog('Errors detected - running auto-debug...', 'warn');
+                window.debugTinyMCE();
+            }
+        }, 5000);
     }
     
     // Initialize when DOM is ready

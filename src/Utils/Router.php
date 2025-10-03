@@ -125,9 +125,47 @@ class Router
 
     private function handleNotFound(): void
     {
+        // Prevent Cloudflare from caching 404 responses
+        header('Cache-Control: no-cache, no-store, must-revalidate');
+        header('Pragma: no-cache');
+        header('Expires: 0');
         http_response_code(404);
-        // Simplified not found handler
-        echo "<h1>404 - Page Not Found</h1>";
+        
+        // Try to render the proper 404 page using the View system
+        try {
+            $config = require __DIR__ . '/../../config/config.php';
+            $view = new View($config['views']);
+            
+            // Get site settings if database is available
+            $settings = [];
+            try {
+                $db = Database::getInstance($config['database']);
+                if ($db !== null) {
+                    $settings = \CMS\Models\Settings::getAll();
+                }
+            } catch (\Exception $e) {
+                // Use default settings if database is unavailable
+                $settings = [
+                    'site_name' => 'Site',
+                    'site_description' => '',
+                    'site_url' => '',
+                    'admin_email' => ''
+                ];
+            }
+            
+            $view->layout('default');
+            $view->render('errors/404', [
+                'page_title' => 'Page Not Found',
+                'settings' => $settings,
+                'current_user' => null
+            ]);
+        } catch (\Exception $e) {
+            // Fallback to simple 404 if view rendering fails
+            echo "<!DOCTYPE html><html><head><title>404 - Page Not Found</title></head>";
+            echo "<body><h1>404 - Page Not Found</h1>";
+            echo "<p>The page you requested could not be found.</p>";
+            echo "<p><a href='/'>Return to Homepage</a></p></body></html>";
+        }
     }
 
     private function getRequestUri(): string

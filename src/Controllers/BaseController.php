@@ -22,7 +22,7 @@ use Exception;
  */
 abstract class BaseController
 {
-    protected Database $db;
+    protected ?Database $db;
     protected View $view;
     protected Request $request;
     protected array $config;
@@ -30,7 +30,25 @@ abstract class BaseController
     public function __construct()
     {
         $this->config = require __DIR__ . '/../../config/config.php';
-        $this->db = Database::getInstance($this->config['database']);
+        
+        // Apply aggressive no-cache headers for ALL admin pages immediately
+        $this->setAdminNoCacheHeaders();
+        
+        // Try to initialize database connection, but allow graceful degradation
+        try {
+            $this->db = Database::getInstance($this->config['database']);
+        } catch (Exception $e) {
+            // In debug mode, allow the app to continue without database
+            if ($this->config['app']['debug']) {
+                error_log("Database connection failed in controller: " . $e->getMessage());
+                // Set a null database - controllers will need to handle this gracefully
+                $this->db = null;
+            } else {
+                // In production mode, re-throw the exception
+                throw $e;
+            }
+        }
+        
         $this->view = new View($this->config['views']);
         $this->request = new Request();
         
@@ -53,8 +71,19 @@ abstract class BaseController
         // Add site settings to all views
         if (!isset($data['settings'])) {
             error_log("BaseController::render() - Getting settings");
-            $data['settings'] = Settings::getAll();
-            error_log("BaseController::render() - Settings loaded successfully");
+            if ($this->db !== null) {
+                $data['settings'] = Settings::getAll();
+                error_log("BaseController::render() - Settings loaded successfully");
+            } else {
+                // Provide default settings when database is unavailable
+                $data['settings'] = [
+                    'site_name' => 'Development Mode - Database Unavailable',
+                    'site_description' => 'Running in development mode without database connection',
+                    'site_url' => 'http://localhost',
+                    'admin_email' => 'admin@localhost'
+                ];
+                error_log("BaseController::render() - Using default settings (no database)");
+            }
         }
         
         // Add current_user to all admin views
@@ -62,7 +91,7 @@ abstract class BaseController
             $currentUserId = $this->getCurrentUserId();
             error_log("BaseController::render() - Current user ID: " . ($currentUserId ?? 'null'));
             
-            if ($currentUserId) {
+            if ($currentUserId && $this->db !== null) {
                 error_log("BaseController::render() - Loading user model");
                 try {
                     $userModel = new \CMS\Models\User();
@@ -167,15 +196,43 @@ abstract class BaseController
         return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
     }
 
-    protected function requireAuth(): void
+    /**
+     * Apply aggressive no-cache headers for admin pages
+     * This ensures admin pages are NEVER cached by browsers or proxies
+     */
+    private function setAdminNoCacheHeaders(): void
     {
-        // Set cache control headers to prevent browser from caching admin pages
-        // This fixes the back button issue where users see cached admin pages after logout
-        header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+        // Only apply to admin routes
+        $currentUri = $_SERVER['REQUEST_URI'] ?? '';
+        if (strpos($currentUri, '/admin') !== 0) {
+            return;
+        }
+        
+        // Comprehensive no-cache headers for admin pages
+        header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0, s-maxage=0');
         header('Cache-Control: post-check=0, pre-check=0', false);
         header('Pragma: no-cache');
-        header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
+        header('Expires: Mon, 01 Jan 1990 00:00:00 GMT');
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+        
+        // Prevent any form of caching
+        header('Vary: *');
+        header('X-Accel-Expires: 0');
+        header('X-Cache-Control: no-cache');
+        
+        // Remove ETag headers that can cause caching
+        if (function_exists('header_remove')) {
+            header_remove('ETag');
+        }
+        
+        // Debug headers for troubleshooting
+        header('X-Admin-No-Cache: true');
+        header('X-Cache-Buster: ' . time());
+        header('X-Load-Time: ' . date('Y-m-d H:i:s'));
+    }
 
+    protected function requireAuth(): void
+    {
         // Check both user_id and logged_in flag for consistency
         if (!$this->isAuthenticated()) {
             $this->setFlash('error', 'You must be logged in to view this page.');

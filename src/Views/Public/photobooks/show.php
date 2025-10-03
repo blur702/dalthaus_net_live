@@ -1,16 +1,24 @@
 <!-- Photobook Display Page -->
 <div class="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8">
+    
+    <?php if (isset($debug_message)): ?>
+        <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4">
+            <strong>Debug:</strong> <?= $this->escape($debug_message) ?>
+        </div>
+    <?php endif; ?>
+    
     <!-- Photobook Header -->
     <header class="mb-4 sm:mb-6 lg:mb-8 text-center">
         <h1 class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 leading-tight px-2 sm:px-0" style="font-family: 'Arimo', Arial, sans-serif;">
-            <?= $this->escape($photobook->getAttribute('title')) ?>
+            <?= $this->escape($photobook ? $photobook->getAttribute('title') : $page_title) ?>
         </h1>
 
         <div class="text-xs sm:text-sm text-gray-900 mb-3 sm:mb-4">
-            <?= $this->escape($author['display_name'] ?? $author['username'] ?? 'author') ?> / <?= $photobook->getFormattedPublishedDate() ?>
+            <?= $this->escape($author['display_name'] ?? $author['username'] ?? 'author') ?> / 
+            <?= $photobook ? $photobook->getFormattedPublishedDate() : 'Date unavailable' ?>
         </div>
 
-        <?php if ($can_edit): ?>
+        <?php if ($can_edit && $photobook): ?>
         <div class="mb-3 sm:mb-4">
             <a href="/admin/content/<?= $photobook->getAttribute('content_id') ?>/edit" 
                class="inline-flex items-center px-3 py-1 text-xs font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 hover:text-blue-700 transition-colors">
@@ -60,7 +68,7 @@
         </div>
     </article>
 
-    <?php if ($total_pages > 1): ?>
+    <?php if ($total_pages > 1 && $photobook): ?>
 
     <!-- Page Navigation -->
     <div class="pagination">

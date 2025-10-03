@@ -5,7 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $this->escape($page_title ?? 'Admin') ?> - <?= $this->escape($settings['site_title'] ?? 'CMS') ?></title>
     
+    <!-- Aggressive no-cache meta tags for admin pages -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📝</text></svg>">
+    
+    <!-- Enhanced cache-busting and performance meta tags -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="cache-buster" content="<?= time() ?>">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Prevent custom element conflicts BEFORE loading any scripts -->
@@ -50,8 +61,31 @@
         })();
     </script>
     
-    <script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js" referrerpolicy="origin"></script>
-    <script src="/assets/js/tinymce-single.js"></script>
+    <!-- TinyMCE with enhanced cache-busting -->
+    <?php
+    $tinymce_version = time(); // Force reload every time for admin
+    $js_file_path = __DIR__ . '/../../../assets/js/tinymce-single.js';
+    $js_version = file_exists($js_file_path) ? filemtime($js_file_path) : time();
+    ?>
+    <script>
+        // Clear any TinyMCE cache on page load
+        if ('caches' in window) {
+            caches.keys().then(names => {
+                names.forEach(name => {
+                    if (name.includes('tinymce') || name.includes('cdn.jsdelivr.net')) {
+                        caches.delete(name);
+                    }
+                });
+            });
+        }
+        
+        // Prevent aggressive caching
+        window.CACHE_BUSTER = '<?= $tinymce_version ?>';
+        window.ADMIN_DEBUG = true;
+        console.log('Admin cache buster:', window.CACHE_BUSTER);
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js?v=<?= $tinymce_version ?>" referrerpolicy="origin"></script>
+    <script src="/assets/js/tinymce-single.js?v=<?= $js_version ?>&cb=<?= $tinymce_version ?>" defer></script>
     
     <style>
         body { background-color: #f8f9fa; }
@@ -435,6 +469,160 @@
                 setTimeout(() => flashMessage.remove(), 500);
             }
         }, 5000);
+
+        // Enhanced debugging capabilities for TinyMCE issues
+        window.showTinyMCEDebugPanel = function() {
+            // Remove existing debug panel if present
+            const existingPanel = document.getElementById('tinymce-debug-panel');
+            if (existingPanel) {
+                existingPanel.remove();
+                return;
+            }
+
+            const debugPanel = document.createElement('div');
+            debugPanel.id = 'tinymce-debug-panel';
+            debugPanel.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                width: 400px;
+                max-height: 80vh;
+                background: white;
+                border: 2px solid #3b82f6;
+                border-radius: 8px;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+                z-index: 10001;
+                font-family: monospace;
+                font-size: 12px;
+                overflow-y: auto;
+            `;
+
+            const buttonStatus = window.TINYMCE_BUTTON_STATUS || { total: 0, registered: 0, missing: 0 };
+            const tinymceState = window.TINYMCE_STATE || {};
+            
+            let statusColor = buttonStatus.missing === 0 ? '#10b981' : '#ef4444';
+            let statusText = buttonStatus.missing === 0 ? 'ALL WORKING' : `${buttonStatus.missing} MISSING`;
+
+            debugPanel.innerHTML = `
+                <div style="padding: 15px; border-bottom: 1px solid #e5e7eb; background: #f9fafb;">
+                    <h3 style="margin: 0; color: #1f2937; display: flex; justify-content: space-between; align-items: center;">
+                        🔍 TinyMCE Debug Panel
+                        <button onclick="this.parentElement.parentElement.parentElement.remove()" 
+                                style="background: none; border: none; font-size: 20px; cursor: pointer; color: #6b7280;">×</button>
+                    </h3>
+                </div>
+                <div style="padding: 15px;">
+                    <div style="margin-bottom: 15px;">
+                        <strong style="color: ${statusColor};">Status: ${statusText}</strong><br>
+                        <small>Buttons: ${buttonStatus.registered}/${buttonStatus.total} registered</small>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <strong>Cache Info:</strong><br>
+                        Cache Buster: ${window.CACHE_BUSTER || 'Not set'}<br>
+                        Debug Mode: ${tinymceState.debugMode ? 'ON' : 'OFF'}<br>
+                        Registration Attempts: ${tinymceState.buttonRegistrationAttempts || 0}
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <strong>Quick Actions:</strong><br>
+                        <button onclick="window.debugTinyMCE && window.debugTinyMCE()" 
+                                style="background: #3b82f6; color: white; border: none; padding: 5px 10px; border-radius: 4px; margin: 2px; cursor: pointer;">
+                            Run Full Debug
+                        </button>
+                        <button onclick="location.reload()" 
+                                style="background: #10b981; color: white; border: none; padding: 5px 10px; border-radius: 4px; margin: 2px; cursor: pointer;">
+                            Hard Refresh
+                        </button>
+                        <button onclick="window.localStorage.clear(); location.reload()" 
+                                style="background: #f59e0b; color: white; border: none; padding: 5px 10px; border-radius: 4px; margin: 2px; cursor: pointer;">
+                            Clear Cache & Reload
+                        </button>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <strong>Browser Info:</strong><br>
+                        <small>
+                            ${navigator.userAgent.split(' ').slice(0, 3).join(' ')}<br>
+                            Cookies: ${navigator.cookieEnabled ? 'Enabled' : 'Disabled'}<br>
+                            LocalStorage: ${typeof(Storage) !== 'undefined' ? 'Available' : 'Not available'}
+                        </small>
+                    </div>
+                    
+                    <div style="background: #f3f4f6; padding: 10px; border-radius: 4px; font-size: 11px;">
+                        <strong>Troubleshooting Tips:</strong><br>
+                        • If buttons are missing, try "Clear Cache & Reload"<br>
+                        • Check console for error messages<br>
+                        • Try incognito/private browsing mode<br>
+                        • Contact admin if issue persists
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(debugPanel);
+
+            // Auto-update button status every 2 seconds
+            const updateInterval = setInterval(() => {
+                const currentStatus = window.TINYMCE_BUTTON_STATUS;
+                if (currentStatus && document.getElementById('tinymce-debug-panel')) {
+                    // Update would go here if panel still exists
+                } else {
+                    clearInterval(updateInterval);
+                }
+            }, 2000);
+        };
+
+        // Add debug panel trigger - show when TinyMCE has issues
+        setTimeout(() => {
+            if (window.TINYMCE_STATE && window.TINYMCE_STATE.lastError && window.ADMIN_DEBUG) {
+                console.warn('TinyMCE issues detected - debug panel available via Ctrl+Shift+D');
+            }
+        }, 3000);
+
+        // Keyboard shortcut for debug panel (Ctrl+Shift+D)
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+                e.preventDefault();
+                window.showTinyMCEDebugPanel();
+            }
+        });
+
+        // Add floating debug button for easy access (only in debug mode)
+        if (window.ADMIN_DEBUG) {
+            setTimeout(() => {
+                const debugButton = document.createElement('button');
+                debugButton.innerHTML = '🔍';
+                debugButton.title = 'TinyMCE Debug Panel (Ctrl+Shift+D)';
+                debugButton.style.cssText = `
+                    position: fixed;
+                    bottom: 20px;
+                    right: 20px;
+                    width: 50px;
+                    height: 50px;
+                    border-radius: 50%;
+                    background: #3b82f6;
+                    color: white;
+                    border: none;
+                    font-size: 20px;
+                    cursor: pointer;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+                    z-index: 9998;
+                    transition: all 0.2s ease;
+                `;
+                
+                debugButton.addEventListener('mouseenter', () => {
+                    debugButton.style.transform = 'scale(1.1)';
+                });
+                
+                debugButton.addEventListener('mouseleave', () => {
+                    debugButton.style.transform = 'scale(1)';
+                });
+                
+                debugButton.addEventListener('click', window.showTinyMCEDebugPanel);
+                
+                document.body.appendChild(debugButton);
+            }, 1000);
+        }
 
         // Global image modal functions for frontend
         window.openImageModal = function(src, alt) {

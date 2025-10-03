@@ -120,21 +120,5 @@
     </div>
 </div>
 
-<!-- Block custom element conflicts immediately -->
-<script>
-(function() {
-    if (window.CE_BLOCKED) return;
-    window.CE_BLOCKED = true;
-    const orig = window.customElements.define;
-    const blocked = new Set();
-    window.customElements.define = function(n, c, o) {
-        if (blocked.has(n) || window.customElements.get(n)) return;
-        blocked.add(n);
-        try { orig.call(window.customElements, n, c, o); } catch(e) {}
-    };
-})();
-</script>
 <!-- Slug Generator -->
 <script src="/assets/js/slug-generator.js"></script>
-<!-- TinyMCE - Only for this page -->
-<script src="/assets/js/tinymce-single.js"></script>

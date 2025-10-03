@@ -41,6 +41,10 @@ class Pages extends BaseController
         $page = Page::findByAlias($alias);
         
         if ($page === null) {
+            // Prevent Cloudflare from caching 404 responses
+            header('Cache-Control: no-cache, no-store, must-revalidate');
+            header('Pragma: no-cache');
+            header('Expires: 0');
             http_response_code(404);
             $this->render('errors/404', [
                 'page_title' => 'Page Not Found'

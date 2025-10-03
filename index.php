@@ -29,7 +29,9 @@ set_exception_handler(function ($exception) {
     error_log("Uncaught exception: " . $exception->getMessage() . " in " . $exception->getFile() . ":" . $exception->getLine());
     
     // Only show database error page for actual connection failures during initialization
+    // BUT only in production - allow development to continue
     if ($exception instanceof PDOException && 
+        !$config['app']['debug'] && // Only show database error page in production
         (strpos($exception->getMessage(), 'Connection refused') !== false ||
          strpos($exception->getMessage(), 'Access denied') !== false ||
          strpos($exception->getMessage(), 'Unknown database') !== false ||
@@ -56,8 +58,32 @@ set_exception_handler(function ($exception) {
             exit;
         }
         
+        // Set 500 status code
         http_response_code(500);
-        echo "<!DOCTYPE html><html><head><title>Internal Server Error</title></head><body><h1>500 - Internal Server Error</h1></body></html>";
+        
+        // Try to render the proper 500 error page
+        try {
+            require_once __DIR__ . '/src/Utils/View.php';
+            $view = new CMS\Utils\View($config['views']);
+            
+            // Get site settings if possible
+            $settings = [
+                'site_name' => $config['app']['name'] ?? 'Site',
+                'site_description' => '',
+                'site_url' => $config['app']['base_url'] ?? '',
+                'admin_email' => ''
+            ];
+            
+            $view->layout('default');
+            $view->render('errors/500', [
+                'page_title' => 'Internal Server Error',
+                'settings' => $settings,
+                'current_user' => null
+            ]);
+        } catch (Exception $e) {
+            // Fallback to simple error page if view rendering fails
+            echo "<!DOCTYPE html><html><head><title>Internal Server Error</title></head><body><h1>500 - Internal Server Error</h1></body></html>";
+        }
     }
 });
 

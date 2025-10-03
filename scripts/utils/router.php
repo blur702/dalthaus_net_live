@@ -10,7 +10,7 @@
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 // Serve static files directly if they exist (but not PHP files)
-if ($uri !== '/' && file_exists(__DIR__ . $uri) && !is_dir(__DIR__ . $uri)) {
+if ($uri !== '/' && file_exists(__DIR__ . '/../../' . $uri) && !is_dir(__DIR__ . '/../../' . $uri)) {
     $ext = pathinfo($uri, PATHINFO_EXTENSION);
     // Don't serve PHP files directly
     if ($ext === 'php') {
@@ -23,4 +23,4 @@ if ($uri !== '/' && file_exists(__DIR__ . $uri) && !is_dir(__DIR__ . $uri)) {
 
 // Everything else goes through index.php
 $_SERVER['SCRIPT_NAME'] = '/index.php';
-require __DIR__ . '/index.php';
+require __DIR__ . '/../../index.php';

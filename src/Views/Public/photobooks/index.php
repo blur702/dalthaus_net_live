@@ -1,6 +1,12 @@
 <!-- Photobooks Listing Page -->
 <div class="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8">
 
+    <?php if (isset($debug_message)): ?>
+        <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4">
+            <strong>Debug:</strong> <?= $this->escape($debug_message) ?>
+        </div>
+    <?php endif; ?>
+
     <?php if (!empty($photobooks)): ?>
         <!-- Photobooks List -->
         <div class="space-y-6 sm:space-y-8">
