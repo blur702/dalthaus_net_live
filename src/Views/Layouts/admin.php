@@ -85,7 +85,7 @@
         console.log('Admin cache buster:', window.CACHE_BUSTER);
     </script>
     <script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js?v=<?= $tinymce_version ?>" referrerpolicy="origin"></script>
-    <script src="/assets/js/tinymce-single.js?v=<?= $js_version ?>&cb=<?= $tinymce_version ?>" defer></script>
+    <script src="/assets/js/tinymce-minimal.js?v=<?= $js_version ?>&cb=<?= $tinymce_version ?>" defer></script>
     
     <style>
         body { background-color: #f8f9fa; }

@@ -27,6 +27,64 @@
     const state = window.TINYMCE_STATE;
     
     // Enhanced logging function
+    // Simple button registration function
+    function registerCustomButtons(editor) {
+        debugLog('Registering custom buttons...', 'info');
+        
+        try {
+            // Dual Image Button
+            editor.ui.registry.addButton('dualimage', {
+                text: '🖼️📱',
+                tooltip: 'Insert Dual Image (Display + Modal)',
+                onAction: function() {
+                    openDualImageDialog();
+                }
+            });
+            
+            // Modal Image Button (fallback)
+            editor.ui.registry.addButton('modalimage', {
+                text: '🔍',
+                tooltip: 'Modal Image',
+                onAction: function() {
+                    openDualImageDialog();
+                }
+            });
+            
+            // Test Button
+            editor.ui.registry.addButton('testbutton', {
+                text: '🧪',
+                tooltip: 'Test Button',
+                onAction: function() {
+                    alert('Test button works!');
+                }
+            });
+            
+            debugLog('Custom buttons registered successfully', 'success');
+        } catch (error) {
+            debugLog('Error registering buttons: ' + error.message, 'error');
+        }
+    }
+
+    // Simple dual image dialog function
+    function openDualImageDialog() {
+        debugLog('Opening dual image dialog...', 'info');
+        
+        const displayImage = prompt('Enter display image URL:');
+        if (!displayImage) return;
+        
+        const modalImage = prompt('Enter modal image URL (optional, will use display image if empty):') || displayImage;
+        
+        // Insert the dual image HTML
+        const editor = tinymce.activeEditor;
+        if (editor) {
+            const html = `<img src="${displayImage}" data-modal-src="${modalImage}" alt="Dual Image" style="cursor: pointer; max-width: 100%;" onclick="openImageModal('${modalImage}')">`;
+            editor.insertContent(html);
+            debugLog('Dual image inserted successfully', 'success');
+        } else {
+            debugLog('No active editor found', 'error');
+        }
+    }
+
     function debugLog(message, type = 'info') {
         const timestamp = new Date().toLocaleTimeString();
         const prefix = `[TinyMCE ${timestamp}]`;
@@ -109,7 +167,7 @@
             plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table help wordcount pagebreak',
             toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | link image dualimage modalimage testbutton | pagebreak code',
             // Force all buttons to be visible
-            toolbar_mode: 'floating',
+            toolbar_mode: 'sliding',
             pagebreak_separator: '<!-- pagebreak -->',
             images_upload_url: '/admin/upload/tinymce',
             automatic_uploads: true,
@@ -132,6 +190,9 @@
             image_title: true,
             setup: function(editor) {
                 debugLog(`TinyMCE setup function called for editor: ${editor.id}`, 'info');
+                
+                // Register buttons immediately in setup
+                registerCustomButtons(editor);
                 
                 // Enhanced button registration with multiple fallback strategies
                 debugLog('Starting enhanced button registration process...', 'info');
@@ -262,10 +323,10 @@
                     };
                     
                     // Enhanced toolbar configuration check
-                    debugLog(`Toolbar configuration: ${editor.settings.toolbar}`, 'info');
+                    const toolbarConfig = editor.settings?.toolbar || '';
+                    debugLog(`Toolbar configuration: ${toolbarConfig}`, 'info');
                     
                     // Validate toolbar contains our buttons
-                    const toolbarConfig = editor.settings.toolbar;
                     const requiredButtons = ['dualimage', 'modalimage', 'testbutton'];
                     const missingFromToolbar = requiredButtons.filter(btn => !toolbarConfig.includes(btn));
                     
@@ -766,7 +827,7 @@
         
         editors.forEach((editor, index) => {
             console.log(`\n--- Editor ${index + 1} (${editor.id}) ---`);
-            console.log('Toolbar config:', editor.settings.toolbar);
+            console.log('Toolbar config:', editor.settings?.toolbar || 'undefined');
             
             const registeredButtons = editor.ui.registry.getAll().buttons;
             const customButtons = ['dualimage', 'modalimage', 'testbutton'];
