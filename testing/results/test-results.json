@@ -1,0 +1,140 @@
+{
+  "config": {
+    "configFile": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/playwright.config.ts",
+    "rootDir": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "html",
+        {
+          "outputFolder": "reports/html-report"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "results/test-results.json"
+        }
+      ],
+      [
+        "list",
+        null
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "diagnosis",
+        "name": "diagnosis",
+        "testDir": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.55.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "tinymce-toolbar-screenshot.spec.js",
+      "file": "tinymce-toolbar-screenshot.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "TinyMCE Toolbar Screenshot Capture",
+          "file": "tinymce-toolbar-screenshot.spec.js",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "capture high-quality toolbar screenshot for documentation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "diagnosis",
+                  "projectName": "diagnosis",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8520,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "📸 Capturing TinyMCE toolbar screenshot for documentation...\n"
+                        },
+                        {
+                          "text": "✅ Screenshots captured successfully\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-10-04T00:26:04.879Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/results/tinymce-toolbar-screenshot-1f305-creenshot-for-documentation-diagnosis/test-finished-1.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "56a1823aac065f46cb3b-2cf80aba6e1077c0dd34",
+              "file": "tinymce-toolbar-screenshot.spec.js",
+              "line": 4,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2025-10-04T00:26:04.022Z",
+    "duration": 10422.218,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}
