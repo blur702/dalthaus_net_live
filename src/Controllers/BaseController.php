@@ -7,6 +7,7 @@ namespace CMS\Controllers;
 use CMS\Utils\Database;
 use CMS\Utils\View;
 use CMS\Utils\Request;
+use CMS\Utils\Auth;
 use CMS\Models\Settings;
 use Exception;
 
@@ -26,6 +27,7 @@ abstract class BaseController
     protected View $view;
     protected Request $request;
     protected array $config;
+    protected ?Auth $auth;
 
     public function __construct()
     {
@@ -37,12 +39,15 @@ abstract class BaseController
         // Try to initialize database connection, but allow graceful degradation
         try {
             $this->db = Database::getInstance($this->config['database']);
+            // Initialize Auth instance only if database is available
+            $this->auth = new Auth($this->db, $this->config["security"]);
         } catch (Exception $e) {
             // In debug mode, allow the app to continue without database
             if ($this->config['app']['debug']) {
                 error_log("Database connection failed in controller: " . $e->getMessage());
                 // Set a null database - controllers will need to handle this gracefully
                 $this->db = null;
+                $this->auth = null;
             } else {
                 // In production mode, re-throw the exception
                 throw $e;
@@ -247,6 +252,13 @@ abstract class BaseController
     
     protected function isAuthenticated(): bool
     {
+        // If Auth instance is available, use its comprehensive check method
+        // which includes Remember Me cookie validation
+        if ($this->auth !== null) {
+            return $this->auth->check();
+        }
+        
+        // Fallback to session-only check if Auth is not available
         return isset($_SESSION['user_id']) && 
                isset($_SESSION['logged_in']) && 
                !empty($_SESSION['logged_in']); // Accept both true and 1

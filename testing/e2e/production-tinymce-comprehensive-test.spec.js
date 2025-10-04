@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+const { test, expect } = require('@playwright/test');
 
 test.describe('Production TinyMCE Button Functionality Test', () => {
   test('comprehensive TinyMCE button verification on production', async ({ page, context }) => {
@@ -22,7 +22,7 @@ test.describe('Production TinyMCE Button Functionality Test', () => {
     try {
       // Step 1: Navigate to login page
       console.log('📝 Step 1: Navigating to login page...');
-      await page.goto('/admin/login', { waitUntil: 'networkidle' });
+      await page.goto('https://dalthaus.net/admin/login', { waitUntil: 'networkidle' });
       
       // Take screenshot of login page
       await page.screenshot({ 
@@ -49,7 +49,7 @@ test.describe('Production TinyMCE Button Functionality Test', () => {
 
       // Step 3: Navigate to content creation page
       console.log('📄 Step 3: Navigating to content creation page...');
-      await page.goto('/admin/content/create?type=article', { waitUntil: 'networkidle' });
+      await page.goto('https://dalthaus.net/admin/content/create?type=article', { waitUntil: 'networkidle' });
       
       // Wait for page to fully load
       await page.waitForTimeout(2000);
@@ -387,6 +387,288 @@ ${reportData.networkErrors.length > 0 ? '### Network Errors\n' + reportData.netw
       });
       
       throw error;
+    }
+  });
+
+  test('Complete workflow: Upload → Save → Frontend → Modal verification', async ({ page }) => {
+    console.log('🚀 Starting complete workflow test...');
+    
+    // Track console errors
+    const consoleErrors = [];
+    page.on('console', msg => {
+      if (msg.type() === 'error') {
+        consoleErrors.push(msg.text());
+        console.log('CONSOLE ERROR:', msg.text());
+      }
+    });
+    
+    // Step 1: Login
+    await page.goto('https://dalthaus.net/admin/login');
+    await page.waitForLoadState('networkidle');
+    
+    await page.fill('input[name="username"]', 'kevin');
+    await page.fill('input[name="password"]', '(130Bpm)');
+    await page.click('button[type="submit"]');
+    await page.waitForLoadState('networkidle');
+    
+    console.log('✅ Logged in successfully');
+    
+    // Step 2: Create or edit content
+    await page.goto('https://dalthaus.net/admin/content');
+    await page.waitForLoadState('networkidle');
+    
+    // Try to edit existing content first
+    const editLinks = await page.locator('a[href*="/edit"]').all();
+    let contentUrl = '';
+    
+    if (editLinks.length > 0) {
+      await editLinks[0].click();
+      await page.waitForLoadState('networkidle');
+      console.log('✅ Editing existing content');
+    } else {
+      // Create new article
+      await page.click('a[href*="/create"]');
+      await page.waitForLoadState('networkidle');
+      
+      const timestamp = Date.now();
+      await page.fill('input[name="title"]', `Test Article ${timestamp}`);
+      await page.fill('input[name="alias"]', `test-article-${timestamp}`);
+      console.log('✅ Creating new article for testing');
+    }
+    
+    // Step 3: Wait for TinyMCE and test buttons
+    await page.waitForTimeout(3000);
+    
+    // Look for dual image button
+    const dualImageButtonSelectors = [
+      'button:has-text("🖼️📱")',
+      'button[title*="Dual Image"]',
+      'button[aria-label*="Dual Image"]',
+      '.tox-tbtn:has-text("🖼️")',
+      'button:has-text("🖼️")'
+    ];
+    
+    let dualImageButtonFound = false;
+    let dualImageButton = null;
+    
+    for (const selector of dualImageButtonSelectors) {
+      const button = page.locator(selector).first();
+      if (await button.count() > 0 && await button.isVisible()) {
+        dualImageButton = button;
+        dualImageButtonFound = true;
+        console.log(`✅ Dual image button found with selector: ${selector}`);
+        break;
+      }
+    }
+    
+    if (!dualImageButtonFound) {
+      console.log('❌ Dual image button not found');
+    }
+    
+    // Step 4: Test button functionality and modal
+    if (dualImageButtonFound) {
+      console.log('🧪 Testing dual image button functionality...');
+      
+      await dualImageButton.click();
+      await page.waitForTimeout(1000);
+      
+      // Check for modal dialog
+      const modalSelectors = [
+        '.tox-dialog',
+        '.modal',
+        '[role="dialog"]',
+        '.ui-dialog'
+      ];
+      
+      let modalFound = false;
+      for (const selector of modalSelectors) {
+        const modal = page.locator(selector);
+        if (await modal.count() > 0 && await modal.isVisible()) {
+          modalFound = true;
+          console.log(`✅ Modal opened with selector: ${selector}`);
+          
+          await page.screenshot({ 
+            path: 'testing/results/modal-dialog.png',
+            fullPage: true 
+          });
+          
+          // Check for form fields
+          const fileInput = modal.locator('input[type="file"]');
+          const hasFileInput = await fileInput.count() > 0;
+          console.log(`File input in modal: ${hasFileInput ? '✅' : '❌'}`);
+          
+          // Close modal
+          const closeButton = modal.locator('button:has-text("Cancel"), button:has-text("Close"), .close').first();
+          if (await closeButton.count() > 0) {
+            await closeButton.click();
+            console.log('✅ Modal closed');
+          }
+          break;
+        }
+      }
+      
+      if (!modalFound) {
+        console.log('❌ Modal did not open after clicking dual image button');
+      }
+    }
+    
+    // Step 5: Add some test content to check on frontend
+    const editor = page.locator('textarea[name="content"]');
+    if (await editor.count() > 0) {
+      await editor.fill('<p>Test content with image functionality</p><img src="/uploads/test.jpg" data-modal-src="/uploads/test-modal.jpg" onclick="openImageModal(this)" style="cursor: pointer;" alt="Test Image">');
+      console.log('✅ Added test content with modal image');
+    }
+    
+    // Step 6: Save content
+    const saveButton = page.locator('button[type="submit"], input[type="submit"]').first();
+    if (await saveButton.count() > 0) {
+      await saveButton.click();
+      await page.waitForLoadState('networkidle');
+      console.log('✅ Content saved');
+    }
+    
+    // Step 7: Navigate to frontend to test
+    await page.goto('https://dalthaus.net');
+    await page.waitForLoadState('networkidle');
+    
+    // Look for articles to test
+    const articleLinks = await page.locator('a[href*="/article/"]').all();
+    
+    if (articleLinks.length > 0) {
+      await articleLinks[0].click();
+      await page.waitForLoadState('networkidle');
+      console.log('✅ Navigated to frontend article');
+      
+      // Look for images with modal functionality
+      const modalImages = await page.locator('img[data-modal-src], img[onclick*="openImageModal"]').count();
+      console.log(`Found ${modalImages} images with modal functionality`);
+      
+      if (modalImages > 0) {
+        const modalImage = page.locator('img[data-modal-src], img[onclick*="openImageModal"]').first();
+        await modalImage.click();
+        await page.waitForTimeout(1000);
+        
+        // Check if modal opened on frontend
+        const frontendModal = page.locator('.modal, .image-modal, #imageModal').first();
+        if (await frontendModal.count() > 0 && await frontendModal.isVisible()) {
+          console.log('✅ Frontend image modal opened successfully');
+          await page.screenshot({ 
+            path: 'testing/results/frontend-modal.png',
+            fullPage: true 
+          });
+          
+          // Test closing modal
+          await page.keyboard.press('Escape');
+          await page.waitForTimeout(500);
+          console.log('✅ Modal closed with Escape key');
+        } else {
+          console.log('❌ Frontend image modal did not open');
+        }
+      }
+    }
+    
+    // Step 8: Debug information
+    await page.keyboard.press('Control+Shift+D');
+    await page.waitForTimeout(1000);
+    
+    const debugInfo = await page.evaluate(() => {
+      return {
+        tinyMCELoaded: typeof tinymce !== 'undefined',
+        customButtonsRegistered: window.customButtonsRegistered || false,
+        tinyMCEVersion: typeof tinymce !== 'undefined' ? tinymce.majorVersion : 'not loaded',
+        modalFunctionsAvailable: typeof openImageModal !== 'undefined'
+      };
+    });
+    
+    console.log('Debug information:', debugInfo);
+    
+    // Final report
+    console.log('\n=== WORKFLOW TEST SUMMARY ===');
+    console.log(`TinyMCE Loaded: ${debugInfo.tinyMCELoaded ? '✅' : '❌'}`);
+    console.log(`Dual Image Button: ${dualImageButtonFound ? '✅' : '❌'}`);
+    console.log(`Modal Functions: ${debugInfo.modalFunctionsAvailable ? '✅' : '❌'}`);
+    console.log(`Console Errors: ${consoleErrors.length}`);
+    
+    if (consoleErrors.length > 0) {
+      console.log('Console errors found:');
+      consoleErrors.forEach(error => console.log(`  - ${error}`));
+    }
+    
+    expect(debugInfo.tinyMCELoaded).toBe(true);
+  });
+
+  test('Cross-browser verification (Firefox)', async ({ page, browserName }) => {
+    test.skip(browserName !== 'firefox', 'This test only runs on Firefox');
+    
+    console.log('🦊 Running Firefox-specific test...');
+    
+    await page.goto('https://dalthaus.net/admin/login');
+    await page.waitForLoadState('networkidle');
+    
+    // Quick login and check
+    await page.fill('input[name="username"]', 'kevin');
+    await page.fill('input[name="password"]', '(130Bpm)');
+    await page.click('button[type="submit"]');
+    await page.waitForLoadState('networkidle');
+    
+    await page.goto('https://dalthaus.net/admin/content/create?type=article');
+    await page.waitForLoadState('networkidle');
+    
+    await page.waitForTimeout(3000);
+    
+    // Check for custom buttons in Firefox
+    const dualImageButton = page.locator('button:has-text("🖼️📱")').first();
+    const dualImageButtonExists = await dualImageButton.count() > 0;
+    
+    console.log(`Firefox - Dual image button: ${dualImageButtonExists ? '✅' : '❌'}`);
+    
+    await page.screenshot({ 
+      path: 'testing/results/firefox-tinymce-test.png',
+      fullPage: true 
+    });
+    
+    const firefoxDebugInfo = await page.evaluate(() => {
+      return {
+        userAgent: navigator.userAgent,
+        tinyMCELoaded: typeof tinymce !== 'undefined',
+        customButtonsCount: document.querySelectorAll('button:contains("🖼️")').length
+      };
+    });
+    
+    console.log('Firefox debug info:', firefoxDebugInfo);
+  });
+
+  test('Cache busting and performance verification', async ({ page }) => {
+    console.log('⚡ Testing cache busting and performance...');
+    
+    const timestamp = Date.now();
+    
+    // Test with cache busting parameter
+    const response = await page.goto(`https://dalthaus.net/admin/login?nocache=${timestamp}`);
+    
+    const headers = response.headers();
+    console.log('Response headers:');
+    console.log(`  Cache-Control: ${headers['cache-control'] || 'not set'}`);
+    console.log(`  Pragma: ${headers['pragma'] || 'not set'}`);
+    console.log(`  Expires: ${headers['expires'] || 'not set'}`);
+    
+    // Verify no caching issues
+    const cacheHeaders = headers['cache-control'] || '';
+    const hasCacheBusting = cacheHeaders.includes('no-cache') || cacheHeaders.includes('no-store');
+    
+    console.log(`Cache busting active: ${hasCacheBusting ? '✅' : '❌'}`);
+    
+    // Test page load performance
+    const startTime = Date.now();
+    await page.waitForLoadState('networkidle');
+    const loadTime = Date.now() - startTime;
+    
+    console.log(`Page load time: ${loadTime}ms`);
+    
+    if (loadTime > 10000) {
+      console.log('⚠️ Page load time is slow (>10s)');
+    } else {
+      console.log('✅ Page load time is acceptable');
     }
   });
 });

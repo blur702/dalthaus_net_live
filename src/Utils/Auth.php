@@ -200,24 +200,35 @@ class Auth
      */
     public function check(): bool
     {
+        error_log("Auth::check() - Starting authentication check");
+        error_log("Auth::check() - Session logged_in: " . (isset($_SESSION['logged_in']) ? var_export($_SESSION['logged_in'], true) : 'not set'));
+        error_log("Auth::check() - Remember cookie exists: " . (isset($_COOKIE['remember_token']) ? 'yes' : 'no'));
+        
         // First check if already logged in via session
         if (isset($_SESSION['logged_in']) && !empty($_SESSION['logged_in'])) {
+            error_log("Auth::check() - User has active session");
             // Check session timeout
             if ($this->isSessionExpired()) {
+                error_log("Auth::check() - Session expired, logging out");
                 $this->logout();
                 return false;
             }
 
             // Update last activity time
             $_SESSION['last_activity'] = time();
+            error_log("Auth::check() - Session valid, returning true");
             return true;
         }
 
         // Check for remember me cookie
         if (isset($_COOKIE['remember_token'])) {
-            return $this->attemptRememberLogin();
+            error_log("Auth::check() - No session but remember cookie exists, attempting auto-login");
+            $result = $this->attemptRememberLogin();
+            error_log("Auth::check() - Remember login result: " . ($result ? 'success' : 'failed'));
+            return $result;
         }
 
+        error_log("Auth::check() - No session and no remember cookie, returning false");
         return false;
     }
 
@@ -571,20 +582,24 @@ class Auth
      */
     private function attemptRememberLogin(): bool
     {
+        error_log("Auth::attemptRememberLogin() - Starting remember me login attempt");
         $cookie = $_COOKIE['remember_token'] ?? '';
         if (empty($cookie)) {
+            error_log("Auth::attemptRememberLogin() - Cookie is empty");
             return false;
         }
 
         // Parse cookie
         $parts = explode(':', $cookie, 2);
         if (count($parts) !== 2) {
+            error_log("Auth::attemptRememberLogin() - Cookie format invalid: " . $cookie);
             $this->clearRememberCookie();
             return false;
         }
 
         [$userId, $token] = $parts;
         $hashedToken = hash('sha256', $token);
+        error_log("Auth::attemptRememberLogin() - Cookie parsed: user_id=$userId");
 
         try {
             // Find token in database

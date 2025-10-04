@@ -117,7 +117,7 @@ try {
         session_set_save_handler($sessionHandler, true);
 
         // Create sessions table if it doesn't exist
-        $db->execute("CREATE TABLE IF NOT EXISTS user_sessions (
+        $db->query("CREATE TABLE IF NOT EXISTS user_sessions (
             session_id VARCHAR(128) PRIMARY KEY,
             session_data TEXT,
             expires DATETIME,
