@@ -30,6 +30,11 @@ class AutoSave {
         this.saveTimeout = null;
         this.intervalId = null;
         this.isDestroyed = false;
+        
+        // Countdown state
+        this.countdownInterval = null;
+        this.countdownSeconds = 0;
+        this.isCountingDown = false;
 
         // Get content ID from form action or hidden field
         this.extractContentId();
@@ -153,28 +158,38 @@ class AutoSave {
         style.textContent = `
             .autosave-status {
                 position: fixed !important;
-                top: 20px !important;
+                top: 80px !important;
                 right: 20px !important;
                 z-index: 10002 !important;
                 background: #10b981 !important;
                 color: white !important;
-                padding: 8px 16px !important;
-                border-radius: 6px !important;
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+                padding: 12px 16px !important;
+                border-radius: 8px !important;
+                box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.15) !important;
                 font-size: 14px !important;
                 opacity: 1 !important;
-                transform: translateY(0) !important;
-                transition: all 0.3s ease !important;
+                transform: translateX(0) !important;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
                 pointer-events: none !important;
                 font-family: system-ui, -apple-system, sans-serif !important;
-                max-width: 300px !important;
+                max-width: 320px !important;
                 word-wrap: break-word !important;
-                border: 2px solid rgba(255, 255, 255, 0.2) !important;
+                border: 1px solid rgba(255, 255, 255, 0.2) !important;
+                backdrop-filter: blur(8px) !important;
             }
 
             .autosave-status.show {
                 opacity: 1 !important;
-                transform: translateY(0) !important;
+                transform: translateX(0) !important;
+            }
+
+            .autosave-status.hidden {
+                opacity: 0 !important;
+                transform: translateX(100%) !important;
+            }
+
+            .autosave-status.countdown {
+                background: #8b5cf6 !important;
             }
 
             .autosave-status.saving {
@@ -216,7 +231,13 @@ class AutoSave {
             .autosave-status-content {
                 display: flex !important;
                 align-items: center !important;
-                gap: 6px !important;
+                gap: 8px !important;
+                line-height: 1.4 !important;
+            }
+
+            .autosave-countdown {
+                font-weight: 600 !important;
+                font-variant-numeric: tabular-nums !important;
             }
 
             .autosave-icon {
@@ -227,6 +248,19 @@ class AutoSave {
 
             .autosave-spinner {
                 animation: autosave-spin 1s linear infinite !important;
+            }
+
+            .pulse-dot {
+                width: 8px !important;
+                height: 8px !important;
+                background: currentColor !important;
+                border-radius: 50% !important;
+                animation: pulse 1.5s ease-in-out infinite !important;
+            }
+
+            @keyframes pulse {
+                0%, 100% { opacity: 1; transform: scale(1); }
+                50% { opacity: 0.5; transform: scale(1.2); }
             }
         `;
         document.head.appendChild(style);
@@ -262,21 +296,21 @@ class AutoSave {
     }
 
     onFieldChange(fieldName) {
-        // Clear existing timeout and set new one for debounced save
+        // Clear existing timeout and countdown
         if (this.saveTimeout) {
             clearTimeout(this.saveTimeout);
         }
+        this.stopCountdown();
 
-        // If in create mode and title field changes, create draft first
-        if (this.isCreateMode && !this.isDraftCreated && fieldName === 'title') {
-            this.saveTimeout = setTimeout(() => {
+        // Start countdown timer
+        this.startCountdown(() => {
+            // If in create mode and title field changes, create draft first
+            if (this.isCreateMode && !this.isDraftCreated && fieldName === 'title') {
                 this.createDraftThenSave(fieldName);
-            }, this.options.debounceDelay);
-        } else {
-            this.saveTimeout = setTimeout(() => {
+            } else {
                 this.saveField(fieldName);
-            }, this.options.debounceDelay);
-        }
+            }
+        });
     }
 
     onFieldBlur(fieldName) {
@@ -284,6 +318,10 @@ class AutoSave {
         if (this.saveTimeout) {
             clearTimeout(this.saveTimeout);
         }
+        this.stopCountdown();
+
+        // Show immediate save indicator
+        this.showStatus('saving', 'Saving on field blur...');
 
         // If in create mode and title field blurs, create draft first
         if (this.isCreateMode && !this.isDraftCreated && fieldName === 'title') {
@@ -291,6 +329,39 @@ class AutoSave {
         } else {
             this.saveField(fieldName);
         }
+    }
+
+    startCountdown(callback) {
+        this.stopCountdown(); // Ensure any existing countdown is stopped
+        this.countdownSeconds = Math.ceil(this.options.debounceDelay / 1000);
+        this.isCountingDown = true;
+
+        // Show initial countdown
+        this.showCountdownStatus();
+
+        this.countdownInterval = setInterval(() => {
+            this.countdownSeconds--;
+            
+            if (this.countdownSeconds > 0) {
+                this.showCountdownStatus();
+            } else {
+                this.stopCountdown();
+                callback();
+            }
+        }, 1000);
+    }
+
+    stopCountdown() {
+        if (this.countdownInterval) {
+            clearInterval(this.countdownInterval);
+            this.countdownInterval = null;
+        }
+        this.isCountingDown = false;
+    }
+
+    showCountdownStatus() {
+        const message = `Auto-save in ${this.countdownSeconds}s`;
+        this.showStatus('countdown', message, false); // Don't auto-hide countdown
     }
 
     startPeriodicSave() {
@@ -437,7 +508,7 @@ class AutoSave {
             throw new Error('No content ID available for saving');
         }
 
-        this.showStatus('saving', 'Saving...');
+        this.showStatus('saving', `Saving ${field}...`);
 
         const formData = new FormData();
         formData.append('id', this.contentId);
@@ -466,11 +537,12 @@ class AutoSave {
             throw new Error(result.message || 'Save failed');
         }
 
-        this.showStatus('success', `Saved at ${result.timestamp || new Date().toLocaleTimeString()}`);
+        const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        this.showStatus('success', `✓ Content autosaved at ${timestamp}`);
         return result;
     }
 
-    showStatus(type, message) {
+    showStatus(type, message, autoHide = true) {
         console.log('AutoSave: Showing status -', type, ':', message);
         
         const status = document.getElementById('autosave-status');
@@ -500,8 +572,15 @@ class AutoSave {
             transform: computedStyle.transform
         });
 
-        // Create enhanced content with spinner for saving state
-        if (type === 'saving') {
+        // Create enhanced content with appropriate icons and animations
+        if (type === 'countdown') {
+            status.innerHTML = `
+                <div class="autosave-status-content">
+                    <div class="autosave-countdown">${this.countdownSeconds}</div>
+                    <span>${message}</span>
+                </div>
+            `;
+        } else if (type === 'saving') {
             status.innerHTML = `
                 <div class="autosave-status-content">
                     <div class="spinner"></div>
@@ -546,22 +625,28 @@ class AutoSave {
             `;
         }
 
-        // Auto-hide success messages after 3 seconds
-        if (type === 'success' || type === 'draft-created') {
-            setTimeout(() => {
-                if (status.classList.contains(type)) {
-                    status.classList.remove('show');
-                }
-            }, 3000);
-        }
-
-        // Auto-hide after 3 seconds for success/error
-        if (type !== 'saving') {
-            setTimeout(() => {
-                if (status.classList.contains(type)) {
-                    status.classList.remove('show');
-                }
-            }, 3000);
+        // Auto-hide logic based on type and autoHide parameter
+        if (autoHide) {
+            let hideDelay = 3000; // Default 3 seconds
+            
+            // Extend display time for success messages
+            if (type === 'success') {
+                hideDelay = 4000; // 4 seconds for success
+            }
+            
+            // Don't auto-hide countdown, saving, or when explicitly disabled
+            if (type !== 'saving' && type !== 'countdown') {
+                setTimeout(() => {
+                    if (status.classList.contains(type)) {
+                        status.classList.add('hidden');
+                        setTimeout(() => {
+                            if (status.classList.contains(type)) {
+                                status.classList.remove('show', 'hidden');
+                            }
+                        }, 400); // Wait for transition
+                    }
+                }, hideDelay);
+            }
         }
     }
 
@@ -592,6 +677,9 @@ class AutoSave {
         if (this.intervalId) {
             clearInterval(this.intervalId);
         }
+
+        // Clean up countdown
+        this.stopCountdown();
 
         // Remove status indicator
         const status = document.getElementById('autosave-status');
