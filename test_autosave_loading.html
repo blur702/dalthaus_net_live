@@ -31,6 +31,27 @@
                 document.getElementById('status').innerHTML = 'Error: ' + error.message;
             });
             
+        // Add a simple test to verify class execution
+        window.testAutoSaveClass = function() {
+            console.log('=== AUTOSAVE CLASS TEST ===');
+            console.log('AutoSave type:', typeof AutoSave);
+            console.log('AutoSave constructor:', AutoSave);
+            
+            if (typeof AutoSave === 'function') {
+                try {
+                    // Test creating an instance with a fake form
+                    const testDiv = document.createElement('div');
+                    testDiv.id = 'testForm';
+                    document.body.appendChild(testDiv);
+                    
+                    const instance = new AutoSave('testForm');
+                    console.log('✅ AutoSave instance created:', !!instance);
+                } catch (error) {
+                    console.error('❌ Error creating AutoSave instance:', error);
+                }
+            }
+        };
+
         // Test direct script loading
         const script = document.createElement('script');
         script.src = '/assets/js/autosave.js';
@@ -44,6 +65,8 @@
                 // Check for any JavaScript errors
                 if (typeof AutoSave !== 'undefined') {
                     console.log('✅ AutoSave class loaded successfully');
+                    // Run the class test
+                    window.testAutoSaveClass();
                 } else {
                     console.error('❌ AutoSave class not found - possible syntax error');
                 }
