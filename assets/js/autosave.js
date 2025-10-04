@@ -44,9 +44,22 @@ class AutoSave {
     }
 
     extractContentId() {
-        // Get form action as string
-        const formAction = String(this.form.action || this.form.getAttribute('action') || '');
+        // Get form action as string - handle RadioNodeList issue
+        let formAction = this.form.getAttribute('action') || '';
+        
+        // Fallback to form.action if getAttribute fails, but handle RadioNodeList
+        if (!formAction) {
+            const action = this.form.action;
+            if (typeof action === 'string') {
+                formAction = action;
+            } else {
+                // If it's a RadioNodeList or other object, try to get the actual action
+                formAction = String(action);
+            }
+        }
+        
         console.log('AutoSave: Form action URL:', formAction);
+        console.log('AutoSave: Form action type:', typeof formAction);
         
         // Try to get ID from form action URL pattern: /admin/content/{id}/update
         const actionMatch = formAction.match(/\/admin\/content\/(\d+)\/update/);
