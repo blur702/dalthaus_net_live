@@ -60,6 +60,8 @@ class AutoSave {
     }
 
     init() {
+        console.log('AutoSave: Starting initialization...');
+        
         this.createStatusIndicator();
         this.attachEventListeners();
 
@@ -67,6 +69,7 @@ class AutoSave {
             // Edit mode - enable auto-save immediately
             this.isEnabled = true;
             this.startPeriodicSave();
+            this.showStatus('success', 'Auto-save enabled for content ID: ' + this.contentId);
             console.log('AutoSave: Initialized for content ID:', this.contentId);
         } else if (this.isCreateMode) {
             // Create mode - wait for title to be entered
@@ -77,11 +80,19 @@ class AutoSave {
             console.warn('AutoSave: Unable to determine mode, auto-save disabled');
             return;
         }
+        
+        console.log('AutoSave: Initialization complete');
     }
 
     createStatusIndicator() {
-        // Create status indicator if it doesn't exist
-        if (document.getElementById('autosave-status')) return;
+        console.log('AutoSave: Creating status indicator...');
+        
+        // Remove existing indicator if it exists
+        const existing = document.getElementById('autosave-status');
+        if (existing) {
+            console.log('AutoSave: Removing existing status indicator');
+            existing.remove();
+        }
 
         const statusDiv = document.createElement('div');
         statusDiv.id = 'autosave-status';
@@ -91,103 +102,121 @@ class AutoSave {
                 <svg class="autosave-icon" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                 </svg>
-                <span class="autosave-text">Auto-save enabled</span>
+                <span class="autosave-text">Auto-save ready</span>
             </div>
         `;
 
-        // Insert status indicator near the form buttons
-        const buttonContainer = this.form.querySelector('.flex.items-center.justify-end');
-        if (buttonContainer) {
-            buttonContainer.parentNode.insertBefore(statusDiv, buttonContainer);
-        } else {
-            this.form.appendChild(statusDiv);
-        }
+        // Always append to body for consistent positioning
+        document.body.appendChild(statusDiv);
+        console.log('AutoSave: Status indicator created and appended to body');
 
         // Add CSS styles
         this.addStatusStyles();
+        
+        // Verify the element is in the DOM
+        const verification = document.getElementById('autosave-status');
+        console.log('AutoSave: Status indicator verification:', !!verification);
+        if (verification) {
+            console.log('AutoSave: Status indicator classes:', verification.className);
+        }
     }
 
     addStatusStyles() {
-        if (document.getElementById('autosave-styles')) return;
+        console.log('AutoSave: Adding status styles...');
+        
+        // Remove existing styles if they exist
+        const existing = document.getElementById('autosave-styles');
+        if (existing) {
+            console.log('AutoSave: Removing existing styles');
+            existing.remove();
+        }
 
         const style = document.createElement('style');
         style.id = 'autosave-styles';
         style.textContent = `
             .autosave-status {
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                z-index: 1000;
-                background: #10b981;
-                color: white;
-                padding: 8px 16px;
-                border-radius: 6px;
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-                font-size: 14px;
-                opacity: 0;
-                transform: translateY(-10px);
-                transition: all 0.3s ease;
-                pointer-events: none;
+                position: fixed !important;
+                top: 20px !important;
+                right: 20px !important;
+                z-index: 9999 !important;
+                background: #10b981 !important;
+                color: white !important;
+                padding: 8px 16px !important;
+                border-radius: 6px !important;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+                font-size: 14px !important;
+                opacity: 0 !important;
+                transform: translateY(-10px) !important;
+                transition: all 0.3s ease !important;
+                pointer-events: none !important;
+                font-family: system-ui, -apple-system, sans-serif !important;
+                max-width: 300px !important;
+                word-wrap: break-word !important;
             }
 
             .autosave-status.show {
-                opacity: 1;
-                transform: translateY(0);
+                opacity: 1 !important;
+                transform: translateY(0) !important;
             }
 
             .autosave-status.saving {
-                background: #f59e0b;
+                background: #f59e0b !important;
             }
 
             .autosave-status.error {
-                background: #ef4444;
+                background: #ef4444 !important;
             }
 
             .autosave-status.info {
-                background: #3b82f6;
+                background: #3b82f6 !important;
+            }
+
+            .autosave-status.success {
+                background: #10b981 !important;
             }
 
             .autosave-status.draft-created {
-                background: #8b5cf6;
+                background: #8b5cf6 !important;
             }
 
             .autosave-status .spinner {
-                display: inline-block;
-                width: 12px;
-                height: 12px;
-                border: 2px solid transparent;
-                border-top: 2px solid currentColor;
-                border-radius: 50%;
-                animation: spin 1s linear infinite;
-                margin-right: 6px;
+                display: inline-block !important;
+                width: 12px !important;
+                height: 12px !important;
+                border: 2px solid transparent !important;
+                border-top: 2px solid currentColor !important;
+                border-radius: 50% !important;
+                animation: autosave-spin 1s linear infinite !important;
+                margin-right: 6px !important;
             }
 
-            @keyframes spin {
+            @keyframes autosave-spin {
                 0% { transform: rotate(0deg); }
                 100% { transform: rotate(360deg); }
             }
 
             .autosave-status-content {
-                display: flex;
-                align-items: center;
-                gap: 6px;
+                display: flex !important;
+                align-items: center !important;
+                gap: 6px !important;
             }
 
             .autosave-icon {
-                width: 16px;
-                height: 16px;
+                width: 16px !important;
+                height: 16px !important;
+                flex-shrink: 0 !important;
             }
 
             .autosave-spinner {
-                animation: spin 1s linear infinite;
-            }
-
-            @keyframes spin {
-                from { transform: rotate(0deg); }
-                to { transform: rotate(360deg); }
+                animation: autosave-spin 1s linear infinite !important;
             }
         `;
         document.head.appendChild(style);
+        console.log('AutoSave: Status styles added to head');
+        
+        // Verify styles were added
+        const verification = document.getElementById('autosave-styles');
+        console.log('AutoSave: Styles verification:', !!verification);
     }
 
     attachEventListeners() {
@@ -424,14 +453,22 @@ class AutoSave {
     }
 
     showStatus(type, message) {
+        console.log('AutoSave: Showing status -', type, ':', message);
+        
         const status = document.getElementById('autosave-status');
-        if (!status) return;
+        if (!status) {
+            console.warn('AutoSave: Status element not found, recreating...');
+            this.createStatusIndicator();
+            return this.showStatus(type, message);
+        }
 
         // Remove all existing type classes
         status.className = 'autosave-status show';
         
         // Add new type class
         status.classList.add(type);
+        
+        console.log('AutoSave: Status element classes:', status.className);
 
         // Create enhanced content with spinner for saving state
         if (type === 'saving') {
@@ -557,9 +594,30 @@ class AutoSave {
 
 // Initialize auto-save when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('AutoSave: DOM loaded, checking for content form...');
+    
     // Check if we're on a content edit page
     const contentForm = document.getElementById('contentForm');
+    console.log('AutoSave: Content form found:', !!contentForm);
+    
     if (contentForm) {
-        window.autoSave = new AutoSave('contentForm');
+        console.log('AutoSave: Creating AutoSave instance...');
+        try {
+            window.autoSave = new AutoSave('contentForm');
+            console.log('AutoSave: Instance created successfully:', !!window.autoSave);
+            
+            // Force show an initial status to verify visibility
+            setTimeout(() => {
+                if (window.autoSave && typeof window.autoSave.showStatus === 'function') {
+                    console.log('AutoSave: Triggering initial status display...');
+                    // The showStatus call from init() should already be active
+                }
+            }, 500);
+            
+        } catch (error) {
+            console.error('AutoSave: Failed to create instance:', error);
+        }
+    } else {
+        console.log('AutoSave: No content form found, auto-save not initialized');
     }
 });

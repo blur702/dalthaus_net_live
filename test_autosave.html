@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto-save Test Page</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #374151;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+        textarea {
+            height: 200px;
+            resize: vertical;
+        }
+        .test-info {
+            background: #eff6ff;
+            border: 2px solid #3b82f6;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 30px;
+        }
+        .test-info h3 {
+            margin: 0 0 10px 0;
+            color: #1d4ed8;
+        }
+        .test-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+        .log-area {
+            background: #111827;
+            color: #e5e7eb;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        .status-test {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            background: #10b981;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            font-size: 14px;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            max-width: 300px;
+        }
+        .status-test.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .status-test.saving { background: #f59e0b; }
+        .status-test.error { background: #ef4444; }
+        .status-test.info { background: #3b82f6; }
+        .status-test.success { background: #10b981; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Auto-save Visual Test Page</h1>
+        
+        <div class="test-info">
+            <h3>Instructions:</h3>
+            <p>This page tests the auto-save status indicator visibility and styling. It simulates the same HTML structure and CSS as the real content forms.</p>
+            <ol>
+                <li>Use the buttons below to test different status types</li>
+                <li>Check that indicators appear in the top-right corner</li>
+                <li>Verify animations and colors work correctly</li>
+                <li>Test on the same browser/device where auto-save isn't working</li>
+            </ol>
+        </div>
+
+        <!-- Simulated content form -->
+        <form id="contentForm" action="/admin/content/store" method="POST">
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" name="title" id="title" placeholder="Enter title...">
+            </div>
+            
+            <div class="form-group">
+                <label for="body">Content</label>
+                <textarea name="body" id="body" placeholder="Write your content here..."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="teaser">Teaser</label>
+                <textarea name="teaser" id="teaser" rows="3" placeholder="A brief summary..."></textarea>
+            </div>
+        </form>
+
+        <div class="test-buttons">
+            <button type="button" class="btn-primary" onclick="testStatus('info', 'Auto-save will start after entering title')">Test Info</button>
+            <button type="button" class="btn-primary" onclick="testStatus('saving', 'Saving...')">Test Saving</button>
+            <button type="button" class="btn-primary" onclick="testStatus('success', 'Saved at ' + new Date().toLocaleTimeString())">Test Success</button>
+            <button type="button" class="btn-primary" onclick="testStatus('error', 'Auto-save failed')">Test Error</button>
+            <button type="button" class="btn-primary" onclick="testStatus('draft-created', 'Draft created - auto-save enabled', 'success')">Test Draft Created</button>
+            <button type="button" class="btn-secondary" onclick="clearLog()">Clear Log</button>
+        </div>
+
+        <div class="log-area" id="logArea">
+            <div>Auto-save test page loaded. Click buttons above to test status indicators.</div>
+        </div>
+    </div>
+
+    <script>
+        function log(message) {
+            const logArea = document.getElementById('logArea');
+            const time = new Date().toLocaleTimeString();
+            logArea.innerHTML += `<div>[${time}] ${message}</div>`;
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('logArea').innerHTML = '<div>Log cleared.</div>';
+        }
+
+        function testStatus(type, message, finalType = null) {
+            log(`Testing status: ${type} - "${message}"`);
+            
+            // Remove existing status indicator
+            const existing = document.getElementById('test-status');
+            if (existing) {
+                existing.remove();
+            }
+
+            // Create status indicator
+            const statusDiv = document.createElement('div');
+            statusDiv.id = 'test-status';
+            statusDiv.className = `status-test ${type}`;
+            
+            if (type === 'saving') {
+                statusDiv.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <div style="width: 12px; height: 12px; border: 2px solid transparent; border-top: 2px solid currentColor; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                        <span>${message}</span>
+                    </div>
+                `;
+            } else {
+                statusDiv.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <svg style="width: 16px; height: 16px;" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                        <span>${message}</span>
+                    </div>
+                `;
+            }
+
+            document.body.appendChild(statusDiv);
+            
+            // Show it
+            setTimeout(() => {
+                statusDiv.classList.add('show');
+                log(`Status indicator should now be visible in top-right corner`);
+            }, 100);
+
+            // Auto-hide after 3 seconds (except saving state)
+            if (type !== 'saving') {
+                setTimeout(() => {
+                    statusDiv.classList.remove('show');
+                    log(`Status indicator hidden`);
+                    setTimeout(() => {
+                        statusDiv.remove();
+                    }, 300);
+                }, 3000);
+            } else if (finalType) {
+                // Simulate save completion
+                setTimeout(() => {
+                    statusDiv.className = `status-test show ${finalType}`;
+                    statusDiv.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <svg style="width: 16px; height: 16px;" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                            <span>Saved at ${new Date().toLocaleTimeString()}</span>
+                        </div>
+                    `;
+                    log(`Status changed to success state`);
+                    
+                    setTimeout(() => {
+                        statusDiv.classList.remove('show');
+                        log(`Status indicator hidden`);
+                        setTimeout(() => statusDiv.remove(), 300);
+                    }, 3000);
+                }, 2000);
+            }
+        }
+
+        // Add spin animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes spin {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        log('Auto-save test page ready. Browser: ' + navigator.userAgent);
+        log('Screen size: ' + window.innerWidth + 'x' + window.innerHeight);
+        log('Device pixel ratio: ' + window.devicePixelRatio);
+    </script>
+</body>
+</html>
