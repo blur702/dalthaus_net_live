@@ -639,19 +639,19 @@
             }, 2000);
         });
 
-        // Global function to add modal functionality to content images with data-modal-src
+        // Global function to add modal functionality to ALL content images (both with data-modal-src and uploaded images)
         window.addModalToContentImages = function() {
-            // Select images in content areas that have data-modal-src attribute
-            const contentSelectors = [
+            // Process images with data-modal-src attribute (dual-image functionality)
+            const dualImageSelectors = [
                 '.content-text img[data-modal-src]',
                 '.prose img[data-modal-src]', 
                 'article img[data-modal-src]',
                 '.photobook-content img[data-modal-src]',
                 '.article-content img[data-modal-src]',
-                'main img[data-modal-src]' // Add main img as fallback
+                'main img[data-modal-src]'
             ];
             
-            contentSelectors.forEach(function(selector) {
+            dualImageSelectors.forEach(function(selector) {
                 const images = document.querySelectorAll(selector);
                 images.forEach(function(img) {
                     // Skip if already has modal functionality
@@ -662,7 +662,7 @@
                     // Get the modal image source from data attribute
                     const modalSrc = img.getAttribute('data-modal-src');
                     if (!modalSrc) {
-                        return; // No modal image specified, skip this image
+                        return;
                     }
                     
                     // Wait for image to load if not already loaded
@@ -685,7 +685,7 @@
                             img.classList.add('modal-image');
                         }
                         
-                        console.log('Modal functionality added to image with data-modal-src:', modalSrc.substring(modalSrc.lastIndexOf('/') + 1));
+                        console.log('Modal functionality added to dual-image with data-modal-src:', modalSrc.substring(modalSrc.lastIndexOf('/') + 1));
                     }
                     
                     // If image is already loaded, process immediately
@@ -696,6 +696,70 @@
                         img.addEventListener('load', processImage);
                         // Also try after a short delay in case load event already fired
                         setTimeout(processImage, 100);
+                    }
+                });
+            });
+            
+            // Process ALL uploaded images (from /uploads/ directory) that don't have data-modal-src
+            const allContentSelectors = [
+                '.content-text img',
+                '.prose img', 
+                'article img',
+                '.photobook-content img',
+                '.article-content img',
+                'main img',
+                '.content img'
+            ];
+            
+            allContentSelectors.forEach(function(selector) {
+                const images = document.querySelectorAll(selector);
+                images.forEach(function(img) {
+                    const src = img.getAttribute('src');
+                    
+                    // Only process images from uploads directory that don't already have modal functionality
+                    if (src && src.includes('/uploads/') && !img.hasAttribute('data-modal-enabled') && !img.hasAttribute('data-modal-src')) {
+                        
+                        function processUploadedImage() {
+                            // Mark as having modal functionality
+                            img.setAttribute('data-modal-enabled', 'true');
+                            
+                            // Add cursor pointer style
+                            img.style.cursor = 'pointer';
+                            img.style.transition = 'opacity 0.2s ease';
+                            
+                            // Add click event listener using the same image as modal (full-size view)
+                            img.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                const alt = this.alt || 'Image';
+                                openImageModal(src, alt);
+                            });
+                            
+                            // Add hover effect
+                            img.addEventListener('mouseenter', function() {
+                                this.style.opacity = '0.9';
+                            });
+                            
+                            img.addEventListener('mouseleave', function() {
+                                this.style.opacity = '1';
+                            });
+                            
+                            // Add modal class if not already present
+                            if (!img.classList.contains('modal-image')) {
+                                img.classList.add('modal-image');
+                            }
+                            
+                            console.log('Modal functionality added to uploaded image:', src.substring(src.lastIndexOf('/') + 1));
+                        }
+                        
+                        // If image is already loaded, process immediately
+                        if (img.complete && img.naturalWidth > 0) {
+                            processUploadedImage();
+                        } else {
+                            // Wait for image to load
+                            img.addEventListener('load', processUploadedImage);
+                            // Also try after a short delay in case load event already fired
+                            setTimeout(processUploadedImage, 100);
+                        }
                     }
                 });
             });
