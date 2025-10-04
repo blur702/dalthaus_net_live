@@ -52,7 +52,7 @@
         "testMatch": [
           "**/*.@(spec|test).?(c|m)[jt]s?(x)"
         ],
-        "timeout": 120000
+        "timeout": 60000
       }
     ],
     "shard": null,
@@ -64,25 +64,25 @@
   },
   "suites": [
     {
-      "title": "final-verification-modal-fix-deployed.spec.js",
-      "file": "final-verification-modal-fix-deployed.spec.js",
+      "title": "autosave-database-verification.spec.js",
+      "file": "autosave-database-verification.spec.js",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "Final Verification - Modal Fix Deployed",
-          "file": "final-verification-modal-fix-deployed.spec.js",
-          "line": 3,
+          "title": "Auto-save Database Verification",
+          "file": "autosave-database-verification.spec.js",
+          "line": 12,
           "column": 6,
           "specs": [
             {
-              "title": "Verify deployed modal functionality works for all uploaded images",
-              "ok": true,
+              "title": "should create draft in database after title entry",
+              "ok": false,
               "tags": [],
               "tests": [
                 {
-                  "timeout": 120000,
+                  "timeout": 60000,
                   "annotations": [],
                   "expectedStatus": "passed",
                   "projectId": "diagnosis",
@@ -91,292 +91,257 @@
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 32550,
-                      "errors": [],
+                      "status": "failed",
+                      "duration": 2214,
+                      "error": {
+                        "message": "Error: page.goto: net::ERR_HTTP_RESPONSE_CODE_FAILURE at http://localhost:9000/admin/login\nCall log:\n\u001b[2m  - navigating to \"http://localhost:9000/admin/login\", waiting until \"load\"\u001b[22m\n",
+                        "stack": "Error: page.goto: net::ERR_HTTP_RESPONSE_CODE_FAILURE at http://localhost:9000/admin/login\nCall log:\n\u001b[2m  - navigating to \"http://localhost:9000/admin/login\", waiting until \"load\"\u001b[22m\n\n    at /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/e2e/autosave-database-verification.spec.js:49:20",
+                        "location": {
+                          "file": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/e2e/autosave-database-verification.spec.js",
+                          "column": 20,
+                          "line": 49
+                        },
+                        "snippet": "  47 |\n  48 |         // Step 2: Navigate to admin login\n> 49 |         await page.goto('http://localhost:9000/admin/login');\n     |                    ^\n  50 |         console.log('✓ Admin login page loaded');\n  51 |\n  52 |         // Wait for login form"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/e2e/autosave-database-verification.spec.js",
+                            "column": 20,
+                            "line": 49
+                          },
+                          "message": "Error: page.goto: net::ERR_HTTP_RESPONSE_CODE_FAILURE at http://localhost:9000/admin/login\nCall log:\n\u001b[2m  - navigating to \"http://localhost:9000/admin/login\", waiting until \"load\"\u001b[22m\n\n\n  47 |\n  48 |         // Step 2: Navigate to admin login\n> 49 |         await page.goto('http://localhost:9000/admin/login');\n     |                    ^\n  50 |         console.log('✓ Admin login page loaded');\n  51 |\n  52 |         // Wait for login form\n    at /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/e2e/autosave-database-verification.spec.js:49:20"
+                        }
+                      ],
                       "stdout": [
                         {
-                          "text": "=== FINAL VERIFICATION: DEPLOYED MODAL FIX ===\n"
+                          "text": "✓ Database connection established\n"
                         },
                         {
-                          "text": "\n--- Testing Homepage (After Deployment) ---\n"
+                          "text": "🔄 Starting admin login test...\n"
                         },
                         {
-                          "text": "Analysis for Homepage:\n"
+                          "text": "✓ Homepage loaded\n"
                         },
                         {
-                          "text": "- Total images: 3\n"
+                          "text": "Browser Error: Failed to load resource: the server responded with a status of 404 (Not Found)\n"
                         },
                         {
-                          "text": "- Uploaded images: 3\n"
-                        },
-                        {
-                          "text": "- Images with modal enabled: 3\n"
-                        },
-                        {
-                          "text": "- Images with pointer cursor: 3\n"
-                        },
-                        {
-                          "text": "\nDetailed Image Analysis:\n"
-                        },
-                        {
-                          "text": "  1. 530fe5ee220115e97dfb7a6386051541.jpg\n"
-                        },
-                        {
-                          "text": "     - Modal enabled: ✅\n"
-                        },
-                        {
-                          "text": "     - Pointer cursor: ✅ (pointer)\n"
-                        },
-                        {
-                          "text": "     - Data-modal-src: ❌\n"
-                        },
-                        {
-                          "text": "     - Click listeners: ❌\n"
-                        },
-                        {
-                          "text": "     - CSS class: teaser-image w-full h-full object-cover modal-image\n"
-                        },
-                        {
-                          "text": "  2. 24e20e2aea802c08f96721eec4a66565.jpg\n"
-                        },
-                        {
-                          "text": "     - Modal enabled: ✅\n"
-                        },
-                        {
-                          "text": "     - Pointer cursor: ✅ (pointer)\n"
-                        },
-                        {
-                          "text": "     - Data-modal-src: ❌\n"
-                        },
-                        {
-                          "text": "     - Click listeners: ❌\n"
-                        },
-                        {
-                          "text": "     - CSS class: teaser-image w-full h-full object-cover modal-image\n"
-                        },
-                        {
-                          "text": "  3. ad495c68c2a90419cf64064ca3a6c777.jpg\n"
-                        },
-                        {
-                          "text": "     - Modal enabled: ✅\n"
-                        },
-                        {
-                          "text": "     - Pointer cursor: ✅ (pointer)\n"
-                        },
-                        {
-                          "text": "     - Data-modal-src: ❌\n"
-                        },
-                        {
-                          "text": "     - Click listeners: ❌\n"
-                        },
-                        {
-                          "text": "     - CSS class: teaser-image w-full h-full object-cover modal-image\n"
-                        },
-                        {
-                          "text": "\nTesting modal functionality on Homepage...\n"
-                        },
-                        {
-                          "text": "Clicking image: 530fe5ee220115e97dfb7a6386051541.jpg\n"
-                        },
-                        {
-                          "text": "✅ MODAL WORKING ON HOMEPAGE!\n"
-                        },
-                        {
-                          "text": "  Testing modal close...\n"
-                        },
-                        {
-                          "text": "  ⚠️ Modal still open, trying click outside\n"
-                        },
-                        {
-                          "text": "\n--- Testing Articles Page (After Deployment) ---\n"
-                        },
-                        {
-                          "text": "Analysis for Articles Page:\n"
-                        },
-                        {
-                          "text": "- Total images: 0\n"
-                        },
-                        {
-                          "text": "- Uploaded images: 0\n"
-                        },
-                        {
-                          "text": "- Images with modal enabled: 0\n"
-                        },
-                        {
-                          "text": "- Images with pointer cursor: 0\n"
-                        },
-                        {
-                          "text": "No uploaded images found on Articles Page\n"
-                        },
-                        {
-                          "text": "\n--- Testing Photobooks Page (After Deployment) ---\n"
-                        },
-                        {
-                          "text": "Analysis for Photobooks Page:\n"
-                        },
-                        {
-                          "text": "- Total images: 3\n"
-                        },
-                        {
-                          "text": "- Uploaded images: 3\n"
-                        },
-                        {
-                          "text": "- Images with modal enabled: 3\n"
-                        },
-                        {
-                          "text": "- Images with pointer cursor: 3\n"
-                        },
-                        {
-                          "text": "\nDetailed Image Analysis:\n"
-                        },
-                        {
-                          "text": "  1. 530fe5ee220115e97dfb7a6386051541.jpg\n"
-                        },
-                        {
-                          "text": "     - Modal enabled: ✅\n"
-                        },
-                        {
-                          "text": "     - Pointer cursor: ✅ (pointer)\n"
-                        },
-                        {
-                          "text": "     - Data-modal-src: ❌\n"
-                        },
-                        {
-                          "text": "     - Click listeners: ❌\n"
-                        },
-                        {
-                          "text": "     - CSS class: teaser-image w-full h-full object-cover modal-image\n"
-                        },
-                        {
-                          "text": "  2. 24e20e2aea802c08f96721eec4a66565.jpg\n"
-                        },
-                        {
-                          "text": "     - Modal enabled: ✅\n"
-                        },
-                        {
-                          "text": "     - Pointer cursor: ✅ (pointer)\n"
-                        },
-                        {
-                          "text": "     - Data-modal-src: ❌\n"
-                        },
-                        {
-                          "text": "     - Click listeners: ❌\n"
-                        },
-                        {
-                          "text": "     - CSS class: teaser-image w-full h-full object-cover modal-image\n"
-                        },
-                        {
-                          "text": "  3. ad495c68c2a90419cf64064ca3a6c777.jpg\n"
-                        },
-                        {
-                          "text": "     - Modal enabled: ✅\n"
-                        },
-                        {
-                          "text": "     - Pointer cursor: ✅ (pointer)\n"
-                        },
-                        {
-                          "text": "     - Data-modal-src: ❌\n"
-                        },
-                        {
-                          "text": "     - Click listeners: ❌\n"
-                        },
-                        {
-                          "text": "     - CSS class: teaser-image w-full h-full object-cover modal-image\n"
-                        },
-                        {
-                          "text": "\nTesting modal functionality on Photobooks Page...\n"
-                        },
-                        {
-                          "text": "Clicking image: 530fe5ee220115e97dfb7a6386051541.jpg\n"
-                        },
-                        {
-                          "text": "✅ MODAL WORKING ON PHOTOBOOKS PAGE!\n"
-                        },
-                        {
-                          "text": "  Testing modal close...\n"
-                        },
-                        {
-                          "text": "  ⚠️ Modal still open, trying click outside\n"
-                        },
-                        {
-                          "text": "\n--- Testing JavaScript Functions (Post-Deployment) ---\n"
-                        },
-                        {
-                          "text": "JavaScript Function Tests:\n"
-                        },
-                        {
-                          "text": "- openImageModal: ✅\n"
-                        },
-                        {
-                          "text": "- closeImageModal: ✅\n"
-                        },
-                        {
-                          "text": "- addModalToContentImages: ✅\n"
-                        },
-                        {
-                          "text": "- Manual addModalToContentImages: ✅\n"
-                        },
-                        {
-                          "text": "- Manual modal count: 3/3\n"
-                        },
-                        {
-                          "text": "- Manual modal open: ✅\n"
-                        },
-                        {
-                          "text": "✅ Manual modal test successful!\n"
-                        },
-                        {
-                          "text": "\n=== FINAL DEPLOYMENT VERIFICATION RESULTS ===\n"
-                        },
-                        {
-                          "text": "Pages Checked: 3\n"
-                        },
-                        {
-                          "text": "Total Uploaded Images Found: 6\n"
-                        },
-                        {
-                          "text": "Images with Modal Functionality: 6\n"
-                        },
-                        {
-                          "text": "Successful Modal Tests: 2\n"
-                        },
-                        {
-                          "text": "Modal Functionality Coverage: 100.0%\n"
-                        },
-                        {
-                          "text": "Modal Test Success Rate: 66.7%\n"
-                        },
-                        {
-                          "text": "\n🎉 DEPLOYMENT VERIFICATION COMPLETE!\n"
-                        },
-                        {
-                          "text": "✅ TinyMCE uploaded images now have full modal functionality!\n"
-                        },
-                        {
-                          "text": "✅ Modal system successfully deployed to production!\n"
+                          "text": "Browser Error: Failed to load resource: the server responded with a status of 500 ()\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-10-04T03:07:10.799Z",
+                      "startTime": "2025-10-04T18:18:37.558Z",
                       "annotations": [],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/results/final-verification-modal-f-105a8-rks-for-all-uploaded-images-diagnosis/test-finished-1.png"
+                          "path": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/results/autosave-database-verifica-13ad2--database-after-title-entry-diagnosis/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/results/autosave-database-verifica-13ad2--database-after-title-entry-diagnosis/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/results/autosave-database-verifica-13ad2--database-after-title-entry-diagnosis/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/results/autosave-database-verifica-13ad2--database-after-title-entry-diagnosis/trace.zip"
                         }
-                      ]
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/e2e/autosave-database-verification.spec.js",
+                        "column": 20,
+                        "line": 49
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
-              "id": "c10b42946ca242b2500f-6563314b32d9799c153e",
-              "file": "final-verification-modal-fix-deployed.spec.js",
-              "line": 5,
-              "column": 7
+              "id": "3b397c7e5a67d7712310-8cbdfc4d8247de7d61b7",
+              "file": "autosave-database-verification.spec.js",
+              "line": 32,
+              "column": 5
+            },
+            {
+              "title": "should handle photobook creation with auto-save",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "diagnosis",
+                  "projectName": "diagnosis",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 1138,
+                      "error": {
+                        "message": "Error: page.goto: net::ERR_HTTP_RESPONSE_CODE_FAILURE at http://localhost:9000/admin/login\nCall log:\n\u001b[2m  - navigating to \"http://localhost:9000/admin/login\", waiting until \"load\"\u001b[22m\n",
+                        "stack": "Error: page.goto: net::ERR_HTTP_RESPONSE_CODE_FAILURE at http://localhost:9000/admin/login\nCall log:\n\u001b[2m  - navigating to \"http://localhost:9000/admin/login\", waiting until \"load\"\u001b[22m\n\n    at /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/e2e/autosave-database-verification.spec.js:230:20",
+                        "location": {
+                          "file": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/e2e/autosave-database-verification.spec.js",
+                          "column": 20,
+                          "line": 230
+                        },
+                        "snippet": "  228 |\n  229 |         // Login\n> 230 |         await page.goto('http://localhost:9000/admin/login');\n      |                    ^\n  231 |         await page.waitForSelector('input[name=\"username\"]', { timeout: 10000 });\n  232 |         await page.fill('input[name=\"username\"]', 'kevin');\n  233 |         await page.fill('input[name=\"password\"]', '(130Bpm)');"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/e2e/autosave-database-verification.spec.js",
+                            "column": 20,
+                            "line": 230
+                          },
+                          "message": "Error: page.goto: net::ERR_HTTP_RESPONSE_CODE_FAILURE at http://localhost:9000/admin/login\nCall log:\n\u001b[2m  - navigating to \"http://localhost:9000/admin/login\", waiting until \"load\"\u001b[22m\n\n\n  228 |\n  229 |         // Login\n> 230 |         await page.goto('http://localhost:9000/admin/login');\n      |                    ^\n  231 |         await page.waitForSelector('input[name=\"username\"]', { timeout: 10000 });\n  232 |         await page.fill('input[name=\"username\"]', 'kevin');\n  233 |         await page.fill('input[name=\"password\"]', '(130Bpm)');\n    at /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/e2e/autosave-database-verification.spec.js:230:20"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "✓ Database connection established\n"
+                        },
+                        {
+                          "text": "🔄 Testing photobook auto-save...\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-10-04T18:18:42.060Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/results/autosave-database-verifica-bc55a-ook-creation-with-auto-save-diagnosis/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/results/autosave-database-verifica-bc55a-ook-creation-with-auto-save-diagnosis/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/results/autosave-database-verifica-bc55a-ook-creation-with-auto-save-diagnosis/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/results/autosave-database-verifica-bc55a-ook-creation-with-auto-save-diagnosis/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/e2e/autosave-database-verification.spec.js",
+                        "column": 20,
+                        "line": 230
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "3b397c7e5a67d7712310-bc45ade3dbe1a3bd1754",
+              "file": "autosave-database-verification.spec.js",
+              "line": 226,
+              "column": 5
+            },
+            {
+              "title": "should not create draft without title",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "diagnosis",
+                  "projectName": "diagnosis",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 1175,
+                      "error": {
+                        "message": "Error: page.goto: net::ERR_HTTP_RESPONSE_CODE_FAILURE at http://localhost:9000/admin/login\nCall log:\n\u001b[2m  - navigating to \"http://localhost:9000/admin/login\", waiting until \"load\"\u001b[22m\n",
+                        "stack": "Error: page.goto: net::ERR_HTTP_RESPONSE_CODE_FAILURE at http://localhost:9000/admin/login\nCall log:\n\u001b[2m  - navigating to \"http://localhost:9000/admin/login\", waiting until \"load\"\u001b[22m\n\n    at /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/e2e/autosave-database-verification.spec.js:293:20",
+                        "location": {
+                          "file": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/e2e/autosave-database-verification.spec.js",
+                          "column": 20,
+                          "line": 293
+                        },
+                        "snippet": "  291 |\n  292 |         // Login\n> 293 |         await page.goto('http://localhost:9000/admin/login');\n      |                    ^\n  294 |         await page.waitForSelector('input[name=\"username\"]', { timeout: 10000 });\n  295 |         await page.fill('input[name=\"username\"]', 'kevin');\n  296 |         await page.fill('input[name=\"password\"]', '(130Bpm)');"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/e2e/autosave-database-verification.spec.js",
+                            "column": 20,
+                            "line": 293
+                          },
+                          "message": "Error: page.goto: net::ERR_HTTP_RESPONSE_CODE_FAILURE at http://localhost:9000/admin/login\nCall log:\n\u001b[2m  - navigating to \"http://localhost:9000/admin/login\", waiting until \"load\"\u001b[22m\n\n\n  291 |\n  292 |         // Login\n> 293 |         await page.goto('http://localhost:9000/admin/login');\n      |                    ^\n  294 |         await page.waitForSelector('input[name=\"username\"]', { timeout: 10000 });\n  295 |         await page.fill('input[name=\"username\"]', 'kevin');\n  296 |         await page.fill('input[name=\"password\"]', '(130Bpm)');\n    at /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/e2e/autosave-database-verification.spec.js:293:20"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "✓ Database connection established\n"
+                        },
+                        {
+                          "text": "🔄 Testing no draft creation without title...\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-10-04T18:18:44.966Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/results/autosave-database-verifica-79083--create-draft-without-title-diagnosis/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/results/autosave-database-verifica-79083--create-draft-without-title-diagnosis/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/results/autosave-database-verifica-79083--create-draft-without-title-diagnosis/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/results/autosave-database-verifica-79083--create-draft-without-title-diagnosis/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/testing/e2e/autosave-database-verification.spec.js",
+                        "column": 20,
+                        "line": 293
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "3b397c7e5a67d7712310-1a856cb6bcd1680b740b",
+              "file": "autosave-database-verification.spec.js",
+              "line": 289,
+              "column": 5
             }
           ]
         }
@@ -385,11 +350,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-10-04T03:07:10.003Z",
-    "duration": 34250.744999999995,
-    "expected": 1,
+    "startTime": "2025-10-04T18:18:36.532Z",
+    "duration": 10602.485,
+    "expected": 0,
     "skipped": 0,
-    "unexpected": 0,
+    "unexpected": 3,
     "flaky": 0
   }
 }

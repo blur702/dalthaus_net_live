@@ -25,7 +25,8 @@
   },
   "homepage": "https://github.com/blur702/dalthaus_net_live#readme",
   "devDependencies": {
-    "@playwright/test": "^1.55.0"
+    "@playwright/test": "^1.55.0",
+    "mysql2": "^3.15.1"
   },
   "dependencies": {
     "playwright": "^1.55.0"

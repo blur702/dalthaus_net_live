@@ -118,6 +118,20 @@ class AutoSave {
         console.log('AutoSave: Status indicator verification:', !!verification);
         if (verification) {
             console.log('AutoSave: Status indicator classes:', verification.className);
+            
+            // Force a test to ensure visibility
+            setTimeout(() => {
+                const rect = verification.getBoundingClientRect();
+                const style = window.getComputedStyle(verification);
+                console.log('AutoSave: Post-creation visibility test:', {
+                    inDOM: document.body.contains(verification),
+                    rect: rect,
+                    opacity: style.opacity,
+                    zIndex: style.zIndex,
+                    display: style.display,
+                    position: style.position
+                });
+            }, 100);
         }
     }
 
@@ -138,20 +152,21 @@ class AutoSave {
                 position: fixed !important;
                 top: 20px !important;
                 right: 20px !important;
-                z-index: 9999 !important;
+                z-index: 10002 !important;
                 background: #10b981 !important;
                 color: white !important;
                 padding: 8px 16px !important;
                 border-radius: 6px !important;
                 box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
                 font-size: 14px !important;
-                opacity: 0 !important;
-                transform: translateY(-10px) !important;
+                opacity: 1 !important;
+                transform: translateY(0) !important;
                 transition: all 0.3s ease !important;
                 pointer-events: none !important;
                 font-family: system-ui, -apple-system, sans-serif !important;
                 max-width: 300px !important;
                 word-wrap: break-word !important;
+                border: 2px solid rgba(255, 255, 255, 0.2) !important;
             }
 
             .autosave-status.show {
@@ -469,6 +484,18 @@ class AutoSave {
         status.classList.add(type);
         
         console.log('AutoSave: Status element classes:', status.className);
+        
+        // Force visibility debugging
+        const rect = status.getBoundingClientRect();
+        const computedStyle = window.getComputedStyle(status);
+        console.log('AutoSave: Indicator visibility check:', {
+            exists: !!status,
+            visible: computedStyle.opacity !== '0' && computedStyle.display !== 'none',
+            position: { top: rect.top, right: window.innerWidth - rect.right },
+            zIndex: computedStyle.zIndex,
+            opacity: computedStyle.opacity,
+            transform: computedStyle.transform
+        });
 
         // Create enhanced content with spinner for saving state
         if (type === 'saving') {

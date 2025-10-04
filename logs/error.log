@@ -681,3 +681,43 @@
 [03-Oct-2025 21:23:39 America/New_York] BaseController::render() - Flash messages retrieved
 [03-Oct-2025 21:23:39 America/New_York] BaseController::render() - About to call view->render()
 [03-Oct-2025 21:23:39 America/New_York] BaseController::render() - View rendered successfully
+[04-Oct-2025 14:02:59 America/New_York] BaseController::render() - Starting render for template: home/index
+[04-Oct-2025 14:02:59 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 14:02:59 America/New_York] BaseController::render() - Settings loaded successfully
+[04-Oct-2025 14:02:59 America/New_York] BaseController::render() - Current user ID: null
+[04-Oct-2025 14:02:59 America/New_York] BaseController::render() - Generating CSRF token
+[04-Oct-2025 14:02:59 America/New_York] BaseController::render() - CSRF token generated
+[04-Oct-2025 14:02:59 America/New_York] BaseController::render() - Getting flash messages
+[04-Oct-2025 14:02:59 America/New_York] BaseController::render() - Flash messages retrieved
+[04-Oct-2025 14:02:59 America/New_York] BaseController::render() - About to call view->render()
+[04-Oct-2025 14:02:59 America/New_York] BaseController::render() - View rendered successfully
+[04-Oct-2025 14:16:44 America/New_York] BaseController::render() - Starting render for template: home/index
+[04-Oct-2025 14:16:44 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 14:16:44 America/New_York] BaseController::render() - Settings loaded successfully
+[04-Oct-2025 14:16:44 America/New_York] BaseController::render() - Current user ID: null
+[04-Oct-2025 14:16:44 America/New_York] BaseController::render() - Generating CSRF token
+[04-Oct-2025 14:16:44 America/New_York] BaseController::render() - CSRF token generated
+[04-Oct-2025 14:16:44 America/New_York] BaseController::render() - Getting flash messages
+[04-Oct-2025 14:16:44 America/New_York] BaseController::render() - Flash messages retrieved
+[04-Oct-2025 14:16:44 America/New_York] BaseController::render() - About to call view->render()
+[04-Oct-2025 14:16:44 America/New_York] BaseController::render() - View rendered successfully
+[04-Oct-2025 14:18:39 America/New_York] BaseController::render() - Starting render for template: home/index
+[04-Oct-2025 14:18:39 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 14:18:39 America/New_York] BaseController::render() - Settings loaded successfully
+[04-Oct-2025 14:18:39 America/New_York] BaseController::render() - Current user ID: null
+[04-Oct-2025 14:18:39 America/New_York] BaseController::render() - Generating CSRF token
+[04-Oct-2025 14:18:39 America/New_York] BaseController::render() - CSRF token generated
+[04-Oct-2025 14:18:39 America/New_York] BaseController::render() - Getting flash messages
+[04-Oct-2025 14:18:39 America/New_York] BaseController::render() - Flash messages retrieved
+[04-Oct-2025 14:18:39 America/New_York] BaseController::render() - About to call view->render()
+[04-Oct-2025 14:18:39 America/New_York] BaseController::render() - View rendered successfully
+[04-Oct-2025 15:14:18 America/New_York] BaseController::render() - Starting render for template: home/index
+[04-Oct-2025 15:14:18 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 15:14:18 America/New_York] BaseController::render() - Settings loaded successfully
+[04-Oct-2025 15:14:18 America/New_York] BaseController::render() - Current user ID: null
+[04-Oct-2025 15:14:18 America/New_York] BaseController::render() - Generating CSRF token
+[04-Oct-2025 15:14:18 America/New_York] BaseController::render() - CSRF token generated
+[04-Oct-2025 15:14:18 America/New_York] BaseController::render() - Getting flash messages
+[04-Oct-2025 15:14:18 America/New_York] BaseController::render() - Flash messages retrieved
+[04-Oct-2025 15:14:18 America/New_York] BaseController::render() - About to call view->render()
+[04-Oct-2025 15:14:18 America/New_York] BaseController::render() - View rendered successfully
