@@ -14,11 +14,13 @@ use CMS\Utils\Security;
  */
 class Auth extends BaseController
 {
-    private AuthUtil $auth;
-
     protected function initialize(): void
     {
-        $this->auth = new AuthUtil($this->db, $this->config["security"]);
+        // No need to redeclare $auth - it's inherited from BaseController
+        // Just make sure it's initialized if not already done in parent
+        if ($this->auth === null) {
+            $this->auth = new AuthUtil($this->db, $this->config["security"]);
+        }
         $this->view->layout("auth");
     }
 
