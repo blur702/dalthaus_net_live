@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug AutoSave</title>
+</head>
+<body>
+    <h1>AutoSave Debug Test</h1>
+    <div id="log"></div>
+    
+    <script>
+        function log(message) {
+            console.log(message);
+            document.getElementById('log').innerHTML += '<div>' + message + '</div>';
+        }
+        
+        // Catch ALL errors
+        window.onerror = function(message, source, lineno, colno, error) {
+            const errorMsg = 'ERROR: ' + message + ' at ' + source + ':' + lineno;
+            log(errorMsg);
+            return false;
+        };
+        
+        window.addEventListener('error', function(e) {
+            log('LISTENER ERROR: ' + e.message + ' at ' + e.filename + ':' + e.lineno);
+        });
+        
+        // Unhandled promise rejections
+        window.addEventListener('unhandledrejection', function(e) {
+            log('UNHANDLED PROMISE: ' + e.reason);
+        });
+        
+        log('Starting test...');
+        
+        // Load autosave.js directly
+        const script = document.createElement('script');
+        script.src = '/assets/js/autosave.js';
+        
+        script.onload = function() {
+            try {
+                log('Script loaded - checking AutoSave...');
+                log('typeof AutoSave: ' + typeof AutoSave);
+                
+                if (typeof AutoSave === 'undefined') {
+                    log('❌ AutoSave is undefined');
+                } else {
+                    log('✅ AutoSave found!');
+                }
+                
+            } catch (e) {
+                log('ERROR in onload: ' + e.message);
+            }
+        };
+        
+        script.onerror = function(e) {
+            log('Script failed to load: ' + e);
+        };
+        
+        document.head.appendChild(script);
+    </script>
+</body>
+</html>
