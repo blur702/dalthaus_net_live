@@ -106,3 +106,28 @@
 
 <!-- Auto-save functionality -->
 <script src="/assets/js/autosave.js?v=<?= filemtime(__DIR__ . '/../../../../assets/js/autosave.js') ?>"></script>
+
+<!-- DEBUG: AutoSave Initialization -->
+<script>
+console.log('=== ADMIN PAGE AUTOSAVE DEBUG ===');
+console.log('Page loaded, checking AutoSave availability...');
+console.log('AutoSave type:', typeof AutoSave);
+console.log('contentForm exists:', !!document.getElementById('contentForm'));
+console.log('Document ready state:', document.readyState);
+
+// Monitor for when AutoSave actually initializes
+let checkCount = 0;
+const checkInterval = setInterval(() => {
+    checkCount++;
+    console.log(`Check ${checkCount}: AutoSave=${typeof AutoSave}, window.autoSave=${typeof window.autoSave}`);
+    
+    if (typeof window.autoSave !== 'undefined' || checkCount > 10) {
+        clearInterval(checkInterval);
+        if (window.autoSave) {
+            console.log('✅ AutoSave instance found:', window.autoSave);
+        } else {
+            console.log('❌ AutoSave instance not created after 10 checks');
+        }
+    }
+}, 500);
+</script>
