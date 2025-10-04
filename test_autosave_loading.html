@@ -36,10 +36,28 @@
         script.src = '/assets/js/autosave.js';
         script.onload = function() {
             console.log('Script tag loaded successfully');
+            // Check if AutoSave class exists
+            setTimeout(() => {
+                console.log('AutoSave class available?', typeof AutoSave !== 'undefined');
+                console.log('window.autoSave exists?', typeof window.autoSave !== 'undefined');
+                
+                // Check for any JavaScript errors
+                if (typeof AutoSave !== 'undefined') {
+                    console.log('✅ AutoSave class loaded successfully');
+                } else {
+                    console.error('❌ AutoSave class not found - possible syntax error');
+                }
+            }, 100);
         };
         script.onerror = function() {
             console.error('Script tag failed to load');
         };
+        
+        // Listen for any JavaScript errors
+        window.addEventListener('error', function(e) {
+            console.error('JavaScript error detected:', e.message, 'at', e.filename + ':' + e.lineno);
+        });
+        
         document.head.appendChild(script);
     </script>
 </body>
