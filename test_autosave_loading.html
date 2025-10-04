@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Autosave Loading Test</title>
+</head>
+<body>
+    <h1>Autosave Script Loading Test</h1>
+    <div id="status">Testing...</div>
+    
+    <script>
+        console.log('Test page loaded');
+        
+        // Test if we can fetch the autosave.js file
+        fetch('/assets/js/autosave.js')
+            .then(response => {
+                console.log('Fetch response status:', response.status);
+                if (response.ok) {
+                    document.getElementById('status').innerHTML = 'autosave.js is accessible (HTTP ' + response.status + ')';
+                    return response.text();
+                } else {
+                    document.getElementById('status').innerHTML = 'autosave.js failed to load (HTTP ' + response.status + ')';
+                    throw new Error('HTTP ' + response.status);
+                }
+            })
+            .then(text => {
+                console.log('File size:', text.length, 'characters');
+                console.log('Contains AutoSave class?', text.includes('class AutoSave'));
+            })
+            .catch(error => {
+                console.error('Failed to fetch autosave.js:', error);
+                document.getElementById('status').innerHTML = 'Error: ' + error.message;
+            });
+            
+        // Test direct script loading
+        const script = document.createElement('script');
+        script.src = '/assets/js/autosave.js';
+        script.onload = function() {
+            console.log('Script tag loaded successfully');
+        };
+        script.onerror = function() {
+            console.error('Script tag failed to load');
+        };
+        document.head.appendChild(script);
+    </script>
+</body>
+</html>
