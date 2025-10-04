@@ -320,9 +320,6 @@ class AutoSave {
         }
         this.stopCountdown();
 
-        // Show immediate save indicator
-        this.showStatus('saving', 'Saving on field blur...');
-
         // If in create mode and title field blurs, create draft first
         if (this.isCreateMode && !this.isDraftCreated && fieldName === 'title') {
             this.createDraftThenSave(fieldName);
