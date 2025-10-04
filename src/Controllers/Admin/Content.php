@@ -494,6 +494,67 @@ class Content extends BaseController
         }
     }
 
+    public function createDraft(): void
+    {
+        if (!$this->isPost()) {
+            $this->renderJson(['success' => false, 'message' => 'Invalid request method']);
+            return;
+        }
+        
+        if (!$this->validateCsrfToken()) {
+            $this->renderJson(['success' => false, 'message' => 'Security token validation failed']);
+            return;
+        }
+        
+        try {
+            $title = $this->sanitize($this->getParam('title', '', 'post'));
+            $contentType = $this->getParam('content_type', ContentModel::TYPE_ARTICLE, 'post');
+            
+            if (empty($title)) {
+                throw new Exception('Title is required to create draft');
+            }
+            
+            if (!in_array($contentType, [ContentModel::TYPE_ARTICLE, ContentModel::TYPE_PHOTOBOOK])) {
+                $contentType = ContentModel::TYPE_ARTICLE;
+            }
+            
+            // Generate URL alias from title
+            $urlAlias = $this->generateUrlAlias($title);
+            
+            // Create minimal draft content
+            $data = [
+                'title' => $title,
+                'url_alias' => $urlAlias,
+                'body' => '',
+                'teaser' => '',
+                'content_type' => $contentType,
+                'status' => ContentModel::STATUS_DRAFT,
+                'user_id' => $this->getCurrentUserId(),
+                'sort_order' => ContentModel::getNextSortOrder(),
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+                'published_at' => null
+            ];
+            
+            $content = ContentModel::create($data);
+            
+            if (!$content || !$content->getId()) {
+                throw new Exception('Failed to create draft content');
+            }
+            
+            $this->renderJson([
+                'success' => true,
+                'content_id' => $content->getId(),
+                'url_alias' => $urlAlias,
+                'message' => 'Draft created successfully'
+            ]);
+            
+        } catch (Exception $e) {
+            error_log('Create draft error: ' . $e->getMessage());
+            $this->renderJson(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
     public function uploadImage(): void
     {
         if (!$this->isPost()) {
@@ -603,5 +664,29 @@ class Content extends BaseController
             }
         }
         return $errors;
+    }
+
+    /**
+     * Generate URL alias from title
+     */
+    private function generateUrlAlias(string $title): string
+    {
+        // Convert to lowercase and replace spaces with hyphens
+        $alias = strtolower(trim($title));
+        $alias = preg_replace('/[^a-z0-9\s\-]/', '', $alias);
+        $alias = preg_replace('/\s+/', '-', $alias);
+        $alias = preg_replace('/-+/', '-', $alias);
+        $alias = trim($alias, '-');
+        
+        // Ensure uniqueness by checking existing aliases
+        $baseAlias = $alias;
+        $counter = 1;
+        
+        while (ContentModel::findByUrlAlias($alias)) {
+            $alias = $baseAlias . '-' . $counter;
+            $counter++;
+        }
+        
+        return $alias ?: 'untitled-' . time();
     }
 }

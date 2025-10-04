@@ -112,6 +112,22 @@ class Content extends BaseModel
     }
 
     /**
+     * Find content by URL alias (any status)
+     * Used for checking uniqueness during creation
+     * 
+     * @param string $urlAlias The URL alias to search for
+     * @return static|null
+     */
+    public static function findByUrlAlias(string $urlAlias): ?static
+    {
+        $instance = new static();
+        
+        $query = "SELECT * FROM {$instance->table} WHERE url_alias = ?";
+        
+        return self::queryFirst($query, [$urlAlias]);
+    }
+
+    /**
      * Get content for admin with search and filters
      * 
      * @param array $filters Filter parameters

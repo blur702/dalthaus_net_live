@@ -122,3 +122,6 @@
 
 <!-- Slug Generator -->
 <script src="/assets/js/slug-generator.js"></script>
+
+<!-- Auto-save functionality -->
+<script src="/assets/js/autosave.js"></script>

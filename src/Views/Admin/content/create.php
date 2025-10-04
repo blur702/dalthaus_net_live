@@ -103,3 +103,6 @@
 
 <!-- Slug Generator -->
 <script src="/assets/js/slug-generator.js"></script>
+
+<!-- Auto-save functionality (disabled for create forms) -->
+<script src="/assets/js/autosave.js"></script>
