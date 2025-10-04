@@ -39,15 +39,18 @@ class AutoSave {
     }
 
     extractContentId() {
+        // Get form action as string
+        const formAction = String(this.form.action || this.form.getAttribute('action') || '');
+        
         // Try to get ID from form action URL pattern: /admin/content/{id}/update
-        const actionMatch = this.form.action.match(/\/admin\/content\/(\d+)\/update/);
+        const actionMatch = formAction.match(/\/admin\/content\/(\d+)\/update/);
         if (actionMatch) {
             this.contentId = parseInt(actionMatch[1]);
             return;
         }
 
         // Check if this is a create form
-        if (this.form.action.includes('/content/store') || this.form.action.includes('/content/create')) {
+        if (formAction.includes('/content/store') || formAction.includes('/content/create')) {
             this.isCreateMode = true;
             return;
         }
