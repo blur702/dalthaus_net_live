@@ -72,6 +72,39 @@ class Content extends BaseController
         ]);
     }
 
+    public function drafts(): void
+    {
+        $page = (int) $this->getParam('page', 1);
+        $type = $this->getParam('type', '');
+        
+        // Build filters for drafts only
+        $filters = [
+            'status' => ContentModel::STATUS_DRAFT,
+            'content_type' => $type,
+            'sort_by' => 'updated_at',
+            'sort_dir' => 'DESC'
+        ];
+        
+        // Get draft items
+        $itemsPerPage = $this->config['app']['items_per_page'] ?? 10;
+        $totalItems = ContentModel::countWithFilters($filters);
+        $totalPages = ceil($totalItems / $itemsPerPage);
+        $page = max(1, min($page, $totalPages ?: 1));
+        $offset = ($page - 1) * $itemsPerPage;
+        
+        $items = ContentModel::findWithFilters($filters, $itemsPerPage, $offset);
+        
+        $this->render('admin/content/drafts', [
+            'items' => $items,
+            'current_page' => $page,
+            'total_pages' => $totalPages,
+            'total_items' => $totalItems,
+            'type_filter' => $type,
+            'page_title' => 'Draft Content',
+            'csrf_token' => $this->generateCsrfToken()
+        ]);
+    }
+
     public function create(): void
     {
         $type = $this->getParam('type', ContentModel::TYPE_ARTICLE);

@@ -147,6 +147,26 @@ class AutoSave {
                 background: #3b82f6;
             }
 
+            .autosave-status.draft-created {
+                background: #8b5cf6;
+            }
+
+            .autosave-status .spinner {
+                display: inline-block;
+                width: 12px;
+                height: 12px;
+                border: 2px solid transparent;
+                border-top: 2px solid currentColor;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                margin-right: 6px;
+            }
+
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+
             .autosave-status-content {
                 display: flex;
                 align-items: center;
@@ -298,7 +318,7 @@ class AutoSave {
             // Start periodic saves
             this.startPeriodicSave();
             
-            this.showStatus('success', 'Draft created - auto-save enabled');
+            this.showStatus('draft-created', 'Draft created - auto-save enabled');
             console.log('AutoSave: Draft created with ID:', this.contentId);
             
         } catch (error) {
@@ -407,30 +427,66 @@ class AutoSave {
         const status = document.getElementById('autosave-status');
         if (!status) return;
 
-        const textElement = status.querySelector('.autosave-text');
-        const iconElement = status.querySelector('.autosave-icon');
+        // Remove all existing type classes
+        status.className = 'autosave-status show';
+        
+        // Add new type class
+        status.classList.add(type);
 
-        // Update content
-        textElement.textContent = message;
-
-        // Update icon based on status
+        // Create enhanced content with spinner for saving state
         if (type === 'saving') {
-            iconElement.innerHTML = `<circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" opacity="0.25"/>
-                                   <path d="M4 12a8 8 0 018-8V2.5a1.5 1.5 0 011 1.415L14 12" stroke="currentColor" stroke-width="4" fill="none"/>`;
-            iconElement.classList.add('autosave-spinner');
+            status.innerHTML = `
+                <div class="autosave-status-content">
+                    <div class="spinner"></div>
+                    <span>${message}</span>
+                </div>
+            `;
+        } else if (type === 'draft-created') {
+            status.innerHTML = `
+                <div class="autosave-status-content">
+                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>${message}</span>
+                </div>
+            `;
+        } else if (type === 'success') {
+            status.innerHTML = `
+                <div class="autosave-status-content">
+                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>${message}</span>
+                </div>
+            `;
         } else if (type === 'error') {
-            iconElement.innerHTML = `<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L10 10.586l2.707-2.707a1 1 0 011.414 1.414L11.414 12l2.707 2.707a1 1 0 01-1.414 1.414L10 13.414l-2.707 2.707a1 1 0 01-1.414-1.414L8.586 12 5.879 9.293a1 1 0 011.414-1.414L10 10.586z" clip-rule="evenodd"/>`;
-            iconElement.classList.remove('autosave-spinner');
-        } else if (type === 'info') {
-            iconElement.innerHTML = `<path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>`;
-            iconElement.classList.remove('autosave-spinner');
+            status.innerHTML = `
+                <div class="autosave-status-content">
+                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>${message}</span>
+                </div>
+            `;
         } else {
-            iconElement.innerHTML = `<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>`;
-            iconElement.classList.remove('autosave-spinner');
+            status.innerHTML = `
+                <div class="autosave-status-content">
+                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>${message}</span>
+                </div>
+            `;
         }
 
-        // Update styling
-        status.className = `autosave-status show ${type}`;
+        // Auto-hide success messages after 3 seconds
+        if (type === 'success' || type === 'draft-created') {
+            setTimeout(() => {
+                if (status.classList.contains(type)) {
+                    status.classList.remove('show');
+                }
+            }, 3000);
+        }
 
         // Auto-hide after 3 seconds for success/error
         if (type !== 'saving') {

@@ -40,6 +40,7 @@ return function(Router $router) {
 
         // Content management
         $router->get('/content', 'Content', 'index');
+        $router->get('/content/drafts', 'Content', 'drafts');
         $router->get('/content/create', 'Content', 'create');
         $router->get('/content/reorder', 'Content', 'reorder');
         $router->post('/content/store', 'Content', 'store');
