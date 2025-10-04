@@ -124,4 +124,4 @@
 <script src="/assets/js/slug-generator.js"></script>
 
 <!-- Auto-save functionality -->
-<script src="/assets/js/autosave.js?v=<?= time() ?>"></script>
+<script src="/assets/js/autosave.js?v=<?= filemtime(__DIR__ . '/../../../../assets/js/autosave.js') ?>"></script>
