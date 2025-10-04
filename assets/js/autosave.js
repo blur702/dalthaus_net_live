@@ -46,6 +46,7 @@ class AutoSave {
     extractContentId() {
         // Get form action as string
         const formAction = String(this.form.action || this.form.getAttribute('action') || '');
+        console.log('AutoSave: Form action URL:', formAction);
         
         // Try to get ID from form action URL pattern: /admin/content/{id}/update
         const actionMatch = formAction.match(/\/admin\/content\/(\d+)\/update/);
@@ -55,7 +56,12 @@ class AutoSave {
         }
 
         // Check if this is a create form
+        console.log('AutoSave: Checking create mode patterns...');
+        console.log('AutoSave: Contains /content/store?', formAction.includes('/content/store'));
+        console.log('AutoSave: Contains /content/create?', formAction.includes('/content/create'));
+        
         if (formAction.includes('/content/store') || formAction.includes('/content/create')) {
+            console.log('AutoSave: CREATE MODE detected');
             this.isCreateMode = true;
             return;
         }
