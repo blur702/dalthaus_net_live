@@ -329,21 +329,31 @@ class AutoSave {
     }
 
     startCountdown(callback) {
+        console.log('AutoSave: Starting countdown with debounce delay:', this.options.debounceDelay);
         this.stopCountdown(); // Ensure any existing countdown is stopped
         this.countdownSeconds = Math.ceil(this.options.debounceDelay / 1000);
         this.isCountingDown = true;
 
+        console.log('AutoSave: Initial countdown seconds:', this.countdownSeconds);
+        
         // Show initial countdown
         this.showCountdownStatus();
 
         this.countdownInterval = setInterval(() => {
+            console.log('AutoSave: Countdown tick, seconds remaining:', this.countdownSeconds);
             this.countdownSeconds--;
             
             if (this.countdownSeconds > 0) {
                 this.showCountdownStatus();
             } else {
+                console.log('AutoSave: Countdown reached zero, executing callback');
                 this.stopCountdown();
-                callback();
+                try {
+                    callback();
+                } catch (error) {
+                    console.error('AutoSave: Error executing countdown callback:', error);
+                    this.showStatus('error', 'Save failed after countdown');
+                }
             }
         }, 1000);
     }
@@ -368,6 +378,7 @@ class AutoSave {
     }
 
     async createDraftThenSave(fieldName) {
+        console.log('AutoSave: createDraftThenSave called for field:', fieldName);
         if (this.isDestroyed) return;
 
         const titleField = this.form.querySelector('[name="title"]');
@@ -375,6 +386,8 @@ class AutoSave {
             console.log('AutoSave: Title is empty, skipping draft creation');
             return;
         }
+        
+        console.log('AutoSave: Title found, proceeding with draft creation:', titleField.value);
 
         try {
             this.showStatus('saving', 'Creating draft...');
@@ -443,16 +456,25 @@ class AutoSave {
     }
 
     async saveField(fieldName) {
+        console.log('AutoSave: saveField called for field:', fieldName, 'enabled:', this.isEnabled, 'destroyed:', this.isDestroyed);
         if (this.isDestroyed || !this.isEnabled) return;
 
         const field = this.form.querySelector(`[name="${fieldName}"]`);
-        if (!field) return;
+        if (!field) {
+            console.log('AutoSave: Field not found:', fieldName);
+            return;
+        }
 
         const currentValue = field.value;
         const lastValue = this.lastSaved[fieldName];
 
+        console.log('AutoSave: Field values - current:', currentValue.length, 'chars, last:', lastValue?.length || 0, 'chars');
+        
         // Only save if value has changed
-        if (currentValue === lastValue) return;
+        if (currentValue === lastValue) {
+            console.log('AutoSave: No changes detected, skipping save');
+            return;
+        }
 
         try {
             await this.performSave(fieldName, currentValue);
