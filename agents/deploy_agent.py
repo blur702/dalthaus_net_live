@@ -42,15 +42,12 @@ class DeploymentAgent:
         """Pull latest code from GitHub"""
         print(f"\n--- Pulling latest code from GitHub ({branch}) ---")
         
-        success, output, error = self.agent.git_pull(self.web_root, branch)
+        success = self.agent.git_pull(self.web_root, branch)
         
         if success:
             print("[SUCCESS] Code pulled successfully!")
-            print("Changes:")
-            print(output)
         else:
             print("[ERROR] Git pull failed!")
-            print(f"Error: {error}")
         
         return success
     
