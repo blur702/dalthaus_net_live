@@ -729,9 +729,13 @@ class AutoSave {
     }
 }
 
+// Add immediate logging to verify script is loading
+console.log('AutoSave: Script loaded at', new Date().toLocaleTimeString());
+
 // Initialize auto-save when DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('AutoSave: DOM loaded, checking for content form...');
+function initializeAutoSave() {
+    console.log('AutoSave: Initializing autosave at', new Date().toLocaleTimeString());
+    console.log('AutoSave: Document ready state:', document.readyState);
     
     // Check if we're on a content edit page
     const contentForm = document.getElementById('contentForm');
@@ -757,4 +761,13 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         console.log('AutoSave: No content form found, auto-save not initialized');
     }
-});
+}
+
+// Try to initialize immediately if DOM is already loaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeAutoSave);
+} else {
+    // DOM is already loaded
+    console.log('AutoSave: DOM already loaded, initializing immediately');
+    initializeAutoSave();
+}
