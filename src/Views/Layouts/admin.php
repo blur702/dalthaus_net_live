@@ -352,8 +352,8 @@
         // Note: TinyMCE initialization is now handled by tinymce-single.js
         // This prevents conflicts between multiple initialization scripts
 
-        // Dual Image Dialog Function
-        function showDualImageDialog(editor) {
+        // Dual Image Dialog Function - exposed globally for TinyMCE integration
+        window.showDualImageDialog = function(editor) {
             const dialog = document.createElement('div');
             dialog.className = 'dual-image-dialog';
             dialog.innerHTML = `
@@ -405,7 +405,7 @@
             });
         }
 
-        function closeDualImageDialog() {
+        window.closeDualImageDialog = function() {
             const dialog = document.querySelector('.dual-image-dialog');
             if (dialog) {
                 dialog.remove();

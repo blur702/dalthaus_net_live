@@ -5,20 +5,29 @@ console.log('Loading minimal TinyMCE configuration...');
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM ready, initializing TinyMCE...');
     
-    // Simple dual image dialog function
+    // Dual image dialog function - connects to the admin layout modal system
     function openDualImageDialog() {
         console.log('Opening dual image dialog...');
         
-        const displayImage = prompt('Enter display image URL:');
-        if (!displayImage) return;
-        
-        const modalImage = prompt('Enter modal image URL (optional):') || displayImage;
-        
         const editor = tinymce.activeEditor;
-        if (editor) {
-            const html = `<img src="${displayImage}" data-modal-src="${modalImage}" alt="Dual Image" style="cursor: pointer; max-width: 100%;">`;
+        if (!editor) {
+            console.error('No active TinyMCE editor found');
+            return;
+        }
+        
+        // Use the showDualImageDialog function from admin layout
+        if (typeof showDualImageDialog === 'function') {
+            showDualImageDialog(editor);
+        } else {
+            console.error('showDualImageDialog function not found - admin layout may not be loaded');
+            // Fallback to simple prompts if admin modal system isn't available
+            const displayImage = prompt('Enter display image URL:');
+            if (!displayImage) return;
+            
+            const modalImage = prompt('Enter modal image URL (optional):') || displayImage;
+            const html = `<img src="${displayImage}" data-modal-src="${modalImage}" alt="Dual Image" style="cursor: pointer; max-width: 100%;" onclick="openImageModal('${modalImage}', 'Dual Image')">`;
             editor.insertContent(html);
-            console.log('Dual image inserted successfully');
+            console.log('Dual image inserted successfully (fallback mode)');
         }
     }
     
@@ -37,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
             height: 500,
             menubar: false,
             plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table help wordcount pagebreak',
-            toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | link image dualimage testbutton | pagebreak code',
+            toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | link image dualimage | pagebreak code',
             toolbar_mode: 'sliding',
             pagebreak_separator: '<!-- pagebreak -->',
             images_upload_url: '/admin/upload/tinymce',
@@ -63,15 +72,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     tooltip: 'Insert Dual Image (Display + Modal)',
                     onAction: function() {
                         openDualImageDialog();
-                    }
-                });
-                
-                // Register test button
-                editor.ui.registry.addButton('testbutton', {
-                    text: '🧪',
-                    tooltip: 'Test Button',
-                    onAction: function() {
-                        alert('Test button works! TinyMCE is functioning correctly.');
                     }
                 });
                 
