@@ -57,8 +57,17 @@
         script.src = '/assets/js/autosave.js';
         script.onload = function() {
             console.log('Script tag loaded successfully');
+            
+            // Immediate check without setTimeout
+            console.log('Immediate check - AutoSave type:', typeof AutoSave);
+            console.log('Immediate check - window.AutoSave type:', typeof window.AutoSave);
+            
+            // Check all global variables containing 'Auto'
+            const globals = Object.keys(window).filter(key => key.includes('Auto'));
+            console.log('Global variables containing "Auto":', globals);
+            
             // Check if AutoSave class exists
-            setTimeout(() => {
+            try {
                 console.log('AutoSave class available?', typeof AutoSave !== 'undefined');
                 console.log('window.autoSave exists?', typeof window.autoSave !== 'undefined');
                 
@@ -70,7 +79,9 @@
                 } else {
                     console.error('❌ AutoSave class not found - possible syntax error');
                 }
-            }, 100);
+            } catch (error) {
+                console.error('Error in onload callback:', error);
+            }
         };
         script.onerror = function() {
             console.error('Script tag failed to load');
