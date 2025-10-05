@@ -76,14 +76,35 @@ class Content extends BaseController
     {
         $page = (int) $this->getParam('page', 1);
         $type = $this->getParam('type', '');
+        $age = $this->getParam('age', '');
+        $sort = $this->getParam('sort', 'updated_at');
         
         // Build filters for drafts only
         $filters = [
             'status' => ContentModel::STATUS_DRAFT,
             'content_type' => $type,
-            'sort_by' => 'updated_at',
+            'sort_by' => $sort,
             'sort_dir' => 'DESC'
         ];
+        
+        // Add age filter
+        if ($age) {
+            $now = date('Y-m-d H:i:s');
+            switch ($age) {
+                case 'recent':
+                    $filters['updated_after'] = date('Y-m-d H:i:s', strtotime('-24 hours'));
+                    break;
+                case 'week':
+                    $filters['updated_after'] = date('Y-m-d H:i:s', strtotime('-1 week'));
+                    break;
+                case 'month':
+                    $filters['updated_after'] = date('Y-m-d H:i:s', strtotime('-1 month'));
+                    break;
+                case 'old':
+                    $filters['updated_before'] = date('Y-m-d H:i:s', strtotime('-1 month'));
+                    break;
+            }
+        }
         
         // Get draft items
         $itemsPerPage = $this->config['app']['items_per_page'] ?? 10;
@@ -94,15 +115,56 @@ class Content extends BaseController
         
         $items = ContentModel::findWithFilters($filters, $itemsPerPage, $offset);
         
+        // Calculate analytics data
+        $analytics = $this->calculateDraftAnalytics();
+        
         $this->render('admin/content/drafts', [
             'items' => $items,
             'current_page' => $page,
             'total_pages' => $totalPages,
             'total_items' => $totalItems,
             'type_filter' => $type,
-            'page_title' => 'Draft Content',
+            'age_filter' => $age,
+            'sort_filter' => $sort,
+            'recent_drafts_count' => $analytics['recent_drafts_count'],
+            'ready_to_publish_count' => $analytics['ready_to_publish_count'],
+            'old_drafts_count' => $analytics['old_drafts_count'],
+            'page_title' => 'Auto-save & Draft Management',
             'csrf_token' => $this->generateCsrfToken()
         ]);
+    }
+    
+    private function calculateDraftAnalytics(): array
+    {
+        $db = Database::getInstance();
+        
+        // Recent drafts (last 24 hours)
+        $recentQuery = "SELECT COUNT(*) as count FROM content 
+                        WHERE status = 'draft' 
+                        AND updated_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)";
+        $recentResult = $db->query($recentQuery);
+        $recentCount = $recentResult->fetch()['count'] ?? 0;
+        
+        // Ready to publish (has title and content)
+        $readyQuery = "SELECT COUNT(*) as count FROM content 
+                       WHERE status = 'draft' 
+                       AND title IS NOT NULL AND title != '' 
+                       AND (teaser IS NOT NULL AND teaser != '' OR body IS NOT NULL AND body != '')";
+        $readyResult = $db->query($readyQuery);
+        $readyCount = $readyResult->fetch()['count'] ?? 0;
+        
+        // Old drafts (older than 1 month)
+        $oldQuery = "SELECT COUNT(*) as count FROM content 
+                     WHERE status = 'draft' 
+                     AND updated_at < DATE_SUB(NOW(), INTERVAL 1 MONTH)";
+        $oldResult = $db->query($oldQuery);
+        $oldCount = $oldResult->fetch()['count'] ?? 0;
+        
+        return [
+            'recent_drafts_count' => $recentCount,
+            'ready_to_publish_count' => $readyCount,
+            'old_drafts_count' => $oldCount
+        ];
     }
 
     public function create(): void
@@ -491,19 +553,25 @@ class Content extends BaseController
         }
         
         try {
-            $id = (int) $this->getParam('id');
+            $id = (int) $this->getParam('id', 0, 'post');
             $field = $this->sanitize($this->getParam('field', '', 'post'));
             $value = $this->getParam('value', '', 'post');
             
+            error_log("Autosave attempt - ID: $id, field: $field, value length: " . strlen($value));
+            
             if (!$id || !$field) {
+                error_log('Autosave validation failed - missing ID or field');
                 throw new Exception('Invalid autosave data');
             }
             
             $content = ContentModel::find($id);
             
             if (!$content) {
+                error_log("Autosave failed - content not found for ID: $id");
                 throw new Exception('Content not found');
             }
+            
+            error_log("Autosave proceeding - found content ID: $id");
             
             // Only allow certain fields to be autosaved
             $allowedFields = ['title', 'teaser', 'body'];
@@ -721,5 +789,76 @@ class Content extends BaseController
         }
         
         return $alias ?: 'untitled-' . time();
+    }
+    
+    /**
+     * Bulk delete multiple drafts
+     */
+    public function bulkDelete(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/admin/content/drafts');
+            return;
+        }
+        
+        if (!$this->validateCsrfToken()) {
+            $this->redirect('/admin/content/drafts?error=invalid_token');
+            return;
+        }
+        
+        $contentIds = $_POST['content_ids'] ?? [];
+        
+        if (empty($contentIds) || !is_array($contentIds)) {
+            $this->redirect('/admin/content/drafts?error=no_items_selected');
+            return;
+        }
+        
+        $deletedCount = 0;
+        $errors = [];
+        
+        foreach ($contentIds as $contentId) {
+            $contentId = (int) $contentId;
+            if ($contentId <= 0) {
+                continue;
+            }
+            
+            try {
+                // Verify this is a draft and belongs to current user (security check)
+                $content = ContentModel::findById($contentId);
+                if (!$content) {
+                    $errors[] = "Content ID {$contentId} not found";
+                    continue;
+                }
+                
+                // Only allow deletion of drafts
+                if ($content['status'] !== ContentModel::STATUS_DRAFT) {
+                    $errors[] = "Content ID {$contentId} is not a draft";
+                    continue;
+                }
+                
+                // Delete the content
+                if (ContentModel::delete($contentId)) {
+                    $deletedCount++;
+                } else {
+                    $errors[] = "Failed to delete content ID {$contentId}";
+                }
+                
+            } catch (Exception $e) {
+                $errors[] = "Error deleting content ID {$contentId}: " . $e->getMessage();
+            }
+        }
+        
+        // Build redirect message
+        $message = "Successfully deleted {$deletedCount} draft(s)";
+        if (!empty($errors)) {
+            $message .= ". Errors: " . implode(', ', $errors);
+        }
+        
+        $redirectUrl = '/admin/content/drafts?message=' . urlencode($message);
+        if ($deletedCount === 0 && !empty($errors)) {
+            $redirectUrl = '/admin/content/drafts?error=' . urlencode($message);
+        }
+        
+        $this->redirect($redirectUrl);
     }
 }
