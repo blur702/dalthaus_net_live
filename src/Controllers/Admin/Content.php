@@ -7,6 +7,7 @@ namespace CMS\Controllers\Admin;
 use CMS\Controllers\BaseController;
 use CMS\Models\Content as ContentModel;
 use CMS\Utils\FileUpload;
+use CMS\Utils\Database;
 use Exception;
 
 class Content extends BaseController
