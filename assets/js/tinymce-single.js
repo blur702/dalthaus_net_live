@@ -259,36 +259,19 @@
                     debugLog('Failed to register debug button: ' + error.message, 'error');
                 }
                 
-                // Strategy 4: Force button visibility check
+                // Strategy 4: Button verification without retry
                 setTimeout(() => {
                     try {
                         const registeredButtons = editor.ui.registry.getAll().buttons;
                         const customButtons = ['dualimage', 'modalimage', 'testbutton'];
-                        let allRegistered = true;
                         
                         customButtons.forEach(buttonName => {
-                            if (!registeredButtons[buttonName]) {
-                                allRegistered = false;
-                                debugLog(`Button '${buttonName}' registration failed - attempting re-registration`, 'warn');
-                                
-                                // Attempt re-registration
-                                try {
-                                    if (buttonName === 'dualimage') {
-                                        editor.ui.registry.addButton('dualimage_retry', {
-                                            text: '📸',
-                                            tooltip: 'Insert modal image (retry)',
-                                            onAction: () => window.showDualImageDialog && window.showDualImageDialog(editor)
-                                        });
-                                    }
-                                } catch (retryError) {
-                                    debugLog(`Button retry failed: ${retryError.message}`, 'error');
-                                }
+                            if (registeredButtons[buttonName]) {
+                                debugLog(`Button '${buttonName}' is registered successfully`, 'success');
+                            } else {
+                                debugLog(`Button '${buttonName}' not found in registry`, 'warn');
                             }
                         });
-                        
-                        if (allRegistered) {
-                            debugLog('All custom buttons registered successfully!', 'success');
-                        }
                     } catch (checkError) {
                         debugLog(`Button registration check failed: ${checkError.message}`, 'error');
                     }
@@ -302,7 +285,7 @@
                     debugLog(`All registered TinyMCE buttons (${Object.keys(registeredButtons).length}): ${Object.keys(registeredButtons).join(', ')}`, 'info');
                     
                     // Enhanced custom button verification
-                    const customButtons = ['dualimage', 'modalimage', 'testbutton', 'dualimage_retry'];
+                    const customButtons = ['dualimage', 'modalimage', 'testbutton'];
                     let registeredCount = 0;
                     
                     customButtons.forEach(buttonName => {
@@ -358,86 +341,118 @@
                                 debugLog(`Button '${buttonName}' visible in UI: ${status}`, found ? 'success' : 'error');
                             });
                         } else {
-                            debugLog('Could not find TinyMCE toolbar element', 'error');
+                            debugLog('TinyMCE toolbar not found - may still be loading', 'warn');
                         }
                     }, 2000); // Wait 2 seconds for UI to fully render
                     
-                    // Manually add dual image button to toolbar after initialization
+                    // Enhanced manual button injection with better toolbar detection
                     setTimeout(() => {
                         const container = editor.getContainer();
-                        debugLog('Editor container found, attempting manual button injection', 'info');
+                        if (!container) {
+                            debugLog('Editor container not found', 'error');
+                            return;
+                        }
                         
-                        // Try different toolbar selectors
-                        let toolbar = container.querySelector('.tox-toolbar');
-                        if (!toolbar) toolbar = container.querySelector('.tox-toolbar-primary');
-                        if (!toolbar) toolbar = container.querySelector('.mce-toolbar');
-                        if (!toolbar) toolbar = container.querySelector('[role="toolbar"]');
+                        debugLog('Attempting to find toolbar for manual button injection', 'info');
                         
-                        if (toolbar) {
-                            debugLog('Toolbar found, attempting to inject dual image button', 'info');
+                        // Enhanced toolbar detection with multiple fallbacks
+                        let toolbar = null;
+                        const toolbarSelectors = [
+                            '.tox-toolbar__primary .tox-toolbar__group',
+                            '.tox-toolbar-primary .tox-toolbar__group',
+                            '.tox-toolbar .tox-toolbar__group',
+                            '.tox-toolbar__primary',
+                            '.tox-toolbar-primary',
+                            '.tox-toolbar',
+                            '.mce-toolbar',
+                            '[role="toolbar"]'
+                        ];
+                        
+                        for (const selector of toolbarSelectors) {
+                            toolbar = container.querySelector(selector);
+                            if (toolbar && toolbar.querySelector('button')) {
+                                debugLog(`Found toolbar using selector: ${selector}`, 'success');
+                                break;
+                            }
+                        }
+                        
+                        if (!toolbar) {
+                            debugLog('Could not find TinyMCE toolbar element', 'error');
+                            return;
+                        }
+                        
+                        // Check if our button already exists to prevent duplicates
+                        if (toolbar.querySelector('button[title*="modal view"]') || toolbar.querySelector('button[aria-label*="modal view"]')) {
+                            debugLog('Manual dual image button already exists', 'info');
+                            return;
+                        }
+                        
+                        // Find reference button (prefer image button, fallback to any button)
+                        let referenceButton = null;
+                        const imageSelectors = [
+                            'button[title*="Image"]',
+                            'button[aria-label*="Image"]',
+                            'button[title*="Insert"]',
+                            'button[aria-label*="Insert"]'
+                        ];
+                        
+                        for (const selector of imageSelectors) {
+                            referenceButton = toolbar.querySelector(selector);
+                            if (referenceButton) {
+                                debugLog(`Found reference button using: ${selector}`, 'info');
+                                break;
+                            }
+                        }
+                        
+                        // Fallback to any button
+                        if (!referenceButton) {
+                            const buttons = toolbar.querySelectorAll('button');
+                            if (buttons.length > 0) {
+                                referenceButton = buttons[Math.min(buttons.length - 1, 5)]; // Use 6th button or last
+                                debugLog('Using fallback button position', 'info');
+                            }
+                        }
+                        
+                        if (referenceButton) {
+                            // Create enhanced manual button
+                            const dualImageBtn = document.createElement('button');
+                            dualImageBtn.type = 'button';
+                            dualImageBtn.innerHTML = '🖼️📱';
+                            dualImageBtn.title = 'Insert image with modal view';
+                            dualImageBtn.setAttribute('aria-label', 'Insert image with modal view');
+                            dualImageBtn.setAttribute('data-manual-button', 'true');
                             
-                            // Find the image button to insert our button after it
-                            let imageButton = toolbar.querySelector('button[title*="Insert"], button[aria-label*="Insert"]');
-                            if (!imageButton) {
-                                // Try different selectors for the image button
-                                imageButton = toolbar.querySelector('button[title*="Image"], button[aria-label*="Image"]');
-                            }
-                            if (!imageButton) {
-                                // Look for any button that might be the image button by icon or content
-                                const buttons = toolbar.querySelectorAll('button');
-                                imageButton = Array.from(buttons).find(btn => 
-                                    btn.innerHTML.includes('image') || 
-                                    btn.innerHTML.includes('Image') ||
-                                    btn.title.toLowerCase().includes('image') ||
-                                    btn.getAttribute('aria-label')?.toLowerCase().includes('image')
-                                );
-                            }
-                            if (!imageButton && toolbar.querySelectorAll('button').length > 5) {
-                                // Fallback: just use any button in the middle of the toolbar
-                                const buttons = toolbar.querySelectorAll('button');
-                                imageButton = buttons[Math.floor(buttons.length / 2)];
-                                debugLog('Using fallback button position for manual injection', 'info');
-                            }
+                            // Copy TinyMCE button styling
+                            dualImageBtn.className = referenceButton.className || 'tox-tbtn';
+                            dualImageBtn.style.marginLeft = '2px';
                             
-                            if (imageButton) {
-                                debugLog('Found image button reference, creating manual dual image button', 'info');
+                            // Enhanced click handler
+                            dualImageBtn.addEventListener('click', (e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                debugLog('Manual dual image button clicked', 'info');
                                 
-                                // Create the dual image button manually
-                                const dualImageBtn = document.createElement('button');
-                                dualImageBtn.type = 'button';
-                                dualImageBtn.textContent = '🖼️📱';
-                                dualImageBtn.title = 'Insert image with modal view';
-                                dualImageBtn.setAttribute('aria-label', 'Insert image with modal view');
-                                dualImageBtn.className = imageButton.className; // Copy styling from existing button
-                                dualImageBtn.style.marginLeft = '4px';
-                                
-                                // Add enhanced click handler with debugging
-                                dualImageBtn.addEventListener('click', (e) => {
-                                    e.preventDefault();
-                                    debugLog('Manual dual image button clicked', 'info');
-                                    if (typeof window.showDualImageDialog === 'function') {
+                                if (typeof window.showDualImageDialog === 'function') {
+                                    try {
                                         window.showDualImageDialog(editor);
-                                    } else if (typeof showDualImageDialog === 'function') {
-                                        showDualImageDialog(editor);
-                                    } else {
-                                        debugLog('Dual image functionality not available via manual button', 'error');
-                                        alert('Dual image functionality not available. Please try refreshing the page.');
+                                    } catch (error) {
+                                        debugLog('Error calling showDualImageDialog: ' + error.message, 'error');
+                                        alert('Error opening dual image dialog. Please refresh the page.');
                                     }
-                                });
-                                
-                                // Insert after the image button
-                                imageButton.parentNode.insertBefore(dualImageBtn, imageButton.nextSibling);
-                                debugLog('Dual image button manually added to toolbar', 'success');
-                                
-                            } else {
-                                debugLog('Could not find image button to position dual image button', 'error');
-                            }
+                                } else {
+                                    debugLog('showDualImageDialog function not available', 'error');
+                                    alert('Dual image functionality not loaded. Please refresh the page.');
+                                }
+                            });
+                            
+                            // Insert button after reference button
+                            referenceButton.parentNode.insertBefore(dualImageBtn, referenceButton.nextSibling);
+                            debugLog('Manual dual image button successfully added to toolbar', 'success');
                             
                         } else {
-                            debugLog('No toolbar found for manual button injection', 'error');
-                            debugLog(`Container HTML preview: ${container.innerHTML.substring(0, 300)}`, 'info');
+                            debugLog('Could not find reference button for positioning', 'error');
                         }
-                    }, 1000); // Wait longer for toolbar to fully render
+                    }, 1500); // Wait longer for complete toolbar rendering
                     
                     // Auto-save on form submit
                     const form = editor.getElement().form;
@@ -843,10 +858,26 @@
                 }
             });
             
-            // Check DOM for buttons
+            // Check DOM for buttons with enhanced toolbar detection
             const container = editor.getContainer();
             if (container) {
-                const toolbar = container.querySelector('.tox-toolbar') || container.querySelector('.tox-toolbar-primary');
+                const toolbarSelectors = [
+                    '.tox-toolbar__primary',
+                    '.tox-toolbar-primary', 
+                    '.tox-toolbar',
+                    '.mce-toolbar',
+                    '[role="toolbar"]'
+                ];
+                
+                let toolbar = null;
+                for (const selector of toolbarSelectors) {
+                    toolbar = container.querySelector(selector);
+                    if (toolbar && toolbar.querySelector('button')) {
+                        console.log(`✅ Found toolbar using: ${selector}`);
+                        break;
+                    }
+                }
+                
                 if (toolbar) {
                     const buttons = toolbar.querySelectorAll('button');
                     console.log(`Toolbar has ${buttons.length} button elements`);
@@ -856,14 +887,15 @@
                         btn.title?.toLowerCase().includes('test') ||
                         btn.title?.toLowerCase().includes('dual') ||
                         btn.textContent?.toLowerCase().includes('modal') ||
-                        btn.textContent?.toLowerCase().includes('test')
+                        btn.textContent?.toLowerCase().includes('test') ||
+                        btn.getAttribute('data-manual-button')
                     );
                     console.log(`Found ${modalButtons.length} custom button(s) in DOM`);
                     modalButtons.forEach(btn => {
                         console.log(`  - Button: ${btn.title || btn.textContent || 'No title'}`);
                     });
                 } else {
-                    console.error('❌ Could not find toolbar element');
+                    console.warn('⚠️ Toolbar element not found - TinyMCE may still be initializing');
                 }
             } else {
                 console.error('❌ Could not find editor container');
