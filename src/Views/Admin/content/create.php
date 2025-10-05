@@ -9,10 +9,13 @@
 <div class="bg-white shadow rounded-lg">
     <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
         <h2 class="text-lg font-semibold text-gray-900">Create <?= ucfirst($this->escape($content_type)) ?></h2>
-        <a href="/admin/content" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path></svg>
-            Back to Content
-        </a>
+        <div class="flex items-center space-x-4">
+            <div id="autosaveStatus" class="text-xs text-gray-500"></div>
+            <a href="/admin/content" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path></svg>
+                Back to Content
+            </a>
+        </div>
     </div>
 
     <div class="p-6">
@@ -41,6 +44,8 @@
         <form method="POST" action="/admin/content/store" enctype="multipart/form-data" id="contentForm">
             <input type="hidden" name="_token" value="<?= $this->escape($csrf_token) ?>">
             <input type="hidden" name="content_type" value="<?= $this->escape($content_type) ?>">
+            <input type="hidden" name="autosave_uuid" id="autosave_uuid" value="">
+            <input type="hidden" name="content_id" id="content_id" value="">
 
             <div class="space-y-6">
                 <!-- Title -->

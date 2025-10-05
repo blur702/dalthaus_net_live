@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimalistic Autosave Indicator Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-sm">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <h1 class="text-xl font-semibold text-gray-900">Create Article</h1>
+                <div id="autosaveStatus" class="text-right"></div>
+            </div>
+            
+            <div class="p-6">
+                <form id="contentForm">
+                    <input type="hidden" name="_token" value="test-token">
+                    <input type="hidden" id="autosave_uuid" name="autosave_uuid" value="">
+                    <input type="hidden" id="content_id" name="content_id" value="">
+                    <input type="hidden" name="content_type" value="article">
+                    
+                    <div class="mb-6">
+                        <label for="title" class="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                        <input type="text" 
+                               id="title" 
+                               name="title" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                               placeholder="Enter article title">
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label for="teaser" class="block text-sm font-medium text-gray-700 mb-2">Teaser</label>
+                        <textarea id="teaser" 
+                                  name="teaser" 
+                                  rows="3"
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                  placeholder="Brief description or teaser"></textarea>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label for="body" class="block text-sm font-medium text-gray-700 mb-2">Content</label>
+                        <textarea id="body" 
+                                  name="body" 
+                                  rows="12"
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                  placeholder="Write your article content here..."></textarea>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3">
+                        <button type="button" class="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                            Save Article
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mock AutoSave with minimalistic design for testing -->
+    <script>
+        class MockAutoSave {
+            constructor(formId) {
+                this.form = document.getElementById(formId);
+                this.statusElement = document.getElementById('autosaveStatus');
+                this.isEnabled = false;
+                this.isDestroyed = false;
+                
+                this.init();
+            }
+            
+            init() {
+                this.createStatusIndicator();
+                this.attachEventListeners();
+                
+                // Enable autosave only after title is entered
+                const titleField = this.form.querySelector('[name="title"]');
+                if (titleField && titleField.value.trim()) {
+                    this.enable();
+                } else {
+                    this.showStatus('neutral', '');
+                }
+            }
+            
+            createStatusIndicator() {
+                // Apply minimalistic styles to existing element
+                if (this.statusElement) {
+                    this.statusElement.style.cssText = 'font-size: 11px; color: #6b7280; opacity: 0.8;';
+                }
+                
+                this.addStatusStyles();
+            }
+            
+            addStatusStyles() {
+                const style = document.createElement('style');
+                style.textContent = `
+                    .autosave-indicator {
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 5px;
+                        font-size: 11px;
+                        color: #6b7280;
+                        opacity: 0.8;
+                        transition: opacity 0.15s ease;
+                    }
+                    
+                    .autosave-indicator:hover {
+                        opacity: 1;
+                    }
+                    
+                    .autosave-dot {
+                        width: 5px;
+                        height: 5px;
+                        border-radius: 50%;
+                        background: #9ca3af;
+                        transition: background 0.2s ease, transform 0.2s ease;
+                    }
+                    
+                    .autosave-dot.saving {
+                        background: #f59e0b;
+                        animation: subtle-pulse 2s ease-in-out infinite;
+                    }
+                    
+                    .autosave-dot.success {
+                        background: #10b981;
+                    }
+                    
+                    .autosave-dot.error {
+                        background: #ef4444;
+                    }
+                    
+                    .autosave-dot.neutral {
+                        background: #9ca3af;
+                    }
+                    
+                    @keyframes subtle-pulse {
+                        0%, 100% { opacity: 1; transform: scale(1); }
+                        50% { opacity: 0.5; transform: scale(0.8); }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+            
+            attachEventListeners() {
+                const titleField = this.form.querySelector('[name="title"]');
+                const bodyField = this.form.querySelector('[name="body"]');
+                const teaserField = this.form.querySelector('[name="teaser"]');
+                
+                [titleField, bodyField, teaserField].forEach(field => {
+                    if (field) {
+                        field.addEventListener('input', () => this.onFieldChange());
+                        field.addEventListener('blur', () => this.onFieldBlur());
+                        
+                        if (field.name === 'title') {
+                            field.addEventListener('input', () => {
+                                if (field.value.trim() && !this.isEnabled) {
+                                    this.enable();
+                                } else if (!field.value.trim() && this.isEnabled) {
+                                    this.disable();
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+            
+            onFieldChange() {
+                if (!this.isEnabled) return;
+                
+                if (this.saveTimeout) {
+                    clearTimeout(this.saveTimeout);
+                }
+                
+                this.saveTimeout = setTimeout(() => {
+                    this.mockSave();
+                }, 2000);
+            }
+            
+            onFieldBlur() {
+                if (!this.isEnabled) return;
+                
+                if (this.saveTimeout) {
+                    clearTimeout(this.saveTimeout);
+                }
+                
+                setTimeout(() => this.mockSave(), 100);
+            }
+            
+            mockSave() {
+                if (!this.isEnabled) return;
+                
+                this.showStatus('saving', 'Saving');
+                
+                // Simulate save delay
+                setTimeout(() => {
+                    const now = new Date();
+                    const time = now.toLocaleTimeString([], { 
+                        hour: 'numeric', 
+                        minute: '2-digit'
+                    });
+                    
+                    this.showStatus('success', time);
+                }, 1000 + Math.random() * 1000);
+            }
+            
+            showStatus(type, message) {
+                if (!this.statusElement) return;
+                
+                if (!message) {
+                    this.statusElement.innerHTML = '';
+                    return;
+                }
+                
+                const dotClass = type === 'saving' ? 'saving' :
+                               type === 'success' ? 'success' :
+                               type === 'error' ? 'error' :
+                               'neutral';
+                
+                this.statusElement.innerHTML = `
+                    <span class="autosave-indicator">
+                        <span class="autosave-dot ${dotClass}"></span>
+                        <span>${message}</span>
+                    </span>
+                `;
+            }
+            
+            enable() {
+                if (this.isEnabled) return;
+                
+                this.isEnabled = true;
+                this.showStatus('success', 'Active');
+                
+                // Clear "Active" message after 1.5 seconds
+                setTimeout(() => {
+                    if (this.isEnabled) {
+                        this.showStatus('neutral', '');
+                    }
+                }, 1500);
+            }
+            
+            disable() {
+                if (!this.isEnabled) return;
+                
+                this.isEnabled = false;
+                this.showStatus('neutral', '');
+            }
+        }
+        
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            window.mockAutoSave = new MockAutoSave('contentForm');
+        });
+    </script>
+</body>
+</html>

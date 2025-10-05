@@ -46,6 +46,8 @@ return function(Router $router) {
         $router->post('/content/store', 'Content', 'store');
         $router->post('/content/update-order', 'Content', 'updateOrder');
         $router->post('/content/autosave', 'Content', 'autosave');
+        $router->post('/content/load-autosave', 'Content', 'loadAutosave');
+        $router->post('/content/list-autosaves', 'Content', 'listAutosaves');
         $router->post('/content/create-draft', 'Content', 'createDraft');
         $router->post('/content/bulk-delete', 'Content', 'bulkDelete');
         $router->get('/content/{id}/edit', 'Content', 'edit');

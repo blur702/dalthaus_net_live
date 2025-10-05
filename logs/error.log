@@ -721,3 +721,391 @@
 [04-Oct-2025 15:14:18 America/New_York] BaseController::render() - Flash messages retrieved
 [04-Oct-2025 15:14:18 America/New_York] BaseController::render() - About to call view->render()
 [04-Oct-2025 15:14:18 America/New_York] BaseController::render() - View rendered successfully
+[04-Oct-2025 22:29:28 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 22:29:28 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 22:29:28 America/New_York] BaseController::render() - Settings loaded successfully
+[04-Oct-2025 22:29:28 America/New_York] BaseController::render() - Current user ID: null
+[04-Oct-2025 22:29:28 America/New_York] BaseController::render() - Getting flash messages
+[04-Oct-2025 22:29:28 America/New_York] BaseController::render() - Flash messages retrieved
+[04-Oct-2025 22:29:28 America/New_York] BaseController::render() - About to call view->render()
+[04-Oct-2025 22:29:28 America/New_York] BaseController::render() - View rendered successfully
+[04-Oct-2025 23:29:02 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:02 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:02 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:22 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:22 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:22 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:22 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:22 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:22 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:22 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:22 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:22 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:22 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:22 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:22 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:22 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:22 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:22 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:22 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:22 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:22 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:22 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:22 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:22 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:25 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:25 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:25 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:25 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:25 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:25 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:25 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:25 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:25 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:25 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:25 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:25 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:25 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:25 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:25 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:25 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:25 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:25 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:25 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:25 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:25 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:27 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:27 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:27 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:27 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:27 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:27 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:27 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:27 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:27 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:27 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:27 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:27 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:27 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:27 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:27 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:27 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:27 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:27 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:27 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[04-Oct-2025 23:29:27 America/New_York] BaseController::render() - Getting settings
+[04-Oct-2025 23:29:27 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[04-Oct-2025 23:29:34 America/New_York] Maintenance mode check failed: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'setting_key' in 'where clause'
+[04-Oct-2025 23:29:34 America/New_York] Uncaught exception: Query execution failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'u.display_name' in 'field list' in /Users/kevin/Downloads/dalthaus_net/dalthaus_net_live/src/Utils/Database.php:120
+[05-Oct-2025 19:24:09 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[05-Oct-2025 19:24:09 America/New_York] BaseController::render() - Getting settings
+[05-Oct-2025 19:24:09 America/New_York] BaseController::render() - Settings loaded successfully
+[05-Oct-2025 19:24:09 America/New_York] BaseController::render() - Current user ID: null
+[05-Oct-2025 19:24:09 America/New_York] BaseController::render() - Getting flash messages
+[05-Oct-2025 19:24:09 America/New_York] BaseController::render() - Flash messages retrieved
+[05-Oct-2025 19:24:09 America/New_York] BaseController::render() - About to call view->render()
+[05-Oct-2025 19:24:09 America/New_York] BaseController::render() - View rendered successfully
+[05-Oct-2025 19:24:22 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[05-Oct-2025 19:24:22 America/New_York] BaseController::render() - Getting settings
+[05-Oct-2025 19:24:22 America/New_York] BaseController::render() - Settings loaded successfully
+[05-Oct-2025 19:24:22 America/New_York] BaseController::render() - Current user ID: null
+[05-Oct-2025 19:24:22 America/New_York] BaseController::render() - Getting flash messages
+[05-Oct-2025 19:24:22 America/New_York] BaseController::render() - Flash messages retrieved
+[05-Oct-2025 19:24:22 America/New_York] BaseController::render() - About to call view->render()
+[05-Oct-2025 19:24:22 America/New_York] BaseController::render() - View rendered successfully
+[05-Oct-2025 19:24:23 America/New_York] Auth::authenticate() - username: kevin
+[05-Oct-2025 19:24:23 America/New_York] Auth::authenticate() - remember_me param: ''
+[05-Oct-2025 19:24:23 America/New_York] Auth::authenticate() - remember_me bool: false
+[05-Oct-2025 19:24:23 America/New_York] Auth::authenticate() - About to call auth->attempt()
+[05-Oct-2025 19:24:23 America/New_York] Auth::startSession() - Setting session data
+[05-Oct-2025 19:24:23 America/New_York] Auth::startSession() - user_id: 1
+[05-Oct-2025 19:24:23 America/New_York] Auth::startSession() - logged_in: true
+[05-Oct-2025 19:24:23 America/New_York] Auth::startSession() - session_id: 9edbb90cee4533b1ea7b861e0d7f8b57
+[05-Oct-2025 19:24:23 America/New_York] Auth::authenticate() - Login successful, redirecting to dashboard
+[05-Oct-2025 19:24:23 America/New_York] Dashboard::initialize() - Session data: Array
+(
+    [_token] => 1e28eebef7c55c3dd6f8b7c3099aa94dd49830b47899b61f432dd933eab1d5b7
+    [rate_limit_c299e53971ab2662107b688563ed120e] => Array
+        (
+            [count] => 1
+            [window_start] => 1759706663
+        )
+
+    [user_id] => 1
+    [username] => kevin
+    [email] => kevin@example.com
+    [logged_in] => 1
+    [is_admin] => 1
+    [login_time] => 1759706663
+    [last_activity] => 1759706663
+)
+
+[05-Oct-2025 19:24:23 America/New_York] Auth::check() - Starting authentication check
+[05-Oct-2025 19:24:23 America/New_York] Auth::check() - Session logged_in: true
+[05-Oct-2025 19:24:23 America/New_York] Auth::check() - Remember cookie exists: no
+[05-Oct-2025 19:24:23 America/New_York] Auth::check() - User has active session
+[05-Oct-2025 19:24:23 America/New_York] Auth::check() - Session valid, returning true
+[05-Oct-2025 19:24:23 America/New_York] Dashboard::initialize() - isAuthenticated(): true
+[05-Oct-2025 19:24:23 America/New_York] Auth::check() - Starting authentication check
+[05-Oct-2025 19:24:23 America/New_York] Auth::check() - Session logged_in: true
+[05-Oct-2025 19:24:23 America/New_York] Auth::check() - Remember cookie exists: no
+[05-Oct-2025 19:24:23 America/New_York] Auth::check() - User has active session
+[05-Oct-2025 19:24:23 America/New_York] Auth::check() - Session valid, returning true
+[05-Oct-2025 19:24:23 America/New_York] Dashboard::index() - Successfully reached dashboard index method
+[05-Oct-2025 19:24:23 America/New_York] Dashboard::index() - Step 1: About to get dashboard stats
+[05-Oct-2025 19:24:23 America/New_York] Dashboard::index() - Step 1: Dashboard stats loaded successfully
+[05-Oct-2025 19:24:23 America/New_York] Dashboard::index() - Step 2: About to get recent content
+[05-Oct-2025 19:24:23 America/New_York] Dashboard::index() - Step 2: Recent content loaded successfully
+[05-Oct-2025 19:24:23 America/New_York] Dashboard::index() - Step 3: About to get recent activity
+[05-Oct-2025 19:24:23 America/New_York] Dashboard::index() - Step 3 FAILED (using fallback): Query execution failed: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'dalthaus_maincms.activity_logs' doesn't exist
+[05-Oct-2025 19:24:23 America/New_York] Dashboard::index() - Step 4: About to get activity stats
+[05-Oct-2025 19:24:23 America/New_York] Dashboard::index() - Step 4 FAILED (using fallback): Query execution failed: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'dalthaus_maincms.activity_logs' doesn't exist
+[05-Oct-2025 19:24:23 America/New_York] Dashboard::index() - About to render view
+[05-Oct-2025 19:24:23 America/New_York] BaseController::render() - Starting render for template: admin/dashboard/index
+[05-Oct-2025 19:24:23 America/New_York] BaseController::render() - Getting settings
+[05-Oct-2025 19:24:23 America/New_York] BaseController::render() - Settings loaded successfully
+[05-Oct-2025 19:24:23 America/New_York] BaseController::render() - Current user ID: 1
+[05-Oct-2025 19:24:23 America/New_York] BaseController::render() - Loading user model
+[05-Oct-2025 19:24:23 America/New_York] BaseController::render() - User loaded successfully
+[05-Oct-2025 19:24:23 America/New_York] BaseController::render() - Generating CSRF token
+[05-Oct-2025 19:24:23 America/New_York] BaseController::render() - CSRF token generated
+[05-Oct-2025 19:24:23 America/New_York] BaseController::render() - Getting flash messages
+[05-Oct-2025 19:24:23 America/New_York] BaseController::render() - Flash messages retrieved
+[05-Oct-2025 19:24:23 America/New_York] BaseController::render() - About to call view->render()
+[05-Oct-2025 19:24:23 America/New_York] BaseController::render() - View rendered successfully
+[05-Oct-2025 19:24:50 America/New_York] BaseController::render() - Starting render for template: admin/auth/login
+[05-Oct-2025 19:24:50 America/New_York] BaseController::render() - Getting settings
+[05-Oct-2025 19:24:50 America/New_York] BaseController::render() - Settings loaded successfully
+[05-Oct-2025 19:24:50 America/New_York] BaseController::render() - Current user ID: null
+[05-Oct-2025 19:24:50 America/New_York] BaseController::render() - Getting flash messages
+[05-Oct-2025 19:24:50 America/New_York] BaseController::render() - Flash messages retrieved
+[05-Oct-2025 19:24:50 America/New_York] BaseController::render() - About to call view->render()
+[05-Oct-2025 19:24:50 America/New_York] BaseController::render() - View rendered successfully
+[05-Oct-2025 19:24:51 America/New_York] Auth::authenticate() - username: kevin
+[05-Oct-2025 19:24:51 America/New_York] Auth::authenticate() - remember_me param: ''
+[05-Oct-2025 19:24:51 America/New_York] Auth::authenticate() - remember_me bool: false
+[05-Oct-2025 19:24:51 America/New_York] Auth::authenticate() - About to call auth->attempt()
+[05-Oct-2025 19:24:51 America/New_York] Auth::startSession() - Setting session data
+[05-Oct-2025 19:24:51 America/New_York] Auth::startSession() - user_id: 1
+[05-Oct-2025 19:24:51 America/New_York] Auth::startSession() - logged_in: true
+[05-Oct-2025 19:24:51 America/New_York] Auth::startSession() - session_id: fe7ba50e8770e88e7ff4a96c8d715708
+[05-Oct-2025 19:24:51 America/New_York] Auth::authenticate() - Login successful, redirecting to dashboard
+[05-Oct-2025 19:24:51 America/New_York] Dashboard::initialize() - Session data: Array
+(
+    [_token] => bfd31092103fb898c7483c9cf53b380f62361df0ca38537a1ad020d6b3995f63
+    [rate_limit_c299e53971ab2662107b688563ed120e] => Array
+        (
+            [count] => 1
+            [window_start] => 1759706691
+        )
+
+    [user_id] => 1
+    [username] => kevin
+    [email] => kevin@example.com
+    [logged_in] => 1
+    [is_admin] => 1
+    [login_time] => 1759706691
+    [last_activity] => 1759706691
+)
+
+[05-Oct-2025 19:24:51 America/New_York] Auth::check() - Starting authentication check
+[05-Oct-2025 19:24:51 America/New_York] Auth::check() - Session logged_in: true
+[05-Oct-2025 19:24:51 America/New_York] Auth::check() - Remember cookie exists: no
+[05-Oct-2025 19:24:51 America/New_York] Auth::check() - User has active session
+[05-Oct-2025 19:24:51 America/New_York] Auth::check() - Session valid, returning true
+[05-Oct-2025 19:24:51 America/New_York] Dashboard::initialize() - isAuthenticated(): true
+[05-Oct-2025 19:24:51 America/New_York] Auth::check() - Starting authentication check
+[05-Oct-2025 19:24:51 America/New_York] Auth::check() - Session logged_in: true
+[05-Oct-2025 19:24:51 America/New_York] Auth::check() - Remember cookie exists: no
+[05-Oct-2025 19:24:51 America/New_York] Auth::check() - User has active session
+[05-Oct-2025 19:24:51 America/New_York] Auth::check() - Session valid, returning true
+[05-Oct-2025 19:24:51 America/New_York] Dashboard::index() - Successfully reached dashboard index method
+[05-Oct-2025 19:24:51 America/New_York] Dashboard::index() - Step 1: About to get dashboard stats
+[05-Oct-2025 19:24:51 America/New_York] Dashboard::index() - Step 1: Dashboard stats loaded successfully
+[05-Oct-2025 19:24:51 America/New_York] Dashboard::index() - Step 2: About to get recent content
+[05-Oct-2025 19:24:51 America/New_York] Dashboard::index() - Step 2: Recent content loaded successfully
+[05-Oct-2025 19:24:51 America/New_York] Dashboard::index() - Step 3: About to get recent activity
+[05-Oct-2025 19:24:51 America/New_York] Dashboard::index() - Step 3 FAILED (using fallback): Query execution failed: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'dalthaus_maincms.activity_logs' doesn't exist
+[05-Oct-2025 19:24:51 America/New_York] Dashboard::index() - Step 4: About to get activity stats
+[05-Oct-2025 19:24:51 America/New_York] Dashboard::index() - Step 4 FAILED (using fallback): Query execution failed: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'dalthaus_maincms.activity_logs' doesn't exist
+[05-Oct-2025 19:24:51 America/New_York] Dashboard::index() - About to render view
+[05-Oct-2025 19:24:51 America/New_York] BaseController::render() - Starting render for template: admin/dashboard/index
+[05-Oct-2025 19:24:51 America/New_York] BaseController::render() - Getting settings
+[05-Oct-2025 19:24:51 America/New_York] BaseController::render() - Settings loaded successfully
+[05-Oct-2025 19:24:51 America/New_York] BaseController::render() - Current user ID: 1
+[05-Oct-2025 19:24:51 America/New_York] BaseController::render() - Loading user model
+[05-Oct-2025 19:24:51 America/New_York] BaseController::render() - User loaded successfully
+[05-Oct-2025 19:24:51 America/New_York] BaseController::render() - Generating CSRF token
+[05-Oct-2025 19:24:51 America/New_York] BaseController::render() - CSRF token generated
+[05-Oct-2025 19:24:51 America/New_York] BaseController::render() - Getting flash messages
+[05-Oct-2025 19:24:51 America/New_York] BaseController::render() - Flash messages retrieved
+[05-Oct-2025 19:24:51 America/New_York] BaseController::render() - About to call view->render()
+[05-Oct-2025 19:24:51 America/New_York] BaseController::render() - View rendered successfully
+[05-Oct-2025 19:24:52 America/New_York] Dashboard::initialize() - Session data: Array
+(
+    [_token] => bfd31092103fb898c7483c9cf53b380f62361df0ca38537a1ad020d6b3995f63
+    [rate_limit_c299e53971ab2662107b688563ed120e] => Array
+        (
+            [count] => 1
+            [window_start] => 1759706691
+        )
+
+    [user_id] => 1
+    [username] => kevin
+    [email] => kevin@example.com
+    [logged_in] => 1
+    [is_admin] => 1
+    [login_time] => 1759706691
+    [last_activity] => 1759706691
+)
+
+[05-Oct-2025 19:24:52 America/New_York] Auth::check() - Starting authentication check
+[05-Oct-2025 19:24:52 America/New_York] Auth::check() - Session logged_in: true
+[05-Oct-2025 19:24:52 America/New_York] Auth::check() - Remember cookie exists: no
+[05-Oct-2025 19:24:52 America/New_York] Auth::check() - User has active session
+[05-Oct-2025 19:24:52 America/New_York] Auth::check() - Session valid, returning true
+[05-Oct-2025 19:24:52 America/New_York] Dashboard::initialize() - isAuthenticated(): true
+[05-Oct-2025 19:24:52 America/New_York] Auth::check() - Starting authentication check
+[05-Oct-2025 19:24:52 America/New_York] Auth::check() - Session logged_in: true
+[05-Oct-2025 19:24:52 America/New_York] Auth::check() - Remember cookie exists: no
+[05-Oct-2025 19:24:52 America/New_York] Auth::check() - User has active session
+[05-Oct-2025 19:24:52 America/New_York] Auth::check() - Session valid, returning true
+[05-Oct-2025 19:24:52 America/New_York] Dashboard::index() - Successfully reached dashboard index method
+[05-Oct-2025 19:24:52 America/New_York] Dashboard::index() - Step 1: About to get dashboard stats
+[05-Oct-2025 19:24:52 America/New_York] Dashboard::index() - Step 1: Dashboard stats loaded successfully
+[05-Oct-2025 19:24:52 America/New_York] Dashboard::index() - Step 2: About to get recent content
+[05-Oct-2025 19:24:52 America/New_York] Dashboard::index() - Step 2: Recent content loaded successfully
+[05-Oct-2025 19:24:52 America/New_York] Dashboard::index() - Step 3: About to get recent activity
+[05-Oct-2025 19:24:52 America/New_York] Dashboard::index() - Step 3 FAILED (using fallback): Query execution failed: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'dalthaus_maincms.activity_logs' doesn't exist
+[05-Oct-2025 19:24:52 America/New_York] Dashboard::index() - Step 4: About to get activity stats
+[05-Oct-2025 19:24:52 America/New_York] Dashboard::index() - Step 4 FAILED (using fallback): Query execution failed: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'dalthaus_maincms.activity_logs' doesn't exist
+[05-Oct-2025 19:24:52 America/New_York] Dashboard::index() - About to render view
+[05-Oct-2025 19:24:52 America/New_York] BaseController::render() - Starting render for template: admin/dashboard/index
+[05-Oct-2025 19:24:52 America/New_York] BaseController::render() - Getting settings
+[05-Oct-2025 19:24:52 America/New_York] BaseController::render() - Settings loaded successfully
+[05-Oct-2025 19:24:52 America/New_York] BaseController::render() - Current user ID: 1
+[05-Oct-2025 19:24:52 America/New_York] BaseController::render() - Loading user model
+[05-Oct-2025 19:24:52 America/New_York] BaseController::render() - User loaded successfully
+[05-Oct-2025 19:24:52 America/New_York] BaseController::render() - Generating CSRF token
+[05-Oct-2025 19:24:52 America/New_York] BaseController::render() - CSRF token generated
+[05-Oct-2025 19:24:52 America/New_York] BaseController::render() - Getting flash messages
+[05-Oct-2025 19:24:52 America/New_York] BaseController::render() - Flash messages retrieved
+[05-Oct-2025 19:24:52 America/New_York] BaseController::render() - About to call view->render()
+[05-Oct-2025 19:24:52 America/New_York] BaseController::render() - View rendered successfully

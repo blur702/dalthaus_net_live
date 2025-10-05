@@ -5,21 +5,52 @@
  */
 ?>
 
+<?php if (!empty($has_autosave) && !empty($autosave)): ?>
+<div class="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-4">
+    <div class="flex items-start">
+        <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+            </svg>
+        </div>
+        <div class="ml-3 flex-1">
+            <p class="text-sm font-medium text-blue-800">
+                Autosaved version available
+            </p>
+            <p class="mt-1 text-sm text-blue-700">
+                An autosaved version from <?= date('M j, Y g:i A', strtotime($autosave['updated_at'])) ?> is available.
+            </p>
+            <div class="mt-3">
+                <button type="button" id="loadAutosave" class="text-sm font-medium text-blue-600 hover:text-blue-500 mr-4">
+                    Load autosaved version
+                </button>
+                <button type="button" id="dismissAutosave" class="text-sm font-medium text-gray-600 hover:text-gray-500">
+                    Dismiss
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
+
 <div class="bg-white shadow rounded-lg">
     <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
         <div>
             <h2 class="text-lg font-semibold text-gray-900">Edit <?= ucfirst($this->escape($content->getAttribute('content_type'))) ?></h2>
             <p class="text-sm text-gray-600">Editing: "<?= $this->escape($content->getAttribute('title')) ?>"</p>
         </div>
-        <div class="flex space-x-2">
-            <a href="/admin/content" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path></svg>
-                Back
-            </a>
-            <a href="/<?= $this->escape($content->getAttribute('content_type')) ?>/<?= $this->escape($content->getAttribute('url_alias')) ?>" target="_blank" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                View Live
-            </a>
+        <div class="flex items-center space-x-4">
+            <div id="autosaveStatus" class="text-xs text-gray-500"></div>
+            <div class="flex space-x-2">
+                <a href="/admin/content" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path></svg>
+                    Back
+                </a>
+                <a href="/<?= $this->escape($content->getAttribute('content_type')) ?>/<?= $this->escape($content->getAttribute('url_alias')) ?>" target="_blank" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                    View Live
+                </a>
+            </div>
         </div>
     </div>
 
@@ -27,6 +58,8 @@
         <form method="POST" action="/admin/content/<?= $content->getId() ?>/update" enctype="multipart/form-data" id="contentForm">
             <input type="hidden" name="_token" value="<?= $this->escape($csrf_token) ?>">
             <input type="hidden" name="content_type" value="<?= $this->escape($content->getAttribute('content_type')) ?>">
+            <input type="hidden" name="autosave_uuid" id="autosave_uuid" value="">
+            <input type="hidden" name="content_id" id="content_id" value="<?= $content->getId() ?>">
 
             <div class="space-y-6">
                 <!-- Title -->
@@ -122,6 +155,13 @@
 
 <!-- Slug Generator -->
 <script src="/assets/js/slug-generator.js"></script>
+
+<!-- Autosave data -->
+<?php if (!empty($autosave)): ?>
+<script>
+    window.autosaveData = <?= json_encode($autosave) ?>;
+</script>
+<?php endif; ?>
 
 <!-- Auto-save functionality -->
 <script src="/assets/js/autosave.js?v=<?= filemtime(__DIR__ . '/../../../../assets/js/autosave.js') ?>"></script>

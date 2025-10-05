@@ -6,6 +6,7 @@ namespace CMS\Controllers\Admin;
 
 use CMS\Controllers\BaseController;
 use CMS\Models\Content as ContentModel;
+use App\Models\Autosave;
 use CMS\Utils\FileUpload;
 use CMS\Utils\Database;
 use Exception;
@@ -256,6 +257,13 @@ class Content extends BaseController
             $content = ContentModel::create($data);
 
             if ($content && $content->getId()) {
+                // Delete any autosaves associated with the UUID if provided
+                $autosaveUUID = $this->getParam('autosave_uuid', '', 'post');
+                if (!empty($autosaveUUID)) {
+                    $autosaveModel = new Autosave();
+                    $autosaveModel->deleteByUUID($autosaveUUID);
+                }
+                
                 // Log for debugging
                 error_log('Content created: ID=' . $content->getId() . ', URL=' . $data['url_alias'] . ', Status=' . $data['status']);
                 
@@ -335,13 +343,19 @@ class Content extends BaseController
         
         error_log('Edit content: Found content ID=' . $id . ', Title=' . $content->getAttribute('title'));
         
+        // Check for autosaves for this content
+        $autosaveModel = new Autosave();
+        $latestAutosave = $autosaveModel->getLatestForContent($id, $this->getCurrentUserId());
+        
         $this->render('admin/content/edit', [
             'content' => $content,
             'content_type' => $content->getAttribute('content_type'),
             'is_edit' => true,
             'flash' => $this->getFlash(),
             'page_title' => 'Edit ' . ucfirst($content->getAttribute('content_type')),
-            'csrf_token' => $this->generateCsrfToken()
+            'csrf_token' => $this->generateCsrfToken(),
+            'has_autosave' => !empty($latestAutosave),
+            'autosave' => $latestAutosave
         ]);
     }
 
@@ -415,6 +429,16 @@ class Content extends BaseController
             }
             
             if ($content->save()) {
+                // Delete all autosaves for this content after successful save
+                $autosaveModel = new Autosave();
+                $autosaveModel->deleteByContentId($id);
+                
+                // Also delete autosaves by UUID if provided
+                $autosaveUUID = $this->getParam('autosave_uuid', '', 'post');
+                if (!empty($autosaveUUID)) {
+                    $autosaveModel->deleteByUUID($autosaveUUID);
+                }
+                
                 $this->setFlash('success', ucfirst($content->getAttribute('content_type')) . ' updated successfully.');
                 $this->redirect('/admin/content/' . $id . '/edit');
             } else {
@@ -861,5 +885,150 @@ class Content extends BaseController
         }
         
         $this->redirect($redirectUrl);
+    }
+
+    public function autosave(): void
+    {
+        if (!$this->isPost()) {
+            $this->jsonResponse(['success' => false, 'message' => 'Invalid request method']);
+            return;
+        }
+
+        try {
+            $data = [
+                'autosave_uuid' => $this->sanitize($this->getParam('autosave_uuid', '', 'post')),
+                'content_id' => $this->getParam('content_id', null, 'post') ? (int)$this->getParam('content_id', null, 'post') : null,
+                'user_id' => $this->getCurrentUserId(),
+                'title' => $this->sanitize($this->getParam('title', '', 'post')),
+                'content' => $this->getParam('body', '', 'post'),
+                'excerpt' => $this->sanitize($this->getParam('teaser', '', 'post')),
+                'type' => $this->getParam('content_type', ContentModel::TYPE_ARTICLE, 'post'),
+                'featured_image' => $this->sanitize($this->getParam('featured_image', '', 'post')),
+                'meta_title' => $this->sanitize($this->getParam('meta_title', '', 'post')),
+                'meta_description' => $this->sanitize($this->getParam('meta_description', '', 'post')),
+                'meta_keywords' => $this->sanitize($this->getParam('meta_keywords', '', 'post'))
+            ];
+
+            // Validate required fields
+            if (empty($data['autosave_uuid']) || empty($data['title'])) {
+                $this->jsonResponse([
+                    'success' => false,
+                    'message' => 'UUID and title are required for autosave'
+                ]);
+                return;
+            }
+
+            $autosaveModel = new Autosave();
+            $autosaveId = $autosaveModel->createOrUpdate($data);
+
+            if ($autosaveId) {
+                $this->jsonResponse([
+                    'success' => true,
+                    'message' => 'Content autosaved successfully',
+                    'autosave_id' => $autosaveId,
+                    'timestamp' => date('Y-m-d H:i:s')
+                ]);
+            } else {
+                throw new Exception('Failed to save autosave');
+            }
+
+        } catch (Exception $e) {
+            error_log('Autosave error: ' . $e->getMessage());
+            $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to autosave content'
+            ]);
+        }
+    }
+
+    public function loadAutosave(): void
+    {
+        if (!$this->isPost()) {
+            $this->jsonResponse(['success' => false, 'message' => 'Invalid request method']);
+            return;
+        }
+
+        try {
+            $autosaveUUID = $this->sanitize($this->getParam('autosave_uuid', '', 'post'));
+            $contentId = $this->getParam('content_id', null, 'post') ? (int)$this->getParam('content_id', null, 'post') : null;
+
+            $autosaveModel = new Autosave();
+            
+            if ($contentId) {
+                // Load latest autosave for this content
+                $autosave = $autosaveModel->getLatestForContent($contentId, $this->getCurrentUserId());
+            } elseif ($autosaveUUID) {
+                // Load autosave by UUID
+                $autosave = $autosaveModel->findByUUID($autosaveUUID);
+            } else {
+                $this->jsonResponse([
+                    'success' => false,
+                    'message' => 'No autosave identifier provided'
+                ]);
+                return;
+            }
+
+            if ($autosave) {
+                $this->jsonResponse([
+                    'success' => true,
+                    'autosave' => $autosave
+                ]);
+            } else {
+                $this->jsonResponse([
+                    'success' => false,
+                    'message' => 'No autosave found'
+                ]);
+            }
+
+        } catch (Exception $e) {
+            error_log('Load autosave error: ' . $e->getMessage());
+            $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to load autosave'
+            ]);
+        }
+    }
+
+    public function listAutosaves(): void
+    {
+        if (!$this->isPost()) {
+            $this->jsonResponse(['success' => false, 'message' => 'Invalid request method']);
+            return;
+        }
+
+        try {
+            $contentId = $this->getParam('content_id', null, 'post') ? (int)$this->getParam('content_id', null, 'post') : null;
+
+            if (!$contentId) {
+                $this->jsonResponse([
+                    'success' => false,
+                    'message' => 'Content ID is required'
+                ]);
+                return;
+            }
+
+            $autosaveModel = new Autosave();
+            $autosaves = $autosaveModel->findByContentId($contentId, $this->getCurrentUserId());
+
+            $this->jsonResponse([
+                'success' => true,
+                'autosaves' => $autosaves,
+                'count' => count($autosaves)
+            ]);
+
+        } catch (Exception $e) {
+            error_log('List autosaves error: ' . $e->getMessage());
+            $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to list autosaves'
+            ]);
+        }
+    }
+
+    private function jsonResponse(array $data): void
+    {
+        header('Content-Type: application/json');
+        echo json_encode($data);
+        exit;
     }
 }

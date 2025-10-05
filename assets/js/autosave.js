@@ -1,11 +1,11 @@
 /**
- * Auto-save functionality for content forms
- * Automatically saves form data periodically and on user interaction
+ * Auto-save functionality with minimalistic UI design
+ * Subtle, non-obtrusive indicators for content autosaving
  */
 
 class AutoSave {
     constructor(formId, options = {}) {
-        console.log('AutoSave: Constructor called with formId:', formId);
+        console.log('AutoSave: Initializing with minimalistic design');
         
         this.form = document.getElementById(formId);
         if (!this.form) {
@@ -13,304 +13,230 @@ class AutoSave {
             return;
         }
         
-        console.log('AutoSave: Form found:', this.form);
-        console.log('AutoSave: Form ID:', this.form.id);
-        console.log('AutoSave: Form action:', this.form.action);
-        console.log('AutoSave: Form method:', this.form.method);
-        
-        // Check if there are multiple forms on the page
-        const allForms = document.querySelectorAll('form');
-        console.log('AutoSave: Total forms on page:', allForms.length);
-        allForms.forEach((form, index) => {
-            console.log(`AutoSave: Form ${index} - ID: ${form.id}, action: ${form.action}`);
-        });
-
         // Configuration
         this.options = {
             saveInterval: 30000, // 30 seconds
             debounceDelay: 2000, // 2 seconds after typing stops
             endpoint: '/admin/content/autosave',
-            createEndpoint: '/admin/content/create-draft',
+            loadEndpoint: '/admin/content/load-autosave',
+            listEndpoint: '/admin/content/list-autosaves',
             watchedFields: ['title', 'teaser', 'body'],
             ...options
         };
 
         // State
+        this.autosaveUUID = null;
         this.contentId = null;
         this.isEnabled = false;
-        this.isCreateMode = false;
-        this.isDraftCreated = false;
         this.lastSaved = {};
         this.saveTimeout = null;
         this.intervalId = null;
         this.isDestroyed = false;
         
-        // Countdown state
-        this.countdownInterval = null;
-        this.countdownSeconds = 0;
-        this.isCountingDown = false;
-
-        // Get content ID from form action or hidden field
-        this.extractContentId();
-        
-        // Initialize for both edit and create forms
+        // Initialize
         this.init();
     }
 
-    extractContentId() {
-        // Verify we have the correct form
-        if (!this.form || !this.form.id || this.form.id !== 'contentForm') {
-            console.error('AutoSave: Invalid form reference - expected contentForm, got:', this.form?.id || 'null');
-            return;
-        }
-        
-        // Get form action as string - handle RadioNodeList issue
-        let formAction = this.form.getAttribute('action') || '';
-        
-        // Fallback to form.action if getAttribute fails, but handle RadioNodeList
-        if (!formAction) {
-            const action = this.form.action;
-            if (typeof action === 'string') {
-                formAction = action;
-            } else {
-                // If it's a RadioNodeList or other object, try to get the actual action
-                formAction = String(action);
-            }
-        }
-        
-        console.log('AutoSave: Form action extracted:', formAction);
-        
-        // Form action extracted successfully
-        
-        // Try to get ID from form action URL pattern: /admin/content/{id}/update
-        const actionMatch = formAction.match(/\/admin\/content\/(\d+)\/update/);
-        if (actionMatch) {
-            this.contentId = parseInt(actionMatch[1]);
-            return;
-        }
-
-        // Check if this is a create form
-        // Check if this is a create form
-        
-        if (formAction.includes('/content/store') || formAction.includes('/content/create')) {
-            // Create mode detected
-            this.isCreateMode = true;
-            return;
-        }
-
-        // Fallback: look for hidden ID field
-        const idField = this.form.querySelector('input[name="id"]');
-        if (idField && idField.value) {
-            this.contentId = parseInt(idField.value);
-        }
+    generateUUID() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random() * 16 | 0,
+                v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
     }
 
     init() {
-        console.log('AutoSave: Starting initialization...');
+        // Get or generate autosave UUID
+        const uuidField = this.form.querySelector('#autosave_uuid');
+        if (uuidField) {
+            if (!uuidField.value) {
+                this.autosaveUUID = this.generateUUID();
+                uuidField.value = this.autosaveUUID;
+            } else {
+                this.autosaveUUID = uuidField.value;
+            }
+        }
+        
+        // Get content ID if editing
+        const contentIdField = this.form.querySelector('#content_id');
+        if (contentIdField && contentIdField.value) {
+            this.contentId = parseInt(contentIdField.value);
+        }
         
         this.createStatusIndicator();
         this.attachEventListeners();
-
-        if (this.contentId) {
-            // Edit mode - enable auto-save immediately
-            this.isEnabled = true;
-            this.startPeriodicSave();
-            this.showStatus('success', 'Auto-save enabled for content ID: ' + this.contentId);
-            console.log('AutoSave: Initialized for content ID:', this.contentId);
-        } else if (this.isCreateMode) {
-            // Create mode - wait for title to be entered
-            this.isEnabled = false;
-            this.showStatus('info', 'Auto-save will start after entering title');
-            console.log('AutoSave: Initialized for create mode, waiting for title');
+        this.setupAutosaveRecovery();
+        
+        // Enable autosave only after title is entered
+        const titleField = this.form.querySelector('[name="title"]');
+        if (titleField && titleField.value.trim()) {
+            this.enable();
         } else {
-            console.warn('AutoSave: Unable to determine mode, auto-save disabled');
-            return;
+            this.showStatus('neutral', '');
+        }
+    }
+
+    setupAutosaveRecovery() {
+        const loadBtn = document.getElementById('loadAutosave');
+        if (loadBtn) {
+            loadBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.loadAutosaveData();
+            });
         }
         
-        console.log('AutoSave: Initialization complete');
+        const dismissBtn = document.getElementById('dismissAutosave');
+        if (dismissBtn) {
+            dismissBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                dismissBtn.closest('.bg-blue-50').style.display = 'none';
+            });
+        }
+    }
+
+    async loadAutosaveData() {
+        if (!window.autosaveData) return;
+        
+        try {
+            const data = window.autosaveData;
+            
+            const titleField = this.form.querySelector('[name="title"]');
+            if (titleField && data.title) {
+                titleField.value = data.title;
+            }
+            
+            const bodyField = this.form.querySelector('[name="body"]');
+            if (bodyField && data.content) {
+                bodyField.value = data.content;
+            }
+            
+            const teaserField = this.form.querySelector('[name="teaser"]');
+            if (teaserField && data.excerpt) {
+                teaserField.value = data.excerpt;
+            }
+            
+            const notification = document.querySelector('.bg-blue-50');
+            if (notification) {
+                notification.style.display = 'none';
+            }
+            
+            this.showStatus('success', 'Restored');
+            
+            this.options.watchedFields.forEach(fieldName => {
+                const field = this.form.querySelector(`[name="${fieldName}"]`);
+                if (field) {
+                    this.lastSaved[fieldName] = field.value;
+                }
+            });
+            
+        } catch (error) {
+            console.error('AutoSave: Failed to load autosave data', error);
+            this.showStatus('error', 'Failed');
+        }
     }
 
     createStatusIndicator() {
-        console.log('AutoSave: Creating status indicator...');
-        
-        // Remove existing indicator if it exists
-        const existing = document.getElementById('autosave-status');
-        if (existing) {
-            console.log('AutoSave: Removing existing status indicator');
-            existing.remove();
+        // Use existing inline autosaveStatus element if present
+        const existingStatus = document.getElementById('autosaveStatus');
+        if (existingStatus) {
+            this.statusElement = existingStatus;
+            // Apply minimalistic styles
+            existingStatus.style.cssText = 'font-size: 11px; color: #6b7280; opacity: 0.8;';
+        } else {
+            // Create minimal floating indicator as fallback
+            const statusDiv = document.createElement('div');
+            statusDiv.id = 'autosave-status';
+            statusDiv.className = 'autosave-status';
+            document.body.appendChild(statusDiv);
+            this.statusElement = statusDiv;
         }
-
-        const statusDiv = document.createElement('div');
-        statusDiv.id = 'autosave-status';
-        statusDiv.className = 'autosave-status';
-        statusDiv.innerHTML = `
-            <div class="autosave-status-content">
-                <svg class="autosave-icon" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                </svg>
-                <span class="autosave-text">Auto-save ready</span>
-            </div>
-        `;
-
-        // Always append to body for consistent positioning
-        document.body.appendChild(statusDiv);
-        console.log('AutoSave: Status indicator created and appended to body');
-
-        // Add CSS styles
+        
+        // Add minimalistic CSS styles
         this.addStatusStyles();
-        
-        // Verify the element is in the DOM
-        const verification = document.getElementById('autosave-status');
-        console.log('AutoSave: Status indicator verification:', !!verification);
-        if (verification) {
-            console.log('AutoSave: Status indicator classes:', verification.className);
-            
-            // Force a test to ensure visibility
-            setTimeout(() => {
-                const rect = verification.getBoundingClientRect();
-                const style = window.getComputedStyle(verification);
-                console.log('AutoSave: Post-creation visibility test:', {
-                    inDOM: document.body.contains(verification),
-                    rect: rect,
-                    opacity: style.opacity,
-                    zIndex: style.zIndex,
-                    display: style.display,
-                    position: style.position
-                });
-            }, 100);
-        }
     }
 
     addStatusStyles() {
-        console.log('AutoSave: Adding status styles...');
-        
-        // Remove existing styles if they exist
         const existing = document.getElementById('autosave-styles');
-        if (existing) {
-            console.log('AutoSave: Removing existing styles');
-            existing.remove();
-        }
+        if (existing) return;
 
         const style = document.createElement('style');
         style.id = 'autosave-styles';
         style.textContent = `
-            .autosave-status {
-                position: fixed !important;
-                top: 80px !important;
-                right: 20px !important;
-                z-index: 10002 !important;
-                background: #10b981 !important;
-                color: white !important;
-                padding: 12px 16px !important;
-                border-radius: 8px !important;
-                box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.15) !important;
-                font-size: 14px !important;
-                opacity: 1 !important;
-                transform: translateX(0) !important;
-                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
-                pointer-events: none !important;
-                font-family: system-ui, -apple-system, sans-serif !important;
-                max-width: 320px !important;
-                word-wrap: break-word !important;
-                border: 1px solid rgba(255, 255, 255, 0.2) !important;
-                backdrop-filter: blur(8px) !important;
+            /* Minimalistic autosave indicator */
+            .autosave-indicator {
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                font-size: 11px;
+                color: #6b7280;
+                opacity: 0.8;
+                transition: opacity 0.15s ease;
             }
-
-            .autosave-status.show {
-                opacity: 1 !important;
-                transform: translateX(0) !important;
+            
+            .autosave-indicator:hover {
+                opacity: 1;
             }
-
-            .autosave-status.hidden {
-                opacity: 0 !important;
-                transform: translateX(100%) !important;
+            
+            /* Small status dot */
+            .autosave-dot {
+                width: 5px;
+                height: 5px;
+                border-radius: 50%;
+                background: #9ca3af;
+                transition: background 0.2s ease, transform 0.2s ease;
             }
-
-            .autosave-status.countdown {
-                background: #8b5cf6 !important;
+            
+            .autosave-dot.saving {
+                background: #f59e0b;
+                animation: subtle-pulse 2s ease-in-out infinite;
             }
-
-            .autosave-status.saving {
-                background: #f59e0b !important;
+            
+            .autosave-dot.success {
+                background: #10b981;
             }
-
-            .autosave-status.error {
-                background: #ef4444 !important;
+            
+            .autosave-dot.error {
+                background: #ef4444;
             }
-
-            .autosave-status.info {
-                background: #3b82f6 !important;
+            
+            .autosave-dot.neutral {
+                background: #9ca3af;
             }
-
-            .autosave-status.success {
-                background: #10b981 !important;
-            }
-
-            .autosave-status.draft-created {
-                background: #8b5cf6 !important;
-            }
-
-            .autosave-status .spinner {
-                display: inline-block !important;
-                width: 12px !important;
-                height: 12px !important;
-                border: 2px solid transparent !important;
-                border-top: 2px solid currentColor !important;
-                border-radius: 50% !important;
-                animation: autosave-spin 1s linear infinite !important;
-                margin-right: 6px !important;
-            }
-
-            @keyframes autosave-spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
-
-            .autosave-status-content {
-                display: flex !important;
-                align-items: center !important;
-                gap: 8px !important;
-                line-height: 1.4 !important;
-            }
-
-            .autosave-countdown {
-                font-weight: 600 !important;
-                font-variant-numeric: tabular-nums !important;
-            }
-
-            .autosave-icon {
-                width: 16px !important;
-                height: 16px !important;
-                flex-shrink: 0 !important;
-            }
-
-            .autosave-spinner {
-                animation: autosave-spin 1s linear infinite !important;
-            }
-
-            .pulse-dot {
-                width: 8px !important;
-                height: 8px !important;
-                background: currentColor !important;
-                border-radius: 50% !important;
-                animation: pulse 1.5s ease-in-out infinite !important;
-            }
-
-            @keyframes pulse {
+            
+            @keyframes subtle-pulse {
                 0%, 100% { opacity: 1; transform: scale(1); }
-                50% { opacity: 0.5; transform: scale(1.2); }
+                50% { opacity: 0.5; transform: scale(0.8); }
+            }
+            
+            /* Fallback floating indicator (minimal) */
+            .autosave-status {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: rgba(255, 255, 255, 0.9);
+                backdrop-filter: blur(10px);
+                padding: 6px 10px;
+                border-radius: 4px;
+                font-size: 11px;
+                color: #6b7280;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+                border: 1px solid rgba(0, 0, 0, 0.05);
+                opacity: 0;
+                transform: translateY(4px);
+                transition: all 0.15s ease;
+                pointer-events: none;
+                z-index: 50;
+            }
+            
+            .autosave-status.show {
+                opacity: 0.9;
+                transform: translateY(0);
             }
         `;
         document.head.appendChild(style);
-        console.log('AutoSave: Status styles added to head');
-        
-        // Verify styles were added
-        const verification = document.getElementById('autosave-styles');
-        console.log('AutoSave: Styles verification:', !!verification);
     }
 
     attachEventListeners() {
-        // Watch for changes on tracked fields
         this.options.watchedFields.forEach(fieldName => {
             const field = this.form.querySelector(`[name="${fieldName}"]`);
             if (field) {
@@ -320,6 +246,17 @@ class AutoSave {
                 // Add event listeners
                 field.addEventListener('input', () => this.onFieldChange(fieldName));
                 field.addEventListener('blur', () => this.onFieldBlur(fieldName));
+                
+                // Special handling for title field
+                if (fieldName === 'title') {
+                    field.addEventListener('input', () => {
+                        if (field.value.trim() && !this.isEnabled) {
+                            this.enable();
+                        } else if (!field.value.trim() && this.isEnabled) {
+                            this.disable();
+                        }
+                    });
+                }
             }
         });
 
@@ -327,81 +264,33 @@ class AutoSave {
         window.addEventListener('beforeunload', (e) => {
             if (this.hasUnsavedChanges()) {
                 e.preventDefault();
-                e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+                e.returnValue = 'You have unsaved changes.';
                 return e.returnValue;
             }
         });
     }
 
     onFieldChange(fieldName) {
-        // Clear existing timeout and countdown
+        if (!this.isEnabled) return;
+        
         if (this.saveTimeout) {
             clearTimeout(this.saveTimeout);
         }
-        this.stopCountdown();
 
-        // Start countdown timer
-        this.startCountdown(() => {
-            // If in create mode and title field changes, create draft first
-            if (this.isCreateMode && !this.isDraftCreated && fieldName === 'title') {
-                this.createDraftThenSave(fieldName);
-            } else {
-                this.saveField(fieldName);
-            }
-        });
+        // Show subtle saving indicator after a brief delay
+        this.saveTimeout = setTimeout(() => {
+            this.saveAllChanges();
+        }, this.options.debounceDelay);
     }
 
     onFieldBlur(fieldName) {
-        // Save immediately when field loses focus
+        if (!this.isEnabled) return;
+        
         if (this.saveTimeout) {
             clearTimeout(this.saveTimeout);
         }
-        this.stopCountdown();
-
-        // If in create mode and title field blurs, create draft first
-        if (this.isCreateMode && !this.isDraftCreated && fieldName === 'title') {
-            this.createDraftThenSave(fieldName);
-        } else {
-            this.saveField(fieldName);
-        }
-    }
-
-    startCountdown(callback) {
-        this.stopCountdown(); // Ensure any existing countdown is stopped
-        this.countdownSeconds = Math.ceil(this.options.debounceDelay / 1000);
-        this.isCountingDown = true;
         
-        // Show initial countdown
-        this.showCountdownStatus();
-
-        this.countdownInterval = setInterval(() => {
-            this.countdownSeconds--;
-            
-            if (this.countdownSeconds > 0) {
-                this.showCountdownStatus();
-            } else {
-                this.stopCountdown();
-                try {
-                    callback();
-                } catch (error) {
-                    console.error('AutoSave: Error executing countdown callback:', error);
-                    this.showStatus('error', 'Save failed after countdown');
-                }
-            }
-        }, 1000);
-    }
-
-    stopCountdown() {
-        if (this.countdownInterval) {
-            clearInterval(this.countdownInterval);
-            this.countdownInterval = null;
-        }
-        this.isCountingDown = false;
-    }
-
-    showCountdownStatus() {
-        const message = `Auto-save in ${this.countdownSeconds}s`;
-        this.showStatus('countdown', message, false); // Don't auto-hide countdown
+        this.saveAllChanges();
     }
 
     startPeriodicSave() {
@@ -410,37 +299,47 @@ class AutoSave {
         }, this.options.saveInterval);
     }
 
-    async createDraftThenSave(fieldName) {
-        // Creating draft for new content
-        if (this.isDestroyed) return;
+    stopPeriodicSave() {
+        if (this.intervalId) {
+            clearInterval(this.intervalId);
+            this.intervalId = null;
+        }
+    }
+
+    async saveAllChanges() {
+        if (this.isDestroyed || !this.isEnabled) return;
 
         const titleField = this.form.querySelector('[name="title"]');
-        if (!titleField || !titleField.value.trim()) {
-            console.log('AutoSave: Title is empty, skipping draft creation');
-            return;
-        }
-        
-        // Title validation passed, creating draft
+        if (!titleField || !titleField.value.trim()) return;
 
         try {
-            this.showStatus('saving', 'Creating draft...');
+            this.showStatus('saving', 'Saving');
             
             const formData = new FormData();
-            formData.append('title', titleField.value.trim());
+            formData.append('autosave_uuid', this.autosaveUUID);
             
-            // Get content type from form
+            if (this.contentId) {
+                formData.append('content_id', this.contentId);
+            }
+            
+            this.options.watchedFields.forEach(fieldName => {
+                const field = this.form.querySelector(`[name="${fieldName}"]`);
+                if (field) {
+                    formData.append(fieldName === 'body' ? 'body' : fieldName, field.value);
+                }
+            });
+            
             const contentTypeField = this.form.querySelector('[name="content_type"]');
             if (contentTypeField) {
                 formData.append('content_type', contentTypeField.value);
             }
             
-            // Get CSRF token
             const csrfToken = this.form.querySelector('[name="_token"]');
             if (csrfToken) {
                 formData.append('_token', csrfToken.value);
             }
 
-            const response = await fetch(this.options.createEndpoint, {
+            const response = await fetch(this.options.endpoint, {
                 method: 'POST',
                 body: formData,
                 credentials: 'same-origin'
@@ -453,267 +352,98 @@ class AutoSave {
             const result = await response.json();
             
             if (!result.success) {
-                throw new Error(result.message || 'Draft creation failed');
+                throw new Error(result.message || 'Save failed');
             }
 
-            // Update state to edit mode
-            this.contentId = result.content_id;
-            this.isDraftCreated = true;
-            this.isCreateMode = false;
-            this.isEnabled = true;
-            
-            // Update form action to edit mode
-            this.form.action = `/admin/content/${this.contentId}/update`;
-            
-            // Update URL alias field if provided
-            if (result.url_alias) {
-                const urlAliasField = this.form.querySelector('[name="url_alias"]');
-                if (urlAliasField && !urlAliasField.value) {
-                    urlAliasField.value = result.url_alias;
+            this.options.watchedFields.forEach(fieldName => {
+                const field = this.form.querySelector(`[name="${fieldName}"]`);
+                if (field) {
+                    this.lastSaved[fieldName] = field.value;
                 }
-            }
+            });
+
+            const now = new Date();
+            const time = now.toLocaleTimeString([], { 
+                hour: 'numeric', 
+                minute: '2-digit'
+            });
             
-            // Store initial values
-            this.lastSaved[fieldName] = titleField.value;
-            
-            // Start periodic saves
-            this.startPeriodicSave();
-            
-            this.showStatus('draft-created', 'Draft created - auto-save enabled');
-            console.log('AutoSave: Draft created with ID:', this.contentId);
+            this.showStatus('success', time);
             
         } catch (error) {
-            console.error('AutoSave: Failed to create draft', error);
-            this.showStatus('error', 'Failed to create draft');
+            console.error('AutoSave: Failed', error);
+            this.showStatus('error', 'Failed');
         }
     }
 
-    async saveField(fieldName) {
-        // Auto-saving field changes
-        if (this.isDestroyed || !this.isEnabled) return;
-
-        const field = this.form.querySelector(`[name="${fieldName}"]`);
-        if (!field) {
-            return;
-        }
-
-        const currentValue = field.value;
-        const lastValue = this.lastSaved[fieldName];
-
-        // Checking if field value changed
+    showStatus(type, message) {
+        if (!this.statusElement) return;
         
-        // Only save if value has changed
-        if (currentValue === lastValue) {
-            return;
-        }
-
-        try {
-            await this.performSave(fieldName, currentValue);
-            this.lastSaved[fieldName] = currentValue;
-        } catch (error) {
-            console.error('AutoSave: Failed to save field', fieldName, error);
-            this.showStatus('error', 'Auto-save failed');
-        }
-    }
-
-    async saveAllChanges() {
-        if (this.isDestroyed) return;
-
-        // If in create mode and haven't created draft yet, check if title exists
-        if (this.isCreateMode && !this.isDraftCreated) {
-            const titleField = this.form.querySelector('[name="title"]');
-            if (titleField && titleField.value.trim()) {
-                await this.createDraftThenSave('title');
-                return; // createDraftThenSave will handle the initial save
+        // For inline status element
+        if (this.statusElement.id === 'autosaveStatus') {
+            if (!message) {
+                this.statusElement.innerHTML = '';
+                return;
             }
-            return; // No title yet, nothing to save
-        }
-
-        if (!this.isEnabled) return;
-
-        const changedFields = [];
-        
-        this.options.watchedFields.forEach(fieldName => {
-            const field = this.form.querySelector(`[name="${fieldName}"]`);
-            if (field && field.value !== this.lastSaved[fieldName]) {
-                changedFields.push({ name: fieldName, value: field.value });
-            }
-        });
-
-        if (changedFields.length === 0) return;
-
-        try {
-            for (const fieldData of changedFields) {
-                await this.performSave(fieldData.name, fieldData.value);
-                this.lastSaved[fieldData.name] = fieldData.value;
-            }
-        } catch (error) {
-            console.error('AutoSave: Failed to save changes', error);
-            this.showStatus('error', 'Auto-save failed');
-        }
-    }
-
-    async performSave(field, value) {
-        if (!this.contentId) {
-            throw new Error('No content ID available for saving');
-        }
-
-        this.showStatus('saving', `Saving ${field}...`);
-
-        const formData = new FormData();
-        formData.append('id', this.contentId);
-        formData.append('field', field);
-        formData.append('value', value);
-        
-        // Get CSRF token
-        const csrfToken = this.form.querySelector('[name="_token"]');
-        if (csrfToken) {
-            formData.append('_token', csrfToken.value);
-        }
-
-        const response = await fetch(this.options.endpoint, {
-            method: 'POST',
-            body: formData,
-            credentials: 'same-origin'
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
-        
-        if (!result.success) {
-            throw new Error(result.message || 'Save failed');
-        }
-
-        const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        this.showStatus('success', `✓ Content autosaved at ${timestamp}`);
-        return result;
-    }
-
-    showStatus(type, message, autoHide = true) {
-        console.log('AutoSave: Showing status -', type, ':', message);
-        
-        const status = document.getElementById('autosave-status');
-        if (!status) {
-            console.warn('AutoSave: Status element not found, recreating...');
-            this.createStatusIndicator();
-            return this.showStatus(type, message);
-        }
-
-        // Remove all existing type classes
-        status.className = 'autosave-status show';
-        
-        // Add new type class
-        status.classList.add(type);
-        
-        console.log('AutoSave: Status element classes:', status.className);
-        
-        // Force visibility debugging
-        const rect = status.getBoundingClientRect();
-        const computedStyle = window.getComputedStyle(status);
-        console.log('AutoSave: Indicator visibility check:', {
-            exists: !!status,
-            visible: computedStyle.opacity !== '0' && computedStyle.display !== 'none',
-            position: { top: rect.top, right: window.innerWidth - rect.right },
-            zIndex: computedStyle.zIndex,
-            opacity: computedStyle.opacity,
-            transform: computedStyle.transform
-        });
-
-        // Create enhanced content with appropriate icons and animations
-        if (type === 'countdown') {
-            status.innerHTML = `
-                <div class="autosave-status-content">
-                    <div class="autosave-countdown">${this.countdownSeconds}</div>
+            
+            const dotClass = type === 'saving' ? 'saving' :
+                           type === 'success' ? 'success' :
+                           type === 'error' ? 'error' :
+                           'neutral';
+            
+            this.statusElement.innerHTML = `
+                <span class="autosave-indicator">
+                    <span class="autosave-dot ${dotClass}"></span>
                     <span>${message}</span>
-                </div>
-            `;
-        } else if (type === 'saving') {
-            status.innerHTML = `
-                <div class="autosave-status-content">
-                    <div class="spinner"></div>
-                    <span>${message}</span>
-                </div>
-            `;
-        } else if (type === 'draft-created') {
-            status.innerHTML = `
-                <div class="autosave-status-content">
-                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                    </svg>
-                    <span>${message}</span>
-                </div>
-            `;
-        } else if (type === 'success') {
-            status.innerHTML = `
-                <div class="autosave-status-content">
-                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                    </svg>
-                    <span>${message}</span>
-                </div>
-            `;
-        } else if (type === 'error') {
-            status.innerHTML = `
-                <div class="autosave-status-content">
-                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd"/>
-                    </svg>
-                    <span>${message}</span>
-                </div>
+                </span>
             `;
         } else {
-            status.innerHTML = `
-                <div class="autosave-status-content">
-                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-                    </svg>
-                    <span>${message}</span>
-                </div>
-            `;
-        }
-
-        // Auto-hide logic based on type and autoHide parameter
-        if (autoHide) {
-            let hideDelay = 3000; // Default 3 seconds
-            
-            // Extend display time for success messages
-            if (type === 'success') {
-                hideDelay = 4000; // 4 seconds for success
+            // Fallback floating indicator
+            if (!message) {
+                this.statusElement.classList.remove('show');
+                return;
             }
             
-            // Don't auto-hide countdown, saving, or when explicitly disabled
-            if (type !== 'saving' && type !== 'countdown') {
+            this.statusElement.textContent = message;
+            this.statusElement.className = 'autosave-status show';
+            
+            // Auto-hide after 2 seconds
+            if (type !== 'saving') {
                 setTimeout(() => {
-                    if (status.classList.contains(type)) {
-                        status.classList.add('hidden');
-                        setTimeout(() => {
-                            if (status.classList.contains(type)) {
-                                status.classList.remove('show', 'hidden');
-                            }
-                        }, 400); // Wait for transition
-                    }
-                }, hideDelay);
+                    this.statusElement.classList.remove('show');
+                }, 2000);
             }
         }
     }
 
     hasUnsavedChanges() {
-        // If in create mode and no draft created yet, check if there's any content
-        if (this.isCreateMode && !this.isDraftCreated) {
-            return this.options.watchedFields.some(fieldName => {
-                const field = this.form.querySelector(`[name="${fieldName}"]`);
-                return field && field.value.trim();
-            });
-        }
-
-        // Normal check for saved vs current values
         return this.options.watchedFields.some(fieldName => {
             const field = this.form.querySelector(`[name="${fieldName}"]`);
             return field && field.value !== this.lastSaved[fieldName];
         });
+    }
+
+    enable() {
+        if (this.isEnabled) return;
+        
+        this.isEnabled = true;
+        this.startPeriodicSave();
+        this.showStatus('success', 'Active');
+        
+        // Clear "Active" message after 1.5 seconds
+        setTimeout(() => {
+            if (this.isEnabled) {
+                this.showStatus('neutral', '');
+            }
+        }, 1500);
+    }
+
+    disable() {
+        if (!this.isEnabled) return;
+        
+        this.isEnabled = false;
+        this.stopPeriodicSave();
+        this.showStatus('neutral', '');
     }
 
     destroy() {
@@ -724,89 +454,31 @@ class AutoSave {
             clearTimeout(this.saveTimeout);
         }
 
-        if (this.intervalId) {
-            clearInterval(this.intervalId);
+        this.stopPeriodicSave();
+
+        const floatingStatus = document.getElementById('autosave-status');
+        if (floatingStatus) {
+            floatingStatus.remove();
         }
 
-        // Clean up countdown
-        this.stopCountdown();
-
-        // Remove status indicator
-        const status = document.getElementById('autosave-status');
-        if (status) {
-            status.remove();
-        }
-
-        // Remove styles
         const styles = document.getElementById('autosave-styles');
         if (styles) {
             styles.remove();
         }
     }
-
-    // Public methods for manual control
-    enable() {
-        this.isEnabled = true;
-        this.showStatus('success', 'Auto-save enabled');
-    }
-
-    disable() {
-        this.isEnabled = false;
-        this.showStatus('error', 'Auto-save disabled');
-    }
-
-    saveNow() {
-        return this.saveAllChanges();
-    }
 }
 
-// Add immediate logging to verify script is loading
-console.log('AutoSave: Script loaded at', new Date().toLocaleTimeString());
-
-// Initialize auto-save when DOM is ready
+// Initialize when DOM is ready
 function initializeAutoSave() {
-    console.log('AutoSave: Initializing autosave at', new Date().toLocaleTimeString());
-    console.log('AutoSave: Document ready state:', document.readyState);
-    
-    // Check if we're on a content edit page
     const contentForm = document.getElementById('contentForm');
-    console.log('AutoSave: Content form found:', !!contentForm);
-    
     if (contentForm) {
-        console.log('AutoSave: Creating AutoSave instance...');
-        try {
-            window.autoSave = new AutoSave('contentForm');
-            console.log('AutoSave: Instance created successfully:', !!window.autoSave);
-            
-            // Store globally for debugging with error checking
-            if (window.autoSave && !window.autoSave.isDestroyed) {
-                window.autoSaveInstance = window.autoSave;
-                console.log('AutoSave: Global instance stored successfully');
-            } else {
-                console.error('AutoSave: Failed to store global instance - instance invalid');
-            }
-            
-            // Force show an initial status to verify visibility
-            setTimeout(() => {
-                if (window.autoSave && typeof window.autoSave.showStatus === 'function') {
-                    console.log('AutoSave: Triggering initial status display...');
-                    // The showStatus call from init() should already be active
-                }
-            }, 500);
-            
-        } catch (error) {
-            console.error('AutoSave: Failed to create instance:', error);
-        }
-    } else {
-        console.log('AutoSave: No content form found, auto-save not initialized');
+        window.autoSave = new AutoSave('contentForm');
+        window.autoSaveInstance = window.autoSave;
     }
 }
 
-// Try to initialize immediately if DOM is already loaded
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initializeAutoSave);
 } else {
-    // DOM is already loaded
-    console.log('AutoSave: DOM already loaded, initializing immediately');
     initializeAutoSave();
 }

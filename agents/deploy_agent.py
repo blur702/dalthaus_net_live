@@ -238,6 +238,174 @@ class DeploymentAgent:
         except Exception as e:
             print(f"[ERROR] Command execution error: {e}")
             return False, "", str(e)
+    
+    def setup_backup_script(self):
+        """Deploy and setup the MySQL backup script"""
+        print("\n=== SETTING UP MYSQL BACKUP SCRIPT ===")
+        
+        # Create backup script content that reads from PHP array config file
+        backup_script = '''#!/bin/bash
+
+# MySQL Database Backup Script
+# Runs every 4 hours via cron
+# Keeps 48 hours (12 backups) of SQL dumps
+
+# Extract database configuration from PHP config file
+CONFIG_FILE="/home/dalthaus/public_html/config/config.php"
+
+# Parse database credentials from PHP array format config.php
+DB_HOST=$(grep "'host'" "$CONFIG_FILE" | sed "s/.*'host' => '\([^']*\)'.*/\\1/")
+DB_NAME=$(grep "'dbname'" "$CONFIG_FILE" | sed "s/.*'dbname' => '\([^']*\)'.*/\\1/")
+DB_USER=$(grep "'username'" "$CONFIG_FILE" | sed "s/.*'username' => '\([^']*\)'.*/\\1/")
+DB_PASS=$(grep "'password'" "$CONFIG_FILE" | sed "s/.*'password' => '\([^']*\)'.*/\\1/")
+
+# Backup directory (outside web root)
+BACKUP_DIR="/home/dalthaus/mysql_backups"
+DATE=$(date +%Y%m%d_%H%M%S)
+BACKUP_FILE="${DB_NAME}_backup_${DATE}.sql"
+BACKUP_PATH="${BACKUP_DIR}/${BACKUP_FILE}"
+
+# Create backup directory if it doesn't exist
+mkdir -p "$BACKUP_DIR"
+
+# Log the backup attempt
+echo "$(date): Starting backup for database: $DB_NAME (user: $DB_USER)"
+
+# Create the MySQL dump
+mysqldump -h"$DB_HOST" -u"$DB_USER" -p"$DB_PASS" "$DB_NAME" > "$BACKUP_PATH"
+
+# Check if backup was successful
+if [ $? -eq 0 ] && [ -s "$BACKUP_PATH" ]; then
+    echo "$(date): Backup successful - $BACKUP_FILE ($(du -h "$BACKUP_PATH" | cut -f1))"
+    
+    # Compress the backup file to save space
+    gzip "$BACKUP_PATH"
+    echo "$(date): Backup compressed - ${BACKUP_FILE}.gz ($(du -h "${BACKUP_PATH}.gz" | cut -f1))"
+    
+    # Remove backups older than 48 hours (keep 12 backups, 4-hour intervals)
+    find "$BACKUP_DIR" -name "${DB_NAME}_backup_*.sql.gz" -type f -mtime +2 -delete
+    
+    # Log cleanup
+    REMAINING=$(find "$BACKUP_DIR" -name "${DB_NAME}_backup_*.sql.gz" -type f | wc -l)
+    echo "$(date): Cleanup complete - $REMAINING backup files remaining"
+    
+else
+    echo "$(date): Backup failed for database $DB_NAME!" >&2
+    if [ -f "$BACKUP_PATH" ]; then
+        echo "$(date): Backup file size: $(du -h "$BACKUP_PATH" | cut -f1)"
+        rm -f "$BACKUP_PATH"  # Clean up empty backup file
+    fi
+    exit 1
+fi
+'''
+        
+        if not self.connect():
+            return False
+        
+        try:
+            # Create the backup script on the server
+            script_path = '/home/dalthaus/mysql_backup.sh'
+            
+            # Write the script content
+            success, stdout, stderr = self.execute_command(f'cat > {script_path} << \'EOF\'\n{backup_script}EOF')
+            if not success:
+                print(f"[ERROR] Failed to create backup script: {stderr}")
+                return False
+            
+            # Make the script executable
+            success, stdout, stderr = self.execute_command(f'chmod +x {script_path}')
+            if not success:
+                print(f"[ERROR] Failed to make script executable: {stderr}")
+                return False
+            
+            # Create backup directory
+            success, stdout, stderr = self.execute_command('mkdir -p /home/dalthaus/mysql_backups')
+            if not success:
+                print(f"[ERROR] Failed to create backup directory: {stderr}")
+                return False
+            
+            print("[SUCCESS] MySQL backup script deployed successfully")
+            print(f"📍 Script location: {script_path}")
+            print("📁 Backup directory: /home/dalthaus/mysql_backups")
+            print("\n🕐 CRON JOB SETUP INSTRUCTIONS:")
+            print("1. Log into cPanel")
+            print("2. Go to 'Cron Jobs' under 'Advanced'")
+            print("3. Add a new cron job with these settings:")
+            print("   - Minute: 0")
+            print("   - Hour: */4")
+            print("   - Day: *")
+            print("   - Month: *")
+            print("   - Weekday: *")
+            print(f"   - Command: {script_path}")
+            print("\nThis will run the backup every 4 hours and keep 48 hours worth of backups.")
+            
+            return True
+            
+        except Exception as e:
+            print(f"[ERROR] Failed to setup backup script: {str(e)}")
+            return False
+        finally:
+            self.disconnect()
+    
+    def test_backup(self):
+        """Test the backup script"""
+        print("\n=== TESTING BACKUP SCRIPT ===")
+        
+        if not self.connect():
+            return False
+        
+        try:
+            script_path = '/home/dalthaus/mysql_backup.sh'
+            
+            # Check if script exists
+            success, stdout, stderr = self.execute_command(f'test -f {script_path} && echo "Script exists" || echo "Script not found"')
+            if "Script not found" in stdout:
+                print("[ERROR] Backup script not found. Run 'setup-backup' first.")
+                return False
+            
+            # Run the backup script
+            print("Running backup script...")
+            success, stdout, stderr = self.execute_command(script_path)
+            
+            if success:
+                print("[SUCCESS] Backup test completed")
+                print("Output:", stdout)
+            else:
+                print("[ERROR] Backup test failed")
+                print("Error:", stderr)
+            
+            return success
+            
+        except Exception as e:
+            print(f"[ERROR] Backup test error: {str(e)}")
+            return False
+        finally:
+            self.disconnect()
+    
+    def list_backups(self):
+        """List available backup files"""
+        print("\n=== LISTING BACKUP FILES ===")
+        
+        if not self.connect():
+            return False
+        
+        try:
+            success, stdout, stderr = self.execute_command('ls -lah /home/dalthaus/mysql_backups/')
+            
+            if success:
+                print("Available backups:")
+                print(stdout)
+            else:
+                print("[ERROR] Failed to list backups")
+                print("Error:", stderr)
+            
+            return success
+            
+        except Exception as e:
+            print(f"[ERROR] List backups error: {str(e)}")
+            return False
+        finally:
+            self.disconnect()
 
     def deploy(self, branch="main"):
         """Full deployment process"""
@@ -278,13 +446,16 @@ def main():
     
     if len(sys.argv) < 2:
         print("Usage:")
-        print("  python deploy_agent.py deploy [branch]  - Deploy code")
-        print("  python deploy_agent.py status          - Check git status")
-        print("  python deploy_agent.py pull [branch]   - Pull code only")
-        print("  python deploy_agent.py db              - Test database")
-        print("  python deploy_agent.py health          - Health check")
-        print("  python deploy_agent.py checkindex      - Check index files")
-        print("  python deploy_agent.py exec 'command'  - Execute arbitrary command")
+        print("  python deploy_agent.py deploy [branch]    - Deploy code")
+        print("  python deploy_agent.py status            - Check git status")
+        print("  python deploy_agent.py pull [branch]     - Pull code only")
+        print("  python deploy_agent.py db                - Test database")
+        print("  python deploy_agent.py health            - Health check")
+        print("  python deploy_agent.py checkindex        - Check index files")
+        print("  python deploy_agent.py setup-backup      - Setup MySQL backup script")
+        print("  python deploy_agent.py test-backup       - Test backup script")
+        print("  python deploy_agent.py list-backups      - List backup files")
+        print("  python deploy_agent.py exec 'command'    - Execute arbitrary command")
         return
     
     command = sys.argv[1].lower()
@@ -320,6 +491,15 @@ def main():
         if agent.connect():
             agent.check_index_files()
             agent.disconnect()
+    
+    elif command == "setup-backup":
+        agent.setup_backup_script()
+    
+    elif command == "test-backup":
+        agent.test_backup()
+    
+    elif command == "list-backups":
+        agent.list_backups()
     
     elif command == "exec":
         if len(sys.argv) < 3:
