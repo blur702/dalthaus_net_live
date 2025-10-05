@@ -167,6 +167,17 @@ class Content extends BaseModel
             $params[] = $searchTerm;
         }
 
+        // Date filters
+        if (!empty($filters['updated_after'])) {
+            $whereClauses[] = "c.updated_at >= ?";
+            $params[] = $filters['updated_after'];
+        }
+        
+        if (!empty($filters['updated_before'])) {
+            $whereClauses[] = "c.updated_at <= ?";
+            $params[] = $filters['updated_before'];
+        }
+
         // Add WHERE clause
         if (!empty($whereClauses)) {
             $query .= " WHERE " . implode(' AND ', $whereClauses);
@@ -226,6 +237,17 @@ class Content extends BaseModel
             $params[] = $searchTerm;
             $params[] = $searchTerm;
             $params[] = $searchTerm;
+        }
+
+        // Date filters
+        if (!empty($filters['updated_after'])) {
+            $whereClauses[] = "c.updated_at >= ?";
+            $params[] = $filters['updated_after'];
+        }
+        
+        if (!empty($filters['updated_before'])) {
+            $whereClauses[] = "c.updated_at <= ?";
+            $params[] = $filters['updated_before'];
         }
 
         // Add WHERE clause

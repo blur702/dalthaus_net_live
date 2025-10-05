@@ -5,11 +5,25 @@
 
 class AutoSave {
     constructor(formId, options = {}) {
+        console.log('AutoSave: Constructor called with formId:', formId);
+        
         this.form = document.getElementById(formId);
         if (!this.form) {
             console.warn('AutoSave: Form not found with ID:', formId);
             return;
         }
+        
+        console.log('AutoSave: Form found:', this.form);
+        console.log('AutoSave: Form ID:', this.form.id);
+        console.log('AutoSave: Form action:', this.form.action);
+        console.log('AutoSave: Form method:', this.form.method);
+        
+        // Check if there are multiple forms on the page
+        const allForms = document.querySelectorAll('form');
+        console.log('AutoSave: Total forms on page:', allForms.length);
+        allForms.forEach((form, index) => {
+            console.log(`AutoSave: Form ${index} - ID: ${form.id}, action: ${form.action}`);
+        });
 
         // Configuration
         this.options = {
@@ -44,6 +58,12 @@ class AutoSave {
     }
 
     extractContentId() {
+        // Verify we have the correct form
+        if (!this.form || !this.form.id || this.form.id !== 'contentForm') {
+            console.error('AutoSave: Invalid form reference - expected contentForm, got:', this.form?.id || 'null');
+            return;
+        }
+        
         // Get form action as string - handle RadioNodeList issue
         let formAction = this.form.getAttribute('action') || '';
         
@@ -57,6 +77,8 @@ class AutoSave {
                 formAction = String(action);
             }
         }
+        
+        console.log('AutoSave: Form action extracted:', formAction);
         
         // Form action extracted successfully
         
@@ -755,6 +777,14 @@ function initializeAutoSave() {
         try {
             window.autoSave = new AutoSave('contentForm');
             console.log('AutoSave: Instance created successfully:', !!window.autoSave);
+            
+            // Store globally for debugging with error checking
+            if (window.autoSave && !window.autoSave.isDestroyed) {
+                window.autoSaveInstance = window.autoSave;
+                console.log('AutoSave: Global instance stored successfully');
+            } else {
+                console.error('AutoSave: Failed to store global instance - instance invalid');
+            }
             
             // Force show an initial status to verify visibility
             setTimeout(() => {
