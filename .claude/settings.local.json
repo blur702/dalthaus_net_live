@@ -17,7 +17,8 @@
       "Bash(cd:*)",
       "Bash(php:*)",
       "Bash(python3:*)",
-      "Bash(git log:*)"
+      "Bash(git log:*)",
+      "Bash(pip install:*)"
     ],
     "deny": [],
     "ask": []
