@@ -17,13 +17,27 @@ try {
     $config = require __DIR__ . '/config/config.php';
     require_once __DIR__ . '/src/Utils/Database.php';
     
-    $db = CMS\Utils\Database::getInstance($config['database']);
+    // Debug: Check if config is loaded properly
+    $configLoaded = isset($config['database']);
+    $dbConfig = $config['database'] ?? null;
+    
+    if (!$configLoaded || !$dbConfig) {
+        throw new Exception('Database configuration not found in config file');
+    }
+    
+    $db = CMS\Utils\Database::getInstance($dbConfig);
     $connection = $db->getConnection();
+    
+    // Test a simple query
+    $stmt = $connection->query("SELECT 1 as test");
+    $result = $stmt->fetch();
     
     echo json_encode([
         'success' => true,
         'message' => 'Database connection successful',
         'database_test' => true,
+        'config_loaded' => $configLoaded,
+        'query_test' => $result['test'] === 1,
         'timestamp' => date('Y-m-d H:i:s')
     ]);
     
@@ -32,6 +46,7 @@ try {
         'success' => false,
         'message' => 'Database connection failed: ' . $e->getMessage(),
         'database_test' => false,
+        'error_trace' => $e->getTraceAsString(),
         'timestamp' => date('Y-m-d H:i:s')
     ]);
 }
