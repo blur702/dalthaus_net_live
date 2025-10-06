@@ -14,10 +14,10 @@ header('Access-Control-Allow-Headers: Content-Type');
 
 try {
     // First test database connection
-    require_once __DIR__ . '/config/config.php';
+    $config = require __DIR__ . '/config/config.php';
     require_once __DIR__ . '/src/Utils/Database.php';
     
-    $db = CMS\Utils\Database::getInstance();
+    $db = CMS\Utils\Database::getInstance($config['database']);
     $connection = $db->getConnection();
     
     echo json_encode([
