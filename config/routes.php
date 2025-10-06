@@ -54,6 +54,10 @@ return function(Router $router) {
         $router->post('/content/{id}/update', 'Content', 'update');
         $router->post('/content/{id}/delete', 'Content', 'delete');
 
+        // Autosave management
+        $router->get('/autosaves', 'Content', 'autosaves');
+        $router->post('/autosaves/{id}/delete', 'Content', 'deleteAutosave');
+
         // Articles management
         $router->get('/articles', 'Articles', 'index');
         $router->get('/articles/reorder', 'Articles', 'reorder');

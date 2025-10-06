@@ -26,6 +26,7 @@ class AutoSave {
 
         // State
         this.autosaveUUID = null;
+        this.masterContentUUID = null;
         this.contentId = null;
         this.isEnabled = false;
         this.lastSaved = {};
@@ -57,10 +58,28 @@ class AutoSave {
             }
         }
         
+        // Get or generate master content UUID
+        const masterUuidField = this.form.querySelector('#master_content_uuid');
+        if (masterUuidField) {
+            if (!masterUuidField.value) {
+                this.masterContentUUID = this.generateUUID();
+                masterUuidField.value = this.masterContentUUID;
+            } else {
+                this.masterContentUUID = masterUuidField.value;
+            }
+        }
+        
         // Get content ID if editing
         const contentIdField = this.form.querySelector('#content_id');
         if (contentIdField && contentIdField.value) {
             this.contentId = parseInt(contentIdField.value);
+            // For existing content, use content-based master UUID
+            if (!this.masterContentUUID) {
+                this.masterContentUUID = 'content-' + this.contentId;
+                if (masterUuidField) {
+                    masterUuidField.value = this.masterContentUUID;
+                }
+            }
         }
         
         this.createStatusIndicator();
@@ -317,6 +336,7 @@ class AutoSave {
             
             const formData = new FormData();
             formData.append('autosave_uuid', this.autosaveUUID);
+            formData.append('master_content_uuid', this.masterContentUUID);
             
             if (this.contentId) {
                 formData.append('content_id', this.contentId);

@@ -59,6 +59,7 @@
             <input type="hidden" name="_token" value="<?= $this->escape($csrf_token) ?>">
             <input type="hidden" name="content_type" value="<?= $this->escape($content->getAttribute('content_type')) ?>">
             <input type="hidden" name="autosave_uuid" id="autosave_uuid" value="">
+            <input type="hidden" name="master_content_uuid" id="master_content_uuid" value="content-<?= $content->getId() ?>">
             <input type="hidden" name="content_id" id="content_id" value="<?= $content->getId() ?>">
 
             <div class="space-y-6">

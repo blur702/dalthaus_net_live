@@ -565,60 +565,6 @@ class Content extends BaseController
         }
     }
 
-    public function autosave(): void
-    {
-        if (!$this->isPost()) {
-            $this->renderJson(['success' => false, 'message' => 'Invalid request method']);
-            return;
-        }
-        
-        if (!$this->validateCsrfToken()) {
-            $this->renderJson(['success' => false, 'message' => 'Security token validation failed']);
-            return;
-        }
-        
-        try {
-            $id = (int) $this->getParam('id', 0, 'post');
-            $field = $this->sanitize($this->getParam('field', '', 'post'));
-            $value = $this->getParam('value', '', 'post');
-            
-            error_log("Autosave attempt - ID: $id, field: $field, value length: " . strlen($value));
-            
-            if (!$id || !$field) {
-                error_log('Autosave validation failed - missing ID or field');
-                throw new Exception('Invalid autosave data');
-            }
-            
-            $content = ContentModel::find($id);
-            
-            if (!$content) {
-                error_log("Autosave failed - content not found for ID: $id");
-                throw new Exception('Content not found');
-            }
-            
-            error_log("Autosave proceeding - found content ID: $id");
-            
-            // Only allow certain fields to be autosaved
-            $allowedFields = ['title', 'teaser', 'body'];
-            
-            if (!in_array($field, $allowedFields)) {
-                throw new Exception('Field not allowed for autosave');
-            }
-            
-            $content->setAttribute($field, $value);
-            $content->setAttribute('updated_at', date('Y-m-d H:i:s'));
-            $content->save();
-            
-            $this->renderJson([
-                'success' => true,
-                'message' => 'Autosaved',
-                'timestamp' => date('g:i:s A')
-            ]);
-        } catch (Exception $e) {
-            error_log('Autosave error: ' . $e->getMessage());
-            $this->renderJson(['success' => false, 'message' => 'Autosave failed']);
-        }
-    }
 
     public function createDraft(): void
     {
@@ -897,6 +843,7 @@ class Content extends BaseController
         try {
             $data = [
                 'autosave_uuid' => $this->sanitize($this->getParam('autosave_uuid', '', 'post')),
+                'master_content_uuid' => $this->sanitize($this->getParam('master_content_uuid', '', 'post')),
                 'content_id' => $this->getParam('content_id', null, 'post') ? (int)$this->getParam('content_id', null, 'post') : null,
                 'user_id' => $this->getCurrentUserId(),
                 'title' => $this->sanitize($this->getParam('title', '', 'post')),
@@ -909,7 +856,7 @@ class Content extends BaseController
                 'meta_keywords' => $this->sanitize($this->getParam('meta_keywords', '', 'post'))
             ];
 
-            // Validate required fields
+            // Validate required fields  
             if (empty($data['autosave_uuid']) || empty($data['title'])) {
                 $this->jsonResponse([
                     'success' => false,
@@ -950,15 +897,19 @@ class Content extends BaseController
 
         try {
             $autosaveUUID = $this->sanitize($this->getParam('autosave_uuid', '', 'post'));
+            $masterContentUUID = $this->sanitize($this->getParam('master_content_uuid', '', 'post'));
             $contentId = $this->getParam('content_id', null, 'post') ? (int)$this->getParam('content_id', null, 'post') : null;
 
             $autosaveModel = new Autosave();
             
-            if ($contentId) {
-                // Load latest autosave for this content
-                $autosave = $autosaveModel->getLatestForContent($contentId, $this->getCurrentUserId());
+            if ($masterContentUUID) {
+                // Load autosave by master content UUID (preferred method)
+                $autosave = $autosaveModel->findByMasterUUID($masterContentUUID);
+            } elseif ($contentId) {
+                // Load autosave for existing content
+                $autosave = $autosaveModel->findByContentId($contentId, $this->getCurrentUserId());
             } elseif ($autosaveUUID) {
-                // Load autosave by UUID
+                // Fallback to autosave UUID
                 $autosave = $autosaveModel->findByUUID($autosaveUUID);
             } else {
                 $this->jsonResponse([
@@ -997,18 +948,10 @@ class Content extends BaseController
         }
 
         try {
-            $contentId = $this->getParam('content_id', null, 'post') ? (int)$this->getParam('content_id', null, 'post') : null;
-
-            if (!$contentId) {
-                $this->jsonResponse([
-                    'success' => false,
-                    'message' => 'Content ID is required'
-                ]);
-                return;
-            }
-
+            // In the new architecture, list all autosaves for the current user
+            // since each content piece has only one autosave
             $autosaveModel = new Autosave();
-            $autosaves = $autosaveModel->findByContentId($contentId, $this->getCurrentUserId());
+            $autosaves = $autosaveModel->getAllAutosaves($this->getCurrentUserId());
 
             $this->jsonResponse([
                 'success' => true,
@@ -1022,6 +965,82 @@ class Content extends BaseController
                 'success' => false,
                 'message' => 'Failed to list autosaves'
             ]);
+        }
+    }
+
+    public function autosaves(): void
+    {
+        $page = (int) $this->getParam('page', 1);
+        $search = $this->sanitize($this->getParam('search', ''));
+        
+        // Get autosaves for current user
+        $autosaveModel = new Autosave();
+        $autosaves = $autosaveModel->getAllAutosaves($this->getCurrentUserId());
+        
+        // Filter by search if provided
+        if (!empty($search)) {
+            $autosaves = array_filter($autosaves, function($autosave) use ($search) {
+                return stripos($autosave['title'], $search) !== false ||
+                       stripos($autosave['content'], $search) !== false;
+            });
+        }
+        
+        // Pagination
+        $itemsPerPage = 20;
+        $totalItems = count($autosaves);
+        $totalPages = ceil($totalItems / $itemsPerPage);
+        $page = max(1, min($page, $totalPages ?: 1));
+        $offset = ($page - 1) * $itemsPerPage;
+        $autosaves = array_slice($autosaves, $offset, $itemsPerPage);
+        
+        $this->view->render('admin/autosaves/index', [
+            'autosaves' => $autosaves,
+            'currentPage' => $page,
+            'totalPages' => $totalPages,
+            'totalItems' => $totalItems,
+            'search' => $search,
+            'csrf_token' => $this->generateCsrfToken()
+        ]);
+    }
+
+    public function deleteAutosave(int $id): void
+    {
+        if (!$this->isPost()) {
+            $this->jsonResponse(['success' => false, 'message' => 'Invalid request method']);
+            return;
+        }
+
+        if (!$this->validateCsrfToken()) {
+            $this->jsonResponse(['success' => false, 'message' => 'Security token validation failed']);
+            return;
+        }
+
+        try {
+            $autosaveModel = new Autosave();
+            $autosave = $autosaveModel->find($id);
+            
+            if (!$autosave) {
+                $this->jsonResponse(['success' => false, 'message' => 'Autosave not found']);
+                return;
+            }
+
+            // Verify ownership
+            if ($autosave['user_id'] !== $this->getCurrentUserId()) {
+                $this->jsonResponse(['success' => false, 'message' => 'Unauthorized']);
+                return;
+            }
+
+            $success = $autosaveModel->delete($id);
+            
+            if ($success) {
+                $this->jsonResponse(['success' => true, 'message' => 'Autosave deleted successfully']);
+            } else {
+                $this->jsonResponse(['success' => false, 'message' => 'Failed to delete autosave']);
+            }
+            
+        } catch (Exception $e) {
+            error_log('Delete autosave error: ' . $e->getMessage());
+            $this->jsonResponse(['success' => false, 'message' => 'An error occurred']);
         }
     }
 

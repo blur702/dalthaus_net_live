@@ -11,6 +11,7 @@ class Autosave extends BaseModel
     protected string $primaryKey = 'id';
     protected array $fillable = [
         'autosave_uuid',
+        'master_content_uuid',
         'content_id',
         'user_id',
         'title',
@@ -20,8 +21,7 @@ class Autosave extends BaseModel
         'featured_image',
         'meta_title',
         'meta_description',
-        'meta_keywords',
-        'version_number'
+        'meta_keywords'
     ];
     
     private $pdo;
@@ -36,26 +36,27 @@ class Autosave extends BaseModel
 
     public function createOrUpdate(array $data): ?int
     {
-        $existingAutosave = $this->findByUUID($data['autosave_uuid']);
+        // Ensure we have a master_content_uuid
+        if (!isset($data['master_content_uuid'])) {
+            if (isset($data['content_id']) && $data['content_id']) {
+                $data['master_content_uuid'] = 'content-' . $data['content_id'];
+            } else {
+                $data['master_content_uuid'] = $this->generateUUID();
+            }
+        }
+        
+        // Check if autosave already exists for this master content UUID
+        $existingAutosave = $this->findByMasterUUID($data['master_content_uuid']);
         
         if ($existingAutosave) {
-            // Check if we've reached the limit of 3 versions
-            $versionCount = $this->getVersionCount($data['autosave_uuid']);
+            // Update existing autosave in place
+            $updateData = array_intersect_key($data, array_flip($this->fillable));
+            $updateData['updated_at'] = date('Y-m-d H:i:s');
             
-            if ($versionCount >= 3) {
-                // Delete the oldest version
-                $this->deleteOldestVersion($data['autosave_uuid']);
-            }
-            
-            // Increment version number for new save
-            $data['version_number'] = $this->getLatestVersionNumber($data['autosave_uuid']) + 1;
-            
-            // Create new version
-            $result = $this->create($data);
-            return $result->getId();
+            $this->updateById($existingAutosave['id'], $updateData);
+            return $existingAutosave['id'];
         } else {
-            // First autosave for this UUID
-            $data['version_number'] = 1;
+            // Create new autosave
             $result = $this->create($data);
             return $result->getId();
         }
@@ -63,7 +64,7 @@ class Autosave extends BaseModel
 
     public function findByUUID(string $uuid): ?array
     {
-        $sql = "SELECT * FROM {$this->table} WHERE autosave_uuid = :uuid ORDER BY version_number DESC LIMIT 1";
+        $sql = "SELECT * FROM {$this->table} WHERE autosave_uuid = :uuid LIMIT 1";
         $stmt = $this->getPdo()->prepare($sql);
         $stmt->execute(['uuid' => $uuid]);
         
@@ -71,54 +72,35 @@ class Autosave extends BaseModel
         return $result ?: null;
     }
 
-    public function findAllByUUID(string $uuid): array
+    public function findByMasterUUID(string $masterUuid): ?array
     {
-        $sql = "SELECT * FROM {$this->table} WHERE autosave_uuid = :uuid ORDER BY version_number DESC";
+        $sql = "SELECT * FROM {$this->table} WHERE master_content_uuid = :master_uuid LIMIT 1";
         $stmt = $this->getPdo()->prepare($sql);
-        $stmt->execute(['uuid' => $uuid]);
+        $stmt->execute(['master_uuid' => $masterUuid]);
         
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result ?: null;
     }
 
-    public function findByContentId(int $contentId, int $userId): array
+    public function findByContentId(int $contentId, int $userId): ?array
     {
         $sql = "SELECT * FROM {$this->table} 
                 WHERE content_id = :content_id 
                 AND user_id = :user_id 
-                ORDER BY updated_at DESC";
+                LIMIT 1";
         $stmt = $this->getPdo()->prepare($sql);
         $stmt->execute([
             'content_id' => $contentId,
             'user_id' => $userId
         ]);
         
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result ?: null;
     }
 
     public function getLatestForContent(int $contentId, int $userId): ?array
     {
-        $sql = "SELECT a1.* FROM {$this->table} a1
-                INNER JOIN (
-                    SELECT autosave_uuid, MAX(version_number) as max_version
-                    FROM {$this->table}
-                    WHERE content_id = :content_id AND user_id = :user_id
-                    GROUP BY autosave_uuid
-                ) a2 ON a1.autosave_uuid = a2.autosave_uuid 
-                AND a1.version_number = a2.max_version
-                WHERE a1.content_id = :content_id2 
-                AND a1.user_id = :user_id2
-                ORDER BY a1.updated_at DESC";
-        
-        $stmt = $this->getPdo()->prepare($sql);
-        $stmt->execute([
-            'content_id' => $contentId,
-            'user_id' => $userId,
-            'content_id2' => $contentId,
-            'user_id2' => $userId
-        ]);
-        
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $result ?: null;
+        return $this->findByContentId($contentId, $userId);
     }
 
     public function deleteByContentId(int $contentId): bool
@@ -135,34 +117,62 @@ class Autosave extends BaseModel
         return $stmt->execute(['uuid' => $uuid]);
     }
 
-    private function getVersionCount(string $uuid): int
+    public function deleteByMasterUUID(string $masterUuid): bool
     {
-        $sql = "SELECT COUNT(*) as count FROM {$this->table} WHERE autosave_uuid = :uuid";
+        $sql = "DELETE FROM {$this->table} WHERE master_content_uuid = :master_uuid";
         $stmt = $this->getPdo()->prepare($sql);
-        $stmt->execute(['uuid' => $uuid]);
-        
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return (int)$result['count'];
+        return $stmt->execute(['master_uuid' => $masterUuid]);
     }
 
-    private function getLatestVersionNumber(string $uuid): int
+    public function getAllAutosaves(int $userId = null): array
     {
-        $sql = "SELECT MAX(version_number) as max_version FROM {$this->table} WHERE autosave_uuid = :uuid";
-        $stmt = $this->getPdo()->prepare($sql);
-        $stmt->execute(['uuid' => $uuid]);
+        $sql = "SELECT * FROM {$this->table}";
+        $params = [];
         
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return (int)($result['max_version'] ?? 0);
+        if ($userId) {
+            $sql .= " WHERE user_id = :user_id";
+            $params['user_id'] = $userId;
+        }
+        
+        $sql .= " ORDER BY updated_at DESC";
+        
+        $stmt = $this->getPdo()->prepare($sql);
+        $stmt->execute($params);
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    private function deleteOldestVersion(string $uuid): bool
+    private function generateUUID(): string
     {
-        $sql = "DELETE FROM {$this->table} 
-                WHERE autosave_uuid = :uuid 
-                ORDER BY version_number ASC 
-                LIMIT 1";
+        return sprintf(
+            '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+            mt_rand(0, 0xffff), mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0x0fff) | 0x4000,
+            mt_rand(0, 0x3fff) | 0x8000,
+            mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
+        );
+    }
+
+    private function updateById(int $id, array $data): bool
+    {
+        $setParts = [];
+        $params = ['id' => $id];
+        
+        foreach ($data as $key => $value) {
+            if (in_array($key, $this->fillable) || $key === 'updated_at') {
+                $setParts[] = "{$key} = :{$key}";
+                $params[$key] = $value;
+            }
+        }
+        
+        if (empty($setParts)) {
+            return false;
+        }
+        
+        $sql = "UPDATE {$this->table} SET " . implode(', ', $setParts) . " WHERE id = :id";
         $stmt = $this->getPdo()->prepare($sql);
-        return $stmt->execute(['uuid' => $uuid]);
+        return $stmt->execute($params);
     }
 
     public function cleanupOldAutosaves(int $daysOld = 30): int
