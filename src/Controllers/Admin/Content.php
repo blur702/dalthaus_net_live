@@ -993,7 +993,7 @@ class Content extends BaseController
         $offset = ($page - 1) * $itemsPerPage;
         $autosaves = array_slice($autosaves, $offset, $itemsPerPage);
         
-        $this->view->render('admin/autosaves/index', [
+        $this->render('admin/content/autosaves', [
             'autosaves' => $autosaves,
             'currentPage' => $page,
             'totalPages' => $totalPages,

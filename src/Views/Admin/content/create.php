@@ -112,3 +112,39 @@
 
 <!-- Auto-save functionality -->
 <script src="/assets/js/autosave.js?v=<?= filemtime(__DIR__ . '/../../../../assets/js/autosave.js') ?>"></script>
+
+<!-- Initialize AutoSave for Create Form -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 DOM LOADED - Initializing AutoSave for create form');
+    
+    // Debug: Check if required elements exist
+    const form = document.getElementById('contentForm');
+    const statusElement = document.getElementById('autosaveStatus');
+    
+    console.log('📋 Form found:', !!form);
+    console.log('📋 Status element found:', !!statusElement);
+    
+    if (statusElement) {
+        statusElement.innerHTML = 'AutoSave Ready';
+        statusElement.style.cssText = 'font-size: 11px; color: #6b7280; opacity: 1; background: yellow; padding: 2px;';
+        console.log('📋 Status element made visible');
+    }
+    
+    if (form) {
+        try {
+            console.log('📋 Creating AutoSave instance...');
+            const autoSave = new AutoSave('contentForm', {
+                saveInterval: 30000,
+                debounceDelay: 2000,
+                endpoint: '/admin/content/create-draft'
+            });
+            console.log('✅ AutoSave instance created successfully');
+        } catch (error) {
+            console.error('❌ AutoSave initialization failed:', error);
+        }
+    } else {
+        console.error('❌ contentForm not found!');
+    }
+});
+</script>

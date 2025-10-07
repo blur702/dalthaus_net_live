@@ -166,3 +166,15 @@
 
 <!-- Auto-save functionality -->
 <script src="/assets/js/autosave.js?v=<?= filemtime(__DIR__ . '/../../../../assets/js/autosave.js') ?>"></script>
+
+<!-- Initialize AutoSave -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Initializing AutoSave for content form');
+    const autoSave = new AutoSave('contentForm', {
+        saveInterval: 30000,
+        debounceDelay: 2000,
+        endpoint: '/admin/content/autosave'
+    });
+});
+</script>
