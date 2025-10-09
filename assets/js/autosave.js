@@ -33,6 +33,7 @@ class AutoSave {
         this.saveTimeout = null;
         this.intervalId = null;
         this.isDestroyed = false;
+        this.isSubmitting = false;
         
         // Initialize
         this.init();
@@ -279,9 +280,14 @@ class AutoSave {
             }
         });
 
-        // Handle page unload
+        // Handle form submission - mark as submitting to skip beforeunload check
+        this.form.addEventListener('submit', () => {
+            this.isSubmitting = true;
+        });
+
+        // Handle page unload - but not during form submission
         window.addEventListener('beforeunload', (e) => {
-            if (this.hasUnsavedChanges()) {
+            if (!this.isSubmitting && this.hasUnsavedChanges()) {
                 e.preventDefault();
                 e.returnValue = 'You have unsaved changes.';
                 return e.returnValue;
