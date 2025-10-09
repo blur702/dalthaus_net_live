@@ -4,6 +4,35 @@
 # Enable RewriteEngine
 RewriteEngine On
 
+# ===== DEVELOPMENT MODE - DISABLE CACHING =====
+# Added: 2025-10-09 12:05:48
+# Remove this section when development is complete
+<IfModule mod_headers.c>
+    # Disable all caching
+    Header set Cache-Control "no-cache, no-store, must-revalidate, private"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+    
+    # Tell Cloudflare to bypass cache
+    Header set CDN-Cache-Control "no-cache"
+    Header set Cloudflare-CDN-Cache-Control "no-cache"
+    
+    # Additional headers to prevent caching
+    Header set X-Development-Mode "active"
+</IfModule>
+
+# Force PHP to not cache
+<FilesMatch "\.(php|html?)$">
+    <IfModule mod_headers.c>
+        Header set Cache-Control "private, no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires "0"
+    </IfModule>
+</FilesMatch>
+# ===== END DEVELOPMENT MODE =====
+
+
+
 # Cloudflare IP Restoration - Get real visitor IPs
 <IfModule mod_cloudflare.c>
     CloudFlareRemoteIPHeader CF-Connecting-IP
