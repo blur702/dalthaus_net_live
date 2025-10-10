@@ -749,34 +749,34 @@ class Content extends BaseController
             
             $upload = new FileUpload($uploadConfig);
             $result = $upload->upload($_FILES['featured_image']);
-            
+
             if ($result['success']) {
-                $data['featured_image'] = 'content/featured/' . $yearMonth . '/' . $result['filename'];
+                $data['featured_image'] = '/uploads/content/featured/' . $yearMonth . '/' . $result['filename'];
             } else {
                 $errors['featured_image'] = $result['error'];
             }
         }
-        
+
         // Handle teaser image upload (only for photobooks)
         if (!empty($_FILES['teaser_image']['name']) && ($data['content_type'] ?? '') === 'photobook') {
             $teaserPath = $uploadBasePath . 'teasers/' . $yearMonth . '/';
-            
+
             // Create directory if it doesn't exist
             if (!is_dir($teaserPath)) {
                 mkdir($teaserPath, 0755, true);
             }
-            
+
             $uploadConfig = [
                 'upload_path' => $teaserPath,
                 'max_size' => 5 * 1024 * 1024, // 5MB
                 'allowed_types' => ['jpg', 'jpeg', 'png', 'gif', 'webp']
             ];
-            
+
             $upload = new FileUpload($uploadConfig);
             $result = $upload->upload($_FILES['teaser_image']);
-            
+
             if ($result['success']) {
-                $data['teaser_image'] = 'content/teasers/' . $yearMonth . '/' . $result['filename'];
+                $data['teaser_image'] = '/uploads/content/teasers/' . $yearMonth . '/' . $result['filename'];
             } else {
                 $errors['teaser_image'] = $result['error'];
             }

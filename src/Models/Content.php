@@ -489,18 +489,26 @@ class Content extends BaseModel
     public function getTeaserImageUrl(): string
     {
         $image = $this->getAttribute('teaser_image');
-        return $image ? '/uploads/' . $image : '';
+        if (!$image) {
+            return '';
+        }
+        // Handle both old format (content/teasers/...) and new format (/uploads/content/teasers/...)
+        return (strpos($image, '/') === 0) ? $image : '/uploads/' . $image;
     }
 
     /**
      * Get featured image URL
-     * 
+     *
      * @return string
      */
     public function getFeaturedImageUrl(): string
     {
         $image = $this->getAttribute('featured_image');
-        return $image ? '/uploads/' . $image : '';
+        if (!$image) {
+            return '';
+        }
+        // Handle both old format (content/featured/...) and new format (/uploads/content/featured/...)
+        return (strpos($image, '/') === 0) ? $image : '/uploads/' . $image;
     }
 
     /**
