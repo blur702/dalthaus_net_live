@@ -1063,8 +1063,7 @@ class Content extends BaseController
         }
 
         try {
-            $autosaveModel = new Autosave();
-            $autosave = $autosaveModel->find($id);
+            $autosave = Autosave::find($id);
 
             if (!$autosave) {
                 $this->setFlash('error', 'Autosave not found.');
@@ -1073,13 +1072,13 @@ class Content extends BaseController
             }
 
             // Verify ownership
-            if ($autosave['user_id'] !== $this->getCurrentUserId()) {
+            if ($autosave->getAttribute('user_id') !== $this->getCurrentUserId()) {
                 $this->setFlash('error', 'Unauthorized.');
                 $this->redirect('/admin/autosaves');
                 return;
             }
 
-            $success = $autosaveModel->delete($id);
+            $success = $autosave->delete();
 
             if ($success) {
                 $this->setFlash('success', 'Autosave deleted successfully.');
