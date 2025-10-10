@@ -77,7 +77,7 @@
                             <div class="flex items-center">
                                 <div class="flex-shrink-0 w-10 h-10">
                                     <?php if ($photobook['teaser_image']): ?>
-                                    <img class="w-10 h-10 rounded object-cover" src="/uploads/<?= $this->escape($photobook['teaser_image']) ?>" alt="<?= $this->escape($photobook['title']) ?>">
+                                    <img class="w-10 h-10 rounded object-cover" src="<?= $this->escape($photobook['teaser_image']) ?>" alt="<?= $this->escape($photobook['title']) ?>">
                                     <?php else: ?>
                                     <div class="w-10 h-10 bg-green-100 rounded flex items-center justify-center">
                                         <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

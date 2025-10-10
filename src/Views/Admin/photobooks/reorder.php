@@ -59,7 +59,7 @@
                         <!-- Image -->
                         <div class="flex-shrink-0 w-16">
                             <?php if ($photobook['teaser_image']): ?>
-                            <img class="admin-image-43 rounded" src="/uploads/<?= $this->escape($photobook['teaser_image']) ?>" alt="<?= $this->escape($photobook['title']) ?>">
+                            <img class="admin-image-43 rounded" src="<?= $this->escape($photobook['teaser_image']) ?>" alt="<?= $this->escape($photobook['title']) ?>">
                             <?php else: ?>
                             <div class="admin-image-43 bg-green-100 rounded flex items-center justify-center">
                                 <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

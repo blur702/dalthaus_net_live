@@ -125,7 +125,7 @@
                         <div class="flex items-center">
                             <?php if ($item['teaser_image']): ?>
                             <div class="flex-shrink-0 w-16">
-                                <img class="admin-image-43 rounded" src="/uploads/<?= $this->escape($item['teaser_image']) ?>" alt="<?= $this->escape($item['title']) ?>">
+                                <img class="admin-image-43 rounded" src="<?= $this->escape($item['teaser_image']) ?>" alt="<?= $this->escape($item['title']) ?>">
                             </div>
                             <?php else: ?>
                             <div class="flex-shrink-0 w-16 admin-image-43 bg-gray-300 rounded flex items-center justify-center">
