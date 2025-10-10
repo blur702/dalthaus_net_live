@@ -188,6 +188,9 @@
             image_advtab: true,
             image_caption: true,
             image_title: true,
+            // MEDIA BROWSER INTEGRATION
+            file_picker_callback: window.tinyMCEFilePicker,
+            file_picker_types: 'image',
             setup: function(editor) {
                 debugLog(`TinyMCE setup function called for editor: ${editor.id}`, 'info');
                 

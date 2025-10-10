@@ -252,4 +252,189 @@ class Media extends BaseController
             $this->redirect('/admin/media');
         }
     }
+
+    /**
+     * API: Get media list for browser (JSON)
+     */
+    public function apiList(): void
+    {
+        $this->requireAuth();
+
+        $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+        $limit = isset($_GET['limit']) ? min(100, max(1, (int)$_GET['limit'])) : 24;
+        $offset = ($page - 1) * $limit;
+
+        $search = $_GET['search'] ?? '';
+        $type = $_GET['type'] ?? null;
+        $groupBy = $_GET['group_by'] ?? null; // 'dual' to group dual images
+
+        $pdo = $this->db->getConnection();
+
+        // Build query
+        $sql = "SELECT mu.*, u.username, u.display_name, c.title as content_title
+                FROM media_uploads mu
+                LEFT JOIN users u ON mu.user_id = u.user_id
+                LEFT JOIN content c ON mu.content_id = c.content_id
+                WHERE 1=1";
+
+        $params = [];
+
+        if ($search) {
+            $sql .= " AND (mu.original_filename LIKE :search
+                      OR mu.alt_text LIKE :search
+                      OR mu.title LIKE :search)";
+            $params['search'] = '%' . $search . '%';
+        }
+
+        if ($type) {
+            $sql .= " AND mu.upload_type = :type";
+            $params['type'] = $type;
+        }
+
+        // Get total count
+        $countSql = "SELECT COUNT(*) as total FROM ($sql) as counted";
+        $countStmt = $pdo->prepare($countSql);
+        $countStmt->execute($params);
+        $total = $countStmt->fetch(\PDO::FETCH_ASSOC)['total'];
+
+        // Add ordering and pagination
+        $sql .= " ORDER BY mu.created_at DESC LIMIT :limit OFFSET :offset";
+
+        $stmt = $pdo->prepare($sql);
+        foreach ($params as $key => $value) {
+            $stmt->bindValue(':' . $key, $value);
+        }
+        $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, \PDO::PARAM_INT);
+
+        $stmt->execute();
+        $uploads = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        // If grouping dual images, organize them
+        if ($groupBy === 'dual') {
+            $uploads = $this->groupDualImages($uploads);
+        }
+
+        $this->renderJson([
+            'success' => true,
+            'data' => $uploads,
+            'pagination' => [
+                'page' => $page,
+                'limit' => $limit,
+                'total' => $total,
+                'pages' => ceil($total / $limit)
+            ]
+        ]);
+    }
+
+    /**
+     * Group dual images (display + modal pairs) together
+     */
+    private function groupDualImages(array $uploads): array
+    {
+        $grouped = [];
+        $modalImages = [];
+
+        // First pass: identify modal images
+        foreach ($uploads as $upload) {
+            if ($upload['upload_type'] === 'dual_modal') {
+                $modalImages[$upload['filepath']] = $upload;
+            }
+        }
+
+        // Second pass: group display images with their modals
+        foreach ($uploads as $upload) {
+            if ($upload['upload_type'] === 'dual_display') {
+                $group = [
+                    'type' => 'dual',
+                    'display' => $upload,
+                    'modal' => null
+                ];
+
+                // Find matching modal image (same content_id and close upload time)
+                foreach ($modalImages as $modal) {
+                    if ($modal['content_id'] === $upload['content_id'] &&
+                        abs(strtotime($modal['created_at']) - strtotime($upload['created_at'])) < 60) {
+                        $group['modal'] = $modal;
+                        break;
+                    }
+                }
+
+                $grouped[] = $group;
+            } elseif ($upload['upload_type'] !== 'dual_modal') {
+                // Regular images (not part of dual system)
+                $grouped[] = [
+                    'type' => 'single',
+                    'image' => $upload
+                ];
+            }
+        }
+
+        return $grouped;
+    }
+
+    /**
+     * API: Update image metadata
+     */
+    public function apiUpdateMetadata(int $id): void
+    {
+        $this->requireAuth();
+
+        if (!$this->isPost()) {
+            $this->renderJson(['error' => 'Invalid request method.'], 405);
+            return;
+        }
+
+        if (!$this->validateCsrfToken()) {
+            $this->renderJson(['error' => 'Security token validation failed.'], 403);
+            return;
+        }
+
+        try {
+            $upload = MediaUpload::find($id);
+
+            if (!$upload) {
+                $this->renderJson(['error' => 'Upload not found.'], 404);
+                return;
+            }
+
+            $data = json_decode(file_get_contents('php://input'), true);
+
+            $pdo = $this->db->getConnection();
+            $sql = "UPDATE media_uploads
+                    SET alt_text = :alt_text,
+                        title = :title,
+                        caption = :caption,
+                        updated_at = CURRENT_TIMESTAMP
+                    WHERE id = :id";
+
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([
+                'alt_text' => $data['alt_text'] ?? null,
+                'title' => $data['title'] ?? null,
+                'caption' => $data['caption'] ?? null,
+                'id' => $id
+            ]);
+
+            $this->renderJson([
+                'success' => true,
+                'message' => 'Metadata updated successfully.'
+            ]);
+        } catch (\Exception $e) {
+            error_log('Update metadata error: ' . $e->getMessage());
+            $this->renderJson(['error' => 'An error occurred.'], 500);
+        }
+    }
+
+    /**
+     * Render media browser modal
+     */
+    public function browser(): void
+    {
+        $this->requireAuth();
+
+        $this->view->render('Admin/media/browser', [
+            'csrf_token' => $this->generateCsrfToken()
+        ]);
+    }
 }

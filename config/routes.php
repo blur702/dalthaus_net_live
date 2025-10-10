@@ -75,6 +75,9 @@ return function(Router $router) {
         // Media uploads management
         $router->get('/media', 'Media', 'index');
         $router->get('/media/stats', 'Media', 'stats');
+        $router->get('/media/browser', 'Media', 'browser'); // Media browser modal
+        $router->get('/media/api/list', 'Media', 'apiList'); // API endpoint for browser
+        $router->post('/media/api/{id}/metadata', 'Media', 'apiUpdateMetadata'); // Update metadata
         $router->get('/media/{id}', 'Media', 'view');
         $router->post('/media/{id}/mark-used', 'Media', 'markUsed');
         $router->post('/media/{id}/delete', 'Media', 'delete');
