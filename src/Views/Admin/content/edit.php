@@ -6,7 +6,26 @@
 ?>
 
 <?php if (!empty($has_autosave) && !empty($autosave)): ?>
-<div class="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-4">
+<?php
+// Calculate time ago
+$autosaveTime = strtotime($autosave['updated_at']);
+$now = time();
+$diff = $now - $autosaveTime;
+
+if ($diff < 60) {
+    $timeAgo = 'just now';
+} elseif ($diff < 3600) {
+    $minutes = floor($diff / 60);
+    $timeAgo = $minutes . ' minute' . ($minutes > 1 ? 's' : '') . ' ago';
+} elseif ($diff < 86400) {
+    $hours = floor($diff / 3600);
+    $timeAgo = $hours . ' hour' . ($hours > 1 ? 's' : '') . ' ago';
+} else {
+    $days = floor($diff / 86400);
+    $timeAgo = $days . ' day' . ($days > 1 ? 's' : '') . ' ago';
+}
+?>
+<div class="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-4" id="autosaveRecoveryNotice">
     <div class="flex items-start">
         <div class="flex-shrink-0">
             <svg class="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -15,16 +34,19 @@
         </div>
         <div class="ml-3 flex-1">
             <p class="text-sm font-medium text-blue-800">
-                Autosaved version available
+                💾 Autosaved version available
             </p>
             <p class="mt-1 text-sm text-blue-700">
-                An autosaved version from <?= date('M j, Y g:i A', strtotime($autosave['updated_at'])) ?> is available.
+                Saved <strong><?= $timeAgo ?></strong> (<?= date('M j, Y g:i A', $autosaveTime) ?>)
             </p>
-            <div class="mt-3">
-                <button type="button" id="loadAutosave" class="text-sm font-medium text-blue-600 hover:text-blue-500 mr-4">
+            <div class="mt-3 flex items-center space-x-3">
+                <button type="button" id="loadAutosave" class="inline-flex items-center px-3 py-1.5 border border-blue-300 text-sm font-medium rounded text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                    </svg>
                     Load autosaved version
                 </button>
-                <button type="button" id="dismissAutosave" class="text-sm font-medium text-gray-600 hover:text-gray-500">
+                <button type="button" id="dismissAutosave" class="text-sm font-medium text-gray-600 hover:text-gray-800 underline">
                     Dismiss
                 </button>
             </div>

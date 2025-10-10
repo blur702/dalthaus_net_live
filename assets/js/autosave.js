@@ -6,13 +6,13 @@
 class AutoSave {
     constructor(formId, options = {}) {
         console.log('AutoSave: Initializing with minimalistic design');
-        
+
         this.form = document.getElementById(formId);
         if (!this.form) {
             console.warn('AutoSave: Form not found with ID:', formId);
             return;
         }
-        
+
         // Configuration
         this.options = {
             saveInterval: 30000, // 30 seconds
@@ -30,11 +30,13 @@ class AutoSave {
         this.contentId = null;
         this.isEnabled = false;
         this.lastSaved = {};
+        this.lastSaveTime = null;
         this.saveTimeout = null;
         this.intervalId = null;
         this.isDestroyed = false;
         this.isSubmitting = false;
-        
+        this.timeUpdateInterval = null;
+
         // Initialize
         this.init();
     }
@@ -452,13 +454,10 @@ class AutoSave {
                 }
             });
 
-            const now = new Date();
-            const time = now.toLocaleTimeString([], {
-                hour: 'numeric',
-                minute: '2-digit'
-            });
-
-            this.showStatus('success', time);
+            // Store the save time and start updating the display
+            this.lastSaveTime = new Date();
+            this.updateTimeDisplay();
+            this.startTimeUpdates();
 
         } catch (error) {
             console.error('AutoSave: Failed', error);
@@ -466,21 +465,55 @@ class AutoSave {
         }
     }
 
+    getTimeAgo() {
+        if (!this.lastSaveTime) return '';
+
+        const now = new Date();
+        const diffMs = now - this.lastSaveTime;
+        const diffSec = Math.floor(diffMs / 1000);
+        const diffMin = Math.floor(diffSec / 60);
+        const diffHr = Math.floor(diffMin / 60);
+
+        if (diffSec < 10) return 'just now';
+        if (diffSec < 60) return diffSec + 's ago';
+        if (diffMin < 60) return diffMin + 'm ago';
+        return diffHr + 'h ago';
+    }
+
+    updateTimeDisplay() {
+        if (!this.lastSaveTime) return;
+
+        const timeAgo = this.getTimeAgo();
+        this.showStatus('success', timeAgo);
+    }
+
+    startTimeUpdates() {
+        // Clear any existing interval
+        if (this.timeUpdateInterval) {
+            clearInterval(this.timeUpdateInterval);
+        }
+
+        // Update every 10 seconds
+        this.timeUpdateInterval = setInterval(() => {
+            this.updateTimeDisplay();
+        }, 10000);
+    }
+
     showStatus(type, message) {
         if (!this.statusElement) return;
-        
+
         // For inline status element
         if (this.statusElement.id === 'autosaveStatus') {
             if (!message) {
                 this.statusElement.innerHTML = '';
                 return;
             }
-            
+
             const dotClass = type === 'saving' ? 'saving' :
                            type === 'success' ? 'success' :
                            type === 'error' ? 'error' :
                            'neutral';
-            
+
             this.statusElement.innerHTML = `
                 <span class="autosave-indicator">
                     <span class="autosave-dot ${dotClass}"></span>
@@ -493,10 +526,10 @@ class AutoSave {
                 this.statusElement.classList.remove('show');
                 return;
             }
-            
+
             this.statusElement.textContent = message;
             this.statusElement.className = 'autosave-status show';
-            
+
             // Auto-hide after 2 seconds
             if (type !== 'saving') {
                 setTimeout(() => {
@@ -548,6 +581,10 @@ class AutoSave {
 
         if (this.saveTimeout) {
             clearTimeout(this.saveTimeout);
+        }
+
+        if (this.timeUpdateInterval) {
+            clearInterval(this.timeUpdateInterval);
         }
 
         this.stopPeriodicSave();
