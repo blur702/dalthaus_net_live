@@ -53,6 +53,7 @@ class Auth
 
     private function startSession(array $user, bool $rememberMe = false): void
     {
+        error_log('Headers: ' . json_encode(getallheaders()));
         if (!isset($_SERVER['HTTP_X_TESTING'])) {
             session_regenerate_id(true);
         }
