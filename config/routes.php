@@ -72,6 +72,14 @@ return function(Router $router) {
         $router->post('/upload/tinymce', 'Upload', 'tinymce');
         $router->post('/upload/dual-image', 'Upload', 'dualImage');
 
+        // Media uploads management
+        $router->get('/media', 'Media', 'index');
+        $router->get('/media/stats', 'Media', 'stats');
+        $router->get('/media/{id}', 'Media', 'view');
+        $router->post('/media/{id}/mark-used', 'Media', 'markUsed');
+        $router->post('/media/{id}/delete', 'Media', 'delete');
+        $router->post('/media/cleanup-orphaned', 'Media', 'cleanupOrphaned');
+
         // Page management
         $router->get('/pages', 'Pages', 'index');
         $router->get('/pages/create', 'Pages', 'create');

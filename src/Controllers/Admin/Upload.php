@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CMS\Controllers\Admin;
 
 use CMS\Controllers\BaseController;
+use CMS\Models\MediaUpload;
 
 class Upload extends BaseController
 {
@@ -51,6 +52,19 @@ class Upload extends BaseController
 
         if (move_uploaded_file($file['tmp_name'], $destination)) {
             $location = '/uploads/content/' . $filename;
+
+            // Track the upload
+            MediaUpload::track([
+                'filename' => $filename,
+                'filepath' => $location,
+                'original_filename' => $file['name'],
+                'file_size' => $file['size'],
+                'file_type' => $fileExtension,
+                'upload_type' => 'tinymce',
+                'user_id' => $this->getCurrentUserId(),
+                'used_in_content' => false
+            ]);
+
             $this->renderJson(['location' => $location]);
         } else {
             $this->renderJson(['error' => 'Failed to move uploaded file.'], 500);
@@ -129,7 +143,21 @@ class Upload extends BaseController
         }
 
         if (move_uploaded_file($file['tmp_name'], $destination)) {
-            return ['success' => true, 'location' => '/uploads/content/' . $filename];
+            $location = '/uploads/content/' . $filename;
+
+            // Track the upload
+            MediaUpload::track([
+                'filename' => $filename,
+                'filepath' => $location,
+                'original_filename' => $file['name'],
+                'file_size' => $file['size'],
+                'file_type' => $fileExtension,
+                'upload_type' => $prefix === 'display' ? 'dual_display' : 'dual_modal',
+                'user_id' => $this->getCurrentUserId(),
+                'used_in_content' => false
+            ]);
+
+            return ['success' => true, 'location' => $location];
         } else {
             return ['success' => false, 'error' => 'Failed to move uploaded file.'];
         }
