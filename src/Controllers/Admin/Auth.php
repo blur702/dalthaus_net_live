@@ -5,141 +5,72 @@ declare(strict_types=1);
 namespace CMS\Controllers\Admin;
 
 use CMS\Controllers\BaseController;
+use CMS\Utils\Database;
 use CMS\Utils\Auth as AuthUtil;
 use CMS\Utils\Security;
 
-/**
- * Admin Authentication Controller - BULLETPROOF VERSION
- * This version NEVER redirects from the login page to prevent loops
- */
 class Auth extends BaseController
 {
+    public function __construct(Database $db, AuthUtil $auth, array $config)
+    {
+        parent::__construct($db, $auth, $config);
+    }
+
     protected function initialize(): void
     {
-        // No need to redeclare $auth - it's inherited from BaseController
-        // Just make sure it's initialized if not already done in parent
-        if ($this->auth === null) {
-            $this->auth = new AuthUtil($this->db, $this->config["security"]);
-        }
         $this->view->layout("auth");
     }
 
-    /**
-     * Handle /admin root route - redirect to dashboard if logged in, or to login
-     */
     public function handleAdminRoot(): void
     {
-        if ($this->isAuthenticated()) {
+        if ($this->auth->check()) {
             $this->redirect("/admin/dashboard");
         } else {
             $this->redirect("/admin/login");
         }
     }
 
-    /**
-     * Show login form - NEVER REDIRECTS
-     */
     public function login(): void
     {
-        // Set cache control headers to prevent caching of login page
         header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
-        header('Cache-Control: post-check=0, pre-check=0', false);
         header('Pragma: no-cache');
-        header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
-
-        // BULLETPROOF: Never check authentication, never redirect
-        // Always show the login form no matter what
-
-        // If user is already logged in, they can still see the login page
-        // This prevents ANY possibility of redirect loops
 
         $this->render("admin/auth/login", [
-            "csrf_token" => $this->auth->generateCsrfToken(),
-            "flash" => $this->getFlash(),
             "page_title" => "Admin Login"
         ]);
     }
 
-    /**
-     * Process login attempt
-     */
     public function authenticate(): void
     {
-        if (!$this->isPost()) {
+        if (!$this->request->isPost()) {
             $this->redirect("/admin/login");
             return;
         }
 
-        if (!$this->auth->validateCsrfToken($this->getParam("_token", "", "post"))) {
+        if (!$this->auth->validateCsrfToken($this->request->post('_token'))) {
             $this->setFlash("error", "Invalid security token. Please try again.");
             $this->redirect("/admin/login");
             return;
         }
 
-        $username = $this->sanitize($this->getParam("username", "", "post"));
-        $password = $this->getParam("password", "", "post");
-        $rememberMeParam = $this->getParam("remember_me", "", "post");
-        $rememberMe = !empty($rememberMeParam);
-
-        // Debug logging
-        error_log("Auth::authenticate() - username: $username");
-        error_log("Auth::authenticate() - remember_me param: '$rememberMeParam'");
-        error_log("Auth::authenticate() - remember_me bool: " . ($rememberMe ? 'true' : 'false'));
+        $username = $this->request->post("username", "");
+        $password = $this->request->post("password", "");
+        $rememberMe = (bool)$this->request->post("remember_me", false);
 
         if (empty($username) || empty($password)) {
-            error_log("Auth::authenticate() - Empty username or password");
             $this->setFlash("error", "Username and password are required.");
             $this->redirect("/admin/login");
             return;
         }
 
-        $rateLimitKey = "admin_login_" . ($_SERVER["REMOTE_ADDR"] ?? "unknown");
-        if (!Security::checkRateLimit($rateLimitKey, 5, 300)) {
-            $this->setFlash("error", "Too many login attempts. Please wait 5 minutes.");
-            $this->redirect("/admin/login");
-            return;
-        }
-
-        $remainingLockout = $this->auth->getRemainingLockoutTime($username);
-        if ($remainingLockout > 0) {
-            $minutes = ceil($remainingLockout / 60);
-            $this->setFlash("error", "Account locked. Please wait {$minutes} minute(s).");
-            $this->redirect("/admin/login");
-            return;
-        }
-
-        try {
-            error_log("Auth::authenticate() - About to call auth->attempt()");
-            if ($this->auth->attempt($username, $password, $rememberMe)) {
-                error_log("Auth::authenticate() - Login successful, redirecting to dashboard");
-                // Use proper HTTP redirect - most reliable method
-                $this->redirect("/admin/dashboard");
-                return;
-            } else {
-                error_log("Auth::authenticate() - Login failed");
-                $remainingLockout = $this->auth->getRemainingLockoutTime($username);
-                if ($remainingLockout > 0) {
-                    $minutes = ceil($remainingLockout / 60);
-                    $this->setFlash("error", "Invalid credentials. Locked for {$minutes} minute(s).");
-                } else {
-                    $this->setFlash("error", "Invalid username or password.");
-                }
-                $this->redirect("/admin/login");
-            }
-        } catch (\Exception $e) {
-            // Log the actual error for debugging
-            error_log("Authentication error: " . $e->getMessage());
-            error_log("Authentication error stack: " . $e->getTraceAsString());
-
-            // Show user-friendly error message
-            $this->setFlash("error", "Login system temporarily unavailable. Please try again later.");
+        if ($this->auth->attempt($username, $password, $rememberMe)) {
+            $this->redirect("/admin/dashboard");
+        } else {
+            $this->setFlash("error", "Invalid username or password.");
             $this->redirect("/admin/login");
         }
     }
 
-    /**
-     * Process logout
-     */
     public function logout(): void
     {
         $this->auth->logout();
