@@ -86,7 +86,8 @@ class Router
         $matchedRoute = $this->findMatchingRoute();
 
         // DEBUGGING
-        var_dump($matchedRoute);
+        error_log("Matched route for URI: " . $this->requestUri);
+        error_log(print_r($matchedRoute, true));
         exit();
 
         if ($matchedRoute === null) {
