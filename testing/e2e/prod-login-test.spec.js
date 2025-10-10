@@ -13,11 +13,6 @@ test.describe('Production Login Test', () => {
 
         console.log('\n=== Starting Production Test ===\n');
 
-        // Set custom header for test detection
-        await page.setExtraHTTPHeaders({
-            'X-Testing': 'Playwright',
-        });
-
         // Go to login page
         console.log('1. Navigating to login page...');
         await page.goto(`${baseURL}/admin/login`, { waitUntil: 'networkidle' });
@@ -26,10 +21,11 @@ test.describe('Production Login Test', () => {
         await page.screenshot({ path: 'test-results/01-login-page.png' });
         console.log('   ✓ Login page loaded');
 
-        // Fill in credentials
+        // Fill in credentials and check remember me
         console.log('2. Filling in credentials...');
         await page.fill('input[name="username"]', 'kevin');
         await page.fill('input[name="password"]', '(130Bpm)');
+        await page.check('input[name="remember_me"]');
 
         // Take screenshot before submit
         await page.screenshot({ path: 'test-results/02-credentials-filled.png' });
