@@ -76,7 +76,7 @@ class Router
         $this->addRoute('GET', $pattern, $handler, $options);
     }
 
-    public function post(string $pattern, string $handler, array $options = []): void
+    public function post(string $pattern, string $handler, array $options = []):
     {
         $this->addRoute('POST', $pattern, $handler, $options);
     }
@@ -84,6 +84,10 @@ class Router
     public function dispatch(): void
     {
         $matchedRoute = $this->findMatchingRoute();
+
+        // DEBUGGING
+        var_dump($matchedRoute);
+        exit();
 
         if ($matchedRoute === null) {
             $this->handleNotFound();
