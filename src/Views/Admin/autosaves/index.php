@@ -54,11 +54,11 @@
                                 <th style="width: 30px;">
                                     <input type="checkbox" id="selectAll" onchange="toggleSelectAll()">
                                 </th>
-                                <th>Title</th>
-                                <th>Type</th>
-                                <th>Content Preview</th>
-                                <th>Last Saved</th>
-                                <th style="width: 200px;">Actions</th>
+                                <th style="width: 25%; max-width: 250px;">Title</th>
+                                <th style="width: 100px;">Type</th>
+                                <th style="width: 30%;">Content Preview</th>
+                                <th style="width: 140px;">Last Saved</th>
+                                <th style="width: 180px;">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -67,7 +67,7 @@
                                 <td>
                                     <input type="checkbox" class="autosave-checkbox" value="<?= $autosave['id'] ?>">
                                 </td>
-                                <td>
+                                <td style="word-wrap: break-word; word-break: break-word; max-width: 250px;">
                                     <strong><?= $this->escape($autosave['title']) ?></strong>
                                     <?php if ($autosave['content_id']): ?>
                                         <br><small class="text-muted">Editing content #<?= $autosave['content_id'] ?></small>
