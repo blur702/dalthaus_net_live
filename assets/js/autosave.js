@@ -58,7 +58,7 @@ class AutoSave {
                 this.autosaveUUID = uuidField.value;
             }
         }
-        
+
         // Get or generate master content UUID
         const masterUuidField = this.form.querySelector('#master_content_uuid');
         if (masterUuidField) {
@@ -69,7 +69,7 @@ class AutoSave {
                 this.masterContentUUID = masterUuidField.value;
             }
         }
-        
+
         // Get content ID if editing
         const contentIdField = this.form.querySelector('#content_id');
         if (contentIdField && contentIdField.value) {
@@ -82,18 +82,36 @@ class AutoSave {
                 }
             }
         }
-        
+
         this.createStatusIndicator();
-        this.attachEventListeners();
         this.setupAutosaveRecovery();
-        
-        // Enable autosave only after title is entered
-        const titleField = this.form.querySelector('[name="title"]');
-        if (titleField && titleField.value.trim()) {
-            this.enable();
-        } else {
-            this.showStatus('neutral', '');
-        }
+
+        // Wait for TinyMCE to be ready before attaching listeners
+        this.waitForTinyMCE(() => {
+            this.attachEventListeners();
+
+            // Enable autosave only after title is entered
+            const titleField = this.form.querySelector('[name="title"]');
+            if (titleField && titleField.value.trim()) {
+                this.enable();
+            } else {
+                this.showStatus('neutral', '');
+            }
+        });
+    }
+
+    waitForTinyMCE(callback) {
+        // Check if TinyMCE is available and the body editor is initialized
+        const checkTinyMCE = () => {
+            if (typeof tinymce !== 'undefined' && tinymce.get('body')) {
+                console.log('AutoSave: TinyMCE is ready');
+                callback();
+            } else {
+                console.log('AutoSave: Waiting for TinyMCE...');
+                setTimeout(checkTinyMCE, 100);
+            }
+        };
+        checkTinyMCE();
     }
 
     setupAutosaveRecovery() {
@@ -116,39 +134,50 @@ class AutoSave {
 
     async loadAutosaveData() {
         if (!window.autosaveData) return;
-        
+
         try {
             const data = window.autosaveData;
-            
+
             const titleField = this.form.querySelector('[name="title"]');
             if (titleField && data.title) {
                 titleField.value = data.title;
             }
-            
+
             const bodyField = this.form.querySelector('[name="body"]');
             if (bodyField && data.content) {
+                // Update both textarea and TinyMCE editor
                 bodyField.value = data.content;
+                const editor = tinymce.get('body');
+                if (editor) {
+                    editor.setContent(data.content);
+                }
             }
-            
+
             const teaserField = this.form.querySelector('[name="teaser"]');
             if (teaserField && data.excerpt) {
                 teaserField.value = data.excerpt;
             }
-            
+
             const notification = document.querySelector('.bg-blue-50');
             if (notification) {
                 notification.style.display = 'none';
             }
-            
+
             this.showStatus('success', 'Restored');
-            
+
+            // Update lastSaved to reflect restored content
             this.options.watchedFields.forEach(fieldName => {
                 const field = this.form.querySelector(`[name="${fieldName}"]`);
                 if (field) {
-                    this.lastSaved[fieldName] = field.value;
+                    if (fieldName === 'body') {
+                        const editor = tinymce.get('body');
+                        this.lastSaved[fieldName] = editor ? editor.getContent() : field.value;
+                    } else {
+                        this.lastSaved[fieldName] = field.value;
+                    }
                 }
             });
-            
+
         } catch (error) {
             console.error('AutoSave: Failed to load autosave data', error);
             this.showStatus('error', 'Failed');
@@ -260,13 +289,29 @@ class AutoSave {
         this.options.watchedFields.forEach(fieldName => {
             const field = this.form.querySelector(`[name="${fieldName}"]`);
             if (field) {
-                // Store initial value
-                this.lastSaved[fieldName] = field.value;
+                // For body field, use TinyMCE editor
+                if (fieldName === 'body') {
+                    const editor = tinymce.get('body');
+                    if (editor) {
+                        // Store initial value from TinyMCE
+                        this.lastSaved[fieldName] = editor.getContent();
 
-                // Add event listeners
-                field.addEventListener('input', () => this.onFieldChange(fieldName));
-                field.addEventListener('blur', () => this.onFieldBlur(fieldName));
-                
+                        // Listen to TinyMCE change events
+                        editor.on('Change', () => this.onFieldChange(fieldName));
+                        editor.on('KeyUp', () => this.onFieldChange(fieldName));
+                        editor.on('Blur', () => this.onFieldBlur(fieldName));
+
+                        console.log('AutoSave: TinyMCE event listeners attached');
+                    } else {
+                        console.warn('AutoSave: TinyMCE editor not found for body field');
+                    }
+                } else {
+                    // For regular fields, use standard events
+                    this.lastSaved[fieldName] = field.value;
+                    field.addEventListener('input', () => this.onFieldChange(fieldName));
+                    field.addEventListener('blur', () => this.onFieldBlur(fieldName));
+                }
+
                 // Special handling for title field
                 if (fieldName === 'title') {
                     field.addEventListener('input', () => {
@@ -283,6 +328,11 @@ class AutoSave {
         // Handle form submission - mark as submitting to skip beforeunload check
         this.form.addEventListener('submit', () => {
             this.isSubmitting = true;
+            // Sync TinyMCE content to textarea before submit
+            const editor = tinymce.get('body');
+            if (editor) {
+                editor.save();
+            }
         });
 
         // Handle page unload - but not during form submission
@@ -339,27 +389,35 @@ class AutoSave {
 
         try {
             this.showStatus('saving', 'Saving');
-            
+
             const formData = new FormData();
             formData.append('autosave_uuid', this.autosaveUUID);
             formData.append('master_content_uuid', this.masterContentUUID);
-            
+
             if (this.contentId) {
                 formData.append('content_id', this.contentId);
             }
-            
+
             this.options.watchedFields.forEach(fieldName => {
                 const field = this.form.querySelector(`[name="${fieldName}"]`);
                 if (field) {
-                    formData.append(fieldName === 'body' ? 'body' : fieldName, field.value);
+                    let value;
+                    // Get content from TinyMCE for body field
+                    if (fieldName === 'body') {
+                        const editor = tinymce.get('body');
+                        value = editor ? editor.getContent() : field.value;
+                    } else {
+                        value = field.value;
+                    }
+                    formData.append(fieldName === 'body' ? 'body' : fieldName, value);
                 }
             });
-            
+
             const contentTypeField = this.form.querySelector('[name="content_type"]');
             if (contentTypeField) {
                 formData.append('content_type', contentTypeField.value);
             }
-            
+
             const csrfToken = this.form.querySelector('[name="_token"]');
             if (csrfToken) {
                 formData.append('_token', csrfToken.value);
@@ -376,26 +434,32 @@ class AutoSave {
             }
 
             const result = await response.json();
-            
+
             if (!result.success) {
                 throw new Error(result.message || 'Save failed');
             }
 
+            // Update lastSaved with current values
             this.options.watchedFields.forEach(fieldName => {
-                const field = this.form.querySelector(`[name="${fieldName}"]`);
-                if (field) {
-                    this.lastSaved[fieldName] = field.value;
+                if (fieldName === 'body') {
+                    const editor = tinymce.get('body');
+                    this.lastSaved[fieldName] = editor ? editor.getContent() : '';
+                } else {
+                    const field = this.form.querySelector(`[name="${fieldName}"]`);
+                    if (field) {
+                        this.lastSaved[fieldName] = field.value;
+                    }
                 }
             });
 
             const now = new Date();
-            const time = now.toLocaleTimeString([], { 
-                hour: 'numeric', 
+            const time = now.toLocaleTimeString([], {
+                hour: 'numeric',
                 minute: '2-digit'
             });
-            
+
             this.showStatus('success', time);
-            
+
         } catch (error) {
             console.error('AutoSave: Failed', error);
             this.showStatus('error', 'Failed');
@@ -444,8 +508,14 @@ class AutoSave {
 
     hasUnsavedChanges() {
         return this.options.watchedFields.some(fieldName => {
-            const field = this.form.querySelector(`[name="${fieldName}"]`);
-            return field && field.value !== this.lastSaved[fieldName];
+            if (fieldName === 'body') {
+                const editor = tinymce.get('body');
+                const currentValue = editor ? editor.getContent() : '';
+                return currentValue !== this.lastSaved[fieldName];
+            } else {
+                const field = this.form.querySelector(`[name="${fieldName}"]`);
+                return field && field.value !== this.lastSaved[fieldName];
+            }
         });
     }
 
