@@ -309,6 +309,7 @@
             <div class="flex items-center justify-between h-16">
                 <nav class="flex items-center space-x-8">
                     <a href="/admin/dashboard" class="text-gray-900 font-bold text-lg">CMS</a>
+                    <a href="/admin/content" class="text-gray-700 hover:text-gray-900">Content</a>
                     <a href="/admin/articles" class="text-gray-700 hover:text-gray-900">Articles</a>
                     <a href="/admin/photobooks" class="text-gray-700 hover:text-gray-900">Photobooks</a>
                     <a href="/admin/pages" class="text-gray-700 hover:text-gray-900">Pages</a>
