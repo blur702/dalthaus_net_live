@@ -216,6 +216,12 @@ class Content extends BaseController
 
         try {
             $data = $this->getFormData();
+
+            // Ensure URL alias is unique before validation
+            if (!empty($data['url_alias'])) {
+                $data['url_alias'] = $this->ensureUniqueUrlAlias($data['url_alias']);
+            }
+
             $errors = $this->validateContentData($data);
 
             if (!empty($errors)) {
@@ -298,6 +304,40 @@ class Content extends BaseController
             'status' => $status,
             'published_at' => $this->getParam('published_at', '', 'post')
         ];
+    }
+
+    /**
+     * Ensure the URL alias is unique by appending a number if necessary
+     *
+     * @param string $urlAlias - The proposed URL alias
+     * @param int|null $excludeId - Content ID to exclude from duplicate check (for updates)
+     * @return string - A unique URL alias
+     */
+    private function ensureUniqueUrlAlias(string $urlAlias, ?int $excludeId = null): string
+    {
+        $baseAlias = $urlAlias;
+        $counter = 2;
+
+        while (true) {
+            $existing = ContentModel::findByUrlAlias($urlAlias);
+
+            // If no existing content found, or it's the same content we're editing, we're good
+            if (!$existing || ($excludeId && $existing->getId() === $excludeId)) {
+                break;
+            }
+
+            // URL alias is taken, try adding a number
+            $urlAlias = $baseAlias . '-' . $counter;
+            $counter++;
+
+            // Safety check to prevent infinite loop
+            if ($counter > 100) {
+                $urlAlias = $baseAlias . '-' . time();
+                break;
+            }
+        }
+
+        return $urlAlias;
     }
 
     /**
@@ -392,6 +432,12 @@ class Content extends BaseController
         
         try {
             $data = $this->getFormData();
+
+            // Ensure URL alias is unique before validation (excluding current content)
+            if (!empty($data['url_alias'])) {
+                $data['url_alias'] = $this->ensureUniqueUrlAlias($data['url_alias'], $id);
+            }
+
             $errors = $this->validateContentData($data, $id);
             
             if (!empty($errors)) {
