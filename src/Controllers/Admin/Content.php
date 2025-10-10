@@ -1052,42 +1052,47 @@ class Content extends BaseController
     public function deleteAutosave(int $id): void
     {
         if (!$this->isPost()) {
-            $this->jsonResponse(['success' => false, 'message' => 'Invalid request method']);
+            $this->redirect('/admin/autosaves');
             return;
         }
 
         if (!$this->validateCsrfToken()) {
-            $this->jsonResponse(['success' => false, 'message' => 'Security token validation failed']);
+            $this->setFlash('error', 'Security token validation failed.');
+            $this->redirect('/admin/autosaves');
             return;
         }
 
         try {
             $autosaveModel = new Autosave();
             $autosave = $autosaveModel->find($id);
-            
+
             if (!$autosave) {
-                $this->jsonResponse(['success' => false, 'message' => 'Autosave not found']);
+                $this->setFlash('error', 'Autosave not found.');
+                $this->redirect('/admin/autosaves');
                 return;
             }
 
             // Verify ownership
             if ($autosave['user_id'] !== $this->getCurrentUserId()) {
-                $this->jsonResponse(['success' => false, 'message' => 'Unauthorized']);
+                $this->setFlash('error', 'Unauthorized.');
+                $this->redirect('/admin/autosaves');
                 return;
             }
 
             $success = $autosaveModel->delete($id);
-            
+
             if ($success) {
-                $this->jsonResponse(['success' => true, 'message' => 'Autosave deleted successfully']);
+                $this->setFlash('success', 'Autosave deleted successfully.');
             } else {
-                $this->jsonResponse(['success' => false, 'message' => 'Failed to delete autosave']);
+                $this->setFlash('error', 'Failed to delete autosave.');
             }
-            
+
         } catch (Exception $e) {
             error_log('Delete autosave error: ' . $e->getMessage());
-            $this->jsonResponse(['success' => false, 'message' => 'An error occurred']);
+            $this->setFlash('error', 'An error occurred while deleting the autosave.');
         }
+
+        $this->redirect('/admin/autosaves');
     }
 
     private function jsonResponse(array $data): void
