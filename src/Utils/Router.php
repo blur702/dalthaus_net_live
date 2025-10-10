@@ -40,15 +40,10 @@ class Router
         $middleware = [];
 
         if (!empty($this->groupStack)) {
-            foreach ($this->groupStack as $group) {
-                $prefix .= $group['prefix'] ?? '';
-                if (isset($group['namespace'])) {
-                    $namespace = $namespace ? $namespace . '\\' . $group['namespace'] : $group['namespace'];
-                }
-                if (isset($group['middleware'])) {
-                    $middleware = array_merge($middleware, (array)$group['middleware']);
-                }
-            }
+            $currentGroup = end($this->groupStack);
+            $prefix = $currentGroup['prefix'] ?? '';
+            $namespace = $currentGroup['namespace'] ?? '';
+            $middleware = isset($currentGroup['middleware']) ? (array)$currentGroup['middleware'] : [];
         }
 
         if (isset($options['middleware'])) {
@@ -84,11 +79,6 @@ class Router
     public function dispatch(): void
     {
         $matchedRoute = $this->findMatchingRoute();
-
-        // DEBUGGING
-        error_log("Matched route for URI: " . $this->requestUri);
-        error_log(print_r($matchedRoute, true));
-        exit();
 
         if ($matchedRoute === null) {
             $this->handleNotFound();
