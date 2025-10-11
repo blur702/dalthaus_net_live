@@ -105,7 +105,7 @@ abstract class BaseController
 
     protected function checkMaintenanceMode(): void
     {
-        if (str_contains(static::class, '\Admin\') || ($this->auth->check() && $this->auth->user()['is_admin'])) {
+        if (str_contains(static::class, '\\Admin\\') || ($this->auth->check() && $this->auth->user()['is_admin'])) {
             return;
         }
         
