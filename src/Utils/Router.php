@@ -71,7 +71,7 @@ class Router
         $this->addRoute('GET', $pattern, $handler, $options);
     }
 
-    public function post(string $pattern, string $handler, array $options = []):
+    public function post(string $pattern, string $handler, array $options = []): void
     {
         $this->addRoute('POST', $pattern, $handler, $options);
     }
