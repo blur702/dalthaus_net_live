@@ -135,7 +135,7 @@ class Router
 
     private function executeController(array $route): void
     {
-        $controllerClass = 'CMS\Controllers\' . $route['controller'];
+        $controllerClass = 'CMS\\Controllers\\' . $route['controller'];
         $actionName = $route['action'];
 
         if (!class_exists($controllerClass)) {
