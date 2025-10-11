@@ -185,4 +185,70 @@ class MediaUpload extends BaseModel
 
         return $deleted;
     }
+
+    /**
+     * Search media uploads with optional filters
+     */
+    public static function search(string $search = '', ?string $type = null, int $limit = 24, int $offset = 0): array
+    {
+        // Use the existing Database singleton instead of creating new instance
+        $db = \CMS\Utils\Database::getInstance();
+        $pdo = $db->getConnection();
+
+        $sql = "SELECT * FROM media_uploads WHERE 1=1";
+        $params = [];
+
+        if (!empty($search)) {
+            $sql .= " AND (filename LIKE :search OR original_filename LIKE :search OR alt_text LIKE :search OR title LIKE :search)";
+            $params[':search'] = '%' . $search . '%';
+        }
+
+        if ($type) {
+            $sql .= " AND upload_type = :type";
+            $params[':type'] = $type;
+        }
+
+        $sql .= " ORDER BY created_at DESC LIMIT :limit OFFSET :offset";
+
+        $stmt = $pdo->prepare($sql);
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Count media uploads with optional filters
+     */
+    public static function countWithSearch(string $search = '', ?string $type = null): int
+    {
+        // Use the existing Database singleton instead of creating new instance
+        $db = \CMS\Utils\Database::getInstance();
+        $pdo = $db->getConnection();
+
+        $sql = "SELECT COUNT(*) FROM media_uploads WHERE 1=1";
+        $params = [];
+
+        if (!empty($search)) {
+            $sql .= " AND (filename LIKE :search OR original_filename LIKE :search OR alt_text LIKE :search OR title LIKE :search)";
+            $params[':search'] = '%' . $search . '%';
+        }
+
+        if ($type) {
+            $sql .= " AND upload_type = :type";
+            $params[':type'] = $type;
+        }
+
+        $stmt = $pdo->prepare($sql);
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+        $stmt->execute();
+
+        return (int) $stmt->fetchColumn();
+    }
 }
