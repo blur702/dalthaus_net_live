@@ -19,24 +19,53 @@ class Auth
 
     public function attempt(string $username, string $password, bool $rememberMe = false): bool
     {
+        error_log("[AUTHUTIL] === attempt() START ===");
+        error_log("[AUTHUTIL] Username: $username");
+        error_log("[AUTHUTIL] Remember me: " . ($rememberMe ? 'YES' : 'NO'));
+        error_log("[AUTHUTIL] Session ID before: " . session_id());
+        error_log("[AUTHUTIL] Session data before: " . json_encode($_SESSION ?? []));
+
+        error_log("[AUTHUTIL] → Checking if account is locked out...");
         if ($this->isLockedOut($username)) {
+            error_log("[AUTHUTIL] ❌ Account is locked out");
             return false;
         }
+        error_log("[AUTHUTIL] ✓ Account not locked out");
 
+        error_log("[AUTHUTIL] → Finding user in database...");
         $user = $this->findUser($username);
 
         if ($user === false) {
+            error_log("[AUTHUTIL] ❌ User not found in database");
             $this->recordFailedAttempt($username);
             return false;
         }
+        error_log("[AUTHUTIL] ✓ User found: " . json_encode([
+            'user_id' => $user['user_id'],
+            'username' => $user['username'],
+            'email' => $user['email']
+        ]));
 
+        error_log("[AUTHUTIL] → Verifying password...");
         if (!password_verify($password, $user['password_hash'])) {
+            error_log("[AUTHUTIL] ❌ Password verification failed");
             $this->recordFailedAttempt($username);
             return false;
         }
+        error_log("[AUTHUTIL] ✓ Password verified successfully");
 
+        error_log("[AUTHUTIL] → Clearing failed attempts...");
         $this->clearFailedAttempts($username);
+        error_log("[AUTHUTIL] ✓ Failed attempts cleared");
+
+        error_log("[AUTHUTIL] → Starting session...");
         $this->startSession($user, $rememberMe);
+        error_log("[AUTHUTIL] ✓ Session started");
+
+        error_log("[AUTHUTIL] Session ID after: " . session_id());
+        error_log("[AUTHUTIL] Session data after: " . json_encode($_SESSION ?? []));
+        error_log("[AUTHUTIL] ✓✓✓ attempt() returning TRUE ✓✓✓");
+        error_log("[AUTHUTIL] === attempt() END ===");
 
         return true;
     }

@@ -28,6 +28,11 @@ class Dashboard extends BaseController
 
     public function index(): void
     {
+        error_log("[DASHBOARD] === index() START ===");
+        error_log("[DASHBOARD] Session ID: " . session_id());
+        error_log("[DASHBOARD] Session data: " . json_encode($_SESSION ?? []));
+        error_log("[DASHBOARD] Auth check result: " . ($this->auth->check() ? 'TRUE' : 'FALSE'));
+
         $stats = $this->getDashboardStats();
         $recentContent = $this->getRecentContent();
         $recentActivity = [];

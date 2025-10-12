@@ -10,7 +10,12 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 set_exception_handler(function ($exception) {
     $config = require __DIR__ . '/config/config.php';
-    error_log("Uncaught exception: " . $exception->getMessage() . " in " . $exception->getFile() . ":" . $exception->getLine());
+    error_log("[EXCEPTION HANDLER] ========== UNCAUGHT EXCEPTION ==========");
+    error_log("[EXCEPTION HANDLER] Message: " . $exception->getMessage());
+    error_log("[EXCEPTION HANDLER] File: " . $exception->getFile() . ":" . $exception->getLine());
+    error_log("[EXCEPTION HANDLER] Type: " . get_class($exception));
+    error_log("[EXCEPTION HANDLER] Request URI: " . ($_SERVER['REQUEST_URI'] ?? 'unknown'));
+    error_log("[EXCEPTION HANDLER] Stack trace: " . $exception->getTraceAsString());
     if ($exception instanceof PDOException && !$config['app']['debug'] && (strpos($exception->getMessage(), 'Connection refused') !== false || strpos($exception->getMessage(), 'Access denied') !== false || strpos($exception->getMessage(), 'Unknown database') !== false || strpos($exception->getMessage(), 'SQLSTATE[HY000]') !== false)) {
         $trace = $exception->getTraceAsString();
         if (strpos($trace, 'Database::getInstance') !== false || strpos($trace, 'Database::__construct') !== false) {
@@ -23,6 +28,8 @@ set_exception_handler(function ($exception) {
         echo "<h1>Error</h1><p>" . htmlspecialchars($exception->getMessage()) . "</p><pre>" . htmlspecialchars($exception->getTraceAsString()) . "</pre>";
     } else {
         if (strpos($_SERVER['REQUEST_URI'] ?? '', '/admin') === 0) {
+            error_log("[EXCEPTION HANDLER] ❌❌❌ REDIRECTING TO LOGIN DUE TO EXCEPTION ❌❌❌");
+            error_log("[EXCEPTION HANDLER] This redirect may be causing login issues!");
             header("Location: /admin/login");
             exit;
         }

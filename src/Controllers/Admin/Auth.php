@@ -61,63 +61,96 @@ class Auth extends BaseController
     }
 
     /**
-     * Process login attempt
+     * Process login attempt - WITH EXTENSIVE LOGGING
      */
     public function authenticate(): void
     {
+        $timestamp = date('Y-m-d H:i:s');
+        error_log("========== AUTH START: $timestamp ==========");
+        error_log("[AUTH] Request URI: " . ($_SERVER['REQUEST_URI'] ?? 'unknown'));
+        error_log("[AUTH] Request Method: " . ($_SERVER['REQUEST_METHOD'] ?? 'unknown'));
+        error_log("[AUTH] Remote IP: " . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'));
+        error_log("[AUTH] Session ID: " . session_id());
+        error_log("[AUTH] Session data: " . json_encode($_SESSION ?? []));
+
         if (!$this->request->isPost()) {
+            error_log("[AUTH] ❌ FAIL: Not a POST request");
             $this->redirect("/admin/login");
             return;
         }
+        error_log("[AUTH] ✓ Request is POST");
 
-        if (!$this->auth->validateCsrfToken($this->request->post('_token', ''))) {
+        $token = $this->request->post('_token', '');
+        error_log("[AUTH] CSRF token received: " . substr($token, 0, 20) . "...");
+
+        if (!$this->auth->validateCsrfToken($token)) {
+            error_log("[AUTH] ❌ FAIL: Invalid CSRF token");
             $this->setFlash("error", "Invalid security token. Please try again.");
             $this->redirect("/admin/login");
             return;
         }
+        error_log("[AUTH] ✓ CSRF token valid");
 
         $username = $this->request->post("username", "");
         $password = $this->request->post("password", "");
         $rememberMe = (bool)$this->request->post("remember_me", false);
 
-        // Debug logging
-        error_log("Auth::authenticate() - username: $username");
-        error_log("Auth::authenticate() - remember_me: " . ($rememberMe ? 'true' : 'false'));
+        error_log("[AUTH] Username: " . $username);
+        error_log("[AUTH] Password length: " . strlen($password));
+        error_log("[AUTH] Remember me: " . ($rememberMe ? 'YES' : 'NO'));
 
         if (empty($username) || empty($password)) {
-            error_log("Auth::authenticate() - Empty username or password");
+            error_log("[AUTH] ❌ FAIL: Empty credentials");
             $this->setFlash("error", "Username and password are required.");
             $this->redirect("/admin/login");
             return;
         }
+        error_log("[AUTH] ✓ Credentials provided");
 
         $rateLimitKey = "admin_login_" . ($_SERVER["REMOTE_ADDR"] ?? "unknown");
+        error_log("[AUTH] Rate limit key: $rateLimitKey");
+
         if (!Security::checkRateLimit($rateLimitKey, 5, 300)) {
+            error_log("[AUTH] ❌ FAIL: Rate limit exceeded");
             $this->setFlash("error", "Too many login attempts. Please wait 5 minutes.");
             $this->redirect("/admin/login");
             return;
         }
+        error_log("[AUTH] ✓ Rate limit check passed");
 
         $remainingLockout = $this->auth->getRemainingLockoutTime($username);
+        error_log("[AUTH] Remaining lockout time: $remainingLockout seconds");
+
         if ($remainingLockout > 0) {
             $minutes = ceil($remainingLockout / 60);
+            error_log("[AUTH] ❌ FAIL: Account locked for $minutes minute(s)");
             $this->setFlash("error", "Account locked. Please wait {$minutes} minute(s).");
             $this->redirect("/admin/login");
             return;
         }
+        error_log("[AUTH] ✓ Account not locked");
 
         try {
-            error_log("Auth::authenticate() - About to call auth->attempt()");
-            if ($this->auth->attempt($username, $password, $rememberMe)) {
-                error_log("Auth::authenticate() - Login successful, redirecting to dashboard");
+            error_log("[AUTH] → Calling AuthUtil::attempt()...");
+            $attemptResult = $this->auth->attempt($username, $password, $rememberMe);
+            error_log("[AUTH] ← AuthUtil::attempt() returned: " . ($attemptResult ? 'TRUE' : 'FALSE'));
+
+            if ($attemptResult) {
+                error_log("[AUTH] ✓✓✓ LOGIN SUCCESSFUL ✓✓✓");
+                error_log("[AUTH] Session after login: " . json_encode($_SESSION ?? []));
+                error_log("[AUTH] Redirecting to: /admin/dashboard");
+                error_log("[AUTH] Headers sent: " . (headers_sent() ? 'YES' : 'NO'));
+
                 // Use proper HTTP redirect - most reliable method
                 $this->redirect("/admin/dashboard");
+                error_log("[AUTH] After redirect() call");
                 return;
             } else {
-                error_log("Auth::authenticate() - Login failed");
+                error_log("[AUTH] ❌ LOGIN FAILED - Invalid credentials");
                 $remainingLockout = $this->auth->getRemainingLockoutTime($username);
                 if ($remainingLockout > 0) {
                     $minutes = ceil($remainingLockout / 60);
+                    error_log("[AUTH] Account now locked for $minutes minute(s)");
                     $this->setFlash("error", "Invalid credentials. Locked for {$minutes} minute(s).");
                 } else {
                     $this->setFlash("error", "Invalid username or password.");
@@ -125,14 +158,16 @@ class Auth extends BaseController
                 $this->redirect("/admin/login");
             }
         } catch (\Exception $e) {
-            // Log the actual error for debugging
-            error_log("Authentication error: " . $e->getMessage());
-            error_log("Authentication error stack: " . $e->getTraceAsString());
+            error_log("[AUTH] ❌❌❌ EXCEPTION THROWN ❌❌❌");
+            error_log("[AUTH] Exception: " . $e->getMessage());
+            error_log("[AUTH] File: " . $e->getFile() . ":" . $e->getLine());
+            error_log("[AUTH] Stack trace: " . $e->getTraceAsString());
 
-            // Show user-friendly error message
             $this->setFlash("error", "Login system temporarily unavailable. Please try again later.");
             $this->redirect("/admin/login");
         }
+
+        error_log("========== AUTH END ==========");
     }
 
     /**
