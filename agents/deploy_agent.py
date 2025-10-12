@@ -17,10 +17,25 @@ from ssh_agent import SSHAgent
 
 class DeploymentAgent:
     """High-level deployment agent for the CMS"""
-    
+
     def __init__(self):
+        # Fix Windows MSYS path conversion issue
         self.web_root = os.getenv("WEB_ROOT")
+        if self.web_root and self.web_root.startswith('C:/Program Files/Git'):
+            # Remove the MSYS prefix
+            self.web_root = self.web_root.replace('C:/Program Files/Git', '')
+            # Ensure it starts with /
+            if not self.web_root.startswith('/'):
+                self.web_root = '/' + self.web_root
+
         self.config_path = os.getenv("CONFIG_PATH")
+        if self.config_path and self.config_path.startswith('C:/Program Files/Git'):
+            # Remove the MSYS prefix
+            self.config_path = self.config_path.replace('C:/Program Files/Git', '')
+            # Ensure it starts with /
+            if not self.config_path.startswith('/'):
+                self.config_path = '/' + self.config_path
+
         self.agent = SSHAgent()
     
     def connect(self):

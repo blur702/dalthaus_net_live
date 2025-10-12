@@ -238,7 +238,137 @@ class Content extends BaseController
             $content->delete();
             $this->setFlash('success', ucfirst($content->getAttribute('content_type')) . ' deleted successfully.');
         }
-        
+
         $this->redirect('/admin/content');
+    }
+
+    public function autosave(): void
+    {
+        // Set JSON header
+        header('Content-Type: application/json');
+
+        if (!$this->request->isPost()) {
+            echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+            return;
+        }
+
+        // Verify CSRF token
+        if (!$this->auth->validateCsrfToken($this->request->post('_token'))) {
+            echo json_encode(['success' => false, 'message' => 'Invalid security token']);
+            return;
+        }
+
+        try {
+            $userId = $_SESSION['user_id'] ?? null;
+            if (!$userId) {
+                echo json_encode(['success' => false, 'message' => 'User not authenticated']);
+                return;
+            }
+
+            $autosaveModel = new Autosave($this->db);
+
+            $data = [
+                'autosave_uuid' => $this->request->post('autosave_uuid'),
+                'master_content_uuid' => $this->request->post('master_content_uuid'),
+                'content_id' => $this->request->post('content_id') ? (int)$this->request->post('content_id') : null,
+                'user_id' => $userId,
+                'title' => $this->request->post('title', ''),
+                'content' => $this->request->post('body', ''),
+                'excerpt' => $this->request->post('teaser', ''),
+                'type' => $this->request->post('content_type', 'article')
+            ];
+
+            // Only save if we have at least a title
+            if (empty($data['title'])) {
+                echo json_encode(['success' => false, 'message' => 'Title is required for autosave']);
+                return;
+            }
+
+            $autosaveId = $autosaveModel->createOrUpdate($data);
+
+            echo json_encode([
+                'success' => true,
+                'autosave_id' => $autosaveId,
+                'message' => 'Content autosaved successfully'
+            ]);
+
+        } catch (Exception $e) {
+            $this->logError('Autosave error', $e);
+            echo json_encode(['success' => false, 'message' => 'Autosave failed: ' . $e->getMessage()]);
+        }
+    }
+
+    public function loadAutosave(): void
+    {
+        // Set JSON header
+        header('Content-Type: application/json');
+
+        if (!$this->request->isPost()) {
+            echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+            return;
+        }
+
+        try {
+            $userId = $_SESSION['user_id'] ?? null;
+            if (!$userId) {
+                echo json_encode(['success' => false, 'message' => 'User not authenticated']);
+                return;
+            }
+
+            $autosaveModel = new Autosave($this->db);
+            $masterUuid = $this->request->post('master_content_uuid');
+
+            if (!$masterUuid) {
+                echo json_encode(['success' => false, 'message' => 'Master UUID required']);
+                return;
+            }
+
+            $autosave = $autosaveModel->findByMasterUUID($masterUuid);
+
+            if (!$autosave) {
+                echo json_encode(['success' => false, 'message' => 'No autosave found']);
+                return;
+            }
+
+            echo json_encode([
+                'success' => true,
+                'autosave' => $autosave
+            ]);
+
+        } catch (Exception $e) {
+            $this->logError('Load autosave error', $e);
+            echo json_encode(['success' => false, 'message' => 'Failed to load autosave: ' . $e->getMessage()]);
+        }
+    }
+
+    public function listAutosaves(): void
+    {
+        // Set JSON header
+        header('Content-Type: application/json');
+
+        if (!$this->request->isPost()) {
+            echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+            return;
+        }
+
+        try {
+            $userId = $_SESSION['user_id'] ?? null;
+            if (!$userId) {
+                echo json_encode(['success' => false, 'message' => 'User not authenticated']);
+                return;
+            }
+
+            $autosaveModel = new Autosave($this->db);
+            $autosaves = $autosaveModel->getAllAutosaves($userId);
+
+            echo json_encode([
+                'success' => true,
+                'autosaves' => $autosaves
+            ]);
+
+        } catch (Exception $e) {
+            $this->logError('List autosaves error', $e);
+            echo json_encode(['success' => false, 'message' => 'Failed to list autosaves: ' . $e->getMessage()]);
+        }
     }
 }
