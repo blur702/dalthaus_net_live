@@ -35,7 +35,7 @@ class Dashboard extends BaseController
             $recentActivity_raw = ActivityLog::getRecentActivity(10);
             $recentActivity = array_map(fn($item) => is_object($item) && method_exists($item, 'toArray') ? $item->toArray() : $item, $recentActivity_raw);
         } catch (Exception $e) {
-            $this->logError('Failed to get recent activity', $e);
+            error_log('Failed to get recent activity: ' . $e->getMessage());
         }
 
         $activityStats = ['today' => 0, 'week' => 0, 'month' => 0];
@@ -46,7 +46,7 @@ class Dashboard extends BaseController
                 'month' => ActivityLog::getActivityStats('month')
             ];
         } catch (Exception $e) {
-            $this->logError('Failed to get activity stats', $e);
+            error_log('Failed to get activity stats: ' . $e->getMessage());
         }
 
         $hour = (int)date('G');
