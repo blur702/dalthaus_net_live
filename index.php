@@ -19,6 +19,24 @@ set_exception_handler(function ($exception) {
     if ($exception instanceof PDOException && !$config['app']['debug'] && (strpos($exception->getMessage(), 'Connection refused') !== false || strpos($exception->getMessage(), 'Access denied') !== false || strpos($exception->getMessage(), 'Unknown database') !== false || strpos($exception->getMessage(), 'SQLSTATE[HY000]') !== false)) {
         $trace = $exception->getTraceAsString();
         if (strpos($trace, 'Database::getInstance') !== false || strpos($trace, 'Database::__construct') !== false) {
+            // Check if this is an AJAX/API request expecting JSON
+            $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+                     strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+            $requestUri = $_SERVER['REQUEST_URI'] ?? '';
+            $isApiRequest = strpos($requestUri, '/api/') !== false ||
+                           strpos($requestUri, '/upload/') !== false ||
+                           strpos($requestUri, '/autosave') !== false;
+
+            if ($isAjax || $isApiRequest) {
+                http_response_code(503);
+                header('Content-Type: application/json');
+                echo json_encode([
+                    'error' => 'Service temporarily unavailable',
+                    'message' => 'Database connection failed. Please try again later.'
+                ]);
+                exit;
+            }
+
             http_response_code(503);
             echo "<!DOCTYPE html>... [Service Unavailable HTML] ...";
             exit;

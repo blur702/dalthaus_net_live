@@ -290,7 +290,10 @@
                 document.getElementById('mediaGrid').classList.add('hidden');
 
                 const response = await fetch(`/admin/media/api/list?${params}`, {
-                    credentials: 'same-origin' // Include cookies for authentication
+                    credentials: 'same-origin', // Include cookies for authentication
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
                 });
                 const data = await response.json();
 
@@ -421,6 +424,7 @@
                     credentials: 'same-origin', // Include cookies for authentication
                     headers: {
                         'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
                     },
                     body: JSON.stringify({
                         _token: CSRF_TOKEN,

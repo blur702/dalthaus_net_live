@@ -99,6 +99,21 @@ class Router
     {
         if ($middleware === 'auth') {
             if (!$this->auth->check()) {
+                // Check if this is an AJAX/API request expecting JSON
+                $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+                         strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+                $isApiRequest = strpos($this->requestUri, '/api/') !== false ||
+                               strpos($this->requestUri, '/upload/') !== false ||
+                               strpos($this->requestUri, '/autosave') !== false;
+
+                if ($isAjax || $isApiRequest) {
+                    http_response_code(401);
+                    header('Content-Type: application/json');
+                    echo json_encode(['error' => 'Unauthorized. Please log in.']);
+                    exit();
+                }
+
+                // Regular page request - redirect to login
                 header('Location: /admin/login');
                 exit();
             }
