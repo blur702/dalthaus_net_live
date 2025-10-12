@@ -47,7 +47,7 @@ class Auth extends BaseController
             return;
         }
 
-        if (!$this->auth->validateCsrfToken($this->request->post('_token'))) {
+        if (!$this->auth->validateCsrfToken($this->request->post('_token', ''))) {
             $this->setFlash("error", "Invalid security token. Please try again.");
             $this->redirect("/admin/login");
             return;
