@@ -64,10 +64,7 @@ class Auth extends BaseController
         }
 
         if ($this->auth->attempt($username, $password, $rememberMe)) {
-            // Use JavaScript redirect with delay to allow session cookie to be set properly
-            // This fixes SameSite=Lax cookie issues after session_regenerate_id()
-            echo '<html><head><script>setTimeout(function(){window.location.href="/admin/dashboard";}, 100);</script></head><body>Redirecting...</body></html>';
-            exit;
+            $this->redirect("/admin/dashboard");
         } else {
             $this->setFlash("error", "Invalid username or password.");
             $this->redirect("/admin/login");
