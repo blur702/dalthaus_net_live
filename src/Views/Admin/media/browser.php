@@ -281,14 +281,17 @@
                 limit: 24,
                 ...(search && { search }),
                 ...(type && { type }),
-                ...(groupDual && { group_by: 'dual' })
+                ...(groupDual && { group_by: 'dual' }),
+                _: Date.now() // Cache buster
             });
 
             try {
                 document.getElementById('loadingIndicator').classList.remove('hidden');
                 document.getElementById('mediaGrid').classList.add('hidden');
 
-                const response = await fetch(`/admin/media/api/list?${params}`);
+                const response = await fetch(`/admin/media/api/list?${params}`, {
+                    credentials: 'same-origin' // Include cookies for authentication
+                });
                 const data = await response.json();
 
                 if (data.success) {
@@ -415,6 +418,7 @@
             try {
                 const response = await fetch(`/admin/media/api/${id}/metadata`, {
                     method: 'POST',
+                    credentials: 'same-origin', // Include cookies for authentication
                     headers: {
                         'Content-Type': 'application/json',
                     },

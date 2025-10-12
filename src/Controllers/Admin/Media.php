@@ -11,11 +11,6 @@ use CMS\Utils\Auth;
 
 class Media extends BaseController
 {
-    public function __construct(Database $db, Auth $auth, array $config)
-    {
-        parent::__construct($db, $auth, $config);
-    }
-
     protected function initialize(): void
     {
         $this->view->layout('admin');
@@ -23,6 +18,7 @@ class Media extends BaseController
 
     public function index(): void
     {
+        $this->requireAuth();
         $page = $this->request->get('page', 1, 'int');
         $limit = 50;
         $offset = ($page - 1) * $limit;
@@ -143,6 +139,21 @@ class Media extends BaseController
 
     public function apiList(): void
     {
+        // Log session and auth state for debugging
+        error_log("===== Media::apiList() START =====");
+        error_log("Session ID: " . session_id());
+        error_log("Session data: " . print_r($_SESSION ?? 'no session', true));
+        error_log("Auth object exists: " . ($this->auth ? 'yes' : 'no'));
+        error_log("Auth check result: " . ($this->auth && $this->auth->check() ? 'TRUE' : 'FALSE'));
+
+        // Check authentication for API endpoints
+        if (!$this->auth || !$this->auth->check()) {
+            error_log("Auth failed - returning 401");
+            $this->renderJson(['error' => 'Unauthorized'], 401);
+            return;
+        }
+
+        error_log("Auth passed - proceeding with query");
         $page = $this->request->get('page', 1, 'int');
         $limit = $this->request->get('limit', 24, 'int');
         $offset = ($page - 1) * $limit;
@@ -161,6 +172,12 @@ class Media extends BaseController
 
     public function apiUpdateMetadata(int $id): void
     {
+        // Check authentication for API endpoints
+        if (!$this->auth || !$this->auth->check()) {
+            $this->renderJson(['error' => 'Unauthorized'], 401);
+            return;
+        }
+
         if (!$this->request->isPost() || !$this->auth->validateCsrfToken($this->request->post('_token'))) {
             $this->renderJson(['error' => 'Invalid request'], 400);
             return;
@@ -181,6 +198,7 @@ class Media extends BaseController
 
     public function browser(): void
     {
+        $this->requireAuth();
         $this->render('admin/media/browser');
     }
 }
