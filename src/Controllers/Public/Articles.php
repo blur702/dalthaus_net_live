@@ -51,6 +51,7 @@ class Articles extends BaseController
 
         $this->render('articles/show', [
             'article' => $article,
+            'content' => $article->getAttribute('body'),
             'author' => $article->getAuthor(),
             'can_edit' => $this->auth->check(),
             'page_title' => $article->getAttribute('title'),

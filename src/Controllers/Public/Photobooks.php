@@ -51,6 +51,7 @@ class Photobooks extends BaseController
 
         $this->render('photobooks/show', [
             'photobook' => $photobook,
+            'content' => $photobook->getAttribute('body'),
             'author' => $photobook->getAuthor(),
             'can_edit' => $this->auth->check(),
             'page_title' => $photobook->getAttribute('title'),
