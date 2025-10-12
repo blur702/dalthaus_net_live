@@ -18,7 +18,6 @@ class Media extends BaseController
 
     public function index(): void
     {
-        $this->requireAuth();
         $page = $this->request->get('page', 1, 'int');
         $limit = 50;
         $offset = ($page - 1) * $limit;
@@ -198,7 +197,6 @@ class Media extends BaseController
 
     public function browser(): void
     {
-        $this->requireAuth();
         $this->render('admin/media/browser');
     }
 }
