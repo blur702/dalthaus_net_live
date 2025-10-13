@@ -371,4 +371,65 @@ class Content extends BaseController
             echo json_encode(['success' => false, 'message' => 'Failed to list autosaves: ' . $e->getMessage()]);
         }
     }
+
+    public function reorder(): void
+    {
+        $type = $this->request->get('type', '');
+
+        // If type filter is specified, validate it
+        if (!empty($type) && !in_array($type, [ContentModel::TYPE_ARTICLE, ContentModel::TYPE_PHOTOBOOK])) {
+            $type = '';
+        }
+
+        // Get content for reordering (all content or filtered by type)
+        $content = ContentModel::getForReordering($type);
+
+        $this->render('admin/content/reorder', [
+            'content' => $content,
+            'content_type' => $type,
+            'page_title' => 'Reorder Content',
+        ]);
+    }
+
+    public function updateOrder(): void
+    {
+        if (!$this->request->isPost()) {
+            $this->renderJson(['success' => false, 'message' => 'Invalid request method'], 405);
+            return;
+        }
+
+        if (!$this->auth->validateCsrfToken($this->request->post('_token'))) {
+            $this->renderJson(['success' => false, 'message' => 'Invalid CSRF token'], 403);
+            return;
+        }
+
+        try {
+            $orderJson = $this->request->post('order', '');
+            if (empty($orderJson)) {
+                throw new Exception('No order data provided');
+            }
+
+            $orderData = json_decode($orderJson, true);
+            if (!is_array($orderData)) {
+                throw new Exception('Invalid order data format');
+            }
+
+            // Transform array format from [{id: 1, position: 1}] to [1 => 1]
+            $transformedData = [];
+            foreach ($orderData as $item) {
+                if (isset($item['id']) && isset($item['position'])) {
+                    $transformedData[$item['id']] = $item['position'];
+                }
+            }
+
+            if (ContentModel::updateSortOrder($transformedData)) {
+                $this->renderJson(['success' => true, 'message' => 'Content order updated successfully']);
+            } else {
+                throw new Exception('Failed to update content order');
+            }
+        } catch (Exception $e) {
+            $this->logError('Update content order error', $e);
+            $this->renderJson(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
 }
