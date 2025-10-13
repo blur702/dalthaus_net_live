@@ -215,8 +215,25 @@ function saveOrder() {
         method: 'POST',
         body: formData
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log('[Photobooks Reorder] Response status:', response.status);
+        console.log('[Photobooks Reorder] Response headers:', response.headers.get('content-type'));
+
+        // Check if response is JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            // Not JSON - log the HTML and throw error
+            return response.text().then(html => {
+                console.error('[Photobooks Reorder] Received HTML instead of JSON:', html.substring(0, 500));
+                throw new Error('Server returned HTML instead of JSON (possible redirect or error page)');
+            });
+        }
+
+        return response.json();
+    })
     .then(data => {
+        console.log('[Photobooks Reorder] Response data:', data);
+
         if (data.success) {
             showSaveStatus('success', data.message || 'Photobook order saved successfully');
             hasUnsavedChanges = false;
@@ -225,8 +242,8 @@ function saveOrder() {
         }
     })
     .catch(error => {
-        console.error('Error:', error);
-        showSaveStatus('error', 'An error occurred while saving the photobook order');
+        console.error('[Photobooks Reorder] Error:', error);
+        showSaveStatus('error', error.message || 'An error occurred while saving the photobook order');
     })
     .finally(() => {
         // Re-enable save button
