@@ -111,7 +111,8 @@ class Router
                          strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
                 $isApiRequest = strpos($this->requestUri, '/api/') !== false ||
                                strpos($this->requestUri, '/upload/') !== false ||
-                               strpos($this->requestUri, '/autosave') !== false;
+                               strpos($this->requestUri, '/autosave') !== false ||
+                               strpos($this->requestUri, '/update-order') !== false;
 
                 error_log("Is AJAX request: " . ($isAjax ? 'yes' : 'no'));
                 error_log("Is API request: " . ($isApiRequest ? 'yes' : 'no'));
