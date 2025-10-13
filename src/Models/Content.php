@@ -267,8 +267,9 @@ class Content extends BaseModel
     public static function getForReordering(?string $contentType = null): array
     {
         $instance = new static();
-        
-        $query = "SELECT content_id, title, content_type, sort_order 
+
+        $query = "SELECT content_id, title, content_type, sort_order, status,
+                         teaser, teaser_image, url_alias
                   FROM {$instance->table}";
         $params = [];
 
@@ -279,8 +280,15 @@ class Content extends BaseModel
 
         $query .= " ORDER BY sort_order ASC, title ASC";
 
+        error_log("[Content::getForReordering] Query: $query");
+        error_log("[Content::getForReordering] Params: " . json_encode($params));
+
         // Return arrays directly instead of model objects for view compatibility
-        return $instance->db->fetchAll($query, $params);
+        $results = $instance->db->fetchAll($query, $params);
+
+        error_log("[Content::getForReordering] Found " . count($results) . " items");
+
+        return $results;
     }
 
     /**
@@ -292,23 +300,33 @@ class Content extends BaseModel
     public static function updateSortOrder(array $orderData): bool
     {
         $instance = new static();
-        
+
+        error_log("[Content::updateSortOrder] Starting update with " . count($orderData) . " items");
+        error_log("[Content::updateSortOrder] Order data: " . json_encode($orderData));
+
         try {
             $instance->db->beginTransaction();
-            
+
             foreach ($orderData as $id => $order) {
-                $instance->db->update(
+                error_log("[Content::updateSortOrder] Updating content_id=$id to sort_order=$order");
+
+                $result = $instance->db->update(
                     $instance->table,
                     ['sort_order' => $order],
                     'content_id = ?',
                     [$id]
                 );
+
+                error_log("[Content::updateSortOrder] Update result for content_id=$id: " . ($result ? 'success' : 'failed'));
             }
-            
+
             $instance->db->commit();
+            error_log("[Content::updateSortOrder] Transaction committed successfully");
             return true;
         } catch (\Exception $e) {
             $instance->db->rollback();
+            error_log("[Content::updateSortOrder] ERROR: " . $e->getMessage());
+            error_log("[Content::updateSortOrder] Stack trace: " . $e->getTraceAsString());
             return false;
         }
     }

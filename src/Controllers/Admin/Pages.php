@@ -144,6 +144,77 @@ class Pages extends BaseController
         $this->redirect('/admin/pages');
     }
 
+    public function reorder(): void
+    {
+        error_log("[Pages::reorder] START - Request URI: " . ($_SERVER['REQUEST_URI'] ?? 'unknown'));
+
+        $pages = PageModel::getForReordering();
+        error_log("[Pages::reorder] Retrieved " . count($pages) . " pages");
+
+        $this->render('admin/pages/reorder', [
+            'pages' => $pages,
+            'page_title' => 'Reorder Pages',
+        ]);
+    }
+
+    public function updateOrder(): void
+    {
+        error_log("[Pages::updateOrder] START - Request method: " . ($_SERVER['REQUEST_METHOD'] ?? 'unknown'));
+
+        if (!$this->request->isPost()) {
+            error_log("[Pages::updateOrder] ERROR: Not a POST request");
+            $this->renderJson(['success' => false, 'message' => 'Invalid request method'], 405);
+            return;
+        }
+
+        $token = $this->request->post('_token');
+        error_log("[Pages::updateOrder] CSRF token received: " . ($token ? 'yes' : 'no'));
+
+        if (!$this->auth->validateCsrfToken($token)) {
+            error_log("[Pages::updateOrder] ERROR: Invalid CSRF token");
+            $this->renderJson(['success' => false, 'message' => 'Invalid CSRF token'], 403);
+            return;
+        }
+
+        try {
+            $orderJson = $this->request->post('order', '');
+            error_log("[Pages::updateOrder] Raw order JSON: " . $orderJson);
+
+            if (empty($orderJson)) {
+                throw new Exception('No order data provided');
+            }
+
+            $orderData = json_decode($orderJson, true);
+            if (!is_array($orderData)) {
+                throw new Exception('Invalid order data format');
+            }
+
+            error_log("[Pages::updateOrder] Decoded order data: " . json_encode($orderData));
+
+            // Transform array format from [{id: 1, position: 1}] to [1 => 1]
+            $transformedData = [];
+            foreach ($orderData as $item) {
+                if (isset($item['id']) && isset($item['position'])) {
+                    $transformedData[$item['id']] = $item['position'];
+                }
+            }
+
+            error_log("[Pages::updateOrder] Transformed data: " . json_encode($transformedData));
+
+            if (PageModel::updateSortOrder($transformedData)) {
+                error_log("[Pages::updateOrder] SUCCESS: Order updated");
+                $this->renderJson(['success' => true, 'message' => 'Page order updated successfully']);
+            } else {
+                throw new Exception('Failed to update page order');
+            }
+        } catch (Exception $e) {
+            error_log("[Pages::updateOrder] EXCEPTION: " . $e->getMessage());
+            error_log("[Pages::updateOrder] Stack trace: " . $e->getTraceAsString());
+            $this->logError('Update page order error', $e);
+            $this->renderJson(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
     private function getFormData(): array
     {
         return [

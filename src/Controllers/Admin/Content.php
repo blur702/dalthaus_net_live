@@ -374,15 +374,20 @@ class Content extends BaseController
 
     public function reorder(): void
     {
+        error_log("[Content::reorder] START - Request URI: " . ($_SERVER['REQUEST_URI'] ?? 'unknown'));
+
         $type = $this->request->get('type', '');
+        error_log("[Content::reorder] Type filter: " . ($type ?: 'none'));
 
         // If type filter is specified, validate it
         if (!empty($type) && !in_array($type, [ContentModel::TYPE_ARTICLE, ContentModel::TYPE_PHOTOBOOK])) {
+            error_log("[Content::reorder] Invalid type '$type', resetting to empty");
             $type = '';
         }
 
         // Get content for reordering (all content or filtered by type)
         $content = ContentModel::getForReordering($type);
+        error_log("[Content::reorder] Retrieved " . count($content) . " content items");
 
         $this->render('admin/content/reorder', [
             'content' => $content,
@@ -393,18 +398,27 @@ class Content extends BaseController
 
     public function updateOrder(): void
     {
+        error_log("[Content::updateOrder] START - Request method: " . ($_SERVER['REQUEST_METHOD'] ?? 'unknown'));
+
         if (!$this->request->isPost()) {
+            error_log("[Content::updateOrder] ERROR: Not a POST request");
             $this->renderJson(['success' => false, 'message' => 'Invalid request method'], 405);
             return;
         }
 
-        if (!$this->auth->validateCsrfToken($this->request->post('_token'))) {
+        $token = $this->request->post('_token');
+        error_log("[Content::updateOrder] CSRF token received: " . ($token ? 'yes' : 'no'));
+
+        if (!$this->auth->validateCsrfToken($token)) {
+            error_log("[Content::updateOrder] ERROR: Invalid CSRF token");
             $this->renderJson(['success' => false, 'message' => 'Invalid CSRF token'], 403);
             return;
         }
 
         try {
             $orderJson = $this->request->post('order', '');
+            error_log("[Content::updateOrder] Raw order JSON: " . $orderJson);
+
             if (empty($orderJson)) {
                 throw new Exception('No order data provided');
             }
@@ -414,6 +428,8 @@ class Content extends BaseController
                 throw new Exception('Invalid order data format');
             }
 
+            error_log("[Content::updateOrder] Decoded order data: " . json_encode($orderData));
+
             // Transform array format from [{id: 1, position: 1}] to [1 => 1]
             $transformedData = [];
             foreach ($orderData as $item) {
@@ -422,12 +438,17 @@ class Content extends BaseController
                 }
             }
 
+            error_log("[Content::updateOrder] Transformed data: " . json_encode($transformedData));
+
             if (ContentModel::updateSortOrder($transformedData)) {
+                error_log("[Content::updateOrder] SUCCESS: Order updated");
                 $this->renderJson(['success' => true, 'message' => 'Content order updated successfully']);
             } else {
                 throw new Exception('Failed to update content order');
             }
         } catch (Exception $e) {
+            error_log("[Content::updateOrder] EXCEPTION: " . $e->getMessage());
+            error_log("[Content::updateOrder] Stack trace: " . $e->getTraceAsString());
             $this->logError('Update content order error', $e);
             $this->renderJson(['success' => false, 'message' => $e->getMessage()], 500);
         }
