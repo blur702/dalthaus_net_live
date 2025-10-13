@@ -51,4 +51,38 @@ class Request
         $uri = $this->server['REQUEST_URI'] ?? '/';
         return strtok($uri, '?');
     }
+
+    /**
+     * Get uploaded file information
+     *
+     * @param string $key The file input name
+     * @return array|null Returns file array or null if not found
+     */
+    public function file(string $key): ?array
+    {
+        return $this->files[$key] ?? null;
+    }
+
+    /**
+     * Check if a file was uploaded
+     *
+     * @param string $key The file input name
+     * @return bool
+     */
+    public function hasFile(string $key): bool
+    {
+        return isset($this->files[$key]) &&
+               is_array($this->files[$key]) &&
+               $this->files[$key]['error'] !== UPLOAD_ERR_NO_FILE;
+    }
+
+    /**
+     * Get all uploaded files
+     *
+     * @return array
+     */
+    public function files(): array
+    {
+        return $this->files;
+    }
 }
