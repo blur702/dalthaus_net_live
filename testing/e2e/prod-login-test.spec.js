@@ -91,6 +91,12 @@ test.describe('Production Login Test', () => {
             console.log('   ⚠️  No session cookie found');
         }
 
+        // Visit debug endpoint to see session state
+        console.log('   Checking session state via debug endpoint...');
+        const debugResponse = await page.goto(`${baseURL}/debug_session_info.php`);
+        const debugText = await debugResponse.text();
+        console.log('   Debug output:\n' + debugText.substring(0, 500));
+
         // Navigate to media browser
         console.log('4. Navigating to media browser...');
         await page.goto(`${baseURL}/admin/media/browser`, { waitUntil: 'networkidle' });
