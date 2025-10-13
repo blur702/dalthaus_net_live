@@ -42,12 +42,42 @@ set_exception_handler(function ($exception) {
             exit;
         }
     }
+    // Check if this is an AJAX/API request
+    $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+             strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+    $isApiRequest = strpos($_SERVER['REQUEST_URI'] ?? '', '/api/') !== false ||
+                   strpos($_SERVER['REQUEST_URI'] ?? '', '/upload/') !== false ||
+                   strpos($_SERVER['REQUEST_URI'] ?? '', '/autosave') !== false;
+
     if ($config['app']['debug']) {
+        if ($isAjax || $isApiRequest) {
+            http_response_code(500);
+            header('Content-Type: application/json');
+            echo json_encode([
+                'error' => 'Internal Server Error',
+                'message' => $exception->getMessage(),
+                'file' => $exception->getFile(),
+                'line' => $exception->getLine(),
+                'trace' => $exception->getTraceAsString()
+            ]);
+            exit;
+        }
         echo "<h1>Error</h1><p>" . htmlspecialchars($exception->getMessage()) . "</p><pre>" . htmlspecialchars($exception->getTraceAsString()) . "</pre>";
     } else {
+        // For AJAX/API requests, return JSON even in production
+        if ($isAjax || $isApiRequest) {
+            http_response_code(500);
+            header('Content-Type: application/json');
+            error_log("[EXCEPTION HANDLER] Returning JSON error for AJAX/API request");
+            echo json_encode([
+                'error' => 'Internal Server Error',
+                'message' => 'An error occurred while processing your request. Please try again.'
+            ]);
+            exit;
+        }
+
         if (strpos($_SERVER['REQUEST_URI'] ?? '', '/admin') === 0) {
-            error_log("[EXCEPTION HANDLER] ❌❌❌ REDIRECTING TO LOGIN DUE TO EXCEPTION ❌❌❌");
-            error_log("[EXCEPTION HANDLER] This redirect may be causing login issues!");
+            error_log("[EXCEPTION HANDLER] Redirecting to login due to exception on admin route");
             header("Location: /admin/login");
             exit;
         }
