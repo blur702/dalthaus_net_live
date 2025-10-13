@@ -98,7 +98,14 @@ class Router
     private function executeMiddleware(string $middleware): void
     {
         if ($middleware === 'auth') {
-            if (!$this->auth->check()) {
+            $isAuthenticated = $this->auth->check();
+
+            // Log authentication check
+            error_log("Router middleware auth check: " . ($isAuthenticated ? 'PASS' : 'FAIL'));
+            error_log("Request URI: " . $this->requestUri);
+            error_log("Request Method: " . $this->requestMethod);
+
+            if (!$isAuthenticated) {
                 // Check if this is an AJAX/API request expecting JSON
                 $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
                          strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
@@ -106,7 +113,12 @@ class Router
                                strpos($this->requestUri, '/upload/') !== false ||
                                strpos($this->requestUri, '/autosave') !== false;
 
+                error_log("Is AJAX request: " . ($isAjax ? 'yes' : 'no'));
+                error_log("Is API request: " . ($isApiRequest ? 'yes' : 'no'));
+                error_log("X-Requested-With header: " . ($_SERVER['HTTP_X_REQUESTED_WITH'] ?? 'not set'));
+
                 if ($isAjax || $isApiRequest) {
+                    error_log("Returning 401 JSON response for unauthenticated AJAX/API request");
                     http_response_code(401);
                     header('Content-Type: application/json');
                     echo json_encode(['error' => 'Unauthorized. Please log in.']);
@@ -114,8 +126,11 @@ class Router
                 }
 
                 // Regular page request - redirect to login
+                error_log("Redirecting to login page");
                 header('Location: /admin/login');
                 exit();
+            } else {
+                error_log("Auth middleware passed - user is authenticated");
             }
         }
     }
