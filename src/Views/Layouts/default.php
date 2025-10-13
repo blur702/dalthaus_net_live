@@ -715,7 +715,12 @@
                 const images = document.querySelectorAll(selector);
                 images.forEach(function(img) {
                     const src = img.getAttribute('src');
-                    
+
+                    // Skip teaser images (they should link to content, not open modals)
+                    if (img.classList.contains('teaser-image')) {
+                        return;
+                    }
+
                     // Only process images from uploads directory that don't already have modal functionality
                     if (src && src.includes('/uploads/') && !img.hasAttribute('data-modal-enabled') && !img.hasAttribute('data-modal-src')) {
                         
