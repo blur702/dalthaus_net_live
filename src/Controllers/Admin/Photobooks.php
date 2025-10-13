@@ -73,18 +73,36 @@ class Photobooks extends BaseController
 
     public function updateOrder(): void
     {
-        if (!$this->request->isPost() || !$this->auth->validateCsrfToken($this->request->post('_token'))) {
-            $this->renderJson(['success' => false, 'message' => 'Invalid request'], 400);
+        if (!$this->request->isPost()) {
+            $this->renderJson(['success' => false, 'message' => 'Invalid request method'], 405);
+            return;
+        }
+
+        if (!$this->auth->validateCsrfToken($this->request->post('_token'))) {
+            $this->renderJson(['success' => false, 'message' => 'Invalid CSRF token'], 403);
             return;
         }
 
         try {
-            $orderData = $this->request->json();
-            if (empty($orderData)) {
+            $orderJson = $this->request->post('order', '');
+            if (empty($orderJson)) {
                 throw new Exception('No order data provided');
             }
 
-            if (ContentModel::updateSortOrder($orderData, ContentModel::TYPE_PHOTOBOOK)) {
+            $orderData = json_decode($orderJson, true);
+            if (!is_array($orderData)) {
+                throw new Exception('Invalid order data format');
+            }
+
+            // Transform array format from [{id: 1, position: 1}] to [1 => 1]
+            $transformedData = [];
+            foreach ($orderData as $item) {
+                if (isset($item['id']) && isset($item['position'])) {
+                    $transformedData[$item['id']] = $item['position'];
+                }
+            }
+
+            if (ContentModel::updateSortOrder($transformedData)) {
                 $this->renderJson(['success' => true, 'message' => 'Photobook order updated successfully']);
             } else {
                 throw new Exception('Failed to update photobook order');
