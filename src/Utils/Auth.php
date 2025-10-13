@@ -160,18 +160,30 @@ class Auth
     public function check(): bool
     {
         error_log("Auth::check() - Starting authentication check");
+        error_log("Auth::check() - Session ID: " . session_id());
         error_log("Auth::check() - Session logged_in: " . (isset($_SESSION['logged_in']) ? var_export($_SESSION['logged_in'], true) : 'not set'));
+        error_log("Auth::check() - Session last_activity: " . (isset($_SESSION['last_activity']) ? date('Y-m-d H:i:s', $_SESSION['last_activity']) : 'not set'));
+        error_log("Auth::check() - Current time: " . date('Y-m-d H:i:s'));
         error_log("Auth::check() - Remember cookie exists: " . (isset($_COOKIE['remember_token']) ? 'yes' : 'no'));
-        
+
         if (isset($_SESSION['logged_in']) && !empty($_SESSION['logged_in'])) {
             error_log("Auth::check() - User has active session");
+
+            // Check if session has expired
             if ($this->isSessionExpired()) {
-                error_log("Auth::check() - Session expired, logging out");
+                $lastActivity = $_SESSION['last_activity'] ?? 0;
+                $elapsed = time() - $lastActivity;
+                $sessionLifetime = $this->config['session_lifetime'] ?? 3600;
+                error_log("Auth::check() - Session EXPIRED! Last activity was {$elapsed} seconds ago (lifetime: {$sessionLifetime})");
                 $this->logout();
                 return false;
             }
 
+            // Update last activity timestamp
+            $oldActivity = $_SESSION['last_activity'] ?? 0;
             $_SESSION['last_activity'] = time();
+            error_log("Auth::check() - Updated last_activity from " . date('Y-m-d H:i:s', $oldActivity) . " to " . date('Y-m-d H:i:s', $_SESSION['last_activity']));
+
             error_log("Auth::check() - Session valid, returning true");
             return true;
         }
