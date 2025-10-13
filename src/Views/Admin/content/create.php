@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const autoSave = new AutoSave('contentForm', {
                 saveInterval: 30000,
                 debounceDelay: 2000,
-                endpoint: '/admin/content/create-draft'
+                endpoint: '/admin/content/autosave'
             });
             console.log('✅ AutoSave instance created successfully');
         } catch (error) {
