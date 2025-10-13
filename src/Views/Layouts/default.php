@@ -597,11 +597,13 @@
         };
 
         window.closeImageModal = function() {
-            const modal = document.querySelector('.image-modal');
-            if (modal) {
+            // Close ALL modals (in case multiple were created)
+            const modals = document.querySelectorAll('.image-modal');
+            modals.forEach(function(modal) {
                 modal.remove();
-                document.body.style.overflow = ''; // Restore scrolling
-            }
+            });
+            // Restore scrolling
+            document.body.style.overflow = '';
         };
 
         // Image lazy loading implementation
@@ -667,35 +669,38 @@
                     
                     // Wait for image to load if not already loaded
                     function processImage() {
+                        // Double-check if already processed (prevent duplicate handlers)
+                        if (img.hasAttribute('data-modal-enabled')) {
+                            return;
+                        }
+
                         // Mark as having modal functionality
                         img.setAttribute('data-modal-enabled', 'true');
-                        
+
                         // Add cursor pointer style
                         img.style.cursor = 'pointer';
-                        
+
                         // Add click event listener using the modal image source
                         img.addEventListener('click', function(e) {
                             e.preventDefault();
                             const alt = this.alt || 'Image';
                             openImageModal(modalSrc, alt);
-                        });
-                        
+                        }, { once: false });
+
                         // Add hover effect class if not already present
                         if (!img.classList.contains('modal-image')) {
                             img.classList.add('modal-image');
                         }
-                        
+
                         console.log('Modal functionality added to dual-image with data-modal-src:', modalSrc.substring(modalSrc.lastIndexOf('/') + 1));
                     }
-                    
+
                     // If image is already loaded, process immediately
                     if (img.complete && img.naturalWidth > 0) {
                         processImage();
                     } else {
-                        // Wait for image to load
-                        img.addEventListener('load', processImage);
-                        // Also try after a short delay in case load event already fired
-                        setTimeout(processImage, 100);
+                        // Wait for image to load - use once:true to prevent duplicate listeners
+                        img.addEventListener('load', processImage, { once: true });
                     }
                 });
             });
@@ -725,45 +730,48 @@
                     if (src && src.includes('/uploads/') && !img.hasAttribute('data-modal-enabled') && !img.hasAttribute('data-modal-src')) {
                         
                         function processUploadedImage() {
+                            // Double-check if already processed (prevent duplicate handlers)
+                            if (img.hasAttribute('data-modal-enabled')) {
+                                return;
+                            }
+
                             // Mark as having modal functionality
                             img.setAttribute('data-modal-enabled', 'true');
-                            
+
                             // Add cursor pointer style
                             img.style.cursor = 'pointer';
                             img.style.transition = 'opacity 0.2s ease';
-                            
+
                             // Add click event listener using the same image as modal (full-size view)
                             img.addEventListener('click', function(e) {
                                 e.preventDefault();
                                 const alt = this.alt || 'Image';
                                 openImageModal(src, alt);
-                            });
-                            
+                            }, { once: false });
+
                             // Add hover effect
                             img.addEventListener('mouseenter', function() {
                                 this.style.opacity = '0.9';
                             });
-                            
+
                             img.addEventListener('mouseleave', function() {
                                 this.style.opacity = '1';
                             });
-                            
+
                             // Add modal class if not already present
                             if (!img.classList.contains('modal-image')) {
                                 img.classList.add('modal-image');
                             }
-                            
+
                             console.log('Modal functionality added to uploaded image:', src.substring(src.lastIndexOf('/') + 1));
                         }
-                        
+
                         // If image is already loaded, process immediately
                         if (img.complete && img.naturalWidth > 0) {
                             processUploadedImage();
                         } else {
-                            // Wait for image to load
-                            img.addEventListener('load', processUploadedImage);
-                            // Also try after a short delay in case load event already fired
-                            setTimeout(processUploadedImage, 100);
+                            // Wait for image to load - use once:true to prevent duplicate listeners
+                            img.addEventListener('load', processUploadedImage, { once: true });
                         }
                     }
                 });
