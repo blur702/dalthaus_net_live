@@ -41,19 +41,28 @@ class Photobooks extends BaseController
 
     public function show(string $alias): void
     {
-        $photobook = Content::findByAlias($alias);
-        
+        // If user is authenticated (admin), allow viewing drafts
+        if ($this->auth->check()) {
+            $photobook = Content::findByUrlAlias($alias);
+        } else {
+            $photobook = Content::findByAlias($alias);
+        }
+
         if ($photobook === null || !$photobook->isPhotobook()) {
             http_response_code(404);
             $this->render('errors/404', ['page_title' => 'Photobook Not Found']);
             return;
         }
 
+        // Show draft indicator for authenticated users viewing unpublished content
+        $isDraft = $photobook->getAttribute('status') !== Content::STATUS_PUBLISHED;
+
         $this->render('photobooks/show', [
             'photobook' => $photobook,
             'content' => $photobook->getAttribute('body'),
             'author' => $photobook->getAuthor(),
             'can_edit' => $this->auth->check(),
+            'is_draft' => $isDraft,
             'page_title' => $photobook->getAttribute('title'),
             'meta_description' => $photobook->getAttribute('meta_description'),
             'meta_keywords' => $photobook->getAttribute('meta_keywords')

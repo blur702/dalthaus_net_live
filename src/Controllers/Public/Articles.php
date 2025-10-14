@@ -41,19 +41,28 @@ class Articles extends BaseController
 
     public function show(string $alias): void
     {
-        $article = Content::findByAlias($alias);
-        
+        // If user is authenticated (admin), allow viewing drafts
+        if ($this->auth->check()) {
+            $article = Content::findByUrlAlias($alias);
+        } else {
+            $article = Content::findByAlias($alias);
+        }
+
         if ($article === null || !$article->isArticle()) {
             http_response_code(404);
             $this->render('errors/404', ['page_title' => 'Article Not Found']);
             return;
         }
 
+        // Show draft indicator for authenticated users viewing unpublished content
+        $isDraft = $article->getAttribute('status') !== Content::STATUS_PUBLISHED;
+
         $this->render('articles/show', [
             'article' => $article,
             'content' => $article->getAttribute('body'),
             'author' => $article->getAuthor(),
             'can_edit' => $this->auth->check(),
+            'is_draft' => $isDraft,
             'page_title' => $article->getAttribute('title'),
             'meta_description' => $article->getAttribute('meta_description'),
             'meta_keywords' => $article->getAttribute('meta_keywords')
