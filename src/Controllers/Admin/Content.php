@@ -264,6 +264,21 @@ class Content extends BaseController
 
     private function deleteOldImage(string $imagePath): void
     {
+        error_log("[Content::deleteOldImage] Checking if image can be safely deleted: $imagePath");
+
+        // Check if any other content is using this same image path
+        $checkQuery = "SELECT content_id, title FROM content
+                       WHERE (featured_image = ? OR teaser_image = ?)";
+        $results = $this->db->fetchAll($checkQuery, [$imagePath, $imagePath]);
+
+        if (count($results) > 1) {
+            error_log("[Content::deleteOldImage] SKIPPING - Image is used by " . count($results) . " other content items");
+            foreach ($results as $item) {
+                error_log("[Content::deleteOldImage]   - Content ID {$item['content_id']}: {$item['title']}");
+            }
+            return;
+        }
+
         // Handle both relative and absolute paths
         if (strpos($imagePath, '/') === 0) {
             // Absolute path from web root
