@@ -136,8 +136,9 @@ class Media extends BaseController
             return;
         }
 
-        error_log("[Media::view] Found upload, rendering view");
-        $this->render('admin/media/view', ['upload' => $upload]);
+        error_log("[Media::view] Found upload, converting to array for view");
+        // Convert model object to array for view compatibility
+        $this->render('admin/media/view', ['upload' => $upload->toArray()]);
     }
 
     public function apiList(): void
