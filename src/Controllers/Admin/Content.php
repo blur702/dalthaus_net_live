@@ -109,6 +109,11 @@ class Content extends BaseController
             $data['user_id'] = $this->auth->id();
             $data['sort_order'] = ContentModel::getNextSortOrder();
 
+            // Handle file uploads for new content (create temporary content object for method signature)
+            error_log("[Content::store] Checking for file uploads");
+            $tempContent = new ContentModel($this->db);
+            $this->handleFileUploads($data, $tempContent);
+
             $content = ContentModel::create($data);
 
             $this->setFlash('success', ucfirst($data['content_type']) . ' created successfully.');
@@ -161,6 +166,120 @@ class Content extends BaseController
         return $errors;
     }
 
+    private function handleFileUploads(array &$data, ContentModel $content): void
+    {
+        error_log("[Content::handleFileUploads] Starting file upload handling");
+
+        // Handle featured image upload
+        $featuredImage = $this->request->file('featured_image');
+        if ($featuredImage && $featuredImage['error'] === UPLOAD_ERR_OK) {
+            error_log("[Content::handleFileUploads] Featured image upload detected");
+            $uploadedPath = $this->uploadContentImage($featuredImage, 'featured');
+            if ($uploadedPath) {
+                $data['featured_image'] = $uploadedPath;
+                error_log("[Content::handleFileUploads] Featured image uploaded: $uploadedPath");
+
+                // Delete old featured image if it exists
+                $oldImage = $content->getAttribute('featured_image');
+                if ($oldImage) {
+                    $this->deleteOldImage($oldImage);
+                }
+            } else {
+                error_log("[Content::handleFileUploads] Featured image upload failed");
+            }
+        } else {
+            if ($featuredImage) {
+                error_log("[Content::handleFileUploads] Featured image error code: " . $featuredImage['error']);
+            }
+        }
+
+        // Handle teaser image upload (for photobooks)
+        $teaserImage = $this->request->file('teaser_image');
+        if ($teaserImage && $teaserImage['error'] === UPLOAD_ERR_OK) {
+            error_log("[Content::handleFileUploads] Teaser image upload detected");
+            $uploadedPath = $this->uploadContentImage($teaserImage, 'teaser');
+            if ($uploadedPath) {
+                $data['teaser_image'] = $uploadedPath;
+                error_log("[Content::handleFileUploads] Teaser image uploaded: $uploadedPath");
+
+                // Delete old teaser image if it exists
+                $oldImage = $content->getAttribute('teaser_image');
+                if ($oldImage) {
+                    $this->deleteOldImage($oldImage);
+                }
+            } else {
+                error_log("[Content::handleFileUploads] Teaser image upload failed");
+            }
+        } else {
+            if ($teaserImage) {
+                error_log("[Content::handleFileUploads] Teaser image error code: " . $teaserImage['error']);
+            }
+        }
+
+        error_log("[Content::handleFileUploads] File upload handling complete");
+    }
+
+    private function uploadContentImage(array $file, string $type): ?string
+    {
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        $extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+
+        if (!in_array($extension, $allowedExtensions)) {
+            error_log("[Content::uploadContentImage] Invalid file extension: $extension");
+            return null;
+        }
+
+        // Create directory structure: /uploads/content/{type}s/YYYY/MM/
+        $year = date('Y');
+        $month = date('m');
+        $uploadDir = __DIR__ . "/../../../uploads/content/{$type}s/$year/$month";
+
+        if (!is_dir($uploadDir)) {
+            if (!mkdir($uploadDir, 0755, true)) {
+                error_log("[Content::uploadContentImage] Failed to create directory: $uploadDir");
+                return null;
+            }
+            error_log("[Content::uploadContentImage] Created directory: $uploadDir");
+        }
+
+        // Generate unique filename
+        $filename = uniqid('', true) . '.' . $extension;
+        $uploadPath = $uploadDir . '/' . $filename;
+        $relativePath = "/uploads/content/{$type}s/$year/$month/$filename";
+
+        error_log("[Content::uploadContentImage] Attempting upload to: $uploadPath");
+
+        if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
+            error_log("[Content::uploadContentImage] Upload successful: $relativePath");
+            return $relativePath;
+        }
+
+        error_log("[Content::uploadContentImage] Upload failed");
+        return null;
+    }
+
+    private function deleteOldImage(string $imagePath): void
+    {
+        // Handle both relative and absolute paths
+        if (strpos($imagePath, '/') === 0) {
+            // Absolute path from web root
+            $fullPath = __DIR__ . '/../../../' . ltrim($imagePath, '/');
+        } else {
+            // Relative path
+            $fullPath = __DIR__ . '/../../../uploads/' . $imagePath;
+        }
+
+        if (file_exists($fullPath)) {
+            if (unlink($fullPath)) {
+                error_log("[Content::deleteOldImage] Deleted old image: $fullPath");
+            } else {
+                error_log("[Content::deleteOldImage] Failed to delete old image: $fullPath");
+            }
+        } else {
+            error_log("[Content::deleteOldImage] Old image not found: $fullPath");
+        }
+    }
+
     public function edit(string $id): void
     {
         $content = ContentModel::find((int)$id);
@@ -195,7 +314,7 @@ class Content extends BaseController
             $this->redirect('/admin/content');
             return;
         }
-        
+
         try {
             $data = $this->getFormData();
             $data['url_alias'] = $this->ensureUniqueUrlAlias($data['url_alias'], (int)$id);
@@ -206,6 +325,10 @@ class Content extends BaseController
                 $this->redirect('/admin/content/' . $id . '/edit');
                 return;
             }
+
+            // Handle file uploads
+            error_log("[Content::update] Checking for file uploads for content ID: $id");
+            $this->handleFileUploads($data, $content);
 
             $content->setAttributes($data);
             $content->save();
