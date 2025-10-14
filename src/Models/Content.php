@@ -184,13 +184,19 @@ class Content extends BaseModel
         }
 
         // Sorting
-        $sortBy = $filters['sort_by'] ?? 'updated_at';
-        $sortDir = $filters['sort_dir'] ?? 'DESC';
-        $allowedSortBy = ['title', 'content_type', 'status', 'created_at', 'updated_at', 'published_at'];
+        $sortBy = $filters['sort_by'] ?? 'sort_order';
+        $sortDir = $filters['sort_dir'] ?? 'ASC';
+        $allowedSortBy = ['title', 'content_type', 'status', 'created_at', 'updated_at', 'published_at', 'sort_order'];
         if (!in_array($sortBy, $allowedSortBy)) {
-            $sortBy = 'updated_at';
+            $sortBy = 'sort_order';
         }
-        $query .= " ORDER BY c.{$sortBy} {$sortDir}";
+
+        // When sorting by sort_order, add secondary sort by published_at to match public behavior
+        if ($sortBy === 'sort_order') {
+            $query .= " ORDER BY c.sort_order ASC, c.published_at DESC";
+        } else {
+            $query .= " ORDER BY c.{$sortBy} {$sortDir}";
+        }
 
         // Pagination
         if ($limit !== null) {
@@ -561,8 +567,8 @@ class Content extends BaseModel
             'type' => $filters['content_type'] ?? '',
             'status' => $filters['status'] ?? '',
             'search' => $filters['search'] ?? '',
-            'sort_by' => $filters['sort_by'] ?? 'updated_at',
-            'sort_dir' => $filters['sort_dir'] ?? 'DESC'
+            'sort_by' => $filters['sort_by'] ?? 'sort_order',
+            'sort_dir' => $filters['sort_dir'] ?? 'ASC'
         ];
         
         $results = self::getForAdmin($mappedFilters, $limit, $offset);

@@ -30,8 +30,8 @@ class Content extends BaseController
         $type = $this->request->get('type', '');
         $search = $this->request->get('search', '');
         $status = $this->request->get('status', '');
-        $sortBy = $this->request->get('sort_by', 'created_at');
-        $sortDir = $this->request->get('sort_dir', 'DESC');
+        $sortBy = $this->request->get('sort_by', 'sort_order');
+        $sortDir = $this->request->get('sort_dir', 'ASC');
         
         $validTypes = [ContentModel::TYPE_ARTICLE, ContentModel::TYPE_PHOTOBOOK];
         if (!empty($type) && !in_array($type, $validTypes)) {
