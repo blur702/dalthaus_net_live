@@ -242,10 +242,14 @@ class Content extends BaseController
             error_log("[Content::uploadContentImage] Created directory: $uploadDir");
         }
 
-        // Generate unique filename
-        $filename = uniqid('', true) . '.' . $extension;
+        // Generate unique, web-safe filename using timestamp and random string
+        $timestamp = time();
+        $randomString = bin2hex(random_bytes(8)); // 16 character hex string
+        $filename = $type . '_' . $timestamp . '_' . $randomString . '.' . $extension;
         $uploadPath = $uploadDir . '/' . $filename;
         $relativePath = "/uploads/content/{$type}s/$year/$month/$filename";
+
+        error_log("[Content::uploadContentImage] Generated filename: $filename");
 
         error_log("[Content::uploadContentImage] Attempting upload to: $uploadPath");
 
