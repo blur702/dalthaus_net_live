@@ -70,14 +70,14 @@ class Media extends BaseController
         ]);
     }
 
-    public function markUsed(int $id): void
+    public function markUsed(string $id): void
     {
         if (!$this->request->isPost() || !$this->auth->validateCsrfToken($this->request->post('_token'))) {
             $this->renderJson(['error' => 'Invalid request'], 400);
             return;
         }
 
-        $upload = MediaUpload::find($id);
+        $upload = MediaUpload::find((int)$id);
         if (!$upload) {
             $this->renderJson(['error' => 'Upload not found.'], 404);
             return;
@@ -101,14 +101,14 @@ class Media extends BaseController
         $this->redirect('/admin/media');
     }
 
-    public function delete(int $id): void
+    public function delete(string $id): void
     {
         if (!$this->request->isPost() || !$this->auth->validateCsrfToken($this->request->post('_token'))) {
             $this->renderJson(['error' => 'Invalid request'], 400);
             return;
         }
 
-        $upload = MediaUpload::find($id);
+        $upload = MediaUpload::find((int)$id);
         if (!$upload) {
             $this->renderJson(['error' => 'Upload not found.'], 404);
             return;
@@ -173,7 +173,7 @@ class Media extends BaseController
         ]);
     }
 
-    public function apiUpdateMetadata(int $id): void
+    public function apiUpdateMetadata(string $id): void
     {
         // Check authentication for API endpoints
         if (!$this->auth || !$this->auth->check()) {
@@ -186,7 +186,7 @@ class Media extends BaseController
             return;
         }
 
-        $upload = MediaUpload::find($id);
+        $upload = MediaUpload::find((int)$id);
         if (!$upload) {
             $this->renderJson(['error' => 'Upload not found.'], 404);
             return;
