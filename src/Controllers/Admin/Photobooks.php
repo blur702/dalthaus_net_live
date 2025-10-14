@@ -94,15 +94,7 @@ class Photobooks extends BaseController
                 throw new Exception('Invalid order data format');
             }
 
-            // Transform array format from [{id: 1, position: 1}] to [1 => 1]
-            $transformedData = [];
-            foreach ($orderData as $item) {
-                if (isset($item['id']) && isset($item['position'])) {
-                    $transformedData[$item['id']] = $item['position'];
-                }
-            }
-
-            if (ContentModel::updateSortOrder($transformedData)) {
+            if (ContentModel::updateSortOrder($orderData, ContentModel::TYPE_PHOTOBOOK)) {
                 $this->renderJson(['success' => true, 'message' => 'Photobook order updated successfully']);
             } else {
                 throw new Exception('Failed to update photobook order');
