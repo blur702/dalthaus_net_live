@@ -75,7 +75,10 @@ class Pages extends BaseController
 
         $page = PageModel::create($data);
         $this->setFlash('success', 'Page created successfully.');
-        $this->redirect('/admin/pages/' . $page->getId() . '/edit');
+
+        // Redirect to frontend view of the page
+        $urlAlias = $page->getAttribute('url_alias');
+        $this->redirect("/page/{$urlAlias}");
     }
 
     public function edit(string $id): void
@@ -124,7 +127,10 @@ class Pages extends BaseController
         $page->save();
 
         $this->setFlash('success', 'Page updated successfully.');
-        $this->redirect('/admin/pages/' . $id . '/edit');
+
+        // Redirect to frontend view of the page
+        $urlAlias = $page->getAttribute('url_alias');
+        $this->redirect("/page/{$urlAlias}");
     }
 
     public function delete(string $id): void

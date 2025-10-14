@@ -117,7 +117,11 @@ class Content extends BaseController
             $content = ContentModel::create($data);
 
             $this->setFlash('success', ucfirst($data['content_type']) . ' created successfully.');
-            $this->redirect('/admin/content/' . $content->getId() . '/edit');
+
+            // Redirect to frontend view of the content
+            $contentType = $content->getAttribute('content_type');
+            $urlAlias = $content->getAttribute('url_alias');
+            $this->redirect("/{$contentType}/{$urlAlias}");
 
         } catch (Exception $e) {
             $this->logError('Content store error', $e);
@@ -353,7 +357,11 @@ class Content extends BaseController
             $content->save();
 
             $this->setFlash('success', ucfirst($content->getAttribute('content_type')) . ' updated successfully.');
-            $this->redirect('/admin/content/' . $id . '/edit');
+
+            // Redirect to frontend view of the content
+            $contentType = $content->getAttribute('content_type');
+            $urlAlias = $content->getAttribute('url_alias');
+            $this->redirect("/{$contentType}/{$urlAlias}");
 
         } catch (Exception $e) {
             $this->logError('Content update error', $e);
