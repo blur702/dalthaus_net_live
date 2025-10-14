@@ -124,15 +124,19 @@ class Media extends BaseController
         $this->renderJson(['success' => true]);
     }
 
-    public function view(int $id): void
+    public function view(string $id): void
     {
-        $upload = MediaUpload::find($id);
+        error_log("[Media::view] Called with ID: $id (type: " . gettype($id) . ")");
+
+        $upload = MediaUpload::find((int)$id);
         if (!$upload) {
+            error_log("[Media::view] Upload not found for ID: $id");
             $this->setFlash('error', 'Upload not found.');
             $this->redirect('/admin/media');
             return;
         }
 
+        error_log("[Media::view] Found upload, rendering view");
         $this->render('admin/media/view', ['upload' => $upload]);
     }
 
