@@ -132,8 +132,21 @@ class Content extends BaseController
 
     private function getFormData(): array
     {
-        $status = $this->request->post('action') === 'publish' ? ContentModel::STATUS_PUBLISHED : ContentModel::STATUS_DRAFT;
-        
+        $action = $this->request->post('action');
+
+        // Determine status based on action button:
+        // - 'publish' = user clicked "Save & Publish" → set to published
+        // - 'draft' = user clicked "Unpublish (Save as Draft)" → set to draft
+        // - 'save' or other = user clicked "Save Changes" → preserve current status
+        if ($action === 'publish') {
+            $status = ContentModel::STATUS_PUBLISHED;
+        } elseif ($action === 'draft') {
+            $status = ContentModel::STATUS_DRAFT;
+        } else {
+            // Preserve current status from hidden field or default to draft
+            $status = $this->request->post('status', ContentModel::STATUS_DRAFT);
+        }
+
         return [
             'title' => $this->request->post('title', ''),
             'teaser' => $this->request->post('teaser', ''),
