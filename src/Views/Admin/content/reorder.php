@@ -122,7 +122,7 @@
 
         <!-- Save Changes Button -->
         <div class="mt-6 flex justify-center">
-            <button type="button" onclick="saveOrder()" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed">
+            <button type="button" onclick="saveOrder(event)" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
@@ -209,23 +209,23 @@ function filterContent(type) {
     window.location = url.toString();
 }
 
-function saveOrder() {
+function saveOrder(event) {
     const items = document.querySelectorAll('.sortable-item');
     const orderData = [];
-    
+
     items.forEach((item, index) => {
         orderData.push({
             id: parseInt(item.dataset.id),
             position: index + 1
         });
     });
-    
+
     const formData = new FormData();
     formData.append('order', JSON.stringify(orderData));
     formData.append('_token', '<?= $csrf_token ?>');
-    
+
     // Disable save button during request
-    const saveButton = event.target;
+    const saveButton = event ? event.target : document.querySelector('button[onclick*="saveOrder"]');
     const originalText = saveButton.innerHTML;
     saveButton.disabled = true;
     saveButton.innerHTML = '<svg class="animate-spin w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Saving...';
