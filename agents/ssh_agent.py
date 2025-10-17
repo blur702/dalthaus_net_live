@@ -142,8 +142,10 @@ class SSHAgent:
         self.logger.info(f"Pulling latest changes from git repository in {repo_path}")
 
         # Change to repository directory and pull
+        # Set pull.rebase false to use merge strategy for divergent branches
         commands = [
             f"cd '{repo_path}'",
+            "git config pull.rebase false",
             "git fetch origin",
             f"git pull origin {branch}"
         ]
