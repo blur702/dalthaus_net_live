@@ -27,8 +27,8 @@ class Articles extends BaseController
         $page = (int) $this->request->get('page', 1);
         $search = $this->request->get('search', '');
         $status = $this->request->get('status', '');
-        $sortBy = $this->request->get('sort_by', 'created_at');
-        $sortDir = $this->request->get('sort_dir', 'DESC');
+        $sortBy = $this->request->get('sort_by', 'sort_order');
+        $sortDir = $this->request->get('sort_dir', 'ASC');
 
         $filters = [
             'search' => $search,
