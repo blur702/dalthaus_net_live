@@ -64,3 +64,26 @@ sessions/
 
 # Log files
 logs/*.log
+
+# Test results
+test-results/
+.last-run.json
+
+# Production-specific files
+Auth_production.php
+Router_prod.php
+*_production.php
+
+# Upload directories (user content)
+uploads/
+_ul/
+
+# Debug and session files
+session_debug.txt
+*.backup.*
+
+# Database backups
+database_backups/
+
+# Index redirect file (server-specific)
+index.html
