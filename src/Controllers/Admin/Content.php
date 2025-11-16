@@ -544,12 +544,13 @@ class Content extends BaseController
 
         // If type filter is specified, validate it
         if (!empty($type) && !in_array($type, [ContentModel::TYPE_ARTICLE, ContentModel::TYPE_PHOTOBOOK])) {
-            error_log("[Content::reorder] Invalid type '$type', resetting to empty");
+            error_log("[Content::reorder] Invalid type '$type', resetting to null");
             $type = '';
         }
 
         // Get content for reordering (all content or filtered by type)
-        $content = ContentModel::getForReordering($type);
+        // Pass null when type is empty to get ALL content
+        $content = ContentModel::getForReordering($type ?: null);
         error_log("[Content::reorder] Retrieved " . count($content) . " content items");
 
         $this->render('admin/content/reorder', [
