@@ -66,8 +66,7 @@ sessions/
 logs/*.log
 
 # Test results
-test-results/
-.last-run.json
+test-results/.last-run.json
 
 # Production-specific files
 Auth_production.php

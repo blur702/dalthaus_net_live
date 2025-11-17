@@ -8556,3 +8556,33 @@
 [09-Oct-2025 19:23:17 America/New_York] BaseController::render() - Flash messages retrieved
 [09-Oct-2025 19:23:17 America/New_York] BaseController::render() - About to call view->render()
 [09-Oct-2025 19:23:17 America/New_York] BaseController::render() - View rendered successfully
+[16-Nov-2025 18:32:31 America/New_York] [EXCEPTION HANDLER] ========== UNCAUGHT EXCEPTION ==========
+[16-Nov-2025 18:32:31 America/New_York] [EXCEPTION HANDLER] Message: Database connection failed: SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it
+[16-Nov-2025 18:32:31 America/New_York] [EXCEPTION HANDLER] File: E:\OneDrive\Documents\My Web Sites\dalthaus-net-live\dalthaus_net_live\src\Utils\Database.php:91
+[16-Nov-2025 18:32:31 America/New_York] [EXCEPTION HANDLER] Type: PDOException
+[16-Nov-2025 18:32:31 America/New_York] [EXCEPTION HANDLER] Request URI: /
+[16-Nov-2025 18:32:31 America/New_York] [EXCEPTION HANDLER] Stack trace: #0 E:\OneDrive\Documents\My Web Sites\dalthaus-net-live\dalthaus_net_live\src\Utils\Database.php(47): CMS\Utils\Database->connect()
+#1 E:\OneDrive\Documents\My Web Sites\dalthaus-net-live\dalthaus_net_live\src\Utils\Database.php(63): CMS\Utils\Database->__construct(Array)
+#2 E:\OneDrive\Documents\My Web Sites\dalthaus-net-live\dalthaus_net_live\index.php(153): CMS\Utils\Database::getInstance(Array)
+#3 E:\OneDrive\Documents\My Web Sites\dalthaus-net-live\dalthaus_net_live\router.php(26): require('E:\\OneDrive\\Doc...')
+#4 {main}
+[16-Nov-2025 18:32:39 America/New_York] [EXCEPTION HANDLER] ========== UNCAUGHT EXCEPTION ==========
+[16-Nov-2025 18:32:39 America/New_York] [EXCEPTION HANDLER] Message: Database connection failed: SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it
+[16-Nov-2025 18:32:39 America/New_York] [EXCEPTION HANDLER] File: E:\OneDrive\Documents\My Web Sites\dalthaus-net-live\dalthaus_net_live\src\Utils\Database.php:91
+[16-Nov-2025 18:32:39 America/New_York] [EXCEPTION HANDLER] Type: PDOException
+[16-Nov-2025 18:32:39 America/New_York] [EXCEPTION HANDLER] Request URI: /
+[16-Nov-2025 18:32:39 America/New_York] [EXCEPTION HANDLER] Stack trace: #0 E:\OneDrive\Documents\My Web Sites\dalthaus-net-live\dalthaus_net_live\src\Utils\Database.php(47): CMS\Utils\Database->connect()
+#1 E:\OneDrive\Documents\My Web Sites\dalthaus-net-live\dalthaus_net_live\src\Utils\Database.php(63): CMS\Utils\Database->__construct(Array)
+#2 E:\OneDrive\Documents\My Web Sites\dalthaus-net-live\dalthaus_net_live\index.php(153): CMS\Utils\Database::getInstance(Array)
+#3 E:\OneDrive\Documents\My Web Sites\dalthaus-net-live\dalthaus_net_live\router.php(26): require('E:\\OneDrive\\Doc...')
+#4 {main}
+[16-Nov-2025 18:32:53 America/New_York] [EXCEPTION HANDLER] ========== UNCAUGHT EXCEPTION ==========
+[16-Nov-2025 18:32:53 America/New_York] [EXCEPTION HANDLER] Message: Database connection failed: SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it
+[16-Nov-2025 18:32:53 America/New_York] [EXCEPTION HANDLER] File: E:\OneDrive\Documents\My Web Sites\dalthaus-net-live\dalthaus_net_live\src\Utils\Database.php:91
+[16-Nov-2025 18:32:53 America/New_York] [EXCEPTION HANDLER] Type: PDOException
+[16-Nov-2025 18:32:53 America/New_York] [EXCEPTION HANDLER] Request URI: /
+[16-Nov-2025 18:32:53 America/New_York] [EXCEPTION HANDLER] Stack trace: #0 E:\OneDrive\Documents\My Web Sites\dalthaus-net-live\dalthaus_net_live\src\Utils\Database.php(47): CMS\Utils\Database->connect()
+#1 E:\OneDrive\Documents\My Web Sites\dalthaus-net-live\dalthaus_net_live\src\Utils\Database.php(63): CMS\Utils\Database->__construct(Array)
+#2 E:\OneDrive\Documents\My Web Sites\dalthaus-net-live\dalthaus_net_live\index.php(153): CMS\Utils\Database::getInstance(Array)
+#3 E:\OneDrive\Documents\My Web Sites\dalthaus-net-live\dalthaus_net_live\router.php(26): require('E:\\OneDrive\\Doc...')
+#4 {main}
