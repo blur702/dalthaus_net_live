@@ -331,7 +331,7 @@ class Content extends BaseModel
 
             // If content type is specified, update remaining items of that type
             if ($contentType !== null) {
-                $maxOrder = max($orderData);
+                $maxOrder = !empty($orderData) ? max(array_values($orderData)) : 0;
                 $orderedIds = array_keys($orderData);
 
                 // Get all items of this type that weren't in the order data
