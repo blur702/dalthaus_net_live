@@ -299,20 +299,23 @@ class Content extends BaseModel
 
     /**
      * Update sort order for multiple items
-     * 
+     *
      * @param array $orderData Array of ['id' => order] pairs
+     * @param string|null $contentType Optional content type to reorder all items of that type
      * @return bool
      */
-    public static function updateSortOrder(array $orderData): bool
+    public static function updateSortOrder(array $orderData, ?string $contentType = null): bool
     {
         $instance = new static();
 
         error_log("[Content::updateSortOrder] Starting update with " . count($orderData) . " items");
+        error_log("[Content::updateSortOrder] Content type: " . ($contentType ?? 'ALL'));
         error_log("[Content::updateSortOrder] Order data: " . json_encode($orderData));
 
         try {
             $instance->db->beginTransaction();
 
+            // Update the items in the order data
             foreach ($orderData as $id => $order) {
                 error_log("[Content::updateSortOrder] Updating content_id=$id to sort_order=$order");
 
@@ -324,6 +327,39 @@ class Content extends BaseModel
                 );
 
                 error_log("[Content::updateSortOrder] Update result for content_id=$id: " . ($result ? 'success' : 'failed'));
+            }
+
+            // If content type is specified, update remaining items of that type
+            if ($contentType !== null) {
+                $maxOrder = max($orderData);
+                $orderedIds = array_keys($orderData);
+
+                // Get all items of this type that weren't in the order data
+                $placeholders = implode(',', array_fill(0, count($orderedIds), '?'));
+                $query = "SELECT content_id FROM {$instance->table}
+                         WHERE content_type = ?
+                         AND content_id NOT IN ($placeholders)
+                         ORDER BY sort_order ASC, published_at DESC";
+
+                $params = array_merge([$contentType], $orderedIds);
+                $remainingItems = $instance->db->fetchAll($query, $params);
+
+                error_log("[Content::updateSortOrder] Found " . count($remainingItems) . " remaining items to update");
+
+                // Assign sequential sort orders to remaining items
+                $nextOrder = $maxOrder + 1;
+                foreach ($remainingItems as $item) {
+                    error_log("[Content::updateSortOrder] Updating remaining content_id={$item['content_id']} to sort_order=$nextOrder");
+
+                    $instance->db->update(
+                        $instance->table,
+                        ['sort_order' => $nextOrder],
+                        'content_id = ?',
+                        [$item['content_id']]
+                    );
+
+                    $nextOrder++;
+                }
             }
 
             $instance->db->commit();
