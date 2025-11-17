@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom admin styles */
+.admin-image-43 {
+    width: 43px;
+    height: 43px;
+    object-fit: cover;
+}
