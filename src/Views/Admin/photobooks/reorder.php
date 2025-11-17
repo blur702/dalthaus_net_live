@@ -213,6 +213,9 @@ function saveOrder(event) {
 
     fetch('/admin/photobooks/update-order', {
         method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        },
         body: formData
     })
     .then(response => {

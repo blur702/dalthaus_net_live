@@ -232,6 +232,9 @@ function saveOrder(event) {
     
     fetch('/admin/content/update-order', {
         method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        },
         body: formData
     })
     .then(response => {

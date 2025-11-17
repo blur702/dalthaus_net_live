@@ -496,6 +496,9 @@
             try {
                 const response = await fetch('/admin/upload/tinymce', {
                     method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
                     body: formData
                 });
 
