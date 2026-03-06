@@ -437,6 +437,37 @@
             background: #9ca3af;
             cursor: not-allowed;
         }
+        
+        /* SPECIFIC OVERRIDE: Only links within article content should be blue */
+        article.prose .content-text a:not(.read-more):not(.no-underline) {
+            color: #2563eb !important;
+            text-decoration: underline !important;
+            border: none !important;
+        }
+        
+        article.prose .content-text a:not(.read-more):not(.no-underline):hover {
+            color: #1d4ed8 !important;
+            text-decoration: underline !important;
+        }
+        
+        /* ENSURE: Read-more buttons maintain their original styling */
+        .read-more {
+            border: 1px solid rgb(20, 20, 20) !important;
+            padding: 0.5rem 1rem !important;
+            text-decoration: none !important;
+            display: inline-block !important;
+            color: rgb(20, 20, 20) !important;
+            background: white !important;
+            transition: all 0.2s ease !important;
+            font-style: italic !important;
+            touch-action: manipulation !important;
+        }
+        
+        .read-more:hover {
+            background: rgb(20, 20, 20) !important;
+            color: white !important;
+            text-decoration: none !important;
+        }
     </style>
 </head>
 <body>
@@ -481,6 +512,7 @@
         <div class="max-w-7xl mx-auto px-4 py-6">
             <div class="text-center text-gray-900 text-xs">
                 <p>copyright <?= date('Y') ?>, Don Althaus, M.A.</p>
+                <p class="mt-1"><a href="mailto:althausdon@gmail.com" class="text-gray-900 hover:text-gray-600 no-underline">althausdon@gmail.com</a></p>
                 <?php if (!empty($footer_menu)): ?>
                 <div class="mt-2">
                     <?php foreach ($footer_menu as $item): ?>
