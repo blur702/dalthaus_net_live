@@ -212,6 +212,115 @@ class SSHAgent:
         
         return commits
     
+    def git_add(self, repo_path: str = ".", files: str = ".") -> bool:
+        """Add files to git staging area"""
+        self.logger.info(f"Adding files to git staging in {repo_path}: {files}")
+        
+        command = f"cd {repo_path} && git add {files}"
+        exit_code, stdout, stderr = self.execute_command(command)
+        
+        if exit_code == 0:
+            self.logger.info("Files added to staging successfully")
+            return True
+        else:
+            self.logger.error(f"Git add failed: {stderr}")
+            return False
+    
+    def git_commit(self, repo_path: str = ".", message: str = "Auto-commit from production", author_name: str = None, author_email: str = None) -> bool:
+        """Commit staged changes to git repository"""
+        self.logger.info(f"Committing changes in {repo_path}")
+        
+        # Set git user config if provided
+        if author_name and author_email:
+            config_commands = [
+                f"cd {repo_path}",
+                f"git config user.name '{author_name}'",
+                f"git config user.email '{author_email}'"
+            ]
+            config_command = " && ".join(config_commands)
+            self.execute_command(config_command, show_output=False)
+        
+        # Commit the changes
+        escaped_message = message.replace("'", "'\"'\"'")
+        command = f"cd {repo_path} && git commit -m '{escaped_message}'"
+        exit_code, stdout, stderr = self.execute_command(command)
+        
+        if exit_code == 0:
+            self.logger.info("Git commit completed successfully")
+            return True
+        else:
+            self.logger.error(f"Git commit failed: {stderr}")
+            return False
+    
+    def git_push(self, repo_path: str = ".", remote: str = "origin", branch: str = "main") -> bool:
+        """Push commits to remote git repository"""
+        self.logger.info(f"Pushing to {remote}/{branch} from {repo_path}")
+        
+        command = f"cd {repo_path} && git push {remote} {branch}"
+        exit_code, stdout, stderr = self.execute_command(command)
+        
+        if exit_code == 0:
+            self.logger.info("Git push completed successfully")
+            return True
+        else:
+            self.logger.error(f"Git push failed: {stderr}")
+            return False
+    
+    def git_status_detailed(self, repo_path: str = ".") -> Dict[str, Any]:
+        """Get detailed git repository status including file changes"""
+        self.logger.info(f"Getting detailed git status in {repo_path}")
+        
+        results = {}
+        
+        # Get working tree status with file details
+        exit_code, stdout, stderr = self.execute_command(f"cd {repo_path} && git status --porcelain", show_output=False)
+        
+        modified_files = []
+        untracked_files = []
+        deleted_files = []
+        
+        if stdout.strip():
+            for line in stdout.strip().split('\n'):
+                if line.startswith(' M '):
+                    modified_files.append(line[3:])
+                elif line.startswith('??'):
+                    untracked_files.append(line[3:])
+                elif line.startswith(' D '):
+                    deleted_files.append(line[3:])
+                elif line.startswith('M '):
+                    modified_files.append(line[2:])
+        
+        results['modified_files'] = modified_files
+        results['untracked_files'] = untracked_files
+        results['deleted_files'] = deleted_files
+        results['has_changes'] = len(modified_files) > 0 or len(untracked_files) > 0 or len(deleted_files) > 0
+        
+        # Get current branch
+        exit_code, stdout, stderr = self.execute_command(f"cd {repo_path} && git branch --show-current", show_output=False)
+        results['current_branch'] = stdout.strip()
+        
+        # Get latest commit info
+        exit_code, stdout, stderr = self.execute_command(f"cd {repo_path} && git log -1 --format='%H|%an|%ad|%s' --date=short", show_output=False)
+        if stdout.strip():
+            commit_parts = stdout.strip().split('|')
+            results['last_commit'] = {
+                'hash': commit_parts[0][:8],
+                'author': commit_parts[1],
+                'date': commit_parts[2],
+                'message': commit_parts[3]
+            }
+        
+        # Check if ahead/behind remote
+        exit_code, stdout, stderr = self.execute_command(f"cd {repo_path} && git status -b --porcelain", show_output=False)
+        ahead_behind = ""
+        if stdout.strip():
+            first_line = stdout.strip().split('\n')[0]
+            if '[ahead' in first_line or '[behind' in first_line:
+                ahead_behind = first_line
+        results['ahead_behind'] = ahead_behind
+        
+        return results
+    
     # DATABASE OPERATIONS
     def mysql_query(self, query: str, database: str = None, user: str = "root", 
                    password: str = "", host: str = "localhost") -> Tuple[bool, str]:
@@ -990,7 +1099,11 @@ def main():
     print("\nAvailable commands:")
     print("  git pull [path] [branch] - Pull latest code")
     print("  git status [path] - Check git status")
+    print("  git status-detailed [path] - Detailed git status with files")
     print("  git log [path] [count] - Show recent commits")
+    print("  git add [path] [files] - Add files to staging")
+    print("  git commit [path] [message] - Commit staged changes")
+    print("  git push [path] [remote] [branch] - Push commits to remote")
     print("  mysql query <query> [database] - Execute MySQL query")
     print("  mysql status - Check MySQL status")
     print("  mysql smart <query> <config_path> - Execute query using server config")
@@ -1047,6 +1160,30 @@ def main():
                     commits = agent.git_log(path, count)
                     for commit in commits:
                         print(f"{commit['hash']} - {commit['date']} - {commit['author']}: {commit['message']}")
+                
+                elif subcmd == "status-detailed":
+                    path = parts[2] if len(parts) > 2 else "."
+                    status = agent.git_status_detailed(path)
+                    print(json.dumps(status, indent=2))
+                
+                elif subcmd == "add":
+                    path = parts[2] if len(parts) > 2 else "."
+                    files = parts[3] if len(parts) > 3 else "."
+                    success = agent.git_add(path, files)
+                    print("Files added successfully" if success else "Failed to add files")
+                
+                elif subcmd == "commit":
+                    path = parts[2] if len(parts) > 2 else "."
+                    message = " ".join(parts[3:]) if len(parts) > 3 else "Auto-commit from SSH agent"
+                    success = agent.git_commit(path, message)
+                    print("Commit successful" if success else "Commit failed")
+                
+                elif subcmd == "push":
+                    path = parts[2] if len(parts) > 2 else "."
+                    remote = parts[3] if len(parts) > 3 else "origin"
+                    branch = parts[4] if len(parts) > 4 else "main"
+                    success = agent.git_push(path, remote, branch)
+                    print("Push successful" if success else "Push failed")
             
             elif cmd == "mysql":
                 if len(parts) < 2:

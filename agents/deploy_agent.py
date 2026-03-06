@@ -56,26 +56,40 @@ class DeploymentAgent:
         print("\n--- Checking git status ---")
         
         try:
-            status_info = self.agent.git_status(self.web_root)
+            status_info = self.agent.git_status_detailed(self.web_root)
             
             if status_info:
                 print("Git Repository Status:")
                 print(f"  Branch: {status_info.get('current_branch', 'Unknown')}")
-                print(f"  Last Commit: {status_info.get('last_commit', {}).get('message', 'Unknown')}")
-                print(f"  Author: {status_info.get('last_commit', {}).get('author', 'Unknown')}")
-                print(f"  Date: {status_info.get('last_commit', {}).get('date', 'Unknown')}")
+                
+                if status_info.get('last_commit'):
+                    commit = status_info['last_commit']
+                    print(f"  Last Commit: {commit.get('message', 'Unknown')}")
+                    print(f"  Author: {commit.get('author', 'Unknown')}")
+                    print(f"  Date: {commit.get('date', 'Unknown')}")
+                    print(f"  Hash: {commit.get('hash', 'Unknown')}")
+                
+                if status_info.get('ahead_behind'):
+                    print(f"  Remote Status: {status_info['ahead_behind']}")
                 
                 if status_info.get('modified_files'):
                     print(f"  Modified Files: {len(status_info['modified_files'])}")
-                    for file in status_info['modified_files'][:5]:  # Show first 5
-                        print(f"    - {file}")
+                    for file in status_info['modified_files'][:10]:  # Show first 10
+                        print(f"    M {file}")
                 
                 if status_info.get('untracked_files'):
                     print(f"  Untracked Files: {len(status_info['untracked_files'])}")
-                    for file in status_info['untracked_files'][:5]:  # Show first 5
-                        print(f"    - {file}")
+                    for file in status_info['untracked_files'][:10]:  # Show first 10
+                        print(f"    ?? {file}")
                 
-                return True
+                if status_info.get('deleted_files'):
+                    print(f"  Deleted Files: {len(status_info['deleted_files'])}")
+                    for file in status_info['deleted_files'][:10]:  # Show first 10
+                        print(f"    D {file}")
+                
+                print(f"  Has Changes: {'Yes' if status_info.get('has_changes') else 'No'}")
+                
+                return status_info
             else:
                 print("[ERROR] Could not get git status")
                 return False
@@ -440,6 +454,130 @@ fi
         
         finally:
             self.disconnect()
+    
+    def commit_production_changes(self, message: str = None):
+        """Commit any uncommitted changes on production server"""
+        print("\n=== COMMITTING PRODUCTION CHANGES ===")
+        
+        if not self.connect():
+            return False
+        
+        try:
+            # First check if there are any changes
+            status = self.check_git_status()
+            if not status or not status.get('has_changes'):
+                print("[INFO] No changes to commit")
+                return True
+            
+            # Generate commit message if not provided
+            if not message:
+                modified_count = len(status.get('modified_files', []))
+                untracked_count = len(status.get('untracked_files', []))
+                deleted_count = len(status.get('deleted_files', []))
+                
+                message_parts = []
+                if modified_count > 0:
+                    message_parts.append(f"{modified_count} modified files")
+                if untracked_count > 0:
+                    message_parts.append(f"{untracked_count} new files")
+                if deleted_count > 0:
+                    message_parts.append(f"{deleted_count} deleted files")
+                
+                message = f"Production sync: {', '.join(message_parts)}"
+            
+            # Add all changes to staging
+            print("Adding files to staging...")
+            if not self.agent.git_add(self.web_root, "."):
+                print("[ERROR] Failed to add files to staging")
+                return False
+            
+            # Set git config for commits
+            print("Configuring git user for commit...")
+            self.agent.execute_command(f"cd {self.web_root} && git config user.name 'Production Server'")
+            self.agent.execute_command(f"cd {self.web_root} && git config user.email 'production@dalthaus.net'")
+            
+            # Commit the changes
+            print(f"Committing with message: {message}")
+            if self.agent.git_commit(self.web_root, message):
+                print("[SUCCESS] Production changes committed successfully!")
+                return True
+            else:
+                print("[ERROR] Failed to commit changes")
+                return False
+            
+        except Exception as e:
+            print(f"[ERROR] Error committing production changes: {e}")
+            return False
+        finally:
+            self.disconnect()
+    
+    def push_to_github(self, remote: str = "origin", branch: str = "main"):
+        """Push committed changes from production to GitHub"""
+        print("\n=== PUSHING TO GITHUB ===")
+        
+        if not self.connect():
+            return False
+        
+        try:
+            # Check current git status
+            status = self.check_git_status()
+            if not status:
+                print("[ERROR] Could not get git status")
+                return False
+            
+            # Push to GitHub
+            print(f"Pushing to {remote}/{branch}...")
+            if self.agent.git_push(self.web_root, remote, branch):
+                print("[SUCCESS] Successfully pushed to GitHub!")
+                return True
+            else:
+                print("[ERROR] Failed to push to GitHub")
+                print("[INFO] This might be due to:")
+                print("  - SSH key not configured on server")
+                print("  - No push access to repository") 
+                print("  - Network connectivity issues")
+                return False
+            
+        except Exception as e:
+            print(f"[ERROR] Error pushing to GitHub: {e}")
+            return False
+        finally:
+            self.disconnect()
+    
+    def sync_production_to_github(self, commit_message: str = None):
+        """Complete workflow: commit production changes and push to GitHub"""
+        print("\n[SYNC] SYNCING PRODUCTION TO GITHUB")
+        print("=" * 50)
+        
+        # Step 1: Check current status
+        if not self.connect():
+            return False
+        
+        status = self.check_git_status()
+        self.disconnect()
+        
+        if not status:
+            print("[ERROR] Could not check git status")
+            return False
+        
+        if not status.get('has_changes'):
+            print("[INFO] No changes to sync - production is clean")
+            return True
+        
+        # Step 2: Commit changes
+        print("\nStep 1: Committing production changes...")
+        if not self.commit_production_changes(commit_message):
+            print("[ERROR] Failed to commit production changes")
+            return False
+        
+        # Step 3: Push to GitHub
+        print("\nStep 2: Pushing to GitHub...")
+        if not self.push_to_github():
+            print("[ERROR] Failed to push to GitHub")
+            return False
+        
+        print("\n[SUCCESS] PRODUCTION SYNCED TO GITHUB SUCCESSFULLY!")
+        return True
 
 def main():
     """Main CLI interface"""
@@ -449,6 +587,9 @@ def main():
         print("  python deploy_agent.py deploy [branch]    - Deploy code")
         print("  python deploy_agent.py status            - Check git status")
         print("  python deploy_agent.py pull [branch]     - Pull code only")
+        print("  python deploy_agent.py commit [message]  - Commit production changes")
+        print("  python deploy_agent.py push              - Push to GitHub")
+        print("  python deploy_agent.py sync [message]    - Complete sync: commit + push")
         print("  python deploy_agent.py db                - Test database")
         print("  python deploy_agent.py health            - Health check")
         print("  python deploy_agent.py checkindex        - Check index files")
@@ -475,6 +616,17 @@ def main():
         if agent.connect():
             agent.pull_latest_code(branch)
             agent.disconnect()
+    
+    elif command == "commit":
+        commit_message = " ".join(sys.argv[2:]) if len(sys.argv) > 2 else None
+        agent.commit_production_changes(commit_message)
+    
+    elif command == "push":
+        agent.push_to_github()
+    
+    elif command == "sync":
+        commit_message = " ".join(sys.argv[2:]) if len(sys.argv) > 2 else None
+        agent.sync_production_to_github(commit_message)
     
     elif command == "db":
         if agent.connect():
