@@ -172,6 +172,51 @@
             images_upload_url: '/admin/upload/tinymce',
             automatic_uploads: true,
             images_reuse_filename: true,
+            // Add custom headers to image uploads
+            images_upload_handler: function (blobInfo, progress) {
+                return new Promise(function (resolve, reject) {
+                    const xhr = new XMLHttpRequest();
+                    xhr.withCredentials = true;
+                    xhr.open('POST', '/admin/upload/tinymce');
+
+                    // Set AJAX header so server knows to return JSON
+                    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+                    xhr.upload.onprogress = function (e) {
+                        progress(e.loaded / e.total * 100);
+                    };
+
+                    xhr.onload = function () {
+                        if (xhr.status === 401) {
+                            reject('Authentication required. Please refresh the page and log in.');
+                            return;
+                        }
+
+                        if (xhr.status < 200 || xhr.status >= 300) {
+                            reject('HTTP Error: ' + xhr.status);
+                            return;
+                        }
+
+                        const json = JSON.parse(xhr.responseText);
+
+                        if (!json || typeof json.location !== 'string') {
+                            reject('Invalid JSON: ' + xhr.responseText);
+                            return;
+                        }
+
+                        resolve(json.location);
+                    };
+
+                    xhr.onerror = function () {
+                        reject('Image upload failed due to a XHR Transport error. Code: ' + xhr.status);
+                    };
+
+                    const formData = new FormData();
+                    formData.append('file', blobInfo.blob(), blobInfo.filename());
+
+                    xhr.send(formData);
+                });
+            },
             browser_spellcheck: true,
             gecko_spellcheck: false,
             contextmenu: false,
@@ -188,6 +233,9 @@
             image_advtab: true,
             image_caption: true,
             image_title: true,
+            // MEDIA BROWSER INTEGRATION
+            file_picker_callback: window.tinyMCEFilePicker,
+            file_picker_types: 'image',
             setup: function(editor) {
                 debugLog(`TinyMCE setup function called for editor: ${editor.id}`, 'info');
                 
@@ -691,7 +739,10 @@
                     
                     fetch('/admin/upload/dual-image', {
                         method: 'POST',
-                        body: formData
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
                     })
                     .then(response => response.json())
                     .then(data => {

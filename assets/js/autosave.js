@@ -428,7 +428,10 @@ class AutoSave {
             const response = await fetch(this.options.endpoint, {
                 method: 'POST',
                 body: formData,
-                credentials: 'same-origin'
+                credentials: 'same-origin',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
             });
 
             if (!response.ok) {

@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git pull:*)",
+      "Bash(git status:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(npm:*)",
+      "Bash(php:*)",
+      "Bash(python:*)",
+      "Bash(python3:*)",
+      "Bash(composer:*)",
+      "Bash(pytest:*)",
+      "Bash(mysql:*)",
+      "Bash(mkdir:*)",
+      "Bash(cd:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(curl:*)",
+      "Bash(node:*)",
+      "Read(**)",
+      "Write(**)",
+      "Edit(**)",
+      "Glob(**)",
+      "Grep(**)"
+    ],
+    "deny": [
+      "Bash(rm -rf /*)",
+      "Bash(sudo:*)",
+      "Bash(chmod 777:*)"
+    ],
+    "defaultMode": "acceptEdits"
+  }
+}

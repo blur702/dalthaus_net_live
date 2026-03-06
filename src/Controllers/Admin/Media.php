@@ -6,250 +6,202 @@ namespace CMS\Controllers\Admin;
 
 use CMS\Controllers\BaseController;
 use CMS\Models\MediaUpload;
+use CMS\Utils\Database;
+use CMS\Utils\Auth;
 
 class Media extends BaseController
 {
-    /**
-     * Display list of all media uploads
-     */
+    protected function initialize(): void
+    {
+        $this->view->layout('admin');
+    }
+
     public function index(): void
     {
-        $this->requireAuth();
-
-        $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+        $page = $this->request->get('page', 1, 'int');
         $limit = 50;
         $offset = ($page - 1) * $limit;
 
-        $uploadType = $_GET['type'] ?? null;
-        $userId = isset($_GET['user']) ? (int)$_GET['user'] : null;
-        $showUnused = isset($_GET['unused']);
+        $uploadType = $this->request->get('type');
+        $userId = $this->request->get('user', null, 'int');
+        $showUnused = $this->request->get('unused') !== null;
 
-        // Get uploads based on filters
         if ($userId) {
             $uploads = MediaUpload::getByUser($userId, $limit, $offset);
         } elseif ($showUnused) {
-            $uploads = MediaUpload::getUnused(7); // Last 7 days
+            $uploads = MediaUpload::getUnused(7);
         } else {
             $uploads = $this->getAllUploads($limit, $offset, $uploadType);
         }
 
-        // Get statistics
         $stats = MediaUpload::getStats();
 
-        $this->view->render('Admin/media/index', [
+        $this->render('admin/media/index', [
             'uploads' => $uploads,
             'stats' => $stats,
             'currentPage' => $page,
             'uploadType' => $uploadType,
             'showUnused' => $showUnused,
-            'csrf_token' => $this->generateCsrfToken()
         ]);
     }
 
-    /**
-     * Get all uploads with optional type filter
-     */
     private function getAllUploads(int $limit, int $offset, ?string $type = null): array
     {
-        $pdo = $this->db->getConnection();
-
         $sql = "SELECT mu.*, u.username, u.display_name, c.title as content_title
                 FROM media_uploads mu
                 LEFT JOIN users u ON mu.user_id = u.user_id
                 LEFT JOIN content c ON mu.content_id = c.content_id";
-
         $params = [];
-
         if ($type) {
-            $sql .= " WHERE mu.upload_type = :type";
-            $params['type'] = $type;
+            $sql .= " WHERE mu.upload_type = ?";
+            $params[] = $type;
         }
+        $sql .= " ORDER BY mu.created_at DESC LIMIT ? OFFSET ?";
+        $params[] = $limit;
+        $params[] = $offset;
 
-        $sql .= " ORDER BY mu.created_at DESC
-                  LIMIT :limit OFFSET :offset";
-
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
-        $stmt->bindValue(':offset', $offset, \PDO::PARAM_INT);
-
-        if ($type) {
-            $stmt->bindValue(':type', $type);
-        }
-
-        $stmt->execute();
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return $this->db->fetchAll($sql, $params);
     }
 
-    /**
-     * Display media upload statistics
-     */
     public function stats(): void
     {
-        $this->requireAuth();
-
-        $stats = MediaUpload::getStats();
-
-        $this->view->render('Admin/media/stats', [
-            'stats' => $stats,
-            'csrf_token' => $this->generateCsrfToken()
+        $this->render('admin/media/stats', [
+            'stats' => MediaUpload::getStats(),
         ]);
     }
 
-    /**
-     * Mark upload as used
-     */
-    public function markUsed(int $id): void
+    public function markUsed(string $id): void
     {
-        $this->requireAuth();
-
-        if (!$this->isPost()) {
-            $this->renderJson(['error' => 'Invalid request method.'], 405);
+        if (!$this->request->isPost() || !$this->auth->validateCsrfToken($this->request->post('_token'))) {
+            $this->renderJson(['error' => 'Invalid request'], 400);
             return;
         }
 
-        if (!$this->validateCsrfToken()) {
-            $this->renderJson(['error' => 'Security token validation failed.'], 403);
+        $upload = MediaUpload::find((int)$id);
+        if (!$upload) {
+            $this->renderJson(['error' => 'Upload not found.'], 404);
             return;
         }
 
-        try {
-            $upload = MediaUpload::find($id);
-
-            if (!$upload) {
-                $this->renderJson(['error' => 'Upload not found.'], 404);
-                return;
-            }
-
-            $filepath = $upload->getAttribute('filepath');
-            $contentId = isset($_POST['content_id']) ? (int)$_POST['content_id'] : null;
-
-            $success = MediaUpload::markAsUsed($filepath, $contentId);
-
-            if ($success) {
-                $this->renderJson(['success' => true, 'message' => 'Upload marked as used.']);
-            } else {
-                $this->renderJson(['error' => 'Failed to update upload.'], 500);
-            }
-        } catch (\Exception $e) {
-            error_log('Mark upload as used error: ' . $e->getMessage());
-            $this->renderJson(['error' => 'An error occurred.'], 500);
-        }
+        $contentId = $this->request->post('content_id', null, 'int');
+        MediaUpload::markAsUsed($upload->getAttribute('filepath'), $contentId);
+        $this->renderJson(['success' => true]);
     }
 
-    /**
-     * Delete unused/orphaned uploads
-     */
     public function cleanupOrphaned(): void
     {
-        $this->requireAuth();
-
-        if (!$this->isPost()) {
-            $this->setFlash('error', 'Invalid request method.');
+        if (!$this->request->isPost() || !$this->auth->validateCsrfToken($this->request->post('_token'))) {
+            $this->setFlash('error', 'Invalid request.');
             $this->redirect('/admin/media');
             return;
         }
 
-        if (!$this->validateCsrfToken()) {
-            $this->setFlash('error', 'Security token validation failed.');
-            $this->redirect('/admin/media');
-            return;
-        }
-
-        try {
-            $deleted = MediaUpload::deleteOrphaned();
-            $this->setFlash('success', "Cleaned up {$deleted} orphaned upload record(s).");
-        } catch (\Exception $e) {
-            error_log('Cleanup orphaned uploads error: ' . $e->getMessage());
-            $this->setFlash('error', 'An error occurred during cleanup.');
-        }
-
+        $deleted = MediaUpload::deleteOrphaned();
+        $this->setFlash('success', "Cleaned up {$deleted} orphaned upload record(s).");
         $this->redirect('/admin/media');
     }
 
-    /**
-     * Delete a specific upload
-     */
-    public function delete(int $id): void
+    public function delete(string $id): void
     {
-        $this->requireAuth();
-
-        if (!$this->isPost()) {
-            $this->renderJson(['error' => 'Invalid request method.'], 405);
+        if (!$this->request->isPost() || !$this->auth->validateCsrfToken($this->request->post('_token'))) {
+            $this->renderJson(['error' => 'Invalid request'], 400);
             return;
         }
 
-        if (!$this->validateCsrfToken()) {
-            $this->renderJson(['error' => 'Security token validation failed.'], 403);
+        $upload = MediaUpload::find((int)$id);
+        if (!$upload) {
+            $this->renderJson(['error' => 'Upload not found.'], 404);
             return;
         }
 
-        try {
-            $upload = MediaUpload::find($id);
-
-            if (!$upload) {
-                $this->renderJson(['error' => 'Upload not found.'], 404);
-                return;
-            }
-
-            // Delete the physical file
-            $filepath = $upload->getAttribute('filepath');
-            $fullPath = __DIR__ . '/../../../' . ltrim($filepath, '/');
-
-            if (file_exists($fullPath)) {
-                unlink($fullPath);
-            }
-
-            // Delete the database record
-            $success = $upload->delete();
-
-            if ($success) {
-                $this->renderJson(['success' => true, 'message' => 'Upload deleted successfully.']);
-            } else {
-                $this->renderJson(['error' => 'Failed to delete upload.'], 500);
-            }
-        } catch (\Exception $e) {
-            error_log('Delete upload error: ' . $e->getMessage());
-            $this->renderJson(['error' => 'An error occurred.'], 500);
+        $filepath = $upload->getAttribute('filepath');
+        $fullPath = __DIR__ . '/../../../' . ltrim($filepath, '/');
+        if (file_exists($fullPath)) {
+            unlink($fullPath);
         }
+
+        $upload->delete();
+        $this->renderJson(['success' => true]);
     }
 
-    /**
-     * View upload details
-     */
-    public function view(int $id): void
+    public function view(string $id): void
     {
-        $this->requireAuth();
+        error_log("[Media::view] Called with ID: $id (type: " . gettype($id) . ")");
 
-        try {
-            $upload = MediaUpload::find($id);
-
-            if (!$upload) {
-                $this->setFlash('error', 'Upload not found.');
-                $this->redirect('/admin/media');
-                return;
-            }
-
-            $pdo = $this->db->getConnection();
-
-            // Get full upload details with user and content info
-            $sql = "SELECT mu.*, u.username, u.display_name, c.title as content_title, c.url_alias
-                    FROM media_uploads mu
-                    LEFT JOIN users u ON mu.user_id = u.user_id
-                    LEFT JOIN content c ON mu.content_id = c.content_id
-                    WHERE mu.id = :id";
-
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute(['id' => $id]);
-            $uploadDetails = $stmt->fetch(\PDO::FETCH_ASSOC);
-
-            $this->view->render('Admin/media/view', [
-                'upload' => $uploadDetails,
-                'csrf_token' => $this->generateCsrfToken()
-            ]);
-        } catch (\Exception $e) {
-            error_log('View upload error: ' . $e->getMessage());
-            $this->setFlash('error', 'An error occurred.');
+        $upload = MediaUpload::find((int)$id);
+        if (!$upload) {
+            error_log("[Media::view] Upload not found for ID: $id");
+            $this->setFlash('error', 'Upload not found.');
             $this->redirect('/admin/media');
+            return;
         }
+
+        error_log("[Media::view] Found upload, converting to array for view");
+        // Convert model object to array for view compatibility
+        $this->render('admin/media/view', ['upload' => $upload->toArray()]);
+    }
+
+    public function apiList(): void
+    {
+        // Log session and auth state for debugging
+        error_log("===== Media::apiList() START =====");
+        error_log("Session ID: " . session_id());
+        error_log("Session data: " . print_r($_SESSION ?? 'no session', true));
+        error_log("Auth object exists: " . ($this->auth ? 'yes' : 'no'));
+        error_log("Auth check result: " . ($this->auth && $this->auth->check() ? 'TRUE' : 'FALSE'));
+
+        // Check authentication for API endpoints
+        if (!$this->auth || !$this->auth->check()) {
+            error_log("Auth failed - returning 401");
+            $this->renderJson(['error' => 'Unauthorized'], 401);
+            return;
+        }
+
+        error_log("Auth passed - proceeding with query");
+        $page = $this->request->get('page', 1, 'int');
+        $limit = $this->request->get('limit', 24, 'int');
+        $offset = ($page - 1) * $limit;
+        $search = $this->request->get('search', '');
+        $type = $this->request->get('type');
+
+        $uploads = MediaUpload::search($search, $type, $limit, $offset);
+        $total = MediaUpload::countWithSearch($search, $type);
+
+        $this->renderJson([
+            'success' => true,
+            'data' => $uploads,
+            'pagination' => ['page' => $page, 'limit' => $limit, 'total' => $total, 'pages' => ceil($total / $limit)]
+        ]);
+    }
+
+    public function apiUpdateMetadata(string $id): void
+    {
+        // Check authentication for API endpoints
+        if (!$this->auth || !$this->auth->check()) {
+            $this->renderJson(['error' => 'Unauthorized'], 401);
+            return;
+        }
+
+        if (!$this->request->isPost() || !$this->auth->validateCsrfToken($this->request->post('_token'))) {
+            $this->renderJson(['error' => 'Invalid request'], 400);
+            return;
+        }
+
+        $upload = MediaUpload::find((int)$id);
+        if (!$upload) {
+            $this->renderJson(['error' => 'Upload not found.'], 404);
+            return;
+        }
+
+        $data = $this->request->json();
+        $upload->setAttributes($data);
+        $upload->save();
+
+        $this->renderJson(['success' => true]);
+    }
+
+    public function browser(): void
+    {
+        $this->render('admin/media/browser');
     }
 }

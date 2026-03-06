@@ -21,9 +21,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400;0,700;1,400;1,700&family=Gelasio:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Tailwind CSS - Production Build -->
+    <link rel="stylesheet" href="/assets/css/output.css?v=<?= filemtime(__DIR__ . '/../../../assets/css/output.css') ?>">
     
     <!-- Custom CSS -->
     <style>
@@ -437,6 +437,37 @@
             background: #9ca3af;
             cursor: not-allowed;
         }
+        
+        /* SPECIFIC OVERRIDE: Only links within article content should be blue */
+        article.prose .content-text a:not(.read-more):not(.no-underline) {
+            color: #2563eb !important;
+            text-decoration: underline !important;
+            border: none !important;
+        }
+        
+        article.prose .content-text a:not(.read-more):not(.no-underline):hover {
+            color: #1d4ed8 !important;
+            text-decoration: underline !important;
+        }
+        
+        /* ENSURE: Read-more buttons maintain their original styling */
+        .read-more {
+            border: 1px solid rgb(20, 20, 20) !important;
+            padding: 0.5rem 1rem !important;
+            text-decoration: none !important;
+            display: inline-block !important;
+            color: rgb(20, 20, 20) !important;
+            background: white !important;
+            transition: all 0.2s ease !important;
+            font-style: italic !important;
+            touch-action: manipulation !important;
+        }
+        
+        .read-more:hover {
+            background: rgb(20, 20, 20) !important;
+            color: white !important;
+            text-decoration: none !important;
+        }
     </style>
 </head>
 <body>
@@ -481,6 +512,7 @@
         <div class="max-w-7xl mx-auto px-4 py-6">
             <div class="text-center text-gray-900 text-xs">
                 <p>copyright <?= date('Y') ?>, Don Althaus, M.A.</p>
+                <p class="mt-1"><a href="mailto:althausdon@gmail.com" class="text-gray-900 hover:text-gray-600 no-underline">althausdon@gmail.com</a></p>
                 <?php if (!empty($footer_menu)): ?>
                 <div class="mt-2">
                     <?php foreach ($footer_menu as $item): ?>
@@ -597,11 +629,13 @@
         };
 
         window.closeImageModal = function() {
-            const modal = document.querySelector('.image-modal');
-            if (modal) {
+            // Close ALL modals (in case multiple were created)
+            const modals = document.querySelectorAll('.image-modal');
+            modals.forEach(function(modal) {
                 modal.remove();
-                document.body.style.overflow = ''; // Restore scrolling
-            }
+            });
+            // Restore scrolling
+            document.body.style.overflow = '';
         };
 
         // Image lazy loading implementation
@@ -667,35 +701,38 @@
                     
                     // Wait for image to load if not already loaded
                     function processImage() {
+                        // Double-check if already processed (prevent duplicate handlers)
+                        if (img.hasAttribute('data-modal-enabled')) {
+                            return;
+                        }
+
                         // Mark as having modal functionality
                         img.setAttribute('data-modal-enabled', 'true');
-                        
+
                         // Add cursor pointer style
                         img.style.cursor = 'pointer';
-                        
+
                         // Add click event listener using the modal image source
                         img.addEventListener('click', function(e) {
                             e.preventDefault();
                             const alt = this.alt || 'Image';
                             openImageModal(modalSrc, alt);
-                        });
-                        
+                        }, { once: false });
+
                         // Add hover effect class if not already present
                         if (!img.classList.contains('modal-image')) {
                             img.classList.add('modal-image');
                         }
-                        
+
                         console.log('Modal functionality added to dual-image with data-modal-src:', modalSrc.substring(modalSrc.lastIndexOf('/') + 1));
                     }
-                    
+
                     // If image is already loaded, process immediately
                     if (img.complete && img.naturalWidth > 0) {
                         processImage();
                     } else {
-                        // Wait for image to load
-                        img.addEventListener('load', processImage);
-                        // Also try after a short delay in case load event already fired
-                        setTimeout(processImage, 100);
+                        // Wait for image to load - use once:true to prevent duplicate listeners
+                        img.addEventListener('load', processImage, { once: true });
                     }
                 });
             });
@@ -715,50 +752,58 @@
                 const images = document.querySelectorAll(selector);
                 images.forEach(function(img) {
                     const src = img.getAttribute('src');
-                    
+
+                    // Skip teaser images (they should link to content, not open modals)
+                    if (img.classList.contains('teaser-image')) {
+                        return;
+                    }
+
                     // Only process images from uploads directory that don't already have modal functionality
                     if (src && src.includes('/uploads/') && !img.hasAttribute('data-modal-enabled') && !img.hasAttribute('data-modal-src')) {
                         
                         function processUploadedImage() {
+                            // Double-check if already processed (prevent duplicate handlers)
+                            if (img.hasAttribute('data-modal-enabled')) {
+                                return;
+                            }
+
                             // Mark as having modal functionality
                             img.setAttribute('data-modal-enabled', 'true');
-                            
+
                             // Add cursor pointer style
                             img.style.cursor = 'pointer';
                             img.style.transition = 'opacity 0.2s ease';
-                            
+
                             // Add click event listener using the same image as modal (full-size view)
                             img.addEventListener('click', function(e) {
                                 e.preventDefault();
                                 const alt = this.alt || 'Image';
                                 openImageModal(src, alt);
-                            });
-                            
+                            }, { once: false });
+
                             // Add hover effect
                             img.addEventListener('mouseenter', function() {
                                 this.style.opacity = '0.9';
                             });
-                            
+
                             img.addEventListener('mouseleave', function() {
                                 this.style.opacity = '1';
                             });
-                            
+
                             // Add modal class if not already present
                             if (!img.classList.contains('modal-image')) {
                                 img.classList.add('modal-image');
                             }
-                            
+
                             console.log('Modal functionality added to uploaded image:', src.substring(src.lastIndexOf('/') + 1));
                         }
-                        
+
                         // If image is already loaded, process immediately
                         if (img.complete && img.naturalWidth > 0) {
                             processUploadedImage();
                         } else {
-                            // Wait for image to load
-                            img.addEventListener('load', processUploadedImage);
-                            // Also try after a short delay in case load event already fired
-                            setTimeout(processUploadedImage, 100);
+                            // Wait for image to load - use once:true to prevent duplicate listeners
+                            img.addEventListener('load', processUploadedImage, { once: true });
                         }
                     }
                 });

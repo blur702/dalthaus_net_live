@@ -280,25 +280,31 @@ class View
 
     /**
      * Format date for display
-     * 
-     * @param string $date Date string
+     *
+     * @param string|null $date Date string
      * @param string $format Date format
      * @return string
      */
-    public function formatDate(string $date, string $format = 'Y-m-d'): string
+    public function formatDate(?string $date, string $format = 'Y-m-d'): string
     {
+        if ($date === null || $date === '') {
+            return 'N/A';
+        }
         $timestamp = strtotime($date);
         return $timestamp !== false ? date($format, $timestamp) : $date;
     }
 
     /**
      * Format date for display with time
-     * 
-     * @param string $date Date string
+     *
+     * @param string|null $date Date string
      * @return string
      */
-    public function formatDateTime(string $date): string
+    public function formatDateTime(?string $date): string
     {
+        if ($date === null || $date === '') {
+            return 'N/A';
+        }
         $timestamp = strtotime($date);
         return $timestamp !== false ? date('F j, Y \a\t g:i A', $timestamp) : $date;
     }

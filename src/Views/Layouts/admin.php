@@ -11,14 +11,15 @@
     <meta http-equiv="Expires" content="0">
     
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📝</text></svg>">
-    
+
     <!-- Enhanced cache-busting and performance meta tags -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <meta name="cache-buster" content="<?= time() ?>">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Tailwind CSS - Production Build -->
+    <link rel="stylesheet" href="/assets/css/output.css?v=<?= filemtime(__DIR__ . '/../../../assets/css/output.css') ?>">
     <!-- Prevent custom element conflicts BEFORE loading any scripts -->
     <script>
         // Comprehensive fix for custom element redefinition errors
@@ -85,8 +86,9 @@
         console.log('Admin cache buster:', window.CACHE_BUSTER);
     </script>
     <script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js?v=<?= $tinymce_version ?>" referrerpolicy="origin"></script>
+    <script src="/assets/js/media-browser-integration.js?v=<?= $js_version ?>"></script>
     <script src="/assets/js/tinymce-single.js?v=<?= $js_version ?>&cb=<?= $tinymce_version ?>" defer></script>
-    
+
     <style>
         body { background-color: #f8f9fa; }
         .dropdown:hover .dropdown-menu { display: block; }

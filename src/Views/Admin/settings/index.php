@@ -365,6 +365,9 @@ function removeLogo() {
     
     fetch('/admin/settings/remove-logo', {
         method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        },
         body: formData
     })
     .then(response => response.json())
@@ -389,6 +392,9 @@ function removeFavicon() {
     
     fetch('/admin/settings/remove-favicon', {
         method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        },
         body: formData
     })
     .then(response => response.json())
@@ -416,6 +422,9 @@ function clearCache() {
     
     fetch('/admin/settings/clear-cache', {
         method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        },
         body: formData
     })
     .then(response => response.json())
@@ -446,6 +455,9 @@ function handleImport(input) {
     
     fetch('/admin/settings/import', {
         method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        },
         body: formData
     })
     .then(response => {

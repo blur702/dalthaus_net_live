@@ -9,32 +9,35 @@ use CMS\Models\Content as ContentModel;
 use App\Models\Autosave;
 use CMS\Utils\FileUpload;
 use CMS\Utils\Database;
+use CMS\Utils\Auth;
 use Exception;
 
 class Content extends BaseController
 {
+    public function __construct(Database $db, Auth $auth, array $config)
+    {
+        parent::__construct($db, $auth, $config);
+    }
+
     protected function initialize(): void
     {
-        $this->requireAuth();
         $this->view->layout('admin');
     }
 
     public function index(): void
     {
-        $page = (int) $this->getParam('page', 1);
-        $type = $this->getParam('type', '');
-        $search = $this->sanitize($this->getParam('search', ''));
-        $status = $this->getParam('status', '');
-        $sortBy = $this->getParam('sort_by', 'created_at');
-        $sortDir = $this->getParam('sort_dir', 'DESC');
+        $page = (int) $this->request->get('page', 1);
+        $type = $this->request->get('type', '');
+        $search = $this->request->get('search', '');
+        $status = $this->request->get('status', '');
+        $sortBy = $this->request->get('sort_by', 'sort_order');
+        $sortDir = $this->request->get('sort_dir', 'ASC');
         
-        // Validate content type
         $validTypes = [ContentModel::TYPE_ARTICLE, ContentModel::TYPE_PHOTOBOOK];
         if (!empty($type) && !in_array($type, $validTypes)) {
             $type = '';
         }
         
-        // Build filters
         $filters = [
             'search' => $search,
             'status' => $status,
@@ -43,7 +46,6 @@ class Content extends BaseController
             'sort_dir' => $sortDir
         ];
         
-        // Get content items
         $itemsPerPage = $this->config['app']['items_per_page'] ?? 10;
         $totalItems = ContentModel::countWithFilters($filters);
         $totalPages = ceil($totalItems / $itemsPerPage);
@@ -52,1052 +54,567 @@ class Content extends BaseController
         
         $content = ContentModel::findWithFilters($filters, $itemsPerPage, (int) $offset);
         
-        // Prepare pagination data
         $pagination = [
             'current_page' => $page,
             'total_pages' => $totalPages,
             'total_items' => $totalItems,
             'items_per_page' => $itemsPerPage,
-            'has_prev' => $page > 1,
-            'has_next' => $page < $totalPages,
-            'prev_page' => max(1, $page - 1),
-            'next_page' => min($totalPages, $page + 1)
         ];
         
         $this->render('admin/content/index', [
             'content' => $content,
             'filters' => $filters,
             'pagination' => $pagination,
-            'flash' => $this->getFlash(),
             'page_title' => 'Content Management',
-            'csrf_token' => $this->generateCsrfToken()
         ]);
-    }
-
-    public function drafts(): void
-    {
-        $page = (int) $this->getParam('page', 1);
-        $type = $this->getParam('type', '');
-        $age = $this->getParam('age', '');
-        $sort = $this->getParam('sort', 'updated_at');
-        
-        // Build filters for drafts only
-        $filters = [
-            'status' => ContentModel::STATUS_DRAFT,
-            'content_type' => $type,
-            'sort_by' => $sort,
-            'sort_dir' => 'DESC'
-        ];
-        
-        // Add age filter
-        if ($age) {
-            $now = date('Y-m-d H:i:s');
-            switch ($age) {
-                case 'recent':
-                    $filters['updated_after'] = date('Y-m-d H:i:s', strtotime('-24 hours'));
-                    break;
-                case 'week':
-                    $filters['updated_after'] = date('Y-m-d H:i:s', strtotime('-1 week'));
-                    break;
-                case 'month':
-                    $filters['updated_after'] = date('Y-m-d H:i:s', strtotime('-1 month'));
-                    break;
-                case 'old':
-                    $filters['updated_before'] = date('Y-m-d H:i:s', strtotime('-1 month'));
-                    break;
-            }
-        }
-        
-        // Get draft items
-        $itemsPerPage = $this->config['app']['items_per_page'] ?? 10;
-        $totalItems = ContentModel::countWithFilters($filters);
-        $totalPages = ceil($totalItems / $itemsPerPage);
-        $page = max(1, min($page, $totalPages ?: 1));
-        $offset = ($page - 1) * $itemsPerPage;
-        
-        $items = ContentModel::findWithFilters($filters, $itemsPerPage, $offset);
-        
-        // Calculate analytics data
-        $analytics = $this->calculateDraftAnalytics();
-        
-        $this->render('admin/content/drafts', [
-            'items' => $items,
-            'current_page' => $page,
-            'total_pages' => $totalPages,
-            'total_items' => $totalItems,
-            'type_filter' => $type,
-            'age_filter' => $age,
-            'sort_filter' => $sort,
-            'recent_drafts_count' => $analytics['recent_drafts_count'],
-            'ready_to_publish_count' => $analytics['ready_to_publish_count'],
-            'old_drafts_count' => $analytics['old_drafts_count'],
-            'page_title' => 'Auto-save & Draft Management',
-            'csrf_token' => $this->generateCsrfToken()
-        ]);
-    }
-    
-    private function calculateDraftAnalytics(): array
-    {
-        $db = Database::getInstance();
-        
-        // Recent drafts (last 24 hours)
-        $recentQuery = "SELECT COUNT(*) as count FROM content 
-                        WHERE status = 'draft' 
-                        AND updated_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)";
-        $recentResult = $db->query($recentQuery);
-        $recentCount = $recentResult->fetch()['count'] ?? 0;
-        
-        // Ready to publish (has title and content)
-        $readyQuery = "SELECT COUNT(*) as count FROM content 
-                       WHERE status = 'draft' 
-                       AND title IS NOT NULL AND title != '' 
-                       AND (teaser IS NOT NULL AND teaser != '' OR body IS NOT NULL AND body != '')";
-        $readyResult = $db->query($readyQuery);
-        $readyCount = $readyResult->fetch()['count'] ?? 0;
-        
-        // Old drafts (older than 1 month)
-        $oldQuery = "SELECT COUNT(*) as count FROM content 
-                     WHERE status = 'draft' 
-                     AND updated_at < DATE_SUB(NOW(), INTERVAL 1 MONTH)";
-        $oldResult = $db->query($oldQuery);
-        $oldCount = $oldResult->fetch()['count'] ?? 0;
-        
-        return [
-            'recent_drafts_count' => $recentCount,
-            'ready_to_publish_count' => $readyCount,
-            'old_drafts_count' => $oldCount
-        ];
     }
 
     public function create(): void
     {
-        $type = $this->getParam('type', ContentModel::TYPE_ARTICLE);
+        $type = $this->request->get('type', ContentModel::TYPE_ARTICLE);
         if (!in_array($type, [ContentModel::TYPE_ARTICLE, ContentModel::TYPE_PHOTOBOOK])) {
             $type = ContentModel::TYPE_ARTICLE;
         }
 
-        // **FIX:** Retrieve form data and errors from session on validation failure
-        $formData = $_SESSION['form_data'] ?? [];
-        $formErrors = $_SESSION['form_errors'] ?? [];
-        unset($_SESSION['form_data'], $_SESSION['form_errors']);
-
         $this->render('admin/content/create', [
-            'content' => null,
             'content_type' => $type,
-            'is_edit' => false,
-            'form_data' => $formData, // Pass form data to the view
-            'form_errors' => $formErrors, // Pass form errors to the view
-            'flash' => $this->getFlash(),
             'page_title' => 'Create ' . ucfirst($type),
-            'csrf_token' => $this->generateCsrfToken()
         ]);
     }
 
     public function store(): void
     {
-        // Check if POST data exceeded the limit
-        if (empty($_POST) && empty($_FILES) && $_SERVER['CONTENT_LENGTH'] > 0) {
-            $maxSize = ini_get('post_max_size');
-            $this->setFlash('error', "The uploaded content exceeded the maximum allowed size of {$maxSize}. Please reduce file sizes or upload fewer images.");
-            $this->redirect('/admin/content/create');
-            return;
-        }
-        
-        if (!$this->isPost()) {
+        if (!$this->request->isPost()) {
             $this->redirect('/admin/content');
             return;
         }
 
-        if (!$this->validateCsrfToken()) {
-            $this->setFlash('error', 'Security token validation failed. Please try again.');
+        if (!$this->auth->validateCsrfToken($this->request->post('_token'))) {
+            $this->setFlash('error', 'Invalid security token.');
             $this->redirect('/admin/content/create');
             return;
         }
 
         try {
             $data = $this->getFormData();
-
-            // Ensure URL alias is unique before validation
-            if (!empty($data['url_alias'])) {
-                $data['url_alias'] = $this->ensureUniqueUrlAlias($data['url_alias']);
-            }
+            $data['url_alias'] = $this->ensureUniqueUrlAlias($data['url_alias']);
 
             $errors = $this->validateContentData($data);
-
             if (!empty($errors)) {
-                // **FIX:** Store data and errors in session and redirect
-                $_SESSION['form_data'] = $data;
-                $_SESSION['form_errors'] = $errors;
-                $this->setFlash('error', 'Please fix the validation errors below.');
-                // Redirect back to the create form, preserving the content type
+                $this->setFlash('error', implode('; ', $errors));
                 $this->redirect('/admin/content/create?type=' . urlencode($data['content_type']));
                 return;
             }
 
-            // Handle file uploads
-            $uploadErrors = $this->handleFileUploads($data);
-            $errors = array_merge($errors, $uploadErrors);
-
-            if (!empty($errors)) {
-                // **FIX:** Store data and errors in session and redirect
-                $_SESSION['form_data'] = $data;
-                $_SESSION['form_errors'] = $errors;
-                $this->setFlash('error', 'Please fix the validation errors below.');
-                // Redirect back to the create form, preserving the content type
-                $this->redirect('/admin/content/create?type=' . urlencode($data['content_type']));
-                return;
-            }
-
-            // Set additional fields
-            $data['user_id'] = $this->getCurrentUserId();
+            $data['user_id'] = $this->auth->id();
             $data['sort_order'] = ContentModel::getNextSortOrder();
-            $data['created_at'] = date('Y-m-d H:i:s');
-            $data['updated_at'] = date('Y-m-d H:i:s');
 
-            if ($data['status'] === ContentModel::STATUS_PUBLISHED && empty($data['published_at'])) {
-                $data['published_at'] = date('Y-m-d H:i:s');
-            } elseif (empty($data['published_at'])) {
-                $data['published_at'] = null;
-            }
+            // Handle file uploads for new content (create temporary content object for method signature)
+            error_log("[Content::store] Checking for file uploads");
+            $tempContent = new ContentModel($this->db);
+            $this->handleFileUploads($data, $tempContent);
 
             $content = ContentModel::create($data);
 
-            if ($content && $content->getId()) {
-                // Delete any autosaves associated with the UUID if provided
-                $autosaveUUID = $this->getParam('autosave_uuid', '', 'post');
-                if (!empty($autosaveUUID)) {
-                    $autosaveModel = new Autosave();
-                    $autosaveModel->deleteByUUID($autosaveUUID);
-                }
-                
-                // Log for debugging
-                error_log('Content created: ID=' . $content->getId() . ', URL=' . $data['url_alias'] . ', Status=' . $data['status']);
-                
-                $this->setFlash('success', ucfirst($data['content_type']) . ' created successfully.');
-                $this->redirect('/admin/content/' . $content->getId() . '/edit');
-            } else {
-                throw new Exception('Failed to create content in the database.');
-            }
+            $this->setFlash('success', ucfirst($data['content_type']) . ' created successfully.');
+
+            // Redirect to frontend view of the content
+            $contentType = $content->getAttribute('content_type');
+            $urlAlias = $content->getAttribute('url_alias');
+            $this->redirect("/{$contentType}/{$urlAlias}");
 
         } catch (Exception $e) {
-            error_log('Content store error: ' . $e->getMessage());
+            $this->logError('Content store error', $e);
             $this->setFlash('error', 'An error occurred while creating content.');
             $this->redirect('/admin/content/create');
         }
     }
 
-    /**
-     * @return array<string, mixed>
-     */
     private function getFormData(): array
     {
-        // Get the action to determine status
-        $action = $this->getParam('action', 'draft', 'post');
-        $status = ($action === 'publish') ? ContentModel::STATUS_PUBLISHED : ContentModel::STATUS_DRAFT;
-        
+        $action = $this->request->post('action');
+
+        // Determine status based on action button:
+        // - 'publish' = user clicked "Save & Publish" → set to published
+        // - 'draft' = user clicked "Unpublish (Save as Draft)" → set to draft
+        // - 'save' or other = user clicked "Save Changes" → preserve current status
+        if ($action === 'publish') {
+            $status = ContentModel::STATUS_PUBLISHED;
+        } elseif ($action === 'draft') {
+            $status = ContentModel::STATUS_DRAFT;
+        } else {
+            // Preserve current status from hidden field or default to draft
+            $status = $this->request->post('status', ContentModel::STATUS_DRAFT);
+        }
+
         return [
-            'title' => $this->sanitize($this->getParam('title', '', 'post')),
-            'teaser' => $this->sanitize($this->getParam('teaser', '', 'post')),
-            'body' => $this->getParam('body', '', 'post'),
-            'url_alias' => $this->sanitize($this->getParam('url_alias', '', 'post')),
-            'content_type' => $this->getParam('content_type', ContentModel::TYPE_ARTICLE, 'post'),
+            'title' => $this->request->post('title', ''),
+            'teaser' => $this->request->post('teaser', ''),
+            'body' => $this->request->post('body', ''),
+            'url_alias' => $this->request->post('url_alias', ''),
+            'content_type' => $this->request->post('content_type', ContentModel::TYPE_ARTICLE),
             'status' => $status,
-            'published_at' => $this->getParam('published_at', '', 'post')
+            'published_at' => $this->request->post('published_at', null)
         ];
     }
 
-    /**
-     * Ensure the URL alias is unique by appending a number if necessary
-     *
-     * @param string $urlAlias - The proposed URL alias
-     * @param int|null $excludeId - Content ID to exclude from duplicate check (for updates)
-     * @return string - A unique URL alias
-     */
     private function ensureUniqueUrlAlias(string $urlAlias, ?int $excludeId = null): string
     {
         $baseAlias = $urlAlias;
         $counter = 2;
-
-        while (true) {
-            $existing = ContentModel::findByUrlAlias($urlAlias);
-
-            // If no existing content found, or it's the same content we're editing, we're good
-            if (!$existing || ($excludeId && $existing->getId() === $excludeId)) {
+        while ($existing = ContentModel::findByUrlAlias($urlAlias)) {
+            if ($excludeId && $existing->getId() === $excludeId) {
                 break;
             }
-
-            // URL alias is taken, try adding a number
-            $urlAlias = $baseAlias . '-' . $counter;
-            $counter++;
-
-            // Safety check to prevent infinite loop
-            if ($counter > 100) {
-                $urlAlias = $baseAlias . '-' . time();
-                break;
-            }
+            $urlAlias = $baseAlias . '-' . $counter++;
         }
-
         return $urlAlias;
     }
 
-    /**
-     * @param array<string, mixed> $data
-     * @return array<string, string>
-     */
     private function validateContentData(array $data, ?int $excludeId = null): array
     {
         $errors = [];
-
         if (empty($data['title'])) {
             $errors['title'] = 'Title is required';
         }
-
         if (empty($data['url_alias'])) {
             $errors['url_alias'] = 'URL alias is required';
         }
-
-        if (empty($data['body'])) {
-            $errors['body'] = 'Content body is required';
-        }
-
-        if (!in_array($data['status'], [ContentModel::STATUS_DRAFT, ContentModel::STATUS_PUBLISHED])) {
-            $errors['status'] = 'Invalid status selected';
-        }
-
         return $errors;
     }
 
-    public function edit(string $id = ''): void
+    private function handleFileUploads(array &$data, ContentModel $content): void
     {
-        $id = (int) $id;
-        error_log('Edit content: Looking for ID=' . $id);
-        
-        $content = ContentModel::find($id);
-        
+        error_log("[Content::handleFileUploads] Starting file upload handling");
+
+        // Handle featured image upload
+        $featuredImage = $this->request->file('featured_image');
+        if ($featuredImage && $featuredImage['error'] === UPLOAD_ERR_OK) {
+            error_log("[Content::handleFileUploads] Featured image upload detected");
+            $uploadedPath = $this->uploadContentImage($featuredImage, 'featured');
+            if ($uploadedPath) {
+                $data['featured_image'] = $uploadedPath;
+                error_log("[Content::handleFileUploads] Featured image uploaded: $uploadedPath");
+
+                // Delete old featured image if it exists
+                $oldImage = $content->getAttribute('featured_image');
+                if ($oldImage) {
+                    $this->deleteOldImage($oldImage);
+                }
+            } else {
+                error_log("[Content::handleFileUploads] Featured image upload failed");
+            }
+        } else {
+            if ($featuredImage) {
+                error_log("[Content::handleFileUploads] Featured image error code: " . $featuredImage['error']);
+            }
+        }
+
+        // Handle teaser image upload (for photobooks)
+        $teaserImage = $this->request->file('teaser_image');
+        if ($teaserImage && $teaserImage['error'] === UPLOAD_ERR_OK) {
+            error_log("[Content::handleFileUploads] Teaser image upload detected");
+            $uploadedPath = $this->uploadContentImage($teaserImage, 'teaser');
+            if ($uploadedPath) {
+                $data['teaser_image'] = $uploadedPath;
+                error_log("[Content::handleFileUploads] Teaser image uploaded: $uploadedPath");
+
+                // Delete old teaser image if it exists
+                $oldImage = $content->getAttribute('teaser_image');
+                if ($oldImage) {
+                    $this->deleteOldImage($oldImage);
+                }
+            } else {
+                error_log("[Content::handleFileUploads] Teaser image upload failed");
+            }
+        } else {
+            if ($teaserImage) {
+                error_log("[Content::handleFileUploads] Teaser image error code: " . $teaserImage['error']);
+            }
+        }
+
+        error_log("[Content::handleFileUploads] File upload handling complete");
+    }
+
+    private function uploadContentImage(array $file, string $type): ?string
+    {
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        $extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+
+        if (!in_array($extension, $allowedExtensions)) {
+            error_log("[Content::uploadContentImage] Invalid file extension: $extension");
+            return null;
+        }
+
+        // Create directory structure: /uploads/content/{type}s/YYYY/MM/
+        $year = date('Y');
+        $month = date('m');
+        $uploadDir = __DIR__ . "/../../../uploads/content/{$type}s/$year/$month";
+
+        if (!is_dir($uploadDir)) {
+            if (!mkdir($uploadDir, 0755, true)) {
+                error_log("[Content::uploadContentImage] Failed to create directory: $uploadDir");
+                return null;
+            }
+            error_log("[Content::uploadContentImage] Created directory: $uploadDir");
+        }
+
+        // Generate unique, web-safe filename using timestamp and random string
+        $timestamp = time();
+        $randomString = bin2hex(random_bytes(8)); // 16 character hex string
+        $filename = $type . '_' . $timestamp . '_' . $randomString . '.' . $extension;
+        $uploadPath = $uploadDir . '/' . $filename;
+        $relativePath = "/uploads/content/{$type}s/$year/$month/$filename";
+
+        error_log("[Content::uploadContentImage] Generated filename: $filename");
+
+        error_log("[Content::uploadContentImage] Attempting upload to: $uploadPath");
+
+        if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
+            error_log("[Content::uploadContentImage] Upload successful: $relativePath");
+            return $relativePath;
+        }
+
+        error_log("[Content::uploadContentImage] Upload failed");
+        return null;
+    }
+
+    private function deleteOldImage(string $imagePath): void
+    {
+        error_log("[Content::deleteOldImage] Checking if image can be safely deleted: $imagePath");
+
+        // Check if any other content is using this same image path
+        $checkQuery = "SELECT content_id, title FROM content
+                       WHERE (featured_image = ? OR teaser_image = ?)";
+        $results = $this->db->fetchAll($checkQuery, [$imagePath, $imagePath]);
+
+        if (count($results) > 1) {
+            error_log("[Content::deleteOldImage] SKIPPING - Image is used by " . count($results) . " other content items");
+            foreach ($results as $item) {
+                error_log("[Content::deleteOldImage]   - Content ID {$item['content_id']}: {$item['title']}");
+            }
+            return;
+        }
+
+        // Handle both relative and absolute paths
+        if (strpos($imagePath, '/') === 0) {
+            // Absolute path from web root
+            $fullPath = __DIR__ . '/../../../' . ltrim($imagePath, '/');
+        } else {
+            // Relative path
+            $fullPath = __DIR__ . '/../../../uploads/' . $imagePath;
+        }
+
+        if (file_exists($fullPath)) {
+            if (unlink($fullPath)) {
+                error_log("[Content::deleteOldImage] Deleted old image: $fullPath");
+            } else {
+                error_log("[Content::deleteOldImage] Failed to delete old image: $fullPath");
+            }
+        } else {
+            error_log("[Content::deleteOldImage] Old image not found: $fullPath");
+        }
+    }
+
+    public function edit(string $id): void
+    {
+        $content = ContentModel::find((int)$id);
         if (!$content) {
-            error_log('Edit content: Content not found for ID=' . $id);
             $this->setFlash('error', 'Content not found.');
             $this->redirect('/admin/content');
             return;
         }
-        
-        error_log('Edit content: Found content ID=' . $id . ', Title=' . $content->getAttribute('title'));
-        
-        // Check for autosaves for this content
-        $autosaveModel = new Autosave();
-        $latestAutosave = $autosaveModel->getLatestForContent($id, $this->getCurrentUserId());
         
         $this->render('admin/content/edit', [
             'content' => $content,
-            'content_type' => $content->getAttribute('content_type'),
-            'is_edit' => true,
-            'flash' => $this->getFlash(),
             'page_title' => 'Edit ' . ucfirst($content->getAttribute('content_type')),
-            'csrf_token' => $this->generateCsrfToken(),
-            'has_autosave' => !empty($latestAutosave),
-            'autosave' => $latestAutosave
         ]);
     }
 
-    public function update(string $id = ''): void
+    public function update(string $id): void
     {
-        // Check if POST data exceeded the limit
-        if (empty($_POST) && empty($_FILES) && $_SERVER['CONTENT_LENGTH'] > 0) {
-            $maxSize = ini_get('post_max_size');
-            $id = (int) $id;
-            $this->setFlash('error', "The uploaded content exceeded the maximum allowed size of {$maxSize}. Please reduce file sizes or upload fewer images.");
+        if (!$this->request->isPost()) {
+            $this->redirect('/admin/content');
+            return;
+        }
+
+        if (!$this->auth->validateCsrfToken($this->request->post('_token'))) {
+            $this->setFlash('error', 'Invalid security token.');
             $this->redirect('/admin/content/' . $id . '/edit');
             return;
         }
-        
-        if (!$this->isPost()) {
-            $this->redirect('/admin/content');
-            return;
-        }
-        
-        if (!$this->validateCsrfToken()) {
-            $this->setFlash('error', 'Security token validation failed.');
-            $this->redirect('/admin/content');
-            return;
-        }
-        
-        $id = (int) $id;
-        $content = ContentModel::find($id);
-        
+
+        $content = ContentModel::find((int)$id);
         if (!$content) {
             $this->setFlash('error', 'Content not found.');
             $this->redirect('/admin/content');
             return;
         }
-        
+
         try {
             $data = $this->getFormData();
+            $data['url_alias'] = $this->ensureUniqueUrlAlias($data['url_alias'], (int)$id);
 
-            // Ensure URL alias is unique before validation (excluding current content)
-            if (!empty($data['url_alias'])) {
-                $data['url_alias'] = $this->ensureUniqueUrlAlias($data['url_alias'], $id);
-            }
-
-            $errors = $this->validateContentData($data, $id);
-            
+            $errors = $this->validateContentData($data, (int)$id);
             if (!empty($errors)) {
-                $_SESSION['form_data'] = $data;
-                $_SESSION['form_errors'] = $errors;
-                $this->setFlash('error', 'Please fix the validation errors.');
+                $this->setFlash('error', implode('; ', $errors));
                 $this->redirect('/admin/content/' . $id . '/edit');
                 return;
             }
-            
+
             // Handle file uploads
-            $uploadErrors = $this->handleFileUploads($data);
-            $errors = array_merge($errors, $uploadErrors);
+            error_log("[Content::update] Checking for file uploads for content ID: $id");
+            $this->handleFileUploads($data, $content);
 
-            if (!empty($errors)) {
-                $_SESSION['form_data'] = $data;
-                $_SESSION['form_errors'] = $errors;
-                $this->setFlash('error', 'Please fix the validation errors.');
-                $this->redirect('/admin/content/' . $id . '/edit');
-                return;
-            }
-            
-            // Update timestamps
-            $data['updated_at'] = date('Y-m-d H:i:s');
-            
-            if ($data['status'] === ContentModel::STATUS_PUBLISHED && empty($content->getAttribute('published_at'))) {
-                $data['published_at'] = date('Y-m-d H:i:s');
-            } elseif (empty($data['published_at'])) {
-                $data['published_at'] = null;
-            }
-            
-            // Set updated data on content model
-            foreach ($data as $key => $value) {
-                $content->setAttribute($key, $value);
-            }
-            
-            if ($content->save()) {
-                // Delete all autosaves for this content after successful save
-                $autosaveModel = new Autosave();
-                $autosaveModel->deleteByContentId($id);
-                
-                // Also delete autosaves by UUID if provided
-                $autosaveUUID = $this->getParam('autosave_uuid', '', 'post');
-                if (!empty($autosaveUUID)) {
-                    $autosaveModel->deleteByUUID($autosaveUUID);
-                }
-                
-                $this->setFlash('success', ucfirst($content->getAttribute('content_type')) . ' updated successfully.');
-                $this->redirect('/admin/content/' . $id . '/edit');
-            } else {
-                throw new Exception('Failed to update content.');
-            }
+            $content->setAttributes($data);
+            $content->save();
+
+            $this->setFlash('success', ucfirst($content->getAttribute('content_type')) . ' updated successfully.');
+
+            // Redirect to frontend view of the content
+            $contentType = $content->getAttribute('content_type');
+            $urlAlias = $content->getAttribute('url_alias');
+            $this->redirect("/{$contentType}/{$urlAlias}");
+
         } catch (Exception $e) {
-            error_log('Content update error: ' . $e->getMessage());
+            $this->logError('Content update error', $e);
             $this->setFlash('error', 'An error occurred while updating content.');
             $this->redirect('/admin/content/' . $id . '/edit');
         }
     }
 
-    public function delete(string $id = ''): void
+    public function delete(string $id): void
     {
-        if (!$this->isPost()) {
+        if (!$this->request->isPost()) {
             $this->redirect('/admin/content');
             return;
         }
-        
-        if (!$this->validateCsrfToken()) {
-            $this->setFlash('error', 'Security token validation failed.');
+
+        if (!$this->auth->validateCsrfToken($this->request->post('_token'))) {
+            $this->setFlash('error', 'Invalid security token.');
             $this->redirect('/admin/content');
             return;
         }
-        
-        $id = (int) $id;
-        $content = ContentModel::find($id);
-        
-        if (!$content) {
-            $this->setFlash('error', 'Content not found.');
-            $this->redirect('/admin/content');
-            return;
+
+        $content = ContentModel::find((int)$id);
+        if ($content) {
+            $content->delete();
+            $this->setFlash('success', ucfirst($content->getAttribute('content_type')) . ' deleted successfully.');
         }
-        
-        try {
-            // Delete associated images
-            $featuredImage = $content->getAttribute('featured_image');
-            $teaserImage = $content->getAttribute('teaser_image');
-            
-            $uploadPath = dirname(__DIR__, 3) . '/uploads/';
-            if ($featuredImage && file_exists($uploadPath . $featuredImage)) {
-                unlink($uploadPath . $featuredImage);
-            }
-            
-            if ($teaserImage && file_exists($uploadPath . $teaserImage)) {
-                unlink($uploadPath . $teaserImage);
-            }
-            
-            if ($content->delete()) {
-                $this->setFlash('success', ucfirst($content->getAttribute('content_type')) . ' deleted successfully.');
-            } else {
-                throw new Exception('Failed to delete content.');
-            }
-        } catch (Exception $e) {
-            error_log('Content delete error: ' . $e->getMessage());
-            $this->setFlash('error', 'An error occurred while deleting content.');
-        }
-        
+
         $this->redirect('/admin/content');
-    }
-
-    public function reorder(): void
-    {
-        $type = $this->getParam('type', '');
-        
-        if (!empty($type) && !in_array($type, [ContentModel::TYPE_ARTICLE, ContentModel::TYPE_PHOTOBOOK])) {
-            $type = '';
-        }
-        
-        $content = ContentModel::getForReordering($type ?: null);
-        
-        $this->render('admin/content/reorder', [
-            'content' => $content,
-            'content_type' => $type,
-            'flash' => $this->getFlash(),
-            'page_title' => 'Reorder Content',
-            'csrf_token' => $this->generateCsrfToken()
-        ]);
-    }
-
-    public function updateOrder(): void
-    {
-        if (!$this->isPost()) {
-            $this->renderJson(['success' => false, 'message' => 'Invalid request method']);
-            return;
-        }
-        
-        if (!$this->validateCsrfToken()) {
-            $this->renderJson(['success' => false, 'message' => 'Security token validation failed']);
-            return;
-        }
-        
-        try {
-            $orderJson = $this->getParam('order', '', 'post');
-
-            if (empty($orderJson)) {
-                throw new Exception('No order data provided');
-            }
-
-            // Parse JSON order data
-            $orderData = json_decode($orderJson, true);
-
-            if (!is_array($orderData)) {
-                throw new Exception('Invalid order data format');
-            }
-
-            // Transform from [{"id":15,"position":1},...] to ["15" => 1,...]
-            $transformedOrder = [];
-            foreach ($orderData as $item) {
-                if (!isset($item['id']) || !isset($item['position'])) {
-                    throw new Exception('Invalid order item format');
-                }
-                $transformedOrder[(string)$item['id']] = (int)$item['position'];
-            }
-
-            if (ContentModel::updateSortOrder($transformedOrder)) {
-                $this->renderJson(['success' => true, 'message' => 'Order updated successfully']);
-            } else {
-                throw new Exception('Failed to update order');
-            }
-        } catch (Exception $e) {
-            error_log('Update order error: ' . $e->getMessage());
-            $this->renderJson(['success' => false, 'message' => 'An error occurred while updating order']);
-        }
-    }
-
-
-    public function createDraft(): void
-    {
-        if (!$this->isPost()) {
-            $this->renderJson(['success' => false, 'message' => 'Invalid request method']);
-            return;
-        }
-        
-        if (!$this->validateCsrfToken()) {
-            $this->renderJson(['success' => false, 'message' => 'Security token validation failed']);
-            return;
-        }
-        
-        try {
-            $title = $this->sanitize($this->getParam('title', '', 'post'));
-            $contentType = $this->getParam('content_type', ContentModel::TYPE_ARTICLE, 'post');
-            
-            if (empty($title)) {
-                throw new Exception('Title is required to create draft');
-            }
-            
-            if (!in_array($contentType, [ContentModel::TYPE_ARTICLE, ContentModel::TYPE_PHOTOBOOK])) {
-                $contentType = ContentModel::TYPE_ARTICLE;
-            }
-            
-            // Generate URL alias from title
-            $urlAlias = $this->generateUrlAlias($title);
-            
-            // Create minimal draft content
-            $data = [
-                'title' => $title,
-                'url_alias' => $urlAlias,
-                'body' => '',
-                'teaser' => '',
-                'content_type' => $contentType,
-                'status' => ContentModel::STATUS_DRAFT,
-                'user_id' => $this->getCurrentUserId(),
-                'sort_order' => ContentModel::getNextSortOrder(),
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
-                'published_at' => null
-            ];
-            
-            $content = ContentModel::create($data);
-            
-            if (!$content || !$content->getId()) {
-                throw new Exception('Failed to create draft content');
-            }
-            
-            $this->renderJson([
-                'success' => true,
-                'content_id' => $content->getId(),
-                'url_alias' => $urlAlias,
-                'message' => 'Draft created successfully'
-            ]);
-            
-        } catch (Exception $e) {
-            error_log('Create draft error: ' . $e->getMessage());
-            $this->renderJson(['success' => false, 'message' => $e->getMessage()]);
-        }
-    }
-
-    public function uploadImage(): void
-    {
-        if (!$this->isPost()) {
-            $this->renderJson(['success' => false, 'message' => 'Invalid request method']);
-            return;
-        }
-        
-        if (!$this->validateCsrfToken()) {
-            $this->renderJson(['success' => false, 'message' => 'Security token validation failed']);
-            return;
-        }
-        
-        try {
-            if (empty($_FILES['file'])) {
-                throw new Exception('No file uploaded');
-            }
-            
-            // Create year/month folder structure for content images
-            $yearMonth = date('Y/m');
-            $imagePath = dirname(__DIR__, 3) . '/uploads/content/images/' . $yearMonth . '/';
-            
-            // Create directory if it doesn't exist
-            if (!is_dir($imagePath)) {
-                mkdir($imagePath, 0755, true);
-            }
-            
-            $uploadConfig = [
-                'upload_path' => $imagePath,
-                'max_size' => 5 * 1024 * 1024, // 5MB
-                'allowed_types' => ['jpg', 'jpeg', 'png', 'gif', 'webp']
-            ];
-            
-            $upload = new FileUpload($uploadConfig);
-            $result = $upload->upload($_FILES['file']);
-            
-            if ($result['success']) {
-                $this->renderJson([
-                    'location' => '/uploads/content/images/' . $yearMonth . '/' . $result['filename']
-                ]);
-            } else {
-                throw new Exception($result['error'] ?? 'Upload failed');
-            }
-        } catch (Exception $e) {
-            error_log('Image upload error: ' . $e->getMessage());
-            $this->renderJson(['success' => false, 'message' => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * @param array<string, mixed> $data
-     * @return array<string, string>
-     */
-    private function handleFileUploads(array &$data): array
-    {
-        $errors = [];
-        // Create year/month folder structure
-        $yearMonth = date('Y/m');
-        $uploadBasePath = dirname(__DIR__, 3) . '/uploads/content/';
-        
-        // Handle featured image upload
-        if (!empty($_FILES['featured_image']['name'])) {
-            $featuredPath = $uploadBasePath . 'featured/' . $yearMonth . '/';
-            
-            // Create directory if it doesn't exist
-            if (!is_dir($featuredPath)) {
-                mkdir($featuredPath, 0755, true);
-            }
-            
-            $uploadConfig = [
-                'upload_path' => $featuredPath,
-                'max_size' => 5 * 1024 * 1024, // 5MB
-                'allowed_types' => ['jpg', 'jpeg', 'png', 'gif', 'webp']
-            ];
-            
-            $upload = new FileUpload($uploadConfig);
-            $result = $upload->upload($_FILES['featured_image']);
-
-            if ($result['success']) {
-                $data['featured_image'] = '/uploads/content/featured/' . $yearMonth . '/' . $result['filename'];
-            } else {
-                $errors['featured_image'] = $result['error'];
-            }
-        }
-
-        // Handle teaser image upload (only for photobooks)
-        if (!empty($_FILES['teaser_image']['name']) && ($data['content_type'] ?? '') === 'photobook') {
-            $teaserPath = $uploadBasePath . 'teasers/' . $yearMonth . '/';
-
-            // Create directory if it doesn't exist
-            if (!is_dir($teaserPath)) {
-                mkdir($teaserPath, 0755, true);
-            }
-
-            $uploadConfig = [
-                'upload_path' => $teaserPath,
-                'max_size' => 5 * 1024 * 1024, // 5MB
-                'allowed_types' => ['jpg', 'jpeg', 'png', 'gif', 'webp']
-            ];
-
-            $upload = new FileUpload($uploadConfig);
-            $result = $upload->upload($_FILES['teaser_image']);
-
-            if ($result['success']) {
-                $data['teaser_image'] = '/uploads/content/teasers/' . $yearMonth . '/' . $result['filename'];
-            } else {
-                $errors['teaser_image'] = $result['error'];
-            }
-        }
-        return $errors;
-    }
-
-    /**
-     * Generate URL alias from title
-     */
-    private function generateUrlAlias(string $title): string
-    {
-        // Convert to lowercase and replace spaces with hyphens
-        $alias = strtolower(trim($title));
-        $alias = preg_replace('/[^a-z0-9\s\-]/', '', $alias);
-        $alias = preg_replace('/\s+/', '-', $alias);
-        $alias = preg_replace('/-+/', '-', $alias);
-        $alias = trim($alias, '-');
-        
-        // Ensure uniqueness by checking existing aliases
-        $baseAlias = $alias;
-        $counter = 1;
-        
-        while (ContentModel::findByUrlAlias($alias)) {
-            $alias = $baseAlias . '-' . $counter;
-            $counter++;
-        }
-        
-        return $alias ?: 'untitled-' . time();
-    }
-    
-    /**
-     * Bulk delete multiple drafts
-     */
-    public function bulkDelete(): void
-    {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect('/admin/content/drafts');
-            return;
-        }
-        
-        if (!$this->validateCsrfToken()) {
-            $this->redirect('/admin/content/drafts?error=invalid_token');
-            return;
-        }
-        
-        $contentIds = $_POST['content_ids'] ?? [];
-        
-        if (empty($contentIds) || !is_array($contentIds)) {
-            $this->redirect('/admin/content/drafts?error=no_items_selected');
-            return;
-        }
-        
-        $deletedCount = 0;
-        $errors = [];
-        
-        foreach ($contentIds as $contentId) {
-            $contentId = (int) $contentId;
-            if ($contentId <= 0) {
-                continue;
-            }
-            
-            try {
-                // Verify this is a draft and belongs to current user (security check)
-                $content = ContentModel::findById($contentId);
-                if (!$content) {
-                    $errors[] = "Content ID {$contentId} not found";
-                    continue;
-                }
-                
-                // Only allow deletion of drafts
-                if ($content['status'] !== ContentModel::STATUS_DRAFT) {
-                    $errors[] = "Content ID {$contentId} is not a draft";
-                    continue;
-                }
-                
-                // Delete the content
-                if (ContentModel::delete($contentId)) {
-                    $deletedCount++;
-                } else {
-                    $errors[] = "Failed to delete content ID {$contentId}";
-                }
-                
-            } catch (Exception $e) {
-                $errors[] = "Error deleting content ID {$contentId}: " . $e->getMessage();
-            }
-        }
-        
-        // Build redirect message
-        $message = "Successfully deleted {$deletedCount} draft(s)";
-        if (!empty($errors)) {
-            $message .= ". Errors: " . implode(', ', $errors);
-        }
-        
-        $redirectUrl = '/admin/content/drafts?message=' . urlencode($message);
-        if ($deletedCount === 0 && !empty($errors)) {
-            $redirectUrl = '/admin/content/drafts?error=' . urlencode($message);
-        }
-        
-        $this->redirect($redirectUrl);
     }
 
     public function autosave(): void
     {
-        if (!$this->isPost()) {
-            $this->jsonResponse(['success' => false, 'message' => 'Invalid request method']);
+        // Set JSON header
+        header('Content-Type: application/json');
+
+        if (!$this->request->isPost()) {
+            echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+            return;
+        }
+
+        // Verify CSRF token
+        if (!$this->auth->validateCsrfToken($this->request->post('_token'))) {
+            echo json_encode(['success' => false, 'message' => 'Invalid security token']);
             return;
         }
 
         try {
-            $data = [
-                'autosave_uuid' => $this->sanitize($this->getParam('autosave_uuid', '', 'post')),
-                'master_content_uuid' => $this->sanitize($this->getParam('master_content_uuid', '', 'post')),
-                'content_id' => $this->getParam('content_id', null, 'post') ? (int)$this->getParam('content_id', null, 'post') : null,
-                'user_id' => $this->getCurrentUserId(),
-                'title' => $this->sanitize($this->getParam('title', '', 'post')),
-                'content' => $this->getParam('body', '', 'post'),
-                'excerpt' => $this->sanitize($this->getParam('teaser', '', 'post')),
-                'type' => $this->getParam('content_type', ContentModel::TYPE_ARTICLE, 'post'),
-                'featured_image' => $this->sanitize($this->getParam('featured_image', '', 'post')),
-                'meta_title' => $this->sanitize($this->getParam('meta_title', '', 'post')),
-                'meta_description' => $this->sanitize($this->getParam('meta_description', '', 'post')),
-                'meta_keywords' => $this->sanitize($this->getParam('meta_keywords', '', 'post'))
-            ];
-
-            // Validate required fields  
-            if (empty($data['autosave_uuid']) || empty($data['title'])) {
-                $this->jsonResponse([
-                    'success' => false,
-                    'message' => 'UUID and title are required for autosave'
-                ]);
+            $userId = $_SESSION['user_id'] ?? null;
+            if (!$userId) {
+                echo json_encode(['success' => false, 'message' => 'User not authenticated']);
                 return;
             }
 
-            $autosaveModel = new Autosave();
-            $autosaveId = $autosaveModel->createOrUpdate($data);
+            $autosaveModel = new Autosave($this->db);
 
-            if ($autosaveId) {
-                $this->jsonResponse([
-                    'success' => true,
-                    'message' => 'Content autosaved successfully',
-                    'autosave_id' => $autosaveId,
-                    'timestamp' => date('Y-m-d H:i:s')
-                ]);
-            } else {
-                throw new Exception('Failed to save autosave');
+            $data = [
+                'autosave_uuid' => $this->request->post('autosave_uuid'),
+                'master_content_uuid' => $this->request->post('master_content_uuid'),
+                'content_id' => $this->request->post('content_id') ? (int)$this->request->post('content_id') : null,
+                'user_id' => $userId,
+                'title' => $this->request->post('title', ''),
+                'content' => $this->request->post('body', ''),
+                'excerpt' => $this->request->post('teaser', ''),
+                'type' => $this->request->post('content_type', 'article')
+            ];
+
+            // Only save if we have at least a title
+            if (empty($data['title'])) {
+                echo json_encode(['success' => false, 'message' => 'Title is required for autosave']);
+                return;
             }
 
-        } catch (Exception $e) {
-            error_log('Autosave error: ' . $e->getMessage());
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Failed to autosave content'
+            $autosaveId = $autosaveModel->createOrUpdate($data);
+
+            echo json_encode([
+                'success' => true,
+                'autosave_id' => $autosaveId,
+                'message' => 'Content autosaved successfully'
             ]);
+
+        } catch (Exception $e) {
+            $this->logError('Autosave error', $e);
+            echo json_encode(['success' => false, 'message' => 'Autosave failed: ' . $e->getMessage()]);
         }
     }
 
     public function loadAutosave(): void
     {
-        if (!$this->isPost()) {
-            $this->jsonResponse(['success' => false, 'message' => 'Invalid request method']);
+        // Set JSON header
+        header('Content-Type: application/json');
+
+        if (!$this->request->isPost()) {
+            echo json_encode(['success' => false, 'message' => 'Invalid request method']);
             return;
         }
 
         try {
-            $autosaveUUID = $this->sanitize($this->getParam('autosave_uuid', '', 'post'));
-            $masterContentUUID = $this->sanitize($this->getParam('master_content_uuid', '', 'post'));
-            $contentId = $this->getParam('content_id', null, 'post') ? (int)$this->getParam('content_id', null, 'post') : null;
-
-            $autosaveModel = new Autosave();
-            
-            if ($masterContentUUID) {
-                // Load autosave by master content UUID (preferred method)
-                $autosave = $autosaveModel->findByMasterUUID($masterContentUUID);
-            } elseif ($contentId) {
-                // Load autosave for existing content
-                $autosave = $autosaveModel->findByContentId($contentId, $this->getCurrentUserId());
-            } elseif ($autosaveUUID) {
-                // Fallback to autosave UUID
-                $autosave = $autosaveModel->findByUUID($autosaveUUID);
-            } else {
-                $this->jsonResponse([
-                    'success' => false,
-                    'message' => 'No autosave identifier provided'
-                ]);
+            $userId = $_SESSION['user_id'] ?? null;
+            if (!$userId) {
+                echo json_encode(['success' => false, 'message' => 'User not authenticated']);
                 return;
             }
 
-            if ($autosave) {
-                $this->jsonResponse([
-                    'success' => true,
-                    'autosave' => $autosave
-                ]);
-            } else {
-                $this->jsonResponse([
-                    'success' => false,
-                    'message' => 'No autosave found'
-                ]);
+            $autosaveModel = new Autosave($this->db);
+            $masterUuid = $this->request->post('master_content_uuid');
+
+            if (!$masterUuid) {
+                echo json_encode(['success' => false, 'message' => 'Master UUID required']);
+                return;
             }
 
-        } catch (Exception $e) {
-            error_log('Load autosave error: ' . $e->getMessage());
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Failed to load autosave'
+            $autosave = $autosaveModel->findByMasterUUID($masterUuid);
+
+            if (!$autosave) {
+                echo json_encode(['success' => false, 'message' => 'No autosave found']);
+                return;
+            }
+
+            echo json_encode([
+                'success' => true,
+                'autosave' => $autosave
             ]);
+
+        } catch (Exception $e) {
+            $this->logError('Load autosave error', $e);
+            echo json_encode(['success' => false, 'message' => 'Failed to load autosave: ' . $e->getMessage()]);
         }
     }
 
     public function listAutosaves(): void
     {
-        if (!$this->isPost()) {
-            $this->jsonResponse(['success' => false, 'message' => 'Invalid request method']);
+        // Set JSON header
+        header('Content-Type: application/json');
+
+        if (!$this->request->isPost()) {
+            echo json_encode(['success' => false, 'message' => 'Invalid request method']);
             return;
         }
 
         try {
-            // In the new architecture, list all autosaves for the current user
-            // since each content piece has only one autosave
-            $autosaveModel = new Autosave();
-            $autosaves = $autosaveModel->getAllAutosaves($this->getCurrentUserId());
+            $userId = $_SESSION['user_id'] ?? null;
+            if (!$userId) {
+                echo json_encode(['success' => false, 'message' => 'User not authenticated']);
+                return;
+            }
 
-            $this->jsonResponse([
+            $autosaveModel = new Autosave($this->db);
+            $autosaves = $autosaveModel->getAllAutosaves($userId);
+
+            echo json_encode([
                 'success' => true,
-                'autosaves' => $autosaves,
-                'count' => count($autosaves)
+                'autosaves' => $autosaves
             ]);
 
         } catch (Exception $e) {
-            error_log('List autosaves error: ' . $e->getMessage());
-            $this->jsonResponse([
-                'success' => false,
-                'message' => 'Failed to list autosaves'
-            ]);
+            $this->logError('List autosaves error', $e);
+            echo json_encode(['success' => false, 'message' => 'Failed to list autosaves: ' . $e->getMessage()]);
         }
     }
 
-    public function autosaves(): void
+    public function reorder(): void
     {
-        $page = (int) $this->getParam('page', 1);
-        $search = $this->sanitize($this->getParam('search', ''));
-        
-        // Get autosaves for current user
-        $autosaveModel = new Autosave();
-        $autosaves = $autosaveModel->getAllAutosaves($this->getCurrentUserId());
-        
-        // Filter by search if provided
-        if (!empty($search)) {
-            $autosaves = array_filter($autosaves, function($autosave) use ($search) {
-                return stripos($autosave['title'], $search) !== false ||
-                       stripos($autosave['content'], $search) !== false;
-            });
+        error_log("[Content::reorder] START - Request URI: " . ($_SERVER['REQUEST_URI'] ?? 'unknown'));
+
+        $type = $this->request->get('type', '');
+        error_log("[Content::reorder] Type filter: " . ($type ?: 'none'));
+
+        // If type filter is specified, validate it
+        if (!empty($type) && !in_array($type, [ContentModel::TYPE_ARTICLE, ContentModel::TYPE_PHOTOBOOK])) {
+            error_log("[Content::reorder] Invalid type '$type', resetting to null");
+            $type = '';
         }
-        
-        // Pagination
-        $itemsPerPage = 20;
-        $totalItems = count($autosaves);
-        $totalPages = ceil($totalItems / $itemsPerPage);
-        $page = max(1, min($page, $totalPages ?: 1));
-        $offset = ($page - 1) * $itemsPerPage;
-        $autosaves = array_slice($autosaves, $offset, $itemsPerPage);
-        
-        $this->render('admin/content/autosaves', [
-            'autosaves' => $autosaves,
-            'currentPage' => $page,
-            'totalPages' => $totalPages,
-            'totalItems' => $totalItems,
-            'search' => $search,
-            'csrf_token' => $this->generateCsrfToken()
+
+        // Get content for reordering (all content or filtered by type)
+        // Pass null when type is empty to get ALL content
+        $content = ContentModel::getForReordering($type ?: null);
+        error_log("[Content::reorder] Retrieved " . count($content) . " content items");
+
+        $this->render('admin/content/reorder', [
+            'content' => $content,
+            'content_type' => $type,
+            'page_title' => 'Reorder Content',
         ]);
     }
 
-    public function deleteAutosave(int $id): void
+    public function updateOrder(): void
     {
-        if (!$this->isPost()) {
-            $this->redirect('/admin/autosaves');
+        error_log("[Content::updateOrder] START - Request method: " . ($_SERVER['REQUEST_METHOD'] ?? 'unknown'));
+
+        if (!$this->request->isPost()) {
+            error_log("[Content::updateOrder] ERROR: Not a POST request");
+            $this->renderJson(['success' => false, 'message' => 'Invalid request method'], 405);
             return;
         }
 
-        if (!$this->validateCsrfToken()) {
-            $this->setFlash('error', 'Security token validation failed.');
-            $this->redirect('/admin/autosaves');
+        $token = $this->request->post('_token');
+        error_log("[Content::updateOrder] CSRF token received: " . ($token ? 'yes' : 'no'));
+
+        if (!$this->auth->validateCsrfToken($token)) {
+            error_log("[Content::updateOrder] ERROR: Invalid CSRF token");
+            $this->renderJson(['success' => false, 'message' => 'Invalid CSRF token'], 403);
             return;
         }
 
         try {
-            $autosave = Autosave::find($id);
+            $orderJson = $this->request->post('order', '');
+            error_log("[Content::updateOrder] Raw order JSON: " . $orderJson);
 
-            if (!$autosave) {
-                $this->setFlash('error', 'Autosave not found.');
-                $this->redirect('/admin/autosaves');
-                return;
+            if (empty($orderJson)) {
+                throw new Exception('No order data provided');
             }
 
-            // Verify ownership
-            if ($autosave->getAttribute('user_id') !== $this->getCurrentUserId()) {
-                $this->setFlash('error', 'Unauthorized.');
-                $this->redirect('/admin/autosaves');
-                return;
+            $orderData = json_decode($orderJson, true);
+            if (!is_array($orderData)) {
+                throw new Exception('Invalid order data format');
             }
 
-            $success = $autosave->delete();
+            error_log("[Content::updateOrder] Decoded order data: " . json_encode($orderData));
 
-            if ($success) {
-                $this->setFlash('success', 'Autosave deleted successfully.');
+            // Transform array format from [{id: 1, position: 1}] to [1 => 1]
+            $transformedData = [];
+            foreach ($orderData as $item) {
+                if (isset($item['id']) && isset($item['position'])) {
+                    $transformedData[$item['id']] = $item['position'];
+                }
+            }
+
+            error_log("[Content::updateOrder] Transformed data: " . json_encode($transformedData));
+
+            if (ContentModel::updateSortOrder($transformedData)) {
+                error_log("[Content::updateOrder] SUCCESS: Order updated");
+                $this->renderJson(['success' => true, 'message' => 'Content order updated successfully']);
             } else {
-                $this->setFlash('error', 'Failed to delete autosave.');
+                throw new Exception('Failed to update content order');
             }
-
         } catch (Exception $e) {
-            error_log('Delete autosave error: ' . $e->getMessage());
-            $this->setFlash('error', 'An error occurred while deleting the autosave.');
+            error_log("[Content::updateOrder] EXCEPTION: " . $e->getMessage());
+            error_log("[Content::updateOrder] Stack trace: " . $e->getTraceAsString());
+            $this->logError('Update content order error', $e);
+            $this->renderJson(['success' => false, 'message' => $e->getMessage()], 500);
         }
-
-        $this->redirect('/admin/autosaves');
-    }
-
-    private function jsonResponse(array $data): void
-    {
-        header('Content-Type: application/json');
-        echo json_encode($data);
-        exit;
     }
 }

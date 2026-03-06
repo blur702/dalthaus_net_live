@@ -6,90 +6,50 @@ namespace CMS\Controllers\Admin;
 
 use CMS\Controllers\BaseController;
 use CMS\Models\MediaUpload;
+use CMS\Utils\Database;
+use CMS\Utils\Auth;
 
 class Upload extends BaseController
 {
+    public function __construct(Database $db, Auth $auth, array $config)
+    {
+        parent::__construct($db, $auth, $config);
+    }
+
     public function tinymce()
     {
-        $this->requireAuth();
-
-        if (!$this->isPost()) {
+        if (!$this->request->isPost()) {
             $this->renderJson(['error' => 'Invalid request method.'], 405);
             return;
         }
 
-        if (empty($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
+        $file = $this->request->file('file');
+        if (!$file || $file['error'] !== UPLOAD_ERR_OK) {
             $this->renderJson(['error' => 'No file uploaded or an upload error occurred.'], 400);
             return;
         }
 
-        $file = $_FILES['file'];
-        $uploadDir = __DIR__ . '/../../../uploads/content';
-        $allowedTypes = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-        $maxSize = 25 * 1024 * 1024; // 25MB
-
-        // Validate file type
-        $fileExtension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-        if (!in_array($fileExtension, $allowedTypes)) {
-            $this->renderJson(['error' => 'Invalid file type.'], 400);
-            return;
-        }
-
-        // Validate file size
-        if ($file['size'] > $maxSize) {
-            $this->renderJson(['error' => 'File is too large.'], 400);
-            return;
-        }
-
-        // Create a unique filename
-        $filename = uniqid('img_', true) . '.' . $fileExtension;
-        $destination = $uploadDir . '/' . $filename;
-
-        // Ensure the upload directory exists
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0755, true);
-        }
-
-        if (move_uploaded_file($file['tmp_name'], $destination)) {
-            $location = '/uploads/content/' . $filename;
-
-            // Track the upload
-            MediaUpload::track([
-                'filename' => $filename,
-                'filepath' => $location,
-                'original_filename' => $file['name'],
-                'file_size' => $file['size'],
-                'file_type' => $fileExtension,
-                'upload_type' => 'tinymce',
-                'user_id' => $this->getCurrentUserId(),
-                'used_in_content' => false
-            ]);
-
-            $this->renderJson(['location' => $location]);
+        $result = $this->processImageUpload($file, 'tinymce');
+        if ($result['success']) {
+            $this->renderJson(['location' => $result['location']]);
         } else {
-            $this->renderJson(['error' => 'Failed to move uploaded file.'], 500);
+            $this->renderJson(['error' => $result['error']], 400);
         }
     }
 
     public function dualImage()
     {
-        $this->requireAuth();
-
-        if (!$this->isPost()) {
+        if (!$this->request->isPost()) {
             $this->renderJson(['error' => 'Invalid request method.'], 405);
             return;
         }
 
-        $uploadDir = __DIR__ . '/../../../uploads/content';
-        $allowedTypes = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-        $maxSize = 25 * 1024 * 1024; // 25MB
-
         $results = [];
         $errors = [];
 
-        // Process display image
-        if (!empty($_FILES['display_image']) && $_FILES['display_image']['error'] === UPLOAD_ERR_OK) {
-            $result = $this->processImageUpload($_FILES['display_image'], $uploadDir, $allowedTypes, $maxSize, 'display');
+        $displayImage = $this->request->file('display_image');
+        if ($displayImage && $displayImage['error'] === UPLOAD_ERR_OK) {
+            $result = $this->processImageUpload($displayImage, 'dual_display');
             if ($result['success']) {
                 $results['display_image'] = $result['location'];
             } else {
@@ -97,9 +57,9 @@ class Upload extends BaseController
             }
         }
 
-        // Process modal image
-        if (!empty($_FILES['modal_image']) && $_FILES['modal_image']['error'] === UPLOAD_ERR_OK) {
-            $result = $this->processImageUpload($_FILES['modal_image'], $uploadDir, $allowedTypes, $maxSize, 'modal');
+        $modalImage = $this->request->file('modal_image');
+        if ($modalImage && $modalImage['error'] === UPLOAD_ERR_OK) {
+            $result = $this->processImageUpload($modalImage, 'dual_modal');
             if ($result['success']) {
                 $results['modal_image'] = $result['location'];
             } else {
@@ -120,24 +80,24 @@ class Upload extends BaseController
         $this->renderJson(['success' => true, 'images' => $results]);
     }
 
-    private function processImageUpload(array $file, string $uploadDir, array $allowedTypes, int $maxSize, string $prefix): array
+    private function processImageUpload(array $file, string $uploadType): array
     {
-        // Validate file type
+        $uploadDir = __DIR__ . '/../../../uploads/content';
+        $allowedTypes = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        $maxSize = 25 * 1024 * 1024; // 25MB
+
         $fileExtension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
         if (!in_array($fileExtension, $allowedTypes)) {
             return ['success' => false, 'error' => 'Invalid file type.'];
         }
 
-        // Validate file size
         if ($file['size'] > $maxSize) {
             return ['success' => false, 'error' => 'File is too large.'];
         }
 
-        // Create a unique filename with prefix
-        $filename = uniqid($prefix . '_', true) . '.' . $fileExtension;
+        $filename = uniqid($uploadType . '_', true) . '.' . $fileExtension;
         $destination = $uploadDir . '/' . $filename;
 
-        // Ensure the upload directory exists
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0755, true);
         }
@@ -145,15 +105,14 @@ class Upload extends BaseController
         if (move_uploaded_file($file['tmp_name'], $destination)) {
             $location = '/uploads/content/' . $filename;
 
-            // Track the upload
             MediaUpload::track([
                 'filename' => $filename,
                 'filepath' => $location,
                 'original_filename' => $file['name'],
                 'file_size' => $file['size'],
                 'file_type' => $fileExtension,
-                'upload_type' => $prefix === 'display' ? 'dual_display' : 'dual_modal',
-                'user_id' => $this->getCurrentUserId(),
+                'upload_type' => $uploadType,
+                'user_id' => $this->auth->id(),
                 'used_in_content' => false
             ]);
 

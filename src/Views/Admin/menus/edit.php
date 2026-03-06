@@ -324,6 +324,9 @@ document.getElementById('addItemForm').addEventListener('submit', function(e) {
     // Send AJAX request to add item
     fetch('/admin/menus/<?= $menu['menu_id'] ?>/add-item', {
         method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        },
         body: formData
     })
     .then(response => response.json())
@@ -373,6 +376,9 @@ function saveMenuOrder() {
     
     fetch('/admin/menus/<?= $menu['menu_id'] ?>/save-order', {
         method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        },
         body: formData
     })
     .then(response => response.json())
@@ -478,6 +484,9 @@ function updateMenuItem(itemId) {
     
     fetch('/admin/menus/items/' + itemId + '/update', {
         method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        },
         body: formData
     })
     .then(response => response.json())
@@ -505,6 +514,9 @@ function deleteMenuItem(itemId) {
     
     fetch('/admin/menus/items/' + itemId + '/delete', {
         method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        },
         body: formData
     })
     .then(response => response.json())

@@ -219,6 +219,46 @@ npm run test:headed
 - Custom exception handler for database connection errors
 - 404 and 500 error pages with appropriate HTTP status codes
 
+## 📚 Documentation Structure
+
+### Essential Documentation
+- **CLAUDE.md** (this file) - Primary project documentation for AI assistants
+- **docs/DEPLOYMENT_WORKFLOW.md** - Complete deployment procedures
+- **docs/SSH_AGENT_README.md** - SSH deployment agent usage
+- **docs/CLOUDFLARE_SETUP.md** - Infrastructure and CDN configuration
+- **docs/CLAUDE_QUICK_REFERENCE.md** - Quick reference guide
+
+### Recent Fixes & Features
+Located in **docs/fixes/** (3-6 month retention):
+- Recent bug fixes and feature implementations
+- Dated format: `YYYY-MM-DD-description.md`
+- Periodically archived when no longer actively referenced
+
+### Implementation Guides
+Located in **docs/implementation/**:
+- **media-browser.md** - Media browser system
+- **image-404-fix.md** - Image path fixes
+- **upload-debugging.md** - Upload troubleshooting
+- **logout-fix.md** - Logout functionality
+- **enhancements.md** - Feature enhancements
+- **form-styling.md** - UI/form improvements
+
+### Historical Records
+Located in **docs/archive/**:
+- **tests/** - Test reports and verification
+  - `autosave-implementation-2025.md`
+  - `production-deployment-tests-2025.md`
+  - `feature-tests-2025.md`
+- **debugging/** - Debugging session logs
+  - `debugging-sessions-2025.md`
+
+### Documentation Guidelines
+1. **Current docs** stay in root or docs/ main directory
+2. **Recent fixes** (< 6 months) go in docs/fixes/
+3. **Implementation guides** go in docs/implementation/
+4. **Historical records** are archived in docs/archive/
+5. **Consolidate** related documents to reduce clutter
+
 ## Cloudflare Development Mode
 
 ### Disabling Cloudflare Cache During Development

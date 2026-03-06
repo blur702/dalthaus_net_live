@@ -140,17 +140,19 @@ class SSHAgent:
     def git_pull(self, repo_path: str = ".", branch: str = "main") -> bool:
         """Pull latest changes from git repository"""
         self.logger.info(f"Pulling latest changes from git repository in {repo_path}")
-        
+
         # Change to repository directory and pull
+        # Set pull.rebase false to use merge strategy for divergent branches
         commands = [
-            f"cd {repo_path}",
+            f"cd '{repo_path}'",
+            "git config pull.rebase false",
             "git fetch origin",
             f"git pull origin {branch}"
         ]
-        
+
         full_command = " && ".join(commands)
         exit_code, stdout, stderr = self.execute_command(full_command)
-        
+
         if exit_code == 0:
             self.logger.info("Git pull completed successfully")
             return True
@@ -161,27 +163,27 @@ class SSHAgent:
     def git_status(self, repo_path: str = ".") -> Dict[str, Any]:
         """Get git repository status"""
         self.logger.info(f"Checking git status in {repo_path}")
-        
+
         commands = [
-            f"cd {repo_path}",
+            f"cd '{repo_path}'",
             "git status --porcelain",
             "git branch --show-current",
             "git log -1 --format='%H|%an|%ad|%s' --date=short"
         ]
-        
+
         results = {}
-        
+
         # Get working tree status
-        exit_code, stdout, stderr = self.execute_command(f"cd {repo_path} && git status --porcelain")
+        exit_code, stdout, stderr = self.execute_command(f"cd '{repo_path}' && git status --porcelain")
         results['has_changes'] = len(stdout.strip()) > 0
         results['changes'] = stdout.strip().split('\n') if stdout.strip() else []
-        
+
         # Get current branch
-        exit_code, stdout, stderr = self.execute_command(f"cd {repo_path} && git branch --show-current")
+        exit_code, stdout, stderr = self.execute_command(f"cd '{repo_path}' && git branch --show-current")
         results['current_branch'] = stdout.strip()
-        
+
         # Get latest commit info
-        exit_code, stdout, stderr = self.execute_command(f"cd {repo_path} && git log -1 --format='%H|%an|%ad|%s' --date=short")
+        exit_code, stdout, stderr = self.execute_command(f"cd '{repo_path}' && git log -1 --format='%H|%an|%ad|%s' --date=short")
         if stdout.strip():
             commit_parts = stdout.strip().split('|')
             results['latest_commit'] = {
@@ -190,12 +192,12 @@ class SSHAgent:
                 'date': commit_parts[2],
                 'message': commit_parts[3]
             }
-        
+
         return results
     
     def git_log(self, repo_path: str = ".", count: int = 5) -> List[Dict[str, str]]:
         """Get recent git commits"""
-        command = f"cd {repo_path} && git log -{count} --format='%H|%an|%ad|%s' --date=short"
+        command = f"cd '{repo_path}' && git log -{count} --format='%H|%an|%ad|%s' --date=short"
         exit_code, stdout, stderr = self.execute_command(command, show_output=False)
         
         commits = []

@@ -32,3 +32,57 @@ env/
 # Local configuration overrides
 config.local.php
 *config.local*
+
+# Test artifacts and reports
+testing/reports/
+testing/results/
+testing/test-images/
+testing/test-results/
+test-results/
+playwright-report/
+*.webm
+*.zip
+
+# Temporary test and debug files
+test_*.php
+test_*.js
+test_*.sh
+test-*.html
+*_backup.php
+*_test*.php
+*_final.php
+dump_*.php
+manual_*.py
+check_*.php
+complete_*.py
+ssh_fix_*.py
+nul
+
+# Session and cookie files
+cookies.txt
+sessions/
+
+# Log files
+logs/*.log
+
+# Test results
+test-results/.last-run.json
+
+# Production-specific files
+Auth_production.php
+Router_prod.php
+*_production.php
+
+# Upload directories (user content)
+uploads/
+_ul/
+
+# Debug and session files
+session_debug.txt
+*.backup.*
+
+# Database backups
+database_backups/
+
+# Index redirect file (server-specific)
+index.html

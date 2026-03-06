@@ -64,17 +64,17 @@
                     <article>
                         <!-- Teaser Image -->
                         <?php if ($photobook->getAttribute('teaser_image')): ?>
-                        <div class="mb-3 h-48 overflow-hidden">
+                        <a href="<?= $this->escape($photobook->getUrl()) ?>" class="block mb-3 h-48 overflow-hidden">
                             <img src="<?= $this->escape($photobook->getTeaserImageUrl()) ?>"
                                  alt="<?= $this->escape($photobook->getAttribute('title')) ?>"
-                                 class="teaser-image w-full h-full object-cover">
-                        </div>
+                                 class="teaser-image w-full h-full object-cover hover:opacity-90 transition-opacity">
+                        </a>
                         <?php else: ?>
-                        <div class="mb-3 w-full">
-                            <div class="teaser-image h-48 bg-black text-white flex items-center justify-center text-lg font-bold">
+                        <a href="<?= $this->escape($photobook->getUrl()) ?>" class="block mb-3 w-full">
+                            <div class="teaser-image h-48 bg-black text-white flex items-center justify-center text-lg font-bold hover:opacity-90 transition-opacity">
                                 TEASER IMAGE
                             </div>
-                        </div>
+                        </a>
                         <?php endif; ?>
                         
                         <!-- Content -->

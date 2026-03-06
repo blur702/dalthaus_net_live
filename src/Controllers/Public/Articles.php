@@ -6,105 +6,63 @@ namespace CMS\Controllers\Public;
 
 use CMS\Controllers\BaseController;
 use CMS\Models\Content;
+use CMS\Utils\Database;
+use CMS\Utils\Auth;
 
-/**
- * Articles Controller
- * 
- * Handles article listings and individual article display.
- * 
- * @package CMS\Controllers\Public
- * @author  Kevin
- * @version 1.0.0
- */
 class Articles extends BaseController
 {
-    /**
-     * Initialize controller
-     * 
-     * @return void
-     */
+    public function __construct(Database $db, Auth $auth, array $config)
+    {
+        parent::__construct($db, $auth, $config);
+    }
+
     protected function initialize(): void
     {
-        // Set default layout for public pages
         $this->view->layout('default');
     }
 
-    /**
-     * Display articles listing page
-     * 
-     * @return void
-     */
     public function index(): void
     {
-        $page = max(1, (int) $this->getParam('page', 1));
+        $page = $this->request->get('page', 1, 'int');
         $itemsPerPage = $this->config['app']['items_per_page'];
         $offset = ($page - 1) * $itemsPerPage;
 
-        // Get published articles with pagination
         $articles = Content::getPublishedArticles($itemsPerPage, $offset);
-        
-        // Get total count for pagination
-        $totalArticles = Content::count([
-            'content_type' => Content::TYPE_ARTICLE,
-            'status' => Content::STATUS_PUBLISHED
-        ]);
-        
+        $totalArticles = Content::count(['content_type' => Content::TYPE_ARTICLE, 'status' => Content::STATUS_PUBLISHED]);
         $totalPages = ceil($totalArticles / $itemsPerPage);
 
-        // Render articles listing template
         $this->render('articles/index', [
             'articles' => $articles,
             'current_page' => $page,
             'total_pages' => $totalPages,
-            'total_articles' => $totalArticles,
             'page_title' => 'Articles'
         ]);
     }
 
-    /**
-     * Display individual article
-     * 
-     * @param string $alias Article URL alias
-     * @return void
-     */
     public function show(string $alias): void
     {
-        // Find article by alias
-        $article = Content::findByAlias($alias);
-        
+        // If user is authenticated (admin), allow viewing drafts
+        if ($this->auth->check()) {
+            $article = Content::findByUrlAlias($alias);
+        } else {
+            $article = Content::findByAlias($alias);
+        }
+
         if ($article === null || !$article->isArticle()) {
-            // Prevent Cloudflare from caching 404 responses
-            header('Cache-Control: no-cache, no-store, must-revalidate');
-            header('Pragma: no-cache');
-            header('Expires: 0');
             http_response_code(404);
-            $this->render('errors/404', [
-                'page_title' => 'Article Not Found'
-            ]);
+            $this->render('errors/404', ['page_title' => 'Article Not Found']);
             return;
         }
 
-        // Show paginated content based on TinyMCE page breaks
-        $contentPages = $article->getContentPages();
-        $currentPage = max(1, min(count($contentPages), (int) $this->getParam('p', 1)));
-        $currentContent = $contentPages[$currentPage - 1] ?? '';
+        // Show draft indicator for authenticated users viewing unpublished content
+        $isDraft = $article->getAttribute('status') !== Content::STATUS_PUBLISHED;
 
-        // Get author information
-        $author = $article->getAuthor();
-
-        // Check if user can edit this content
-        $canEdit = $this->isAuthenticated() && 
-                   isset($_SESSION['is_admin']) && 
-                   $_SESSION['is_admin'];
-
-        // Render article template
         $this->render('articles/show', [
             'article' => $article,
-            'content' => $currentContent,
-            'current_page' => $currentPage,
-            'total_pages' => count($contentPages),
-            'author' => $author,
-            'can_edit' => $canEdit,
+            'content' => $article->getAttribute('body'),
+            'author' => $article->getAuthor(),
+            'can_edit' => $this->auth->check(),
+            'is_draft' => $isDraft,
             'page_title' => $article->getAttribute('title'),
             'meta_description' => $article->getAttribute('meta_description'),
             'meta_keywords' => $article->getAttribute('meta_keywords')
