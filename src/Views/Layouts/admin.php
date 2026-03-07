@@ -314,6 +314,7 @@
                     <a href="/admin/content" class="text-gray-700 hover:text-gray-900">Content</a>
                     <a href="/admin/articles" class="text-gray-700 hover:text-gray-900">Articles</a>
                     <a href="/admin/photobooks" class="text-gray-700 hover:text-gray-900">Photobooks</a>
+                    <a href="/admin/blog" class="text-gray-700 hover:text-gray-900">Blog</a>
                     <a href="/admin/pages" class="text-gray-700 hover:text-gray-900">Pages</a>
                     <a href="/admin/menus" class="text-gray-700 hover:text-gray-900">Menus</a>
                     <a href="/admin/media" class="text-gray-700 hover:text-gray-900">Media</a>

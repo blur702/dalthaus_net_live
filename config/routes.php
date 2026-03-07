@@ -8,8 +8,10 @@ return function(Router $router) {
         $router->get('/', 'Home@index');
         $router->get('/articles', 'Articles@index');
         $router->get('/photobooks', 'Photobooks@index');
+        $router->get('/blog', 'Blog@index');
         $router->get('/article/{alias}', 'Articles@show');
         $router->get('/photobook/{alias}', 'Photobooks@show');
+        $router->get('/blog/{alias}', 'Blog@show');
         $router->get('/page/{alias}', 'Pages@show');
     });
 
@@ -62,6 +64,16 @@ return function(Router $router) {
         $router->get('/photobooks', 'Photobooks@index');
         $router->get('/photobooks/reorder', 'Photobooks@reorder');
         $router->post('/photobooks/update-order', 'Photobooks@updateOrder');
+
+        // Blog management
+        $router->get('/blog', 'Blog@index');
+        $router->get('/blog/create', 'Blog@create');
+        $router->get('/blog/reorder', 'Blog@reorder');
+        $router->post('/blog/store', 'Blog@store');
+        $router->post('/blog/update-order', 'Blog@updateOrder');
+        $router->get('/blog/{id}/edit', 'Blog@edit');
+        $router->post('/blog/{id}/update', 'Blog@update');
+        $router->post('/blog/{id}/delete', 'Blog@delete');
 
         // Uploads
         $router->post('/upload/tinymce', 'Upload@tinymce');

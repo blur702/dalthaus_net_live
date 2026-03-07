@@ -166,6 +166,9 @@
             menubar: false,
             plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table help wordcount pagebreak',
             toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | link image dualimage modalimage testbutton | pagebreak code',
+            // Enhanced list configuration
+            advlist_bullet_styles: 'default,circle,square',
+            advlist_number_styles: 'default,lower-alpha,lower-roman,upper-alpha,upper-roman',
             // Force all buttons to be visible
             toolbar_mode: 'sliding',
             pagebreak_separator: '<!-- pagebreak -->',
@@ -229,6 +232,11 @@
             document_base_url: window.location.origin + '/',
             // Ensure images load properly in editor
             verify_html: false,
+            // List and content validation settings
+            valid_elements: '*[*]',
+            valid_children: '+body[style],+ol[li],+ul[li]',
+            extended_valid_elements: '*[*]',
+            content_style: 'ul, ol { list-style-type: initial; margin: 1em 0; padding-left: 40px; } li { margin: 0.25em 0; }',
             // Image handling options
             image_advtab: true,
             image_caption: true,
@@ -327,6 +335,36 @@
 
                 editor.on('init', function() {
                     debugLog(`TinyMCE editor initialized: ${editor.id}`, 'success');
+                    
+                    // Debug list functionality
+                    setTimeout(() => {
+                        try {
+                            const listSupported = editor.queryCommandSupported('InsertUnorderedList');
+                            debugLog(`List commands supported: ${listSupported}`, listSupported ? 'success' : 'error');
+                            
+                            // Test list functionality
+                            const testContent = '<p>Test paragraph for list conversion</p>';
+                            const originalContent = editor.getContent();
+                            
+                            editor.setContent(testContent);
+                            editor.selection.setCursorLocation(editor.getBody().querySelector('p'), 0);
+                            editor.execCommand('InsertUnorderedList');
+                            
+                            const afterListCommand = editor.getContent();
+                            const listCreated = afterListCommand.includes('<ul>') || afterListCommand.includes('<li>');
+                            debugLog(`List creation test: ${listCreated ? 'PASSED' : 'FAILED'}`, listCreated ? 'success' : 'error');
+                            
+                            if (!listCreated) {
+                                debugLog(`Expected list HTML, got: ${afterListCommand}`, 'error');
+                            }
+                            
+                            // Restore original content
+                            editor.setContent(originalContent);
+                            
+                        } catch (error) {
+                            debugLog(`List functionality test failed: ${error.message}`, 'error');
+                        }
+                    }, 2000);
                     
                     // Enhanced debug: Check button registration status
                     const registeredButtons = editor.ui.registry.getAll().buttons;
